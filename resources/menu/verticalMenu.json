@@ -41,20 +41,10 @@
       "menuHeader": "Attendance & Time"
     },
     {
-      "name": "Attendance",
+      "name": "Attendance Records",
       "icon": "menu-icon tf-icons ti ti-clock",
-      "slug": "attendance",
+      "slug": "attendance-records",
       "submenu": [
-        {
-          "url": "attendances",
-          "name": "View Records",
-          "slug": "attendance-index"
-        },
-        {
-          "url": "attendances/create",
-          "name": "Add Record",
-          "slug": "attendance-create"
-        },
         {
           "url": "attendance/import",
           "name": "Import CSV",
@@ -88,23 +78,6 @@
       "menuHeader": "Leave Management"
     },
     {
-      "name": "Leave Requests",
-      "icon": "menu-icon tf-icons ti ti-calendar-off",
-      "slug": "leave-requests",
-      "submenu": [
-        {
-          "url": "leaves",
-          "name": "All Requests",
-          "slug": "leave-index"
-        },
-        {
-          "url": "leaves/create",
-          "name": "New Request",
-          "slug": "leave-create"
-        }
-      ]
-    },
-    {
       "name": "Leave Policies",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
@@ -120,28 +93,6 @@
       "menuHeader": "Payroll"
     },
     {
-      "name": "Payroll Management",
-      "icon": "menu-icon tf-icons ti ti-currency-dollar",
-      "slug": "payroll",
-      "submenu": [
-        {
-          "url": "payrolls",
-          "name": "Payroll Records",
-          "slug": "payroll-index"
-        },
-        {
-          "url": "payrolls/create",
-          "name": "Create Record",
-          "slug": "payroll-create"
-        },
-        {
-          "url": "payroll/run-review",
-          "name": "Run & Review",
-          "slug": "payroll-run-review"
-        }
-      ]
-    },
-    {
       "name": "Billable Hours",
       "icon": "menu-icon tf-icons ti ti-clock-hour-4",
       "slug": "billable-hours",
@@ -154,14 +105,39 @@
       ]
     },
     {
-      "name": "Payroll Settings",
-      "icon": "menu-icon tf-icons ti ti-settings-dollar",
-      "slug": "payroll-settings",
+      "name": "Payroll Management",
+      "icon": "menu-icon tf-icons ti ti-currency-dollar",
+      "slug": "payroll-management",
       "submenu": [
         {
+          "url": "payroll/run-review",
+          "name": "Run & Review",
+          "slug": "payroll-run-review"
+        },
+        {
           "url": "payroll/settings",
-          "name": "Configuration",
+          "name": "Settings",
           "slug": "payroll-settings-index"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Document Management"
+    },
+    {
+      "name": "Letter Templates",
+      "icon": "menu-icon tf-icons ti ti-file-text",
+      "slug": "letter-templates",
+      "submenu": [
+        {
+          "url": "letter-templates",
+          "name": "All Templates",
+          "slug": "letter-templates-index"
+        },
+        {
+          "url": "letter-templates/create",
+          "name": "Create Template",
+          "slug": "letter-templates-create"
         }
       ]
     },
@@ -174,14 +150,14 @@
       "slug": "assets",
       "submenu": [
         {
-          "url": "assetmanagers",
+          "url": "assetmanager/assets",
           "name": "All Assets",
-          "slug": "assetmanager-index"
+          "slug": "assetmanager-assets-index"
         },
         {
-          "url": "assetmanagers/create",
+          "url": "assetmanager/assets/create",
           "name": "Add Asset",
-          "slug": "assetmanager-create"
+          "slug": "assetmanager-assets-create"
         }
       ]
     },
@@ -256,53 +232,6 @@
           "url": "pages/account-settings-notifications",
           "name": "Notifications",
           "slug": "pages-account-settings-notifications"
-        }
-      ]
-    },
-    {
-      "menuHeader": "Development Tools"
-    },
-    {
-      "name": "UI Components",
-      "icon": "menu-icon tf-icons ti ti-color-swatch",
-      "slug": "ui",
-      "submenu": [
-        {
-          "url": "ui/buttons",
-          "name": "Buttons",
-          "slug": "ui-buttons"
-        },
-        {
-          "url": "ui/modals",
-          "name": "Modals",
-          "slug": "ui-modals"
-        },
-        {
-          "url": "ui/alerts",
-          "name": "Alerts",
-          "slug": "ui-alerts"
-        },
-        {
-          "url": "form/validation",
-          "name": "Form Validation",
-          "slug": "form-validation"
-        }
-      ]
-    },
-    {
-      "name": "Tables & Forms",
-      "icon": "menu-icon tf-icons ti ti-table",
-      "slug": "tables-forms",
-      "submenu": [
-        {
-          "url": "tables/datatables-basic",
-          "name": "DataTables",
-          "slug": "tables-datatables-basic"
-        },
-        {
-          "url": "forms/basic-inputs",
-          "name": "Form Elements",
-          "slug": "forms-basic-inputs"
         }
       ]
     }
