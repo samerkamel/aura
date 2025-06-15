@@ -16,10 +16,10 @@
           </div>
         </div>
         <div class="d-flex gap-2">
-          <a href="{{ route('assets.edit', $asset) }}" class="btn btn-outline-primary">
+          <a href="{{ route('assetmanager.assets.edit', $asset) }}" class="btn btn-outline-primary">
             <i class="ti ti-edit me-1"></i>Edit Asset
           </a>
-          <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+          <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
             <i class="ti ti-arrow-left me-1"></i>Back to Assets
           </a>
         </div>
@@ -245,7 +245,7 @@
                 </button>
               @endif
 
-              <a href="{{ route('assets.edit', $asset) }}" class="btn btn-outline-info">
+              <a href="{{ route('assetmanager.assets.edit', $asset) }}" class="btn btn-outline-info">
                 <i class="ti ti-edit me-1"></i>Edit Asset
               </a>
 
@@ -338,7 +338,7 @@
         <h5 class="modal-title">Assign Asset</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('assets.assign') }}" method="POST">
+      <form action="{{ route('assetmanager.assets.assign') }}" method="POST">
         @csrf
         <div class="modal-body">
           <input type="hidden" name="asset_id" id="assign_asset_id" value="{{ $asset->id }}">
@@ -387,7 +387,7 @@
         <h5 class="modal-title">Return Asset</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('assets.unassign') }}" method="POST">
+      <form action="{{ route('assetmanager.assets.unassign') }}" method="POST">
         @csrf
         <div class="modal-body">
           <input type="hidden" name="asset_id" id="unassign_asset_id">

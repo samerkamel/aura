@@ -29,7 +29,7 @@ class AssetController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Asset::with('currentEmployee.employee');
+        $query = Asset::with('currentEmployee');
 
         // Filter by status if provided
         if ($request->filled('status')) {
@@ -82,7 +82,7 @@ class AssetController extends Controller
     {
         Asset::create($request->validated());
 
-        return redirect()->route('assets.index')
+        return redirect()->route('assetmanager.assets.index')
             ->with('success', 'Asset created successfully.');
     }
 
@@ -124,7 +124,7 @@ class AssetController extends Controller
     {
         $asset->update($request->validated());
 
-        return redirect()->route('assets.index')
+        return redirect()->route('assetmanager.assets.index')
             ->with('success', 'Asset updated successfully.');
     }
 
@@ -138,13 +138,13 @@ class AssetController extends Controller
     {
         // Check if asset is currently assigned
         if ($asset->isAssigned()) {
-            return redirect()->route('assets.index')
+            return redirect()->route('assetmanager.assets.index')
                 ->with('error', 'Cannot delete an asset that is currently assigned to an employee.');
         }
 
         $asset->delete();
 
-        return redirect()->route('assets.index')
+        return redirect()->route('assetmanager.assets.index')
             ->with('success', 'Asset deleted successfully.');
     }
 }

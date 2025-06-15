@@ -15,7 +15,7 @@
             <small class="text-muted">Add a new asset to the company inventory</small>
           </div>
         </div>
-        <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
           <i class="ti ti-arrow-left me-1"></i>Back to Assets
         </a>
       </div>
@@ -29,7 +29,7 @@
         </h6>
       </div>
       <div class="card-body">
-        <form action="{{ route('assets.store') }}" method="POST">
+        <form action="{{ route('assetmanager.assets.store') }}" method="POST">
           @csrf
 
           <div class="row">
@@ -127,7 +127,7 @@
             <div class="col-12">
               <hr class="my-4">
               <div class="d-flex justify-content-between">
-                <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
                   <i class="ti ti-x me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">

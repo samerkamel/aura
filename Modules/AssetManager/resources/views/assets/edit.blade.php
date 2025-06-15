@@ -16,10 +16,10 @@
           </div>
         </div>
         <div class="d-flex gap-2">
-          <a href="{{ route('assets.show', $asset) }}" class="btn btn-outline-info">
+          <a href="{{ route('assetmanager.assets.show', $asset) }}" class="btn btn-outline-info">
             <i class="ti ti-eye me-1"></i>View Details
           </a>
-          <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+          <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
             <i class="ti ti-arrow-left me-1"></i>Back to Assets
           </a>
         </div>
@@ -34,7 +34,7 @@
         </h6>
       </div>
       <div class="card-body">
-        <form action="{{ route('assets.update', $asset) }}" method="POST">
+        <form action="{{ route('assetmanager.assets.update', $asset) }}" method="POST">
           @csrf
           @method('PUT')
 
@@ -156,7 +156,7 @@
             <div class="col-12">
               <hr class="my-4">
               <div class="d-flex justify-content-between">
-                <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
                   <i class="ti ti-x me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">

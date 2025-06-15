@@ -15,7 +15,7 @@
             <small class="text-muted">Manage company assets and track assignments</small>
           </div>
         </div>
-        <a href="{{ route('assets.create') }}" class="btn btn-primary">
+        <a href="{{ route('assetmanager.assets.create') }}" class="btn btn-primary">
           <i class="ti ti-plus me-1"></i>Add Asset
         </a>
       </div>
@@ -41,7 +41,7 @@
     <!-- Filters Card -->
     <div class="card mb-4">
       <div class="card-body">
-        <form method="GET" action="{{ route('assets.index') }}" class="row g-3">
+        <form method="GET" action="{{ route('assetmanager.assets.index') }}" class="row g-3">
           <div class="col-md-3">
             <label for="search" class="form-label">Search</label>
             <input type="text" class="form-control" id="search" name="search"
@@ -72,7 +72,7 @@
             <button type="submit" class="btn btn-primary me-2">
               <i class="ti ti-search me-1"></i>Filter
             </button>
-            <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
               <i class="ti ti-refresh me-1"></i>Clear
             </a>
           </div>
@@ -156,12 +156,12 @@
                         </button>
                         <ul class="dropdown-menu">
                           <li>
-                            <a class="dropdown-item" href="{{ route('assets.show', $asset) }}">
+                            <a class="dropdown-item" href="{{ route('assetmanager.assets.show', $asset) }}">
                               <i class="ti ti-eye me-1"></i>View Details
                             </a>
                           </li>
                           <li>
-                            <a class="dropdown-item" href="{{ route('assets.edit', $asset) }}">
+                            <a class="dropdown-item" href="{{ route('assetmanager.assets.edit', $asset) }}">
                               <i class="ti ti-edit me-1"></i>Edit Asset
                             </a>
                           </li>
@@ -218,7 +218,7 @@
               <i class="ti ti-device-laptop text-muted" style="font-size: 2rem;"></i>
             </div>
             <p class="text-muted mb-3">No assets found.</p>
-            <a href="{{ route('assets.create') }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('assetmanager.assets.create') }}" class="btn btn-primary btn-sm">
               <i class="ti ti-plus me-1"></i>Add First Asset
             </a>
           </div>
@@ -236,7 +236,7 @@
         <h5 class="modal-title">Assign Asset</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('assets.assign') }}" method="POST">
+      <form action="{{ route('assetmanager.assets.assign') }}" method="POST">
         @csrf
         <div class="modal-body">
           <input type="hidden" name="asset_id" id="assign_asset_id">
@@ -285,7 +285,7 @@
         <h5 class="modal-title">Unassign Asset</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('assets.unassign') }}" method="POST">
+      <form action="{{ route('assetmanager.assets.unassign') }}" method="POST">
         @csrf
         <div class="modal-body">
           <input type="hidden" name="asset_id" id="unassign_asset_id">
