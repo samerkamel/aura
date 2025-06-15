@@ -1,0 +1,12 @@
+# Project Documentation Index
+- Epics
+  - Epic 1: Foundational Setup & Core Employee Management: Covers project setup and the employee profile module.
+  - Epic 2: Advanced Attendance & Leave Rule Configuration: Details the admin setup for all attendance, leave, and penalty rules.
+  - Epic 3: Attendance Processing & Payroll Calculation: Describes the logic for processing data and calculating payroll.
+  - Epic 4: HR Utilities: Covers asset management and document generation.
+- Architecture
+  - API Reference & Integrations: Details the file-based integrations for the system.
+  - Data Models: Contains the SQL schema for the application's database tables.
+  - Project Structure: Outlines the modular folder structure using nWidart/laravel-modules.
+  - Technology Stack: Lists the definitive technology choices for the project.
+  - Operational Guidelines: Consolidates standards for coding, testing, security, and error handling.

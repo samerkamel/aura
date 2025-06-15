@@ -1,0 +1,5 @@
+EmployeeID,DateTime,LogType
+1,2025-06-14 09:00:00,sign_in
+1,2025-06-14 17:00:00,sign_out
+2,2025-06-14 09:30:00,sign_in
+2,2025-06-14 17:30:00,sign_out

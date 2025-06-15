@@ -1,0 +1,11 @@
+{
+    "name": "LetterGenerator",
+    "alias": "lettergenerator",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\LetterGenerator\\Providers\\LetterGeneratorServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,275 @@
+<?php
+
+namespace Modules\Payroll\Services;
+
+use Modules\HR\Models\Employee;
+use Modules\Payroll\Models\BillableHour;
+use Modules\Attendance\Models\Setting;
+use Modules\Attendance\Models\WfhRecord;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * PayrollCalculationService
+ *
+ * Orchestrates the entire payroll calculation process by combining attendance,
+ * billable hours, and other factors to compute final performance percentages.
+ * Consumes the AttendanceCalculationService and applies configured weights.
+ *
+ * @author Dev Agent
+ */
+class PayrollCalculationService
+{
+  /**
+   * @var AttendanceCalculationService
+   */
+  private $attendanceService;
+
+  public function __construct(AttendanceCalculationService $attendanceService)
+  {
+    $this->attendanceService = $attendanceService;
+  }
+
+  /**
+   * Calculate payroll summary for all active employees in a given period.
+   *
+   * @param Carbon $periodStart The start date of the payroll period
+   * @param Carbon $periodEnd The end date of the payroll period
+   * @return Collection Collection of employee payroll summaries
+   * @throws \Exception If calculation cannot be performed
+   */
+  public function calculatePayrollSummary(Carbon $periodStart, Carbon $periodEnd): Collection
+  {
+    // Get all active employees
+    $employees = Employee::where('status', 'active')->get();
+
+    // Get configured weights
+    $attendanceWeight = (float) Setting::get('weight_attendance_pct', 50);
+    $billableHoursWeight = (float) Setting::get('weight_billable_hours_pct', 50);
+
+    $summaries = collect();
+
+    foreach ($employees as $employee) {
+      $summary = $this->calculateEmployeePayrollSummary(
+        $employee,
+        $periodStart,
+        $periodEnd,
+        $attendanceWeight,
+        $billableHoursWeight
+      );
+
+      $summaries->push($summary);
+    }
+
+    return $summaries;
+  }
+
+  /**
+   * Calculate payroll summary for a single employee.
+   *
+   * @param Employee $employee The employee to calculate for
+   * @param Carbon $periodStart The start date of the payroll period
+   * @param Carbon $periodEnd The end date of the payroll period
+   * @param float $attendanceWeight Weight for attendance percentage
+   * @param float $billableHoursWeight Weight for billable hours percentage
+   * @return array Employee payroll summary data
+   * @throws \Exception If calculation cannot be performed
+   */
+  private function calculateEmployeePayrollSummary(
+    Employee $employee,
+    Carbon $periodStart,
+    Carbon $periodEnd,
+    float $attendanceWeight,
+    float $billableHoursWeight
+  ): array {
+    // Calculate attendance metrics using the AttendanceCalculationService
+    $netAttendedHours = $this->attendanceService->calculateNetHours($employee, $periodStart, $periodEnd);
+
+    // Get required monthly hours (assuming 8 hours per working day, ~22 working days per month)
+    $requiredMonthlyHours = $this->calculateRequiredMonthlyHours($periodStart, $periodEnd);
+
+    // Calculate attendance percentage
+    $attendancePercentage = $requiredMonthlyHours > 0
+      ? min(100, ($netAttendedHours / $requiredMonthlyHours) * 100)
+      : 0;
+
+    // Get billable hours for the period
+    $billableHoursRecord = BillableHour::where('employee_id', $employee->id)
+      ->where('payroll_period_start_date', $periodStart->toDateString())
+      ->first();
+
+    $billableHours = $billableHoursRecord ? $billableHoursRecord->hours : 0;
+
+    // Calculate target billable hours (e.g., 70% of net attended hours)
+    $targetBillableHours = $netAttendedHours * 0.7;
+
+    // Calculate billable hours percentage
+    $billableHoursPercentage = $targetBillableHours > 0
+      ? min(100, ($billableHours / $targetBillableHours) * 100)
+      : 0;
+
+    // Calculate final weighted performance percentage
+    $finalPerformancePercentage = (
+      ($attendancePercentage * ($attendanceWeight / 100)) +
+      ($billableHoursPercentage * ($billableHoursWeight / 100))
+    );
+
+    // Get additional metrics
+    $additionalMetrics = $this->getAdditionalMetrics($employee, $periodStart, $periodEnd);
+
+    return [
+      'employee' => $employee,
+      'net_attended_hours' => round($netAttendedHours, 2),
+      'required_monthly_hours' => $requiredMonthlyHours,
+      'attendance_percentage' => round($attendancePercentage, 2),
+      'billable_hours' => round($billableHours, 2),
+      'target_billable_hours' => round($targetBillableHours, 2),
+      'billable_hours_percentage' => round($billableHoursPercentage, 2),
+      'final_performance_percentage' => round($finalPerformancePercentage, 2),
+      'attendance_weight' => $attendanceWeight,
+      'billable_hours_weight' => $billableHoursWeight,
+      'pto_days' => $additionalMetrics['pto_days'],
+      'wfh_days' => $additionalMetrics['wfh_days'],
+      'penalty_minutes' => $additionalMetrics['penalty_minutes'],
+    ];
+  }
+
+  /**
+   * Calculate required monthly hours for the given period.
+   *
+   * @param Carbon $periodStart
+   * @param Carbon $periodEnd
+   * @return float Required hours for the period
+   */
+  private function calculateRequiredMonthlyHours(Carbon $periodStart, Carbon $periodEnd): float
+  {
+    // Count working days (Monday to Friday) in the period
+    $workingDays = 0;
+    $current = $periodStart->copy();
+
+    while ($current->lte($periodEnd)) {
+      if ($current->isWeekday()) {
+        $workingDays++;
+      }
+      $current->addDay();
+    }
+
+    // Assuming 8 hours per working day
+    return $workingDays * 8;
+  }
+
+  /**
+   * Get additional metrics for an employee in the given period.
+   *
+   * @param Employee $employee
+   * @param Carbon $periodStart
+   * @param Carbon $periodEnd
+   * @return array Additional metrics (PTO days, WFH days, penalty minutes)
+   */
+  private function getAdditionalMetrics(Employee $employee, Carbon $periodStart, Carbon $periodEnd): array
+  {
+    // Get PTO days - will be implemented when Leave module is available
+    $ptoDays = 0;
+
+    // Get WFH days
+    $wfhDays = WfhRecord::where('employee_id', $employee->id)
+      ->whereBetween('date', [$periodStart, $periodEnd])
+      ->count();
+
+    // Get penalty minutes - will be calculated from attendance logs in future iterations
+    $penaltyMinutes = 0;
+
+    return [
+      'pto_days' => $ptoDays,
+      'wfh_days' => $wfhDays,
+      'penalty_minutes' => $penaltyMinutes,
+    ];
+  }
+
+  /**
+   * Finalize payroll run for all employees in a given period.
+   * Saves permanent records to the payroll_runs table with calculated salaries
+   * and a JSON snapshot of contributing factors.
+   *
+   * @param Carbon $periodStart The start date of the payroll period
+   * @param Carbon $periodEnd The end date of the payroll period
+   * @return Collection Collection of finalized PayrollRun models
+   * @throws \Exception If finalization cannot be performed
+   */
+  public function finalizePayrollRun(Carbon $periodStart, Carbon $periodEnd): Collection
+  {
+    // Get all active employees
+    $employees = Employee::where('status', 'active')->get();
+
+    // Get configured weights
+    $attendanceWeight = (float) Setting::get('weight_attendance_pct', 50);
+    $billableHoursWeight = (float) Setting::get('weight_billable_hours_pct', 50);
+
+    $finalizedRuns = collect();
+
+    // Use database transaction to ensure atomicity
+    DB::transaction(function () use ($employees, $periodStart, $periodEnd, $attendanceWeight, $billableHoursWeight, &$finalizedRuns) {
+      foreach ($employees as $employee) {
+        // Calculate employee payroll summary
+        $summary = $this->calculateEmployeePayrollSummary(
+          $employee,
+          $periodStart,
+          $periodEnd,
+          $attendanceWeight,
+          $billableHoursWeight
+        );
+
+        // Calculate final salary based on performance percentage
+        $baseSalary = $employee->base_salary ?? 0;
+        $finalSalary = $baseSalary * ($summary['final_performance_percentage'] / 100);
+
+        // Create calculation snapshot
+        $calculationSnapshot = [
+          'attendance' => [
+            'net_attended_hours' => $summary['net_attended_hours'],
+            'required_monthly_hours' => $summary['required_monthly_hours'],
+            'percentage' => $summary['attendance_percentage'],
+            'weight' => $summary['attendance_weight'],
+          ],
+          'billable_hours' => [
+            'billable_hours' => $summary['billable_hours'],
+            'target_billable_hours' => $summary['target_billable_hours'],
+            'percentage' => $summary['billable_hours_percentage'],
+            'weight' => $summary['billable_hours_weight'],
+          ],
+          'additional_metrics' => [
+            'pto_days' => $summary['pto_days'],
+            'wfh_days' => $summary['wfh_days'],
+            'penalty_minutes' => $summary['penalty_minutes'],
+          ],
+          'calculated_at' => now()->toISOString(),
+          'system_settings' => [
+            'attendance_weight' => $attendanceWeight,
+            'billable_hours_weight' => $billableHoursWeight,
+          ],
+        ];
+
+        // Create or update payroll run record
+        $payrollRun = \Modules\Payroll\Models\PayrollRun::updateOrCreate(
+          [
+            'employee_id' => $employee->id,
+            'period_start_date' => $periodStart->toDateString(),
+            'period_end_date' => $periodEnd->toDateString(),
+          ],
+          [
+            'base_salary' => $baseSalary,
+            'final_salary' => $finalSalary,
+            'performance_percentage' => $summary['final_performance_percentage'],
+            'calculation_snapshot' => $calculationSnapshot,
+            'status' => 'finalized',
+          ]
+        );
+
+        $finalizedRuns->push($payrollRun);
+      }
+    });
+
+    return $finalizedRuns;
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "slug": "dashboard",
+      "submenu": [
+        {
+          "url": "/",
+          "name": "Analytics",
+          "slug": "dashboard-analytics"
+        },
+        {
+          "url": "dashboard/crm",
+          "name": "CRM Overview",
+          "slug": "dashboard-crm"
+        }
+      ]
+    },
+    {
+      "menuHeader": "HR Management"
+    },
+    {
+      "name": "Employees",
+      "icon": "menu-icon tf-icons ti ti-users",
+      "slug": "hr-employees",
+      "submenu": [
+        {
+          "url": "hr/employees",
+          "name": "All Employees",
+          "slug": "hr-employees-index"
+        },
+        {
+          "url": "hr/employees/create",
+          "name": "Add Employee",
+          "slug": "hr-employees-create"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Attendance & Time"
+    },
+    {
+      "name": "Attendance",
+      "icon": "menu-icon tf-icons ti ti-clock",
+      "slug": "attendance",
+      "submenu": [
+        {
+          "url": "attendances",
+          "name": "View Records",
+          "slug": "attendance-index"
+        },
+        {
+          "url": "attendances/create",
+          "name": "Add Record",
+          "slug": "attendance-create"
+        },
+        {
+          "url": "attendance/import",
+          "name": "Import CSV",
+          "slug": "attendance-import-create"
+        }
+      ]
+    },
+    {
+      "name": "Attendance Settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
+      "slug": "attendance-settings",
+      "submenu": [
+        {
+          "url": "attendance/settings",
+          "name": "General Settings",
+          "slug": "attendance-settings-index"
+        },
+        {
+          "url": "attendance/rules",
+          "name": "Attendance Rules",
+          "slug": "attendance-rules-index"
+        },
+        {
+          "url": "attendance/public-holidays",
+          "name": "Public Holidays",
+          "slug": "attendance-public-holidays-index"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Leave Management"
+    },
+    {
+      "name": "Leave Requests",
+      "icon": "menu-icon tf-icons ti ti-calendar-off",
+      "slug": "leave-requests",
+      "submenu": [
+        {
+          "url": "leaves",
+          "name": "All Requests",
+          "slug": "leave-index"
+        },
+        {
+          "url": "leaves/create",
+          "name": "New Request",
+          "slug": "leave-create"
+        }
+      ]
+    },
+    {
+      "name": "Leave Policies",
+      "icon": "menu-icon tf-icons ti ti-file-text",
+      "slug": "leave-policies",
+      "submenu": [
+        {
+          "url": "leave-policies",
+          "name": "Manage Policies",
+          "slug": "leave-policies-index"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Payroll"
+    },
+    {
+      "name": "Payroll Management",
+      "icon": "menu-icon tf-icons ti ti-currency-dollar",
+      "slug": "payroll",
+      "submenu": [
+        {
+          "url": "payrolls",
+          "name": "Payroll Records",
+          "slug": "payroll-index"
+        },
+        {
+          "url": "payrolls/create",
+          "name": "Create Record",
+          "slug": "payroll-create"
+        },
+        {
+          "url": "payroll/run-review",
+          "name": "Run & Review",
+          "slug": "payroll-run-review"
+        }
+      ]
+    },
+    {
+      "name": "Billable Hours",
+      "icon": "menu-icon tf-icons ti ti-clock-hour-4",
+      "slug": "billable-hours",
+      "submenu": [
+        {
+          "url": "payroll/billable-hours",
+          "name": "Manage Hours",
+          "slug": "payroll-billable-hours-index"
+        }
+      ]
+    },
+    {
+      "name": "Payroll Settings",
+      "icon": "menu-icon tf-icons ti ti-settings-dollar",
+      "slug": "payroll-settings",
+      "submenu": [
+        {
+          "url": "payroll/settings",
+          "name": "Configuration",
+          "slug": "payroll-settings-index"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Asset Management"
+    },
+    {
+      "name": "Assets",
+      "icon": "menu-icon tf-icons ti ti-package",
+      "slug": "assets",
+      "submenu": [
+        {
+          "url": "assetmanagers",
+          "name": "All Assets",
+          "slug": "assetmanager-index"
+        },
+        {
+          "url": "assetmanagers/create",
+          "name": "Add Asset",
+          "slug": "assetmanager-create"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Administration"
+    },
+    {
+      "name": "User Management",
+      "icon": "menu-icon tf-icons ti ti-users-group",
+      "slug": "user-management",
+      "submenu": [
+        {
+          "url": "app/user/list",
+          "name": "All Users",
+          "slug": "app-user-list"
+        },
+        {
+          "url": "laravel/user-management",
+          "name": "User Management",
+          "slug": "laravel-example-user-management"
+        }
+      ]
+    },
+    {
+      "name": "Roles & Permissions",
+      "icon": "menu-icon tf-icons ti ti-shield-check",
+      "slug": "app-access",
+      "submenu": [
+        {
+          "url": "app/access-roles",
+          "name": "Roles",
+          "slug": "app-access-roles"
+        },
+        {
+          "url": "app/access-permission",
+          "name": "Permissions",
+          "slug": "app-access-permission"
+        }
+      ]
+    },
+    {
+      "menuHeader": "System Tools"
+    },
+    {
+      "url": "app/calendar",
+      "name": "Calendar",
+      "icon": "menu-icon tf-icons ti ti-calendar",
+      "slug": "app-calendar"
+    },
+    {
+      "url": "app/email",
+      "name": "Email",
+      "icon": "menu-icon tf-icons ti ti-mail",
+      "slug": "app-email"
+    },
+    {
+      "name": "Account Settings",
+      "icon": "menu-icon tf-icons ti ti-user-cog",
+      "slug": "pages-account-settings",
+      "submenu": [
+        {
+          "url": "pages/account-settings-account",
+          "name": "Account",
+          "slug": "pages-account-settings-account"
+        },
+        {
+          "url": "pages/account-settings-security",
+          "name": "Security",
+          "slug": "pages-account-settings-security"
+        },
+        {
+          "url": "pages/account-settings-notifications",
+          "name": "Notifications",
+          "slug": "pages-account-settings-notifications"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Development Tools"
+    },
+    {
+      "name": "UI Components",
+      "icon": "menu-icon tf-icons ti ti-color-swatch",
+      "slug": "ui",
+      "submenu": [
+        {
+          "url": "ui/buttons",
+          "name": "Buttons",
+          "slug": "ui-buttons"
+        },
+        {
+          "url": "ui/modals",
+          "name": "Modals",
+          "slug": "ui-modals"
+        },
+        {
+          "url": "ui/alerts",
+          "name": "Alerts",
+          "slug": "ui-alerts"
+        },
+        {
+          "url": "form/validation",
+          "name": "Form Validation",
+          "slug": "form-validation"
+        }
+      ]
+    },
+    {
+      "name": "Tables & Forms",
+      "icon": "menu-icon tf-icons ti ti-table",
+      "slug": "tables-forms",
+      "submenu": [
+        {
+          "url": "tables/datatables-basic",
+          "name": "DataTables",
+          "slug": "tables-datatables-basic"
+        },
+        {
+          "url": "forms/basic-inputs",
+          "name": "Form Elements",
+          "slug": "forms-basic-inputs"
+        }
+      ]
+    }
+  ]
+}

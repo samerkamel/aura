@@ -1,0 +1,8 @@
+{
+    "HR": true,
+    "AssetManager": true,
+    "Payroll": true,
+    "Attendance": true,
+    "Leave": true,
+    "LetterGenerator": true
+}

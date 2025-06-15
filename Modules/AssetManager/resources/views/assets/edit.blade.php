@@ -1,0 +1,212 @@
+@extends('layouts/layoutMaster')
+
+@section('title', 'Edit Asset')
+
+@section('content')
+<div class="row">
+  <div class="col-12">
+    <!-- Header Card -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <i class="ti ti-edit me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <div>
+            <h5 class="mb-0">Edit Asset</h5>
+            <small class="text-muted">Update asset information</small>
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ route('assets.show', $asset) }}" class="btn btn-outline-info">
+            <i class="ti ti-eye me-1"></i>View Details
+          </a>
+          <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+            <i class="ti ti-arrow-left me-1"></i>Back to Assets
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Asset Form Card -->
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="ti ti-info-circle me-2"></i>Asset Information
+        </h6>
+      </div>
+      <div class="card-body">
+        <form action="{{ route('assets.update', $asset) }}" method="POST">
+          @csrf
+          @method('PUT')
+
+          <div class="row">
+            <!-- Asset Name -->
+            <div class="col-md-6 mb-3">
+              <label for="name" class="form-label">Asset Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control @error('name') is-invalid @enderror"
+                     id="name" name="name" value="{{ old('name', $asset->name) }}"
+                     placeholder="e.g., MacBook Pro, Dell Monitor" required>
+              @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Asset Type -->
+            <div class="col-md-6 mb-3">
+              <label for="type" class="form-label">Asset Type <span class="text-danger">*</span></label>
+              <input type="text" class="form-control @error('type') is-invalid @enderror"
+                     id="type" name="type" value="{{ old('type', $asset->type) }}"
+                     placeholder="e.g., Laptop, Monitor, Phone" required>
+              @error('type')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Serial Number -->
+            <div class="col-md-6 mb-3">
+              <label for="serial_number" class="form-label">Serial Number</label>
+              <input type="text" class="form-control @error('serial_number') is-invalid @enderror"
+                     id="serial_number" name="serial_number" value="{{ old('serial_number', $asset->serial_number) }}"
+                     placeholder="e.g., ABC123456789">
+              <div class="form-text">Leave empty if not applicable</div>
+              @error('serial_number')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-6 mb-3">
+              <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+              <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                <option value="">Select status...</option>
+                <option value="available" {{ old('status', $asset->status) === 'available' ? 'selected' : '' }}>Available</option>
+                <option value="assigned" {{ old('status', $asset->status) === 'assigned' ? 'selected' : '' }}>Assigned</option>
+                <option value="maintenance" {{ old('status', $asset->status) === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+                <option value="retired" {{ old('status', $asset->status) === 'retired' ? 'selected' : '' }}>Retired</option>
+              </select>
+              @if($asset->isAssigned())
+                <div class="form-text text-warning">
+                  <i class="ti ti-alert-triangle me-1"></i>
+                  This asset is currently assigned. Changing status may affect the assignment.
+                </div>
+              @endif
+              @error('status')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Purchase Date -->
+            <div class="col-md-6 mb-3">
+              <label for="purchase_date" class="form-label">Purchase Date</label>
+              <input type="date" class="form-control @error('purchase_date') is-invalid @enderror"
+                     id="purchase_date" name="purchase_date"
+                     value="{{ old('purchase_date', $asset->purchase_date?->format('Y-m-d')) }}"
+                     max="{{ date('Y-m-d') }}">
+              <div class="form-text">Date when the asset was purchased</div>
+              @error('purchase_date')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Purchase Price -->
+            <div class="col-md-6 mb-3">
+              <label for="purchase_price" class="form-label">Purchase Price</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control @error('purchase_price') is-invalid @enderror"
+                       id="purchase_price" name="purchase_price"
+                       value="{{ old('purchase_price', $asset->purchase_price) }}"
+                       step="0.01" min="0" placeholder="0.00">
+              </div>
+              <div class="form-text">Asset purchase price (optional)</div>
+              @error('purchase_price')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <!-- Description -->
+            <div class="col-12 mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control @error('description') is-invalid @enderror"
+                        id="description" name="description" rows="4"
+                        placeholder="Additional details about the asset...">{{ old('description', $asset->description) }}</textarea>
+              <div class="form-text">Optional description with specifications, condition, or other notes</div>
+              @error('description')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+
+          <!-- Current Assignment Info -->
+          @if($asset->isAssigned())
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="alert alert-info">
+                  <i class="ti ti-info-circle me-2"></i>
+                  <strong>Current Assignment:</strong>
+                  This asset is currently assigned to
+                  <strong>{{ $asset->currentEmployee->first()->name }}</strong>
+                  since {{ $asset->currentEmployee->first()->pivot->assigned_date }}.
+                </div>
+              </div>
+            </div>
+          @endif
+
+          <!-- Form Actions -->
+          <div class="row">
+            <div class="col-12">
+              <hr class="my-4">
+              <div class="d-flex justify-content-between">
+                <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">
+                  <i class="ti ti-x me-1"></i>Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  <i class="ti ti-check me-1"></i>Update Asset
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
+
+@section('vendor-script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-suggest asset types based on common categories
+  const typeInput = document.getElementById('type');
+  const commonTypes = [
+    'Laptop', 'Desktop Computer', 'Monitor', 'Smartphone', 'Tablet',
+    'Printer', 'Keyboard', 'Mouse', 'Headphones', 'Camera',
+    'Projector', 'Speaker', 'Router', 'Server', 'Hard Drive'
+  ];
+
+  // Create datalist for type suggestions
+  const datalist = document.createElement('datalist');
+  datalist.id = 'assetTypes';
+  commonTypes.forEach(type => {
+    const option = document.createElement('option');
+    option.value = type;
+    datalist.appendChild(option);
+  });
+
+  typeInput.setAttribute('list', 'assetTypes');
+  typeInput.parentNode.appendChild(datalist);
+
+  // Warn about status changes for assigned assets
+  const statusSelect = document.getElementById('status');
+  const originalStatus = '{{ $asset->status }}';
+  const isAssigned = {{ $asset->isAssigned() ? 'true' : 'false' }};
+
+  statusSelect.addEventListener('change', function() {
+    if (isAssigned && originalStatus === 'assigned' && this.value !== 'assigned') {
+      if (!confirm('This asset is currently assigned to an employee. Changing the status may affect the assignment. Are you sure you want to continue?')) {
+        this.value = originalStatus;
+      }
+    }
+  });
+});
+</script>
+@endsection

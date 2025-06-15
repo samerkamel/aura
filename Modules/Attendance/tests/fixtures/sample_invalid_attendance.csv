@@ -1,0 +1,6 @@
+EmployeeID,DateTime,LogType
+1,2025-06-14 09:00:00,sign_in
+999,2025-06-14 09:00:00,sign_in
+1,invalid-date,sign_in
+1,2025-06-14 09:00:00,invalid_type
+,2025-06-14 09:00:00,sign_in
