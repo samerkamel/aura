@@ -1,23 +1,6 @@
 {
   "menu": [
     {
-      "name": "Dashboard",
-      "icon": "menu-icon tf-icons ti ti-smart-home",
-      "slug": "dashboard",
-      "submenu": [
-        {
-          "url": "/",
-          "name": "Analytics",
-          "slug": "dashboard-analytics"
-        },
-        {
-          "url": "dashboard/crm",
-          "name": "CRM Overview",
-          "slug": "dashboard-crm"
-        }
-      ]
-    },
-    {
       "menuHeader": "HR Management"
     },
     {
@@ -36,9 +19,6 @@
           "slug": "hr-employees-create"
         }
       ]
-    },
-    {
-      "menuHeader": "Attendance & Time"
     },
     {
       "name": "Attendance Records",
@@ -75,9 +55,6 @@
       ]
     },
     {
-      "menuHeader": "Leave Management"
-    },
-    {
       "name": "Leave Policies",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
@@ -88,9 +65,6 @@
           "slug": "leave-policies-index"
         }
       ]
-    },
-    {
-      "menuHeader": "Payroll"
     },
     {
       "name": "Billable Hours",
@@ -120,9 +94,6 @@
           "slug": "payroll-settings-index"
         }
       ]
-    },
-    {
-      "menuHeader": "Document Management"
     },
     {
       "name": "Letter Templates",
@@ -162,76 +133,84 @@
       ]
     },
     {
+      "menuHeader": "Financial Planning"
+    },
+    {
+      "name": "Accounting",
+      "icon": "menu-icon tf-icons ti ti-coin",
+      "slug": "accounting-cash-flow",
+      "submenu": [
+        {
+          "url": "accounting",
+          "name": "Dashboard",
+          "slug": "accounting-dashboard"
+        },
+        {
+          "url": "accounting/expenses",
+          "name": "Expense Schedules",
+          "slug": "accounting-expenses-index"
+        },
+        {
+          "url": "accounting/expenses/paid",
+          "name": "Paid Expenses",
+          "slug": "accounting-expenses-paid"
+        },
+        {
+          "url": "accounting/accounts",
+          "name": "Accounts",
+          "slug": "accounting-accounts-index"
+        },
+        {
+          "url": "accounting/income",
+          "name": "Income & Contracts",
+          "slug": "accounting-income-index"
+        },
+        {
+          "url": "accounting/reports",
+          "name": "Reports",
+          "slug": "accounting-reports-index"
+        },
+        {
+          "url": "administration/departments",
+          "name": "Departments",
+          "slug": "administration-departments-index"
+        }
+      ]
+    },
+    {
       "menuHeader": "Administration"
     },
     {
       "name": "User Management",
       "icon": "menu-icon tf-icons ti ti-users-group",
-      "slug": "user-management",
+      "slug": "administration-users",
       "submenu": [
         {
-          "url": "app/user/list",
+          "url": "administration/users",
           "name": "All Users",
-          "slug": "app-user-list"
+          "slug": "administration-users-index"
         },
         {
-          "url": "laravel/user-management",
-          "name": "User Management",
-          "slug": "laravel-example-user-management"
+          "url": "administration/users/create",
+          "name": "Create User",
+          "slug": "administration-users-create"
         }
       ]
     },
     {
       "name": "Roles & Permissions",
       "icon": "menu-icon tf-icons ti ti-shield-check",
-      "slug": "app-access",
+      "slug": "administration-roles",
       "submenu": [
         {
-          "url": "app/access-roles",
+          "url": "administration/roles",
           "name": "Roles",
-          "slug": "app-access-roles"
+          "slug": "administration-roles-index"
         },
         {
-          "url": "app/access-permission",
+          "url": "administration/permissions",
           "name": "Permissions",
-          "slug": "app-access-permission"
-        }
-      ]
-    },
-    {
-      "menuHeader": "System Tools"
-    },
-    {
-      "url": "app/calendar",
-      "name": "Calendar",
-      "icon": "menu-icon tf-icons ti ti-calendar",
-      "slug": "app-calendar"
-    },
-    {
-      "url": "app/email",
-      "name": "Email",
-      "icon": "menu-icon tf-icons ti ti-mail",
-      "slug": "app-email"
-    },
-    {
-      "name": "Account Settings",
-      "icon": "menu-icon tf-icons ti ti-user-cog",
-      "slug": "pages-account-settings",
-      "submenu": [
-        {
-          "url": "pages/account-settings-account",
-          "name": "Account",
-          "slug": "pages-account-settings-account"
-        },
-        {
-          "url": "pages/account-settings-security",
-          "name": "Security",
-          "slug": "pages-account-settings-security"
-        },
-        {
-          "url": "pages/account-settings-notifications",
-          "name": "Notifications",
-          "slug": "pages-account-settings-notifications"
+          "slug": "administration-permissions-index"
         }
       ]
     }

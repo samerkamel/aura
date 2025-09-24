@@ -372,3 +372,50 @@ Route::get('/maps/leaflet', [Leaflet::class, 'index'])->name('maps-leaflet');
 // laravel example
 Route::get('/laravel/user-management', [UserManagement::class, 'UserManagement'])->name('laravel-example-user-management');
 Route::resource('/user-list', UserManagement::class);
+
+// Administration Routes - User Management and Roles & Permissions
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\DepartmentController;
+
+Route::middleware(['auth'])->prefix('administration')->name('administration.')->group(function () {
+    // User Management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('index');
+        Route::get('/create', [UserManagementController::class, 'create'])->name('create');
+        Route::post('/', [UserManagementController::class, 'store'])->name('store');
+        Route::get('/{user}', [UserManagementController::class, 'show'])->name('show');
+        Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserManagementController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
+        Route::patch('/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    // Roles & Permissions
+    Route::prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', [RolePermissionController::class, 'index'])->name('index');
+        Route::get('/create', [RolePermissionController::class, 'create'])->name('create');
+        Route::post('/', [RolePermissionController::class, 'store'])->name('store');
+        Route::get('/{role}', [RolePermissionController::class, 'show'])->name('show');
+        Route::get('/{role}/edit', [RolePermissionController::class, 'edit'])->name('edit');
+        Route::put('/{role}', [RolePermissionController::class, 'update'])->name('update');
+        Route::delete('/{role}', [RolePermissionController::class, 'destroy'])->name('destroy');
+        Route::patch('/{role}/toggle-status', [RolePermissionController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    Route::prefix('permissions')->name('permissions.')->group(function () {
+        Route::get('/', [RolePermissionController::class, 'permissions'])->name('index');
+    });
+
+    // Department Management
+    Route::prefix('departments')->name('departments.')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index'])->name('index');
+        Route::get('/create', [DepartmentController::class, 'create'])->name('create');
+        Route::post('/', [DepartmentController::class, 'store'])->name('store');
+        Route::get('/{department}', [DepartmentController::class, 'show'])->name('show');
+        Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('edit');
+        Route::put('/{department}', [DepartmentController::class, 'update'])->name('update');
+        Route::delete('/{department}', [DepartmentController::class, 'destroy'])->name('destroy');
+        Route::patch('/{department}/toggle-status', [DepartmentController::class, 'toggleStatus'])->name('toggle-status');
+    });
+});

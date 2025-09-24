@@ -1,0 +1,30 @@
+<?php
+
+namespace Modules\Accounting\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateExpenseScheduleRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true; // Add proper authorization logic later
+    }
+
+    public function rules(): array
+    {
+        return [
+            'category_id' => 'required|exists:expense_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric|min:0|max:999999.99',
+            'frequency_type' => 'required|in:weekly,bi-weekly,monthly,quarterly,yearly',
+            'frequency_value' => 'required|integer|min:1|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after:start_date',
+            'skip_weekends' => 'boolean',
+            'excluded_dates' => 'nullable|array',
+            'excluded_dates.*' => 'date',
+        ];
+    }
+}

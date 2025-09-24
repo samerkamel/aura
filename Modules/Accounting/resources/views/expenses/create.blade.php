@@ -1,0 +1,463 @@
+@extends('layouts/layoutMaster')
+
+@section('title', 'Create Expense')
+
+@section('content')
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Create New Expense</h5>
+                    <small class="text-muted">Add a recurring expense schedule or one-time expense</small>
+                </div>
+                <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
+                    <i class="ti ti-arrow-left me-1"></i>Back to Expenses
+                </a>
+            </div>
+
+            <div class="card-body">
+                <form action="{{ route('accounting.expenses.store') }}" method="POST">
+                    @csrf
+
+                    <div class="row">
+                        <!-- Main Content -->
+                        <div class="col-lg-8">
+                            <!-- Expense Type Selection -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Expense Type</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Select Expense Type <span class="text-danger">*</span></label>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="expense_type"
+                                                               id="expenseTypeRecurring" value="recurring"
+                                                               {{ old('expense_type', 'recurring') === 'recurring' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="expenseTypeRecurring">
+                                                            <strong>Recurring Expense</strong>
+                                                            <br><small class="text-muted">Regular scheduled expenses (rent, salaries, etc.)</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="expense_type"
+                                                               id="expenseTypeOneTime" value="one_time"
+                                                               {{ old('expense_type') === 'one_time' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="expenseTypeOneTime">
+                                                            <strong>One-time Expense</strong>
+                                                            <br><small class="text-muted">Single occurrence expenses (equipment, repairs, etc.)</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Basic Information -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Basic Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label for="name" class="form-label">Expense Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                                   id="name" name="name" value="{{ old('name') }}"
+                                                   placeholder="e.g., Office Rent, Employee Salaries">
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('category_id') is-invalid @enderror"
+                                                    id="category_id" name="category_id">
+                                                <option value="">Select a category</option>
+                                                @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}"
+                                                            {{ old('category_id') == $category->id ? 'selected' : '' }}
+                                                            data-color="{{ $category->color }}">
+                                                        {{ $category->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('category_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="subcategory_id" class="form-label">Subcategory <small class="text-muted">(Optional)</small></label>
+                                            <select class="form-select @error('subcategory_id') is-invalid @enderror"
+                                                    id="subcategory_id" name="subcategory_id" disabled>
+                                                <option value="">Select a subcategory</option>
+                                            </select>
+                                            @error('subcategory_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control @error('description') is-invalid @enderror"
+                                                      id="description" name="description" rows="3"
+                                                      placeholder="Optional description or notes">{{ old('description') }}</textarea>
+                                            @error('description')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Amount & Dates -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Amount & Dates</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">EGP</span>
+                                                <input type="number" class="form-control @error('amount') is-invalid @enderror"
+                                                       id="amount" name="amount" value="{{ old('amount') }}"
+                                                       step="0.01" min="0" max="999999.99"
+                                                       placeholder="0.00">
+                                                @error('amount')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <!-- One-time expense date -->
+                                        <div class="col-md-6" id="oneTimeDate" style="display: none;">
+                                            <label for="expense_date" class="form-label">Expense Date <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control @error('expense_date') is-invalid @enderror"
+                                                   id="expense_date" name="expense_date" value="{{ old('expense_date') }}">
+                                            @error('expense_date')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Recurring expense start date -->
+                                        <div class="col-md-6" id="recurringStartDate">
+                                            <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control @error('start_date') is-invalid @enderror"
+                                                   id="start_date" name="start_date" value="{{ old('start_date') }}">
+                                            @error('start_date')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Recurring expense end date -->
+                                        <div class="col-md-6" id="recurringEndDate">
+                                            <label for="end_date" class="form-label">End Date <small class="text-muted">(Optional)</small></label>
+                                            <input type="date" class="form-control @error('end_date') is-invalid @enderror"
+                                                   id="end_date" name="end_date" value="{{ old('end_date') }}">
+                                            @error('end_date')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="text-muted">Leave blank for ongoing expenses</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Frequency Settings (Recurring Only) -->
+                            <div class="card mb-4" id="frequencySettings">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Frequency Settings</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="frequency_type" class="form-label">Frequency Type <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('frequency_type') is-invalid @enderror"
+                                                    id="frequency_type" name="frequency_type">
+                                                <option value="">Select frequency</option>
+                                                @foreach($frequencyOptions as $key => $label)
+                                                    <option value="{{ $key }}" {{ old('frequency_type') === $key ? 'selected' : '' }}>
+                                                        {{ $label }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('frequency_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="frequency_value" class="form-label">
+                                                Frequency Interval <span class="text-danger">*</span>
+                                                <i class="ti ti-info-circle" data-bs-toggle="tooltip"
+                                                   title="How often the frequency occurs (e.g., every 2 weeks, every 3 months)"></i>
+                                            </label>
+                                            <input type="number" class="form-control @error('frequency_value') is-invalid @enderror"
+                                                   id="frequency_value" name="frequency_value"
+                                                   value="{{ old('frequency_value', 1) }}"
+                                                   min="1" max="100">
+                                            @error('frequency_value')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="text-muted" id="frequencyHelper">Every 1 time</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Payment Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" name="mark_as_paid"
+                                                       id="markAsPaid" value="1" {{ old('mark_as_paid') ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="markAsPaid">
+                                                    Mark as already paid
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div id="paymentFields" style="display: none;">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="paid_from_account_id" class="form-label">Paid From Account <span class="text-danger">*</span></label>
+                                                    <select class="form-select @error('paid_from_account_id') is-invalid @enderror"
+                                                            id="paid_from_account_id" name="paid_from_account_id">
+                                                        <option value="">Select account</option>
+                                                        @foreach($accounts as $account)
+                                                            <option value="{{ $account->id }}"
+                                                                    {{ old('paid_from_account_id') == $account->id ? 'selected' : '' }}>
+                                                                {{ $account->name }} ({{ $account->formatted_balance }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('paid_from_account_id')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="paid_date" class="form-label">Payment Date <span class="text-danger">*</span></label>
+                                                    <input type="date" class="form-control @error('paid_date') is-invalid @enderror"
+                                                           id="paid_date" name="paid_date" value="{{ old('paid_date', date('Y-m-d')) }}">
+                                                    @error('paid_date')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="paid_amount" class="form-label">Paid Amount</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">EGP</span>
+                                                        <input type="number" class="form-control @error('paid_amount') is-invalid @enderror"
+                                                               id="paid_amount" name="paid_amount" value="{{ old('paid_amount') }}"
+                                                               step="0.01" min="0" placeholder="Same as expense amount">
+                                                        @error('paid_amount')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <small class="text-muted">Leave blank to use the expense amount</small>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="payment_notes" class="form-label">Payment Notes</label>
+                                                    <textarea class="form-control @error('payment_notes') is-invalid @enderror"
+                                                              id="payment_notes" name="payment_notes" rows="2"
+                                                              placeholder="Optional payment notes">{{ old('payment_notes') }}</textarea>
+                                                    @error('payment_notes')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="col-lg-4">
+                            <!-- Quick Actions -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ route('accounting.expenses.categories') }}"
+                                           class="btn btn-outline-primary" target="_blank">
+                                            <i class="ti ti-category me-2"></i>Manage Categories
+                                        </a>
+                                        <a href="{{ route('accounting.accounts.index') }}"
+                                           class="btn btn-outline-info" target="_blank">
+                                            <i class="ti ti-credit-card me-2"></i>Manage Accounts
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Help -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Help</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6>Recurring Expenses</h6>
+                                        <small class="text-muted">Use for regular scheduled expenses like rent, salaries, utilities, etc.</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6>One-time Expenses</h6>
+                                        <small class="text-muted">Use for single occurrence expenses like equipment purchases, repairs, etc.</small>
+                                    </div>
+                                    <div class="mb-0">
+                                        <h6>Subcategories</h6>
+                                        <small class="text-muted">Use subcategories for detailed expense tracking within main categories.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
+                                        <i class="ti ti-x me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="ti ti-device-floppy me-1"></i>Create Expense
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const expenseTypeRecurring = document.getElementById('expenseTypeRecurring');
+    const expenseTypeOneTime = document.getElementById('expenseTypeOneTime');
+    const frequencySettings = document.getElementById('frequencySettings');
+    const oneTimeDate = document.getElementById('oneTimeDate');
+    const recurringStartDate = document.getElementById('recurringStartDate');
+    const recurringEndDate = document.getElementById('recurringEndDate');
+    const categorySelect = document.getElementById('category_id');
+    const subcategorySelect = document.getElementById('subcategory_id');
+    const markAsPaidCheckbox = document.getElementById('markAsPaid');
+    const paymentFields = document.getElementById('paymentFields');
+    const amountField = document.getElementById('amount');
+    const paidAmountField = document.getElementById('paid_amount');
+
+    // Subcategory data
+    const subcategories = @json($categories->mapWithKeys(function($category) {
+        return [$category->id => $category->subcategories->map(function($sub) {
+            return ['id' => $sub->id, 'name' => $sub->name];
+        })];
+    }));
+
+    // Handle expense type change
+    function toggleExpenseType() {
+        if (expenseTypeOneTime.checked) {
+            frequencySettings.style.display = 'none';
+            oneTimeDate.style.display = 'block';
+            recurringStartDate.style.display = 'none';
+            recurringEndDate.style.display = 'none';
+
+            // Clear recurring fields
+            document.getElementById('frequency_type').value = '';
+            document.getElementById('frequency_value').value = 1;
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+        } else {
+            frequencySettings.style.display = 'block';
+            oneTimeDate.style.display = 'none';
+            recurringStartDate.style.display = 'block';
+            recurringEndDate.style.display = 'block';
+
+            // Clear one-time fields
+            document.getElementById('expense_date').value = '';
+        }
+    }
+
+    // Handle category change to populate subcategories
+    function updateSubcategories() {
+        const categoryId = categorySelect.value;
+        subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
+
+        if (categoryId && subcategories[categoryId]) {
+            subcategorySelect.disabled = false;
+            subcategories[categoryId].forEach(function(subcategory) {
+                const option = document.createElement('option');
+                option.value = subcategory.id;
+                option.textContent = subcategory.name;
+                subcategorySelect.appendChild(option);
+            });
+        } else {
+            subcategorySelect.disabled = true;
+        }
+    }
+
+    // Handle payment fields visibility
+    function togglePaymentFields() {
+        if (markAsPaidCheckbox.checked) {
+            paymentFields.style.display = 'block';
+            document.getElementById('paid_from_account_id').required = true;
+            document.getElementById('paid_date').required = true;
+        } else {
+            paymentFields.style.display = 'none';
+            document.getElementById('paid_from_account_id').required = false;
+            document.getElementById('paid_date').required = false;
+        }
+    }
+
+    // Sync paid amount with expense amount
+    function syncPaidAmount() {
+        if (paidAmountField.value === '' || paidAmountField.value === '0') {
+            paidAmountField.value = amountField.value;
+        }
+    }
+
+    // Event listeners
+    expenseTypeRecurring.addEventListener('change', toggleExpenseType);
+    expenseTypeOneTime.addEventListener('change', toggleExpenseType);
+    categorySelect.addEventListener('change', updateSubcategories);
+    markAsPaidCheckbox.addEventListener('change', togglePaymentFields);
+    amountField.addEventListener('input', syncPaidAmount);
+
+    // Initialize
+    toggleExpenseType();
+    updateSubcategories();
+    togglePaymentFields();
+
+    // Initialize tooltips
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltips.forEach(tooltip => {
+        new bootstrap.Tooltip(tooltip);
+    });
+});
+</script>
+@endsection

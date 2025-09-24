@@ -1,0 +1,459 @@
+<?php
+
+namespace Modules\Accounting\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
+use Modules\Accounting\Services\CashFlowProjectionService;
+use Modules\Accounting\Models\ExpenseSchedule;
+use Modules\Accounting\Models\Contract;
+use Modules\Accounting\Models\ContractPayment;
+use Modules\Accounting\Models\ExpenseCategory;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use League\Csv\Writer;
+
+/**
+ * AccountingController
+ *
+ * Main controller for the Accounting dashboard and overview functionality.
+ */
+class AccountingController extends Controller
+{
+    protected CashFlowProjectionService $projectionService;
+
+    public function __construct(CashFlowProjectionService $projectionService)
+    {
+        $this->projectionService = $projectionService;
+    }
+
+    /**
+     * Display the accounting dashboard.
+     */
+    public function index(): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('view-accounting-dashboard')) {
+            abort(403, 'Unauthorized to access accounting dashboard.');
+        }
+        // Get current month projections
+        $currentMonth = now()->startOfMonth();
+        $endMonth = now()->addMonths(6)->endOfMonth();
+
+        // Generate projections for dashboard
+        $projections = $this->projectionService
+            ->setStartingBalance(10000)
+            ->generateProjections($currentMonth, $endMonth, 'monthly');
+
+        // Calculate dashboard metrics - using contract payments instead of income schedules
+        $monthlyIncome = ContractPayment::where('status', 'pending')
+            ->where('due_date', '>=', now()->startOfMonth())
+            ->where('due_date', '<=', now()->endOfMonth())
+            ->sum('amount');
+        $monthlyExpenses = ExpenseSchedule::active()->get()->sum('monthly_equivalent_amount');
+        $netCashFlow = $monthlyIncome - $monthlyExpenses;
+        $activeContracts = Contract::active()->count();
+        $totalContractValue = Contract::active()->sum('total_amount');
+
+        // Get upcoming payments (next 30 days)
+        $upcomingPayments = collect();
+
+        // Add expense payments
+        ExpenseSchedule::active()->with('category')->get()->each(function($schedule) use ($upcomingPayments) {
+            if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addDays(30)) {
+                $upcomingPayments->push([
+                    'type' => 'expense',
+                    'name' => $schedule->name,
+                    'amount' => $schedule->amount,
+                    'date' => $schedule->next_payment_date,
+                    'category' => $schedule->category->name,
+                    'color' => $schedule->category->color,
+                ]);
+            }
+        });
+
+        // Add income payments from contract payments
+        ContractPayment::with('contract')
+            ->where('status', 'pending')
+            ->where('due_date', '>=', now())
+            ->where('due_date', '<=', now()->addDays(30))
+            ->get()
+            ->each(function($payment) use ($upcomingPayments) {
+                $upcomingPayments->push([
+                    'type' => 'income',
+                    'name' => $payment->name,
+                    'amount' => $payment->amount,
+                    'date' => $payment->due_date,
+                    'source' => $payment->contract->client_name,
+                ]);
+            });
+
+        $upcomingPayments = $upcomingPayments->sortBy('date');
+
+        // Chart data for cash flow
+        $cashFlowData = [
+            'income' => $projections->pluck('projected_income')->toArray(),
+            'expenses' => $projections->pluck('projected_expenses')->toArray(),
+            'netFlow' => $projections->pluck('net_flow')->toArray(),
+            'periods' => $projections->pluck('projection_date')->map(fn($date) => $date->format('M Y'))->toArray(),
+        ];
+
+        // Expense categories breakdown
+        $categoryData = ExpenseCategory::active()
+            ->with('activeExpenseSchedules')
+            ->get()
+            ->map(function($category) {
+                return [
+                    'name' => $category->name,
+                    'amount' => $category->monthly_amount,
+                    'color' => $category->color,
+                ];
+            })
+            ->filter(fn($cat) => $cat['amount'] > 0);
+
+        $expenseCategories = [
+            'names' => $categoryData->pluck('name')->toArray(),
+            'amounts' => $categoryData->pluck('amount')->toArray(),
+            'colors' => $categoryData->pluck('color')->toArray(),
+        ];
+
+        // Recent contracts
+        $recentContracts = Contract::active()->latest()->take(5)->get();
+
+        // Identify deficit periods
+        $deficitPeriods = $projections->where('net_flow', '<', 0);
+
+        // Additional dashboard variables
+        $selectedPeriod = 'monthly';
+        $incomeGrowth = 5.2;
+        $expenseGrowth = -2.1;
+
+        return view('accounting::dashboard.index', compact(
+            'monthlyIncome',
+            'monthlyExpenses',
+            'netCashFlow',
+            'activeContracts',
+            'totalContractValue',
+            'upcomingPayments',
+            'cashFlowData',
+            'expenseCategories',
+            'recentContracts',
+            'deficitPeriods',
+            'selectedPeriod',
+            'incomeGrowth',
+            'expenseGrowth'
+        ));
+    }
+
+    /**
+     * Display cash flow reports.
+     */
+    public function reports(Request $request)
+    {
+        // Check authorization
+        if (!auth()->user()->can('view-cash-flow-reports')) {
+            abort(403, 'Unauthorized to view cash flow reports.');
+        }
+
+        // Handle export requests
+        if ($request->has('export')) {
+            return $this->exportReport($request);
+        }
+
+        // Parse parameters
+        $selectedPeriod = $request->input('period', 'monthly');
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))
+            : now()->startOfYear();
+        $duration = (int) $request->input('duration', 12);
+        $reportType = $request->input('type', 'projection');
+
+        // Calculate end date based on duration
+        $endDate = match($selectedPeriod) {
+            'weekly' => $startDate->copy()->addWeeks($duration),
+            'monthly' => $startDate->copy()->addMonths($duration),
+            'quarterly' => $startDate->copy()->addMonths($duration * 3),
+            default => $startDate->copy()->addMonths($duration),
+        };
+
+        // Generate projections
+        $projections = $this->projectionService
+            ->setStartingBalance(10000)
+            ->generateProjections($startDate, $endDate, $selectedPeriod);
+
+        // Prepare projection data for tables
+        $projectionData = $projections->map(function($projection, $index) use ($selectedPeriod) {
+            return [
+                'period' => $selectedPeriod === 'weekly'
+                    ? 'Week ' . ($index + 1)
+                    : ($selectedPeriod === 'quarterly' ? 'Q' . ($index + 1) : $projection['projection_date']->format('M Y')),
+                'dates' => $selectedPeriod === 'monthly'
+                    ? $projection['projection_date']->format('M 1 - ') . $projection['projection_date']->copy()->endOfMonth()->format('M j, Y')
+                    : null,
+                'income' => $projection['projected_income'],
+                'expenses' => $projection['projected_expenses'],
+                'netFlow' => $projection['net_flow'],
+            ];
+        });
+
+        // Calculate summary data
+        $summaryData = [
+            'totalIncome' => $projections->sum('projected_income'),
+            'totalExpenses' => $projections->sum('projected_expenses'),
+            'netCashFlow' => $projections->sum('net_flow'),
+            'avgMonthly' => $projections->avg('net_flow'),
+        ];
+
+        // Get deficit periods
+        $deficitPeriods = $projectionData->filter(fn($p) => $p['netFlow'] < 0)
+            ->map(function($deficit) {
+                $deficit['runningBalance'] = 0; // Calculate running balance here if needed
+                return $deficit;
+            });
+
+        // Chart data
+        $chartData = [
+            'income' => $projections->pluck('projected_income')->toArray(),
+            'expenses' => $projections->pluck('projected_expenses')->toArray(),
+            'netFlow' => $projections->pluck('net_flow')->toArray(),
+            'periods' => $projectionData->pluck('period')->toArray(),
+        ];
+
+        // Breakdowns
+        $incomeBreakdown = [
+            'labels' => Contract::active()->pluck('client_name')->toArray(),
+            'amounts' => Contract::active()->pluck('monthly_income')->toArray(),
+        ];
+
+        $expenseBreakdown = [
+            'labels' => ExpenseCategory::active()->pluck('name')->toArray(),
+            'amounts' => ExpenseCategory::active()->pluck('monthly_amount')->toArray(),
+            'colors' => ExpenseCategory::active()->pluck('color')->toArray(),
+        ];
+
+        // Get upcoming payments for schedule tab
+        $upcomingPayments = collect();
+
+        // Add expense payments
+        ExpenseSchedule::active()->with('category')->get()->each(function($schedule) use ($upcomingPayments) {
+            if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addMonths(3)) {
+                $upcomingPayments->push([
+                    'type' => 'expense',
+                    'name' => $schedule->name,
+                    'description' => $schedule->description,
+                    'amount' => $schedule->amount,
+                    'date' => $schedule->next_payment_date,
+                    'category' => $schedule->category->name,
+                    'color' => $schedule->category->color,
+                ]);
+            }
+        });
+
+        // Add income payments
+        IncomeSchedule::active()->with('contract')->get()->each(function($schedule) use ($upcomingPayments) {
+            if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addMonths(3)) {
+                $upcomingPayments->push([
+                    'type' => 'income',
+                    'name' => $schedule->name,
+                    'description' => $schedule->description,
+                    'amount' => $schedule->amount,
+                    'date' => $schedule->next_payment_date,
+                    'source' => $schedule->contract->client_name,
+                ]);
+            }
+        });
+
+        $upcomingPayments = $upcomingPayments->sortBy('date');
+
+        return view('accounting::reports.index', compact(
+            'selectedPeriod',
+            'startDate',
+            'duration',
+            'reportType',
+            'projectionData',
+            'summaryData',
+            'deficitPeriods',
+            'chartData',
+            'incomeBreakdown',
+            'expenseBreakdown',
+            'upcomingPayments'
+        ));
+    }
+
+    /**
+     * Export report in various formats
+     */
+    private function exportReport(Request $request)
+    {
+        // Check export permission
+        if (!auth()->user()->can('export-financial-reports')) {
+            abort(403, 'Unauthorized to export financial reports.');
+        }
+
+        $format = $request->input('export');
+
+        // Get the same data as reports method
+        $selectedPeriod = $request->input('period', 'monthly');
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))
+            : now()->startOfYear();
+        $duration = (int) $request->input('duration', 12);
+
+        // Calculate end date based on duration
+        $endDate = match($selectedPeriod) {
+            'weekly' => $startDate->copy()->addWeeks($duration),
+            'monthly' => $startDate->copy()->addMonths($duration),
+            'quarterly' => $startDate->copy()->addMonths($duration * 3),
+            default => $startDate->copy()->addMonths($duration),
+        };
+
+        $projections = $this->projectionService
+            ->setStartingBalance(10000)
+            ->generateProjections($startDate, $endDate, $selectedPeriod);
+
+        switch ($format) {
+            case 'pdf':
+                return $this->exportPdf($projections, $selectedPeriod, $startDate, $endDate);
+            case 'excel':
+                return $this->exportExcel($projections, $selectedPeriod, $startDate, $endDate);
+            case 'csv':
+                return $this->exportCsv($projections, $selectedPeriod, $startDate, $endDate);
+            default:
+                return redirect()->back()->with('error', 'Invalid export format');
+        }
+    }
+
+    /**
+     * Export cash flow report as PDF
+     */
+    private function exportPdf($projections, $selectedPeriod, $startDate, $endDate)
+    {
+        $data = [
+            'projections' => $projections,
+            'selectedPeriod' => $selectedPeriod,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'generatedAt' => now(),
+            'totalIncome' => $projections->sum('projected_income'),
+            'totalExpenses' => $projections->sum('projected_expenses'),
+            'netCashFlow' => $projections->sum('net_flow'),
+        ];
+
+        $pdf = Pdf::loadView('accounting::exports.pdf-report', $data);
+        $filename = 'cash-flow-report-' . now()->format('Y-m-d') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Export cash flow report as Excel
+     */
+    private function exportExcel($projections, $selectedPeriod, $startDate, $endDate)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set headers
+        $sheet->setTitle('Cash Flow Report');
+        $sheet->setCellValue('A1', 'Cash Flow Report - ' . ucfirst($selectedPeriod));
+        $sheet->setCellValue('A2', 'Generated: ' . now()->format('F j, Y g:i A'));
+        $sheet->setCellValue('A3', 'Period: ' . $startDate->format('M j, Y') . ' to ' . $endDate->format('M j, Y'));
+
+        // Column headers
+        $sheet->setCellValue('A5', 'Period');
+        $sheet->setCellValue('B5', 'Income');
+        $sheet->setCellValue('C5', 'Expenses');
+        $sheet->setCellValue('D5', 'Net Flow');
+        $sheet->setCellValue('E5', 'Running Balance');
+
+        // Data rows
+        $row = 6;
+        $runningBalance = 0;
+        foreach ($projections as $index => $projection) {
+            $periodLabel = $selectedPeriod === 'weekly'
+                ? 'Week ' . ($index + 1)
+                : ($selectedPeriod === 'quarterly' ? 'Q' . ($index + 1) : $projection['projection_date']->format('M Y'));
+
+            $runningBalance += $projection['net_flow'];
+
+            $sheet->setCellValue('A' . $row, $periodLabel);
+            $sheet->setCellValue('B' . $row, $projection['projected_income']);
+            $sheet->setCellValue('C' . $row, $projection['projected_expenses']);
+            $sheet->setCellValue('D' . $row, $projection['net_flow']);
+            $sheet->setCellValue('E' . $row, $runningBalance);
+            $row++;
+        }
+
+        // Summary totals
+        $row += 2;
+        $sheet->setCellValue('A' . $row, 'TOTALS:');
+        $sheet->setCellValue('B' . $row, $projections->sum('projected_income'));
+        $sheet->setCellValue('C' . $row, $projections->sum('projected_expenses'));
+        $sheet->setCellValue('D' . $row, $projections->sum('net_flow'));
+
+        // Format as currency
+        $sheet->getStyle('B5:E' . $row)->getNumberFormat()->setFormatCode('#,##0.00" EGP"');
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'cash-flow-report-' . now()->format('Y-m-d') . '.xlsx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'cash_flow_report');
+
+        $writer->save($tempFile);
+
+        return response()->download($tempFile, $filename)->deleteFileAfterSend();
+    }
+
+    /**
+     * Export cash flow report as CSV
+     */
+    private function exportCsv($projections, $selectedPeriod, $startDate, $endDate)
+    {
+        $csv = Writer::createFromString('');
+
+        // Add headers
+        $csv->insertOne(['Cash Flow Report - ' . ucfirst($selectedPeriod)]);
+        $csv->insertOne(['Generated: ' . now()->format('F j, Y g:i A')]);
+        $csv->insertOne(['Period: ' . $startDate->format('M j, Y') . ' to ' . $endDate->format('M j, Y')]);
+        $csv->insertOne([]);
+        $csv->insertOne(['Period', 'Income', 'Expenses', 'Net Flow', 'Running Balance']);
+
+        // Add data
+        $runningBalance = 0;
+        foreach ($projections as $index => $projection) {
+            $periodLabel = $selectedPeriod === 'weekly'
+                ? 'Week ' . ($index + 1)
+                : ($selectedPeriod === 'quarterly' ? 'Q' . ($index + 1) : $projection['projection_date']->format('M Y'));
+
+            $runningBalance += $projection['net_flow'];
+
+            $csv->insertOne([
+                $periodLabel,
+                $projection['projected_income'],
+                $projection['projected_expenses'],
+                $projection['net_flow'],
+                $runningBalance
+            ]);
+        }
+
+        // Add totals
+        $csv->insertOne([]);
+        $csv->insertOne([
+            'TOTALS:',
+            $projections->sum('projected_income'),
+            $projections->sum('projected_expenses'),
+            $projections->sum('net_flow'),
+            ''
+        ]);
+
+        $filename = 'cash-flow-report-' . now()->format('Y-m-d') . '.csv';
+
+        return response($csv->toString(), 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+}
