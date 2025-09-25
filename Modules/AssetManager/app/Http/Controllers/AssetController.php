@@ -147,4 +147,76 @@ class AssetController extends Controller
         return redirect()->route('assetmanager.assets.index')
             ->with('success', 'Asset deleted successfully.');
     }
+
+    /**
+     * Assign an asset to an employee
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function assign(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id',
+            'employee_id' => 'required|exists:employees,id',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $asset = Asset::findOrFail($request->asset_id);
+        $employee = Employee::findOrFail($request->employee_id);
+
+        // Check if asset is already assigned
+        if ($asset->isAssigned()) {
+            return redirect()->route('assetmanager.assets.index')
+                ->with('error', 'Asset is already assigned to another employee.');
+        }
+
+        // Assign asset to employee
+        $asset->employees()->attach($employee->id, [
+            'assigned_date' => now(),
+            'notes' => $request->notes,
+        ]);
+
+        // Update asset status
+        $asset->update(['status' => 'assigned']);
+
+        return redirect()->route('assetmanager.assets.index')
+            ->with('success', "Asset '{$asset->name}' has been successfully assigned to {$employee->name}.");
+    }
+
+    /**
+     * Unassign an asset from an employee
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function unassign(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $asset = Asset::findOrFail($request->asset_id);
+
+        // Check if asset is currently assigned
+        if (!$asset->isAssigned()) {
+            return redirect()->route('assetmanager.assets.index')
+                ->with('error', 'Asset is not currently assigned to any employee.');
+        }
+
+        $currentEmployee = $asset->currentEmployee;
+
+        // Update the pivot record with return information
+        $asset->employees()->updateExistingPivot($currentEmployee->id, [
+            'returned_date' => now(),
+            'notes' => $request->notes,
+        ]);
+
+        // Update asset status
+        $asset->update(['status' => 'available']);
+
+        return redirect()->route('assetmanager.assets.index')
+            ->with('success', "Asset '{$asset->name}' has been successfully returned by {$currentEmployee->name}.");
+    }
 }

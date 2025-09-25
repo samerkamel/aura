@@ -102,32 +102,32 @@
                                 </div>
                             </div>
 
-                            <!-- Department Allocation -->
+                            <!-- Product Allocation -->
                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <h6 class="card-title mb-0">Department Allocation</h6>
+                                    <h6 class="card-title mb-0">Product Allocation</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
                                         <div class="col-12">
-                                            <label class="form-label">Department Assignments <small class="text-muted">(Optional)</small></label>
-                                            <p class="text-muted small mb-3">Allocate this contract to one or more departments for budget tracking.</p>
+                                            <label class="form-label">Product Assignments <small class="text-muted">(Optional)</small></label>
+                                            <p class="text-muted small mb-3">Allocate this contract to one or more products for budget tracking.</p>
 
-                                            <div id="department-allocations">
-                                                @foreach($contract->departments as $index => $department)
+                                            <div id="product-allocations">
+                                                @foreach($contract->products as $index => $product)
                                                 <div class="allocation-row">
                                                     <div class="card mb-3">
                                                         <div class="card-body">
                                                             <div class="row g-3">
                                                                 <div class="col-md-4">
-                                                                    <label class="form-label">Department <span class="text-danger">*</span></label>
-                                                                    <select class="form-select allocation-department" name="departments[{{ $index }}][department_id]">
-                                                                        <option value="">Select department</option>
+                                                                    <label class="form-label">Product <span class="text-danger">*</span></label>
+                                                                    <select class="form-select allocation-product" name="products[{{ $index }}][product_id]">
+                                                                        <option value="">Select product</option>
                                                                         @php
-                                                                            $departments = \App\Models\Department::where('is_active', true)->get();
+                                                                            $products = \App\Models\Department::where('is_active', true)->get();
                                                                         @endphp
-                                                                        @foreach($departments as $dept)
-                                                                            <option value="{{ $dept->id }}" {{ $department->id == $dept->id ? 'selected' : '' }}>
+                                                                        @foreach($products as $dept)
+                                                                            <option value="{{ $dept->id }}" {{ $product->id == $dept->id ? 'selected' : '' }}>
                                                                                 {{ $dept->name }} ({{ $dept->code }})
                                                                             </option>
                                                                         @endforeach
@@ -135,27 +135,27 @@
                                                                 </div>
                                                                 <div class="col-md-2">
                                                                     <label class="form-label">Type <span class="text-danger">*</span></label>
-                                                                    <select class="form-select allocation-type" name="departments[{{ $index }}][allocation_type]">
-                                                                        <option value="percentage" {{ $department->pivot->allocation_type == 'percentage' ? 'selected' : '' }}>Percentage</option>
-                                                                        <option value="amount" {{ $department->pivot->allocation_type == 'amount' ? 'selected' : '' }}>Amount</option>
+                                                                    <select class="form-select allocation-type" name="products[{{ $index }}][allocation_type]">
+                                                                        <option value="percentage" {{ $product->pivot->allocation_type == 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                                                        <option value="amount" {{ $product->pivot->allocation_type == 'amount' ? 'selected' : '' }}>Amount</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <label class="form-label allocation-value-label">
-                                                                        {{ $department->pivot->allocation_type == 'percentage' ? 'Percentage (%)' : 'Amount (EGP)' }} <span class="text-danger">*</span>
+                                                                        {{ $product->pivot->allocation_type == 'percentage' ? 'Percentage (%)' : 'Amount (EGP)' }} <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="input-group">
-                                                                        <input type="number" class="form-control allocation-value {{ $department->pivot->allocation_type == 'amount' ? 'd-none' : '' }}"
-                                                                               name="departments[{{ $index }}][allocation_percentage]"
+                                                                        <input type="number" class="form-control allocation-value {{ $product->pivot->allocation_type == 'amount' ? 'd-none' : '' }}"
+                                                                               name="products[{{ $index }}][allocation_percentage]"
                                                                                step="0.01" min="0" max="100"
-                                                                               value="{{ $department->pivot->allocation_percentage }}"
+                                                                               value="{{ $product->pivot->allocation_percentage }}"
                                                                                placeholder="0.00">
-                                                                        <input type="number" class="form-control allocation-value {{ $department->pivot->allocation_type == 'percentage' ? 'd-none' : '' }}"
-                                                                               name="departments[{{ $index }}][allocation_amount]"
+                                                                        <input type="number" class="form-control allocation-value {{ $product->pivot->allocation_type == 'percentage' ? 'd-none' : '' }}"
+                                                                               name="products[{{ $index }}][allocation_amount]"
                                                                                step="0.01" min="0"
-                                                                               value="{{ $department->pivot->allocation_amount }}"
+                                                                               value="{{ $product->pivot->allocation_amount }}"
                                                                                placeholder="0.00">
-                                                                        <span class="input-group-text allocation-unit">{{ $department->pivot->allocation_type == 'percentage' ? '%' : 'EGP' }}</span>
+                                                                        <span class="input-group-text allocation-unit">{{ $product->pivot->allocation_type == 'percentage' ? '%' : 'EGP' }}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2 d-flex align-items-end">
@@ -165,8 +165,8 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <label class="form-label">Notes <small class="text-muted">(Optional)</small></label>
-                                                                    <input type="text" class="form-control" name="departments[{{ $index }}][notes]"
-                                                                           value="{{ $department->pivot->notes }}"
+                                                                    <input type="text" class="form-control" name="products[{{ $index }}][notes]"
+                                                                           value="{{ $product->pivot->notes }}"
                                                                            placeholder="Additional notes for this allocation">
                                                                 </div>
                                                                 <div class="col-md-4">
@@ -180,12 +180,12 @@
                                                 @endforeach
                                             </div>
 
-                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-department">
-                                                <i class="ti ti-plus me-1"></i>Add Department
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-product">
+                                                <i class="ti ti-plus me-1"></i>Add Product
                                             </button>
                                         </div>
 
-                                        @if($contract->departments->count() > 0)
+                                        @if($contract->products->count() > 0)
                                         <div class="col-12" id="allocation-summary">
                                             <div class="alert alert-info">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -409,29 +409,29 @@
     </div>
 </div>
 
-<!-- Hidden Template for Department Allocation -->
+<!-- Hidden Template for Product Allocation -->
 <div id="allocation-template" style="display: none;">
     <div class="allocation-row">
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Department <span class="text-danger">*</span></label>
-                        <select class="form-select allocation-department" name="departments[INDEX][department_id]">
-                            <option value="">Select department</option>
+                        <label class="form-label">Product <span class="text-danger">*</span></label>
+                        <select class="form-select allocation-product" name="products[INDEX][product_id]">
+                            <option value="">Select product</option>
                             @php
-                                $departments = \App\Models\Department::where('is_active', true)->get();
+                                $products = \App\Models\Department::where('is_active', true)->get();
                             @endphp
-                            @foreach($departments as $department)
-                                <option value="{{ $department->id }}">
-                                    {{ $department->name }} ({{ $department->code }})
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}">
+                                    {{ $product->name }} ({{ $product->code }})
                                 </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Type <span class="text-danger">*</span></label>
-                        <select class="form-select allocation-type" name="departments[INDEX][allocation_type]">
+                        <select class="form-select allocation-type" name="products[INDEX][allocation_type]">
                             <option value="percentage">Percentage</option>
                             <option value="amount">Amount</option>
                         </select>
@@ -440,10 +440,10 @@
                         <label class="form-label allocation-value-label">Percentage (%) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="number" class="form-control allocation-value"
-                                   name="departments[INDEX][allocation_percentage]"
+                                   name="products[INDEX][allocation_percentage]"
                                    step="0.01" min="0" max="100" placeholder="0.00">
                             <input type="number" class="form-control allocation-value d-none"
-                                   name="departments[INDEX][allocation_amount]"
+                                   name="products[INDEX][allocation_amount]"
                                    step="0.01" min="0" placeholder="0.00">
                             <span class="input-group-text allocation-unit">%</span>
                         </div>
@@ -455,7 +455,7 @@
                     </div>
                     <div class="col-md-8">
                         <label class="form-label">Notes <small class="text-muted">(Optional)</small></label>
-                        <input type="text" class="form-control" name="departments[INDEX][notes]"
+                        <input type="text" class="form-control" name="products[INDEX][notes]"
                                placeholder="Additional notes for this allocation">
                     </div>
                     <div class="col-md-4">
@@ -470,13 +470,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let allocationIndex = {{ $contract->departments->count() }};
+    let allocationIndex = {{ $contract->products->count() }};
 
-    // Add new department allocation
-    document.getElementById('add-department').addEventListener('click', function() {
+    // Add new product allocation
+    document.getElementById('add-product').addEventListener('click', function() {
         const template = document.getElementById('allocation-template').innerHTML;
         const newAllocation = template.replace(/INDEX/g, allocationIndex);
-        document.getElementById('department-allocations').insertAdjacentHTML('beforeend', newAllocation);
+        document.getElementById('product-allocations').insertAdjacentHTML('beforeend', newAllocation);
         allocationIndex++;
         updateCalculations();
         document.getElementById('allocation-summary').style.display = 'block';

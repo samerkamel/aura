@@ -228,68 +228,47 @@
   </div>
   <!--/ Sales Overview -->
 
-  <!-- Earning Reports -->
+  <!-- Cash Flow Projection -->
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header pb-0 d-flex justify-content-between">
         <div class="card-title mb-0">
-          <h5 class="mb-1">Earning Reports</h5>
-          <p class="card-subtitle">Weekly Earnings Overview</p>
+          <h5 class="mb-1">Cash Flow Projection</h5>
+          <p class="card-subtitle">Next 6 Months Overview</p>
         </div>
         <div class="dropdown">
-          <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="earningReportsId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="cashFlowProjectionId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReportsId">
-            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cashFlowProjectionId">
+            <a class="dropdown-item" href="{{ route('accounting.reports') }}?tab=projections">View Detailed Reports</a>
+            <a class="dropdown-item" href="{{ route('accounting.expenses.index') }}">Manage Expenses</a>
+            <a class="dropdown-item" href="{{ route('accounting.income.index') }}">Manage Income</a>
           </div>
         </div>
-        <!-- </div> -->
       </div>
       <div class="card-body">
-        <div class="row align-items-center g-md-8">
-          <div class="col-12 col-md-5 d-flex flex-column">
-            <div class="d-flex gap-2 align-items-center mb-3 flex-wrap">
-              <h2 class="mb-0">$468</h2>
-              <div class="badge rounded bg-label-success">+4.2%</div>
-            </div>
-            <small class="text-body">You informed of this week compared to last week</small>
-          </div>
-          <div class="col-12 col-md-7 ps-xl-8">
-            <div id="weeklyEarningReports"></div>
-          </div>
-        </div>
-        <div class="border rounded p-5 mt-5">
+        <div id="cashFlowChart"></div>
+        <div class="border rounded p-4 mt-4">
           <div class="row gap-4 gap-sm-0">
-            <div class="col-12 col-sm-4">
+            <div class="col-12 col-sm-6">
               <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-primary p-1"><i class="ti ti-currency-dollar ti-sm"></i></div>
-                <h6 class="mb-0 fw-normal">Earnings</h6>
+                <div class="badge rounded bg-label-success p-1"><i class="ti ti-trend-up ti-sm"></i></div>
+                <h6 class="mb-0 fw-normal">Total Income</h6>
               </div>
-              <h4 class="my-2">$545.69</h4>
+              <h4 class="my-2" id="totalIncomeAmount">EGP 0</h4>
               <div class="progress w-75" style="height:4px">
-                <div class="progress-bar" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
-            <div class="col-12 col-sm-4">
+            <div class="col-12 col-sm-6">
               <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-info p-1"><i class="ti ti-chart-pie-2 ti-sm"></i></div>
-                <h6 class="mb-0 fw-normal">Profit</h6>
+                <div class="badge rounded bg-label-danger p-1"><i class="ti ti-trend-down ti-sm"></i></div>
+                <h6 class="mb-0 fw-normal">Total Expenses</h6>
               </div>
-              <h4 class="my-2">$256.34</h4>
+              <h4 class="my-2" id="totalExpenseAmount">EGP 0</h4>
               <div class="progress w-75" style="height:4px">
-                <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <div class="col-12 col-sm-4">
-              <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-danger p-1"><i class="ti ti-brand-paypal ti-sm"></i></div>
-                <h6 class="mb-0 fw-normal">Expense</h6>
-              </div>
-              <h4 class="my-2">$74.19</h4>
-              <div class="progress w-75" style="height:4px">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
           </div>
@@ -297,7 +276,7 @@
       </div>
     </div>
   </div>
-  <!--/ Earning Reports -->
+  <!--/ Cash Flow Projection -->
 
   <!-- Support Tracker -->
   <div class="col-md-6">
@@ -774,3 +753,122 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const chartData = @json($chartData ?? ['categories' => [], 'income' => [], 'expenses' => []]);
+
+  // Cash Flow Chart Configuration
+  const cashFlowChartEl = document.querySelector('#cashFlowChart');
+
+  if (cashFlowChartEl) {
+    const cashFlowChartConfig = {
+      chart: {
+        height: 240,
+        type: 'bar',
+        parentHeightOffset: 0,
+        toolbar: {
+          show: false
+        }
+      },
+      series: [
+        {
+          name: 'Income',
+          type: 'bar',
+          data: chartData.income
+        },
+        {
+          name: 'Expenses',
+          type: 'bar',
+          data: chartData.expenses
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '50%',
+          endingShape: 'rounded',
+          borderRadius: 4
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: chartData.categories,
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: '#9aa0ac',
+            fontSize: '13px'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#9aa0ac',
+            fontSize: '13px'
+          },
+          formatter: function (value) {
+            return 'EGP ' + Math.round(value).toLocaleString();
+          }
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      colors: ['#28c76f', '#ea5455'],
+      tooltip: {
+        y: {
+          formatter: function (value) {
+            return 'EGP ' + Math.round(value).toLocaleString();
+          }
+        }
+      },
+      legend: {
+        position: 'top',
+        horizontalAlign: 'left',
+        fontSize: '14px',
+        markers: {
+          radius: 10
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 600,
+          options: {
+            plotOptions: {
+              bar: {
+                columnWidth: '70%'
+              }
+            }
+          }
+        }
+      ]
+    };
+
+    const cashFlowChart = new ApexCharts(cashFlowChartEl, cashFlowChartConfig);
+    cashFlowChart.render();
+
+    // Calculate and display totals
+    const totalIncome = chartData.income.reduce((sum, val) => sum + val, 0);
+    const totalExpenses = chartData.expenses.reduce((sum, val) => sum + val, 0);
+
+    document.getElementById('totalIncomeAmount').textContent = 'EGP ' + Math.round(totalIncome).toLocaleString();
+    document.getElementById('totalExpenseAmount').textContent = 'EGP ' + Math.round(totalExpenses).toLocaleString();
+  }
+});
+</script>
+@endpush

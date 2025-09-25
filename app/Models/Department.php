@@ -37,7 +37,7 @@ class Department extends Model
     }
 
     /**
-     * Scope to get only active departments.
+     * Scope to get only active products.
      */
     public function scopeActive($query)
     {
@@ -45,7 +45,7 @@ class Department extends Model
     }
 
     /**
-     * Get total contract allocations for this department.
+     * Get total contract allocations for this product.
      */
     public function getTotalContractAllocationsAttribute()
     {

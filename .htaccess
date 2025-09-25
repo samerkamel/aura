@@ -1,0 +1,14 @@
+# Laravel Application - Root .htaccess
+# Redirect all requests to the public directory
+
+RewriteEngine On
+
+# Handle requests to the public directory
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Handle direct access to root
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^(.*)$ public/index.php [L]

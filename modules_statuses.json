@@ -4,5 +4,6 @@
     "Payroll": true,
     "Attendance": true,
     "Leave": true,
-    "LetterGenerator": true
+    "LetterGenerator": true,
+    "Accounting": true
 }

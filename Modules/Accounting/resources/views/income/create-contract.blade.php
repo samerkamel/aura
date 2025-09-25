@@ -112,23 +112,23 @@
                                 </div>
                             </div>
 
-                            <!-- Department Allocation -->
+                            <!-- Product Allocation -->
                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <h6 class="card-title mb-0">Department Allocation</h6>
+                                    <h6 class="card-title mb-0">Product Allocation</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
                                         <div class="col-12">
-                                            <label class="form-label">Department Assignments <small class="text-muted">(Optional)</small></label>
-                                            <p class="text-muted small mb-3">Allocate this contract to one or more departments for budget tracking.</p>
+                                            <label class="form-label">Product Assignments <small class="text-muted">(Optional)</small></label>
+                                            <p class="text-muted small mb-3">Allocate this contract to one or more products for budget tracking.</p>
 
-                                            <div id="department-allocations">
+                                            <div id="product-allocations">
                                                 <!-- Dynamic allocations will be added here -->
                                             </div>
 
-                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-department">
-                                                <i class="ti ti-plus me-1"></i>Add Department
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-product">
+                                                <i class="ti ti-plus me-1"></i>Add Product
                                             </button>
                                         </div>
 
@@ -242,7 +242,7 @@
                                     <div class="d-grid gap-2">
                                         <a href="{{ route('administration.departments.index') }}"
                                            class="btn btn-outline-primary" target="_blank">
-                                            <i class="ti ti-building me-2"></i>Manage Departments
+                                            <i class="ti ti-building me-2"></i>Manage Products
                                         </a>
                                         <a href="{{ route('accounting.accounts.index') }}"
                                            class="btn btn-outline-info" target="_blank">
@@ -263,8 +263,8 @@
                                         <small class="text-muted">Use unique contract numbers for easy tracking</small>
                                     </div>
                                     <div class="mb-3">
-                                        <h6>Department Allocation</h6>
-                                        <small class="text-muted">Assign contracts to departments for budget tracking and reporting</small>
+                                        <h6>Product Allocation</h6>
+                                        <small class="text-muted">Assign contracts to products for budget tracking and reporting</small>
                                     </div>
                                     <div class="mb-0">
                                         <h6>Next Steps</h6>
@@ -296,29 +296,29 @@
     </div>
 </div>
 
-<!-- Hidden Template for Department Allocation -->
+<!-- Hidden Template for Product Allocation -->
 <div id="allocation-template" style="display: none;">
     <div class="allocation-row">
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Department <span class="text-danger">*</span></label>
-                        <select class="form-select allocation-department" name="departments[INDEX][department_id]">
-                            <option value="">Select department</option>
+                        <label class="form-label">Product <span class="text-danger">*</span></label>
+                        <select class="form-select allocation-product" name="products[INDEX][product_id]">
+                            <option value="">Select product</option>
                             @php
-                                $departments = \App\Models\Department::where('is_active', true)->get();
+                                $products = \App\Models\Department::where('is_active', true)->get();
                             @endphp
-                            @foreach($departments as $department)
-                                <option value="{{ $department->id }}">
-                                    {{ $department->name }} ({{ $department->code }})
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}">
+                                    {{ $product->name }} ({{ $product->code }})
                                 </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Type <span class="text-danger">*</span></label>
-                        <select class="form-select allocation-type" name="departments[INDEX][allocation_type]">
+                        <select class="form-select allocation-type" name="products[INDEX][allocation_type]">
                             <option value="percentage">Percentage</option>
                             <option value="amount">Amount</option>
                         </select>
@@ -327,10 +327,10 @@
                         <label class="form-label allocation-value-label">Percentage (%) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="number" class="form-control allocation-value"
-                                   name="departments[INDEX][allocation_percentage]"
+                                   name="products[INDEX][allocation_percentage]"
                                    step="0.01" min="0" max="100" placeholder="0.00">
                             <input type="number" class="form-control allocation-value d-none"
-                                   name="departments[INDEX][allocation_amount]"
+                                   name="products[INDEX][allocation_amount]"
                                    step="0.01" min="0" placeholder="0.00">
                             <span class="input-group-text allocation-unit">%</span>
                         </div>
@@ -342,7 +342,7 @@
                     </div>
                     <div class="col-md-8">
                         <label class="form-label">Notes <small class="text-muted">(Optional)</small></label>
-                        <input type="text" class="form-control" name="departments[INDEX][notes]"
+                        <input type="text" class="form-control" name="products[INDEX][notes]"
                                placeholder="Additional notes for this allocation">
                     </div>
                     <div class="col-md-4">
@@ -359,11 +359,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = 0;
 
-    // Add new department allocation
-    document.getElementById('add-department').addEventListener('click', function() {
+    // Add new product allocation
+    document.getElementById('add-product').addEventListener('click', function() {
         const template = document.getElementById('allocation-template').innerHTML;
         const newAllocation = template.replace(/INDEX/g, allocationIndex);
-        document.getElementById('department-allocations').insertAdjacentHTML('beforeend', newAllocation);
+        document.getElementById('product-allocations').insertAdjacentHTML('beforeend', newAllocation);
         allocationIndex++;
         updateCalculations();
         document.getElementById('allocation-summary').style.display = 'block';

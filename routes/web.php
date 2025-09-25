@@ -30,25 +30,6 @@ use App\Http\Controllers\apps\Email;
 use App\Http\Controllers\apps\Chat;
 use App\Http\Controllers\apps\Calendar;
 use App\Http\Controllers\apps\Kanban;
-use App\Http\Controllers\apps\EcommerceDashboard;
-use App\Http\Controllers\apps\EcommerceProductList;
-use App\Http\Controllers\apps\EcommerceProductAdd;
-use App\Http\Controllers\apps\EcommerceProductCategory;
-use App\Http\Controllers\apps\EcommerceOrderList;
-use App\Http\Controllers\apps\EcommerceOrderDetails;
-use App\Http\Controllers\apps\EcommerceCustomerAll;
-use App\Http\Controllers\apps\EcommerceCustomerDetailsOverview;
-use App\Http\Controllers\apps\EcommerceCustomerDetailsSecurity;
-use App\Http\Controllers\apps\EcommerceCustomerDetailsBilling;
-use App\Http\Controllers\apps\EcommerceCustomerDetailsNotifications;
-use App\Http\Controllers\apps\EcommerceManageReviews;
-use App\Http\Controllers\apps\EcommerceReferrals;
-use App\Http\Controllers\apps\EcommerceSettingsDetails;
-use App\Http\Controllers\apps\EcommerceSettingsPayments;
-use App\Http\Controllers\apps\EcommerceSettingsCheckout;
-use App\Http\Controllers\apps\EcommerceSettingsShipping;
-use App\Http\Controllers\apps\EcommerceSettingsLocations;
-use App\Http\Controllers\apps\EcommerceSettingsNotifications;
 use App\Http\Controllers\apps\AcademyDashboard;
 use App\Http\Controllers\apps\AcademyCourse;
 use App\Http\Controllers\apps\AcademyCourseDetails;
@@ -201,25 +182,6 @@ Route::get('/app/email', [Email::class, 'index'])->name('app-email');
 Route::get('/app/chat', [Chat::class, 'index'])->name('app-chat');
 Route::get('/app/calendar', [Calendar::class, 'index'])->name('app-calendar');
 Route::get('/app/kanban', [Kanban::class, 'index'])->name('app-kanban');
-Route::get('/app/ecommerce/dashboard', [EcommerceDashboard::class, 'index'])->name('app-ecommerce-dashboard');
-Route::get('/app/ecommerce/product/list', [EcommerceProductList::class, 'index'])->name('app-ecommerce-product-list');
-Route::get('/app/ecommerce/product/add', [EcommerceProductAdd::class, 'index'])->name('app-ecommerce-product-add');
-Route::get('/app/ecommerce/product/category', [EcommerceProductCategory::class, 'index'])->name('app-ecommerce-product-category');
-Route::get('/app/ecommerce/order/list', [EcommerceOrderList::class, 'index'])->name('app-ecommerce-order-list');
-Route::get('/app/ecommerce/order/details', [EcommerceOrderDetails::class, 'index'])->name('app-ecommerce-order-details');
-Route::get('/app/ecommerce/customer/all', [EcommerceCustomerAll::class, 'index'])->name('app-ecommerce-customer-all');
-Route::get('/app/ecommerce/customer/details/overview', [EcommerceCustomerDetailsOverview::class, 'index'])->name('app-ecommerce-customer-details-overview');
-Route::get('/app/ecommerce/customer/details/security', [EcommerceCustomerDetailsSecurity::class, 'index'])->name('app-ecommerce-customer-details-security');
-Route::get('/app/ecommerce/customer/details/billing', [EcommerceCustomerDetailsBilling::class, 'index'])->name('app-ecommerce-customer-details-billing');
-Route::get('/app/ecommerce/customer/details/notifications', [EcommerceCustomerDetailsNotifications::class, 'index'])->name('app-ecommerce-customer-details-notifications');
-Route::get('/app/ecommerce/manage/reviews', [EcommerceManageReviews::class, 'index'])->name('app-ecommerce-manage-reviews');
-Route::get('/app/ecommerce/referrals', [EcommerceReferrals::class, 'index'])->name('app-ecommerce-referrals');
-Route::get('/app/ecommerce/settings/details', [EcommerceSettingsDetails::class, 'index'])->name('app-ecommerce-settings-details');
-Route::get('/app/ecommerce/settings/payments', [EcommerceSettingsPayments::class, 'index'])->name('app-ecommerce-settings-payments');
-Route::get('/app/ecommerce/settings/checkout', [EcommerceSettingsCheckout::class, 'index'])->name('app-ecommerce-settings-checkout');
-Route::get('/app/ecommerce/settings/shipping', [EcommerceSettingsShipping::class, 'index'])->name('app-ecommerce-settings-shipping');
-Route::get('/app/ecommerce/settings/locations', [EcommerceSettingsLocations::class, 'index'])->name('app-ecommerce-settings-locations');
-Route::get('/app/ecommerce/settings/notifications', [EcommerceSettingsNotifications::class, 'index'])->name('app-ecommerce-settings-notifications');
 Route::get('/app/academy/dashboard', [AcademyDashboard::class, 'index'])->name('app-academy-dashboard');
 Route::get('/app/academy/course', [AcademyCourse::class, 'index'])->name('app-academy-course');
 Route::get('/app/academy/course-details', [AcademyCourseDetails::class, 'index'])->name('app-academy-course-details');
@@ -376,7 +338,7 @@ Route::resource('/user-list', UserManagement::class);
 // Administration Routes - User Management and Roles & Permissions
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ProductController;
 
 Route::middleware(['auth'])->prefix('administration')->name('administration.')->group(function () {
     // User Management
@@ -408,14 +370,14 @@ Route::middleware(['auth'])->prefix('administration')->name('administration.')->
     });
 
     // Department Management
-    Route::prefix('departments')->name('departments.')->group(function () {
-        Route::get('/', [DepartmentController::class, 'index'])->name('index');
-        Route::get('/create', [DepartmentController::class, 'create'])->name('create');
-        Route::post('/', [DepartmentController::class, 'store'])->name('store');
-        Route::get('/{department}', [DepartmentController::class, 'show'])->name('show');
-        Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('edit');
-        Route::put('/{department}', [DepartmentController::class, 'update'])->name('update');
-        Route::delete('/{department}', [DepartmentController::class, 'destroy'])->name('destroy');
-        Route::patch('/{department}/toggle-status', [DepartmentController::class, 'toggleStatus'])->name('toggle-status');
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('/create', [ProductController::class, 'create'])->name('create');
+        Route::post('/', [ProductController::class, 'store'])->name('store');
+        Route::get('/{department}', [ProductController::class, 'show'])->name('show');
+        Route::get('/{department}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/{department}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/{department}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::patch('/{department}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
     });
 });

@@ -171,9 +171,9 @@
           "slug": "accounting-reports-index"
         },
         {
-          "url": "administration/departments",
-          "name": "Departments",
-          "slug": "administration-departments-index"
+          "url": "administration/products",
+          "name": "Products",
+          "slug": "administration.products.index"
         }
       ]
     },

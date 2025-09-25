@@ -49,5 +49,42 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view-employee-details', function ($user) {
             return in_array($user->role, ['super_admin', 'admin']);
         });
+
+        // Accounting Module Permissions
+
+        // Gate to check if user can access accounting dashboard
+        Gate::define('view-accounting-dashboard', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate to check if user can manage expense schedules
+        Gate::define('manage-expense-schedules', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate to check if user can manage income schedules and contracts
+        Gate::define('manage-income-schedules', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate to check if user can view cash flow reports
+        Gate::define('view-cash-flow-reports', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate to check if user can export financial reports
+        Gate::define('export-financial-reports', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate to check if user can manage expense categories
+        Gate::define('manage-expense-categories', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Gate for read-only access to accounting (employees can view some data)
+        Gate::define('view-accounting-readonly', function ($user) {
+            return in_array($user->role, ['super_admin', 'admin', 'employee']);
+        });
     }
 }

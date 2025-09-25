@@ -61,17 +61,20 @@ class PermissionSeeder extends Seeder
     $this->command->info('   - manage-leave-records ✓');
     $this->command->info('   - manage-wfh-records ✓');
     $this->command->info('   - view-employee-details ✓');
+    $this->command->info('   - All accounting permissions ✓');
     $this->command->info('');
 
     $this->command->info('👨‍💼 Admin Role (admin):');
     $this->command->info('   - manage-leave-records ✓');
     $this->command->info('   - manage-wfh-records ✓');
     $this->command->info('   - view-employee-details ✓');
+    $this->command->info('   - All accounting permissions ✓');
     $this->command->info('   - manage-permission-overrides ✗');
     $this->command->info('');
 
     $this->command->info('👤 Employee Role (employee):');
     $this->command->info('   - Basic access only');
+    $this->command->info('   - Read-only accounting access ✓');
     $this->command->info('   - All administrative permissions ✗');
     $this->command->info('');
 
@@ -84,7 +87,12 @@ class PermissionSeeder extends Seeder
         'manage-permission-overrides',
         'manage-leave-records',
         'manage-wfh-records',
-        'view-employee-details'
+        'view-employee-details',
+        'view-accounting-dashboard',
+        'manage-expense-schedules',
+        'manage-income-schedules',
+        'view-cash-flow-reports',
+        'export-financial-reports'
       ];
 
       foreach ($permissions as $permission) {
