@@ -12,6 +12,7 @@ use Modules\Accounting\Models\Account;
 use Modules\Accounting\Http\Requests\StoreExpenseScheduleRequest;
 use Modules\Accounting\Http\Requests\UpdateExpenseScheduleRequest;
 use Modules\Accounting\Services\ScheduleCalculatorService;
+use App\Helpers\BusinessUnitHelper;
 
 /**
  * ExpenseController
@@ -39,6 +40,9 @@ class ExpenseController extends Controller
         $query = ExpenseSchedule::with(['category'])
             ->where('expense_type', 'recurring');
 
+        // Apply business unit filtering
+        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
+
         // Filter by category
         if ($request->has('category_id') && $request->category_id) {
             $query->where('category_id', $request->category_id);
@@ -61,11 +65,20 @@ class ExpenseController extends Controller
         $expenseSchedules = $query->orderBy('name')->paginate(15);
         $categories = ExpenseCategory::active()->orderBy('name')->get();
 
-        // Calculate summary statistics (recurring expenses only)
+        // Calculate summary statistics (recurring expenses only) - with BU filtering
+        $totalSchedulesQuery = ExpenseSchedule::where('expense_type', 'recurring');
+        $totalSchedulesQuery = BusinessUnitHelper::filterQueryByBusinessUnit($totalSchedulesQuery, $request);
+
+        $activeSchedulesQuery = ExpenseSchedule::where('expense_type', 'recurring')->active();
+        $activeSchedulesQuery = BusinessUnitHelper::filterQueryByBusinessUnit($activeSchedulesQuery, $request);
+
+        $monthlyAmountQuery = ExpenseSchedule::where('expense_type', 'recurring')->active();
+        $monthlyAmountQuery = BusinessUnitHelper::filterQueryByBusinessUnit($monthlyAmountQuery, $request);
+
         $statistics = [
-            'total_schedules' => ExpenseSchedule::where('expense_type', 'recurring')->count(),
-            'active_schedules' => ExpenseSchedule::where('expense_type', 'recurring')->active()->count(),
-            'total_monthly_amount' => ExpenseSchedule::where('expense_type', 'recurring')->active()->get()->sum('monthly_equivalent_amount'),
+            'total_schedules' => $totalSchedulesQuery->count(),
+            'active_schedules' => $activeSchedulesQuery->count(),
+            'total_monthly_amount' => $monthlyAmountQuery->get()->sum('monthly_equivalent_amount'),
             'categories_count' => ExpenseCategory::active()->count(),
         ];
 
@@ -88,6 +101,9 @@ class ExpenseController extends Controller
 
         $query = ExpenseSchedule::with(['category', 'subcategory', 'paidFromAccount'])
             ->where('payment_status', 'paid');
+
+        // Apply business unit filtering
+        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
 
         // Filter by date range
         if ($request->has('start_date') && $request->start_date) {
@@ -168,8 +184,16 @@ class ExpenseController extends Controller
 
         $accounts = Account::active()->orderBy('name')->get();
         $frequencyOptions = $this->scheduleCalculator->getFrequencyOptions();
+        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
+        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
 
-        return view('accounting::expenses.create', compact('categories', 'accounts', 'frequencyOptions'));
+        // Get expense types for category filtering
+        $expenseTypes = \Modules\Accounting\Models\ExpenseType::active()
+            ->with('activeCategories')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('accounting::expenses.create', compact('categories', 'accounts', 'frequencyOptions', 'currentBusinessUnit', 'accessibleBusinessUnits', 'expenseTypes'));
     }
 
     /**
@@ -178,6 +202,16 @@ class ExpenseController extends Controller
     public function store(StoreExpenseScheduleRequest $request): RedirectResponse
     {
         $validatedData = $request->validated();
+
+        // Determine business unit ID
+        $businessUnitId = $request->business_unit_id ?? BusinessUnitHelper::getCurrentBusinessUnitId();
+
+        // Verify user has access to the selected business unit
+        if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to create expenses in this business unit.');
+        }
+
+        $validatedData['business_unit_id'] = $businessUnitId;
 
         // Set default payment status
         $validatedData['payment_status'] = $request->input('mark_as_paid') ? 'paid' : 'pending';
@@ -393,7 +427,7 @@ class ExpenseController extends Controller
                 $query->withCount(['expenseSchedules', 'activeExpenseSchedules'])
                       ->orderBy('sort_order')
                       ->orderBy('name');
-            }])
+            }, 'expenseType'])
             ->mainCategories()
             ->orderBy('name')
             ->get();
@@ -432,7 +466,12 @@ class ExpenseController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('accounting::expenses.categories', compact('categories', 'parentCategories'));
+        // Get expense types for selection
+        $expenseTypes = \Modules\Accounting\Models\ExpenseType::active()
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes'));
     }
 
     /**
@@ -445,10 +484,17 @@ class ExpenseController extends Controller
             'description' => 'nullable|string',
             'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
             'parent_id' => 'nullable|exists:expense_categories,id',
+            'expense_type_id' => 'nullable|exists:expense_types,id',
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
-        $data = $request->only(['name', 'description', 'color', 'parent_id', 'sort_order']);
+        $data = $request->only(['name', 'description', 'color', 'parent_id', 'expense_type_id', 'sort_order']);
+
+        // If creating a subcategory, inherit expense type from parent
+        if (!empty($data['parent_id']) && empty($data['expense_type_id'])) {
+            $parent = ExpenseCategory::find($data['parent_id']);
+            $data['expense_type_id'] = $parent ? $parent->expense_type_id : null;
+        }
 
         // Set default sort_order if not provided
         if (empty($data['sort_order'])) {
@@ -467,13 +513,30 @@ class ExpenseController extends Controller
      */
     public function updateCategory(Request $request, ExpenseCategory $category): RedirectResponse
     {
-        $request->validate([
+        // Validate based on category type
+        $rules = [
             'name' => 'required|string|max:255|unique:expense_categories,name,' . $category->id,
             'description' => 'nullable|string',
             'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
-        ]);
+        ];
 
-        $category->update($request->only(['name', 'description', 'color']));
+        // Only main categories need expense_type_id
+        if ($category->parent_id === null) {
+            $rules['expense_type_id'] = 'required|exists:expense_types,id';
+        } else {
+            $rules['expense_type_id'] = 'nullable|exists:expense_types,id';
+        }
+
+        $request->validate($rules);
+
+        $data = $request->only(['name', 'description', 'color', 'expense_type_id']);
+
+        // Only main categories can have expense types
+        if ($category->parent_id !== null) {
+            unset($data['expense_type_id']);
+        }
+
+        $category->update($data);
 
         return redirect()
             ->route('accounting.expenses.categories')
@@ -522,6 +585,388 @@ class ExpenseController extends Controller
         return redirect()
             ->route('accounting.expenses.categories')
             ->with('success', "Category '{$categoryName}' deleted successfully.");
+    }
+
+    /**
+     * Show CSV import form for expense categories.
+     */
+    public function importCategoriesForm(): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to import expense categories.');
+        }
+
+        $parentCategories = ExpenseCategory::active()->mainCategories()->orderBy('name')->get();
+
+        return view('accounting::expenses.import-categories', compact('parentCategories'));
+    }
+
+    /**
+     * Process CSV import for expense categories.
+     */
+    public function importCategories(Request $request): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to import expense categories.');
+        }
+
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $file = $request->file('csv_file');
+            $csvData = array_map('str_getcsv', file($file->getPathname()));
+
+            // Remove header row
+            $header = array_shift($csvData);
+
+            // Validate header format
+            $expectedHeader = ['name', 'description', 'color', 'parent_id', 'sort_order'];
+            if (count(array_intersect($header, $expectedHeader)) < 2) { // At least name and color required
+                return redirect()->back()
+                    ->with('error', 'Invalid CSV format. Please download the sample CSV and follow the format.');
+            }
+
+            $successCount = 0;
+            $errorCount = 0;
+            $errors = [];
+
+            foreach ($csvData as $rowIndex => $row) {
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    continue;
+                }
+
+                try {
+                    // Map CSV row to array using header
+                    $data = array_combine($header, $row);
+
+                    // Validate required fields
+                    if (empty($data['name'])) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Missing required field 'name'";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Check for duplicate names
+                    if (ExpenseCategory::where('name', trim($data['name']))->exists()) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Category name '" . trim($data['name']) . "' already exists";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate parent category exists if provided
+                    $parentId = !empty($data['parent_id']) ? (int)$data['parent_id'] : null;
+                    if ($parentId && !ExpenseCategory::find($parentId)) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Parent category ID {$parentId} does not exist";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate color format
+                    $color = !empty($data['color']) ? $data['color'] : '#007bff';
+                    if (!preg_match('/^#[a-fA-F0-9]{6}$/', $color)) {
+                        $color = '#007bff'; // Default color if invalid
+                    }
+
+                    // Create the category record
+                    $categoryData = [
+                        'name' => trim($data['name']),
+                        'description' => !empty($data['description']) ? trim($data['description']) : null,
+                        'color' => $color,
+                        'parent_id' => $parentId,
+                        'sort_order' => !empty($data['sort_order']) ? (int)$data['sort_order'] : 0,
+                        'is_active' => true,
+                    ];
+
+                    ExpenseCategory::create($categoryData);
+                    $successCount++;
+
+                } catch (\Exception $e) {
+                    $errors[] = "Row " . ($rowIndex + 2) . ": " . $e->getMessage();
+                    $errorCount++;
+                }
+            }
+
+            $message = "{$successCount} expense categories imported successfully.";
+            if ($errorCount > 0) {
+                $message .= " {$errorCount} errors occurred.";
+            }
+
+            $messageType = $errorCount > 0 ? 'warning' : 'success';
+
+            return redirect()->route('accounting.expenses.categories')
+                ->with($messageType, $message)
+                ->with('import_errors', $errors);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error processing CSV file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download sample CSV file for expense categories import.
+     */
+    public function downloadCategoriesSample()
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to download sample files.');
+        }
+
+        $headers = ['name', 'description', 'color', 'parent_id', 'sort_order'];
+
+        $sampleData = [
+            ['Office Supplies', 'General office supplies and equipment', '#28a745', '', '1'],
+            ['Marketing', 'Marketing and advertising expenses', '#fd7e14', '', '2'],
+            ['Travel', 'Business travel and accommodation', '#6f42c1', '', '3'],
+            ['Office Rent', 'Monthly office rental payments', '#28a745', '1', '1'],
+            ['Stationery', 'Paper, pens, and office supplies', '#28a745', '1', '2'],
+        ];
+
+        $csvContent = implode(',', $headers) . "\n";
+        foreach ($sampleData as $row) {
+            $csvContent .= '"' . implode('","', $row) . '"' . "\n";
+        }
+
+        $filename = 'expense_categories_sample_' . date('Y-m-d') . '.csv';
+
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Show CSV import form for paid expenses.
+     */
+    public function importForm(): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-schedules')) {
+            abort(403, 'Unauthorized to import expenses.');
+        }
+
+        $categories = ExpenseCategory::active()->orderBy('name')->get();
+        $accounts = Account::active()->orderBy('name')->get();
+
+        return view('accounting::expenses.import', compact('categories', 'accounts'));
+    }
+
+    /**
+     * Process CSV import for paid expenses.
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-schedules')) {
+            abort(403, 'Unauthorized to import expenses.');
+        }
+
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $file = $request->file('csv_file');
+            $csvData = array_map('str_getcsv', file($file->getPathname()));
+
+            // Remove header row
+            $header = array_shift($csvData);
+
+            // Validate header format
+            $expectedHeader = ['name', 'description', 'amount', 'category_id', 'subcategory_id', 'expense_date', 'paid_from_account_id', 'payment_notes', 'business_unit_id'];
+            if (count(array_intersect($header, $expectedHeader)) < 4) { // At least 4 required fields
+                return redirect()->back()
+                    ->with('error', 'Invalid CSV format. Please download the sample CSV and follow the format.');
+            }
+
+            $successCount = 0;
+            $errorCount = 0;
+            $errors = [];
+
+            foreach ($csvData as $rowIndex => $row) {
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    continue;
+                }
+
+                try {
+                    // Map CSV row to array using header
+                    $data = array_combine($header, $row);
+
+                    // Determine business unit ID
+                    $businessUnitId = !empty($data['business_unit_id']) ?
+                        (int)$data['business_unit_id'] :
+                        BusinessUnitHelper::getCurrentBusinessUnitId();
+
+                    // Verify user has access to the selected business unit
+                    if (!BusinessUnitHelper::isSuperAdmin() &&
+                        !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Unauthorized to import expenses to business unit ID {$businessUnitId}";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate required fields
+                    if (empty($data['name']) || empty($data['amount']) || empty($data['expense_date'])) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Missing required fields (name, amount, expense_date)";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate account exists if provided
+                    $accountId = !empty($data['paid_from_account_id']) ? (int)$data['paid_from_account_id'] : null;
+                    if ($accountId && !Account::find($accountId)) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Account ID {$accountId} does not exist";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate category exists if provided
+                    $categoryId = !empty($data['category_id']) ? (int)$data['category_id'] : null;
+                    if ($categoryId && !ExpenseCategory::find($categoryId)) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Category ID {$categoryId} does not exist";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate subcategory exists if provided
+                    $subcategoryId = !empty($data['subcategory_id']) ? (int)$data['subcategory_id'] : null;
+                    if ($subcategoryId && !ExpenseCategory::find($subcategoryId)) {
+                        $errors[] = "Row " . ($rowIndex + 2) . ": Subcategory ID {$subcategoryId} does not exist";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Create the expense record
+                    $expenseData = [
+                        'name' => trim($data['name']),
+                        'description' => !empty($data['description']) ? trim($data['description']) : null,
+                        'amount' => (float)$data['amount'],
+                        'category_id' => $categoryId,
+                        'subcategory_id' => $subcategoryId,
+                        'expense_type' => 'one_time',
+                        'expense_date' => date('Y-m-d', strtotime($data['expense_date'])),
+                        'payment_status' => 'paid',
+                        'paid_amount' => (float)$data['amount'],
+                        'paid_from_account_id' => $accountId,
+                        'paid_date' => date('Y-m-d', strtotime($data['expense_date'])),
+                        'payment_notes' => !empty($data['payment_notes']) ? trim($data['payment_notes']) : null,
+                        'business_unit_id' => $businessUnitId,
+                        // Required fields for database constraints
+                        'frequency_type' => 'monthly',
+                        'frequency_value' => 1,
+                        'start_date' => date('Y-m-d', strtotime($data['expense_date'])),
+                        'is_active' => true,
+                    ];
+
+                    $expense = ExpenseSchedule::create($expenseData);
+
+                    // Update account balance if account was provided
+                    if ($accountId) {
+                        $account = Account::find($accountId);
+                        if ($account) {
+                            $account->updateBalance($expense->paid_amount, 'subtract');
+                        }
+                    }
+
+                    $successCount++;
+
+                } catch (\Exception $e) {
+                    $errors[] = "Row " . ($rowIndex + 2) . ": " . $e->getMessage();
+                    $errorCount++;
+                }
+            }
+
+            $message = "{$successCount} expenses imported successfully.";
+            if ($errorCount > 0) {
+                $message .= " {$errorCount} errors occurred.";
+            }
+
+            $messageType = $errorCount > 0 ? 'warning' : 'success';
+
+            return redirect()->route('accounting.expenses.paid')
+                ->with($messageType, $message)
+                ->with('import_errors', $errors);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error processing CSV file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download sample CSV file for expense import.
+     */
+    public function downloadSample()
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-schedules')) {
+            abort(403, 'Unauthorized to download sample files.');
+        }
+
+        $headers = [
+            'name',
+            'description',
+            'amount',
+            'category_id',
+            'subcategory_id',
+            'expense_date',
+            'paid_from_account_id',
+            'payment_notes',
+            'business_unit_id'
+        ];
+
+        $sampleData = [
+            [
+                'Office Supplies',
+                'Monthly office supplies for November',
+                '250.00',
+                '7',
+                '',
+                '2024-11-15',
+                '3',
+                'Paid via company card',
+                '1'
+            ],
+            [
+                'Software License',
+                'Adobe Creative Suite monthly subscription',
+                '89.99',
+                '5',
+                '',
+                '2024-11-01',
+                '1',
+                'Monthly subscription payment',
+                '1'
+            ],
+            [
+                'Internet Bill',
+                'Company internet service - November',
+                '199.50',
+                '14',
+                '',
+                '2024-11-05',
+                '4',
+                'Monthly internet service',
+                '3'
+            ]
+        ];
+
+        $csvContent = implode(',', $headers) . "\n";
+        foreach ($sampleData as $row) {
+            $csvContent .= '"' . implode('","', $row) . '"' . "\n";
+        }
+
+        $filename = 'expense_import_sample_' . date('Y-m-d') . '.csv';
+
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /**

@@ -7,6 +7,32 @@
 @endsection
 
 @section('content')
+<!-- Business Unit Context Header -->
+@if(isset($currentBusinessUnit) && $currentBusinessUnit)
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <div class="d-flex align-items-center">
+                <div class="avatar avatar-sm me-3">
+                    <span class="avatar-initial rounded-circle bg-label-{{ $currentBusinessUnit->type === 'head_office' ? 'info' : 'primary' }}">
+                        <i class="ti {{ $currentBusinessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} ti-sm"></i>
+                    </span>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0">{{ $currentBusinessUnit->name }} - Financial Overview</h6>
+                    <small class="text-muted">
+                        Viewing financial data for {{ $currentBusinessUnit->code }}
+                        @if($currentBusinessUnit->type === 'head_office')
+                            (Company-wide financial management)
+                        @endif
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Dashboard Header -->
 <div class="row mb-4">
     <div class="col-12">

@@ -6,20 +6,40 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
-use App\Models\Department;
+use App\Models\Product;
+use App\Models\BusinessUnit;
+use App\Helpers\BusinessUnitHelper;
 
 class ProductController extends Controller
 {
+    /**
+     * Apply business unit filtering to a query based on request parameters
+     */
+    private function applyBusinessUnitFilter($query, Request $request)
+    {
+        if ($request->has('business_unit_id') && $request->business_unit_id) {
+            // Verify user has access to the selected business unit
+            $accessibleBusinessUnitIds = BusinessUnitHelper::getAccessibleBusinessUnitIds();
+            if (BusinessUnitHelper::isSuperAdmin() || in_array($request->business_unit_id, $accessibleBusinessUnitIds)) {
+                return $query->where('business_unit_id', $request->business_unit_id);
+            }
+        }
+        // Apply default business unit filtering
+        return BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
+    }
     /**
      * Display a listing of products.
      */
     public function index(Request $request): View
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('view-products') && !auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to view products.');
         }
 
-        $query = Department::query();
+        $query = Product::query();
+
+        // Apply business unit filtering
+        $query = $this->applyBusinessUnitFilter($query, $request);
 
         // Filter by status
         if ($request->has('status')) {
@@ -35,26 +55,26 @@ class ProductController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('code', 'like', '%' . $request->search . '%')
-                  ->orWhere('head_of_department', 'like', '%' . $request->search . '%');
+                  ->orWhere('head_of_product', 'like', '%' . $request->search . '%');
             });
         }
 
-        $departments = $query->with(['contracts' => function($q) {
+        $products = $query->with(['contracts' => function($q) {
             $q->where('status', 'active');
-        }])->orderBy('name')->paginate(15);
+        }, 'businessUnit'])->orderBy('name')->paginate(15);
 
-        // Calculate YTD budget and contract values for each department
-        foreach ($departments as $department) {
+        // Calculate YTD budget and contract values for each product
+        foreach ($products as $product) {
             // Calculate YTD budget (pro-rated based on how much of the year has passed)
             $currentDate = now();
             $yearStart = $currentDate->copy()->startOfYear();
             $daysInYear = $yearStart->daysInYear;
             $daysPassed = $yearStart->diffInDays($currentDate) + 1;
 
-            $department->ytd_budget = ($department->budget_allocation * $daysPassed) / $daysInYear;
+            $product->ytd_budget = ($product->budget_allocation * $daysPassed) / $daysInYear;
 
-            // Calculate total contract allocations for this department
-            $contractValue = $department->contracts->sum(function($contract) {
+            // Calculate total contract allocations for this product
+            $contractValue = $product->contracts->sum(function($contract) {
                 $pivot = $contract->pivot;
                 if ($pivot->allocation_type === 'amount') {
                     return $pivot->allocation_amount;
@@ -63,41 +83,52 @@ class ProductController extends Controller
                 }
             });
 
-            $department->contract_value = $contractValue;
+            $product->contract_value = $contractValue;
 
             // Calculate achievement percentage (contracts / YTD budget)
-            $department->achievement_percentage = $department->ytd_budget > 0
-                ? ($contractValue / $department->ytd_budget) * 100
+            $product->achievement_percentage = $product->ytd_budget > 0
+                ? ($contractValue / $product->ytd_budget) * 100
                 : 0;
         }
 
-        // Calculate total budget for percentage calculations
-        $totalActiveBudget = Department::where('is_active', true)->sum('budget_allocation');
+        // Calculate total budget for percentage calculations (using same filtering as main query)
+        $totalBudgetQuery = Product::where('is_active', true);
+        $totalBudgetQuery = $this->applyBusinessUnitFilter($totalBudgetQuery, $request);
+        $totalActiveBudget = $totalBudgetQuery->sum('budget_allocation');
 
-        // Add budget percentage to each department
-        foreach ($departments as $department) {
-            $department->budget_percentage = $totalActiveBudget > 0 && $department->budget_allocation > 0
-                ? ($department->budget_allocation / $totalActiveBudget) * 100
+        // Add budget percentage to each product
+        foreach ($products as $product) {
+            $product->budget_percentage = $totalActiveBudget > 0 && $product->budget_allocation > 0
+                ? ($product->budget_allocation / $totalActiveBudget) * 100
                 : 0;
         }
 
-        // Calculate total contract value and YTD budget across all departments
+        // Calculate total contract value and YTD budget across all products
         $totalContractValue = 0;
         $totalYtdBudget = 0;
-        foreach ($departments as $department) {
-            $totalContractValue += $department->contract_value;
-            $totalYtdBudget += $department->ytd_budget;
+        foreach ($products as $product) {
+            $totalContractValue += $product->contract_value;
+            $totalYtdBudget += $product->ytd_budget;
         }
 
-        // Calculate statistics
+        // Calculate statistics (using same filtering as main query)
+        $activeProductsQuery = Product::where('is_active', true);
+        $activeProductsQuery = $this->applyBusinessUnitFilter($activeProductsQuery, $request);
+
+        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit($request);
+        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
+
         $statistics = [
             'total_contracts' => $totalContractValue,
-            'active_departments' => Department::where('is_active', true)->count(),
+            'active_products' => $activeProductsQuery->count(),
             'total_ytd_budget' => $totalYtdBudget,
             'total_budget' => $totalActiveBudget,
+            'current_business_unit' => $currentBusinessUnit,
+            'accessible_business_units' => $accessibleBusinessUnits,
+            'can_access_multiple_bus' => BusinessUnitHelper::canAccessMultipleBusinessUnits(),
         ];
 
-        return view('administration.products.index', compact('departments', 'statistics'));
+        return view('administration.products.index', compact('products', 'statistics', 'currentBusinessUnit', 'accessibleBusinessUnits'));
     }
 
     /**
@@ -105,11 +136,14 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to create products.');
         }
 
-        return view('administration.products.create');
+        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
+        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
+
+        return view('administration.products.create', compact('currentBusinessUnit', 'accessibleBusinessUnits'));
     }
 
     /**
@@ -117,34 +151,44 @@ class ProductController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to create products.');
         }
 
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'code' => 'required|string|max:10|unique:departments',
+                'code' => 'required|string|max:10|unique:products',
                 'description' => 'nullable|string',
-                'head_of_department' => 'nullable|string|max:255',
+                'head_of_product' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'phone' => 'nullable|string|max:20',
                 'budget_allocation' => 'nullable|numeric|min:0',
+                'business_unit_id' => 'nullable|exists:business_units,id',
             ]);
 
-            $department = Department::create([
+            // Determine business unit ID
+            $businessUnitId = $request->business_unit_id ?? BusinessUnitHelper::getCurrentBusinessUnitId();
+
+            // Verify user has access to the selected business unit
+            if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+                abort(403, 'Unauthorized to create products in this business unit.');
+            }
+
+            $product = Product::create([
                 'name' => $request->name,
                 'code' => strtoupper($request->code),
                 'description' => $request->description,
-                'head_of_department' => $request->head_of_department,
+                'head_of_product' => $request->head_of_product,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'budget_allocation' => $request->budget_allocation,
                 'is_active' => $request->has('is_active'),
+                'business_unit_id' => $businessUnitId,
             ]);
 
             return redirect()
-                ->route('administration.products.show', $department)
+                ->route('administration.products.show', $product)
                 ->with('success', 'Product created successfully.');
 
         } catch (\Exception $e) {
@@ -157,62 +201,98 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Department $department): View
+    public function show(Product $product): View
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('view-products') && !auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to view product details.');
         }
 
-        $department->load('contracts');
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to view this product.');
+        }
 
-        return view('administration.products.show', compact('department'));
+        $product->load(['contracts', 'businessUnit']);
+
+        return view('administration.products.show', compact('product'));
     }
 
     /**
      * Show the form for editing the specified product.
      */
-    public function edit(Department $department): View
+    public function edit(Product $product): View
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to edit products.');
         }
 
-        return view('administration.products.edit', compact('department'));
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to edit this product.');
+        }
+
+        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
+
+        return view('administration.products.edit', compact('product', 'accessibleBusinessUnits'));
     }
 
     /**
      * Update the specified product.
      */
-    public function update(Request $request, Department $department): RedirectResponse
+    public function update(Request $request, Product $product): RedirectResponse
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to edit products.');
+        }
+
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to edit this product.');
         }
 
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'code' => 'required|string|max:10|unique:departments,code,' . $department->id,
+                'code' => 'required|string|max:10|unique:products,code,' . $product->id,
                 'description' => 'nullable|string',
-                'head_of_department' => 'nullable|string|max:255',
+                'head_of_product' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'phone' => 'nullable|string|max:20',
                 'budget_allocation' => 'nullable|numeric|min:0',
+                'business_unit_id' => 'nullable|exists:business_units,id',
             ]);
 
-            $department->update([
+            // If business unit is being changed, verify access
+            if ($request->has('business_unit_id') && $request->business_unit_id != $product->business_unit_id) {
+                if (!BusinessUnitHelper::isSuperAdmin() &&
+                    !in_array($request->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+                    abort(403, 'Unauthorized to move product to this business unit.');
+                }
+            }
+
+            $updateData = [
                 'name' => $request->name,
                 'code' => strtoupper($request->code),
                 'description' => $request->description,
-                'head_of_department' => $request->head_of_department,
+                'head_of_product' => $request->head_of_product,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'budget_allocation' => $request->budget_allocation,
                 'is_active' => $request->has('is_active'),
-            ]);
+            ];
+
+            // Only update business unit if provided and user has access
+            if ($request->has('business_unit_id')) {
+                $updateData['business_unit_id'] = $request->business_unit_id;
+            }
+
+            $product->update($updateData);
 
             return redirect()
-                ->route('administration.products.show', $department)
+                ->route('administration.products.show', $product)
                 ->with('success', 'Product updated successfully.');
 
         } catch (\Exception $e) {
@@ -225,20 +305,26 @@ class ProductController extends Controller
     /**
      * Remove the specified product.
      */
-    public function destroy(Department $department): RedirectResponse
+    public function destroy(Product $product): RedirectResponse
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to delete products.');
         }
 
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to delete this product.');
+        }
+
         // Check if product has contracts
-        if ($department->contracts()->count() > 0) {
+        if ($product->contracts()->count() > 0) {
             return redirect()
                 ->back()
                 ->with('error', 'Cannot delete product that has assigned contracts.');
         }
 
-        $department->delete();
+        $product->delete();
 
         return redirect()
             ->route('administration.products.index')
@@ -248,15 +334,21 @@ class ProductController extends Controller
     /**
      * Toggle product status.
      */
-    public function toggleStatus(Department $department): RedirectResponse
+    public function toggleStatus(Product $product): RedirectResponse
     {
-        if (!auth()->user()->can('manage-departments')) {
+        if (!auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to modify products.');
         }
 
-        $department->update(['is_active' => !$department->is_active]);
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to modify this product.');
+        }
 
-        $status = $department->is_active ? 'activated' : 'deactivated';
+        $product->update(['is_active' => !$product->is_active]);
+
+        $status = $product->is_active ? 'activated' : 'deactivated';
 
         return redirect()
             ->back()

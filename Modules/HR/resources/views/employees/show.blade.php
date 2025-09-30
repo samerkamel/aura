@@ -109,7 +109,7 @@
               </div>
               <div class="col-sm-8">
                 @if($employee->base_salary)
-                  <span class="text-success fw-bold">${{ number_format($employee->base_salary, 2) }}</span>
+                  <span class="text-success fw-bold">EGP {{ number_format($employee->base_salary, 2) }}</span>
                 @else
                   <span class="text-muted">Not Set</span>
                 @endif

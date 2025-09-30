@@ -50,6 +50,14 @@ class ContractPayment extends Model
     }
 
     /**
+     * Get the invoice item that was created from this contract payment.
+     */
+    public function invoiceItem(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\Modules\Invoicing\Models\InvoiceItem::class);
+    }
+
+    /**
      * Scope to get only pending payments.
      */
     public function scopePending(Builder $query): Builder

@@ -98,7 +98,7 @@
             <div class="col-md-6 mb-3">
               <label for="purchase_price" class="form-label">Purchase Price</label>
               <div class="input-group">
-                <span class="input-group-text">$</span>
+                <span class="input-group-text">EGP</span>
                 <input type="number" class="form-control @error('purchase_price') is-invalid @enderror"
                        id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}"
                        step="0.01" min="0" placeholder="0.00">

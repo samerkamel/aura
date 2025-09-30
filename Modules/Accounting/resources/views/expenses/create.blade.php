@@ -3,6 +3,27 @@
 @section('title', 'Create Expense')
 
 @section('content')
+<!-- Business Unit Context Header -->
+@if(isset($currentBusinessUnit) && $currentBusinessUnit)
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <div class="d-flex align-items-center">
+                <div class="avatar avatar-sm me-3">
+                    <span class="avatar-initial rounded-circle bg-label-{{ $currentBusinessUnit->type === 'head_office' ? 'info' : 'primary' }}">
+                        <i class="ti {{ $currentBusinessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} ti-sm"></i>
+                    </span>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0">Creating Expense for {{ $currentBusinessUnit->name }}</h6>
+                    <small class="text-muted">This expense will be assigned to {{ $currentBusinessUnit->code }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -68,6 +89,29 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
+                                        <!-- Business Unit Selection (if user has access to multiple BUs) -->
+                                        @if(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() > 1)
+                                        <div class="col-12">
+                                            <label class="form-label" for="business_unit_id">Business Unit <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('business_unit_id') is-invalid @enderror"
+                                                    id="business_unit_id" name="business_unit_id" required>
+                                                <option value="">Select Business Unit</option>
+                                                @foreach($accessibleBusinessUnits as $businessUnit)
+                                                    <option value="{{ $businessUnit->id }}"
+                                                            {{ old('business_unit_id', $currentBusinessUnit?->id) == $businessUnit->id ? 'selected' : '' }}>
+                                                        {{ $businessUnit->name }} ({{ $businessUnit->code }})
+                                                        @if($businessUnit->type === 'head_office')
+                                                            - Head Office
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('business_unit_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        @endif
+
                                         <div class="col-12">
                                             <label for="name" class="form-label">Expense Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('name') is-invalid @enderror"
@@ -79,24 +123,35 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
-                                            <select class="form-select @error('category_id') is-invalid @enderror"
-                                                    id="category_id" name="category_id">
-                                                <option value="">Select a category</option>
-                                                @foreach($categories as $category)
-                                                    <option value="{{ $category->id }}"
-                                                            {{ old('category_id') == $category->id ? 'selected' : '' }}
-                                                            data-color="{{ $category->color }}">
-                                                        {{ $category->name }}
+                                            <label for="expense_type_category" class="form-label">Expense Type <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('expense_type_category') is-invalid @enderror"
+                                                    id="expense_type_category" name="expense_type_category">
+                                                <option value="">Select expense type first</option>
+                                                @foreach($expenseTypes as $expenseType)
+                                                    <option value="{{ $expenseType->id }}"
+                                                            {{ old('expense_type_category') == $expenseType->id ? 'selected' : '' }}
+                                                            data-color="{{ $expenseType->color }}">
+                                                        {{ $expenseType->code }} - {{ $expenseType->name }}
                                                     </option>
                                                 @endforeach
+                                            </select>
+                                            @error('expense_type_category')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('category_id') is-invalid @enderror"
+                                                    id="category_id" name="category_id" disabled>
+                                                <option value="">Select expense type first</option>
                                             </select>
                                             @error('category_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <label for="subcategory_id" class="form-label">Subcategory <small class="text-muted">(Optional)</small></label>
                                             <select class="form-select @error('subcategory_id') is-invalid @enderror"
                                                     id="subcategory_id" name="subcategory_id" disabled>
@@ -367,13 +422,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const recurringEndDate = document.getElementById('recurringEndDate');
     const categorySelect = document.getElementById('category_id');
     const subcategorySelect = document.getElementById('subcategory_id');
+    const expenseTypeSelect = document.getElementById('expense_type_category');
     const markAsPaidCheckbox = document.getElementById('markAsPaid');
     const paymentFields = document.getElementById('paymentFields');
     const amountField = document.getElementById('amount');
     const paidAmountField = document.getElementById('paid_amount');
 
-    // Subcategory data
-    const subcategories = @json($categories->mapWithKeys(function($category) {
+    // Category and subcategory data
+    const categoriesByType = @json($expenseTypes->mapWithKeys(function($type) {
+        return [$type->id => $type->activeCategories->map(function($category) {
+            return ['id' => $category->id, 'name' => $category->name, 'color' => $category->color];
+        })];
+    }));
+
+    const subcategoriesByCategory = @json($categories->mapWithKeys(function($category) {
         return [$category->id => $category->subcategories->map(function($sub) {
             return ['id' => $sub->id, 'name' => $sub->name];
         })];
@@ -403,14 +465,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Handle expense type change to populate categories
+    function updateCategoriesByType() {
+        const expenseTypeId = expenseTypeSelect.value;
+        categorySelect.innerHTML = '<option value="">Select a category</option>';
+        subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
+
+        if (expenseTypeId && categoriesByType[expenseTypeId]) {
+            categorySelect.disabled = false;
+            subcategorySelect.disabled = true;
+
+            categoriesByType[expenseTypeId].forEach(function(category) {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                option.setAttribute('data-color', category.color);
+                categorySelect.appendChild(option);
+            });
+        } else {
+            categorySelect.disabled = true;
+            subcategorySelect.disabled = true;
+        }
+    }
+
     // Handle category change to populate subcategories
     function updateSubcategories() {
         const categoryId = categorySelect.value;
         subcategorySelect.innerHTML = '<option value="">Select a subcategory</option>';
 
-        if (categoryId && subcategories[categoryId]) {
+        if (categoryId && subcategoriesByCategory[categoryId]) {
             subcategorySelect.disabled = false;
-            subcategories[categoryId].forEach(function(subcategory) {
+            subcategoriesByCategory[categoryId].forEach(function(subcategory) {
                 const option = document.createElement('option');
                 option.value = subcategory.id;
                 option.textContent = subcategory.name;
@@ -444,12 +529,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     expenseTypeRecurring.addEventListener('change', toggleExpenseType);
     expenseTypeOneTime.addEventListener('change', toggleExpenseType);
+    expenseTypeSelect.addEventListener('change', updateCategoriesByType);
     categorySelect.addEventListener('change', updateSubcategories);
     markAsPaidCheckbox.addEventListener('change', togglePaymentFields);
     amountField.addEventListener('input', syncPaidAmount);
 
     // Initialize
     toggleExpenseType();
+    updateCategoriesByType();
     updateSubcategories();
     togglePaymentFields();
 

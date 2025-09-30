@@ -17,6 +17,11 @@
           "url": "hr/employees/create",
           "name": "Add Employee",
           "slug": "hr-employees-create"
+        },
+        {
+          "url": "hr/employees-import",
+          "name": "Import Employees",
+          "slug": "hr-employees-import"
         }
       ]
     },
@@ -166,6 +171,21 @@
           "slug": "accounting-income-index"
         },
         {
+          "url": "accounting/income-sheet",
+          "name": "Income Sheet",
+          "slug": "accounting-income-sheet-index"
+        },
+        {
+          "url": "accounting/expenses/categories/manage",
+          "name": "Expense Categories",
+          "slug": "accounting-expenses-categories"
+        },
+        {
+          "url": "accounting/expense-types",
+          "name": "Expense Types",
+          "slug": "accounting-expense-types-index"
+        },
+        {
           "url": "accounting/reports",
           "name": "Reports",
           "slug": "accounting-reports-index"
@@ -174,6 +194,55 @@
           "url": "administration/products",
           "name": "Products",
           "slug": "administration.products.index"
+        }
+      ]
+    },
+    {
+      "name": "Invoice Management",
+      "icon": "menu-icon tf-icons ti ti-file-invoice",
+      "slug": "invoice-management",
+      "submenu": [
+        {
+          "url": "invoicing/invoices",
+          "name": "Customer Invoices",
+          "slug": "invoicing-invoices-index"
+        },
+        {
+          "url": "invoicing/invoices/create",
+          "name": "Create Invoice",
+          "slug": "invoicing-invoices-create"
+        },
+        {
+          "url": "invoicing/internal-transactions",
+          "name": "Internal Transactions",
+          "slug": "invoicing-internal-transactions-index"
+        },
+        {
+          "url": "invoicing/internal-transactions/create",
+          "name": "Create Internal Transaction",
+          "slug": "invoicing-internal-transactions-create"
+        },
+        {
+          "url": "invoicing/payments",
+          "name": "Payment Records",
+          "slug": "invoicing-payments-index"
+        }
+      ]
+    },
+    {
+      "name": "Invoice Settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
+      "slug": "invoice-settings",
+      "submenu": [
+        {
+          "url": "invoicing/admin/sequences",
+          "name": "Invoice Sequences",
+          "slug": "invoicing-sequences-index"
+        },
+        {
+          "url": "invoicing/admin/internal-sequences",
+          "name": "Internal Sequences",
+          "slug": "invoicing-internal-sequences-index"
         }
       ]
     },
@@ -213,6 +282,24 @@
           "slug": "administration-permissions-index"
         }
       ]
+    },
+    {
+      "name": "Sectors",
+      "icon": "menu-icon tf-icons ti ti-world",
+      "slug": "administration-sectors-index",
+      "url": "administration/sectors"
+    },
+    {
+      "name": "Business Units",
+      "icon": "menu-icon tf-icons ti ti-building",
+      "slug": "administration-business-units-index",
+      "url": "administration/business-units"
+    },
+    {
+      "name": "Customers",
+      "icon": "menu-icon tf-icons ti ti-users",
+      "slug": "administration-customers-index",
+      "url": "administration/customers"
     }
   ]
 }

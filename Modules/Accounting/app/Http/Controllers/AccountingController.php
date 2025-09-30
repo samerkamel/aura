@@ -11,6 +11,7 @@ use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\Contract;
 use Modules\Accounting\Models\ContractPayment;
 use Modules\Accounting\Models\ExpenseCategory;
+use App\Helpers\BusinessUnitHelper;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -50,20 +51,38 @@ class AccountingController extends Controller
             ->generateProjections($currentMonth, $endMonth, 'monthly');
 
         // Calculate dashboard metrics - using contract payments instead of income schedules
-        $monthlyIncome = ContractPayment::where('status', 'pending')
+        $contractPaymentsQuery = ContractPayment::where('status', 'pending')
             ->where('due_date', '>=', now()->startOfMonth())
-            ->where('due_date', '<=', now()->endOfMonth())
-            ->sum('amount');
-        $monthlyExpenses = ExpenseSchedule::active()->get()->sum('monthly_equivalent_amount');
+            ->where('due_date', '<=', now()->endOfMonth());
+
+        // Apply BU filtering through contract relationship
+        if (!BusinessUnitHelper::isSuperAdmin()) {
+            $accessibleBuIds = BusinessUnitHelper::getAccessibleBusinessUnitIds();
+            $contractPaymentsQuery->whereHas('contract', function($q) use ($accessibleBuIds) {
+                $q->whereIn('business_unit_id', $accessibleBuIds);
+            });
+        }
+
+        $monthlyIncome = $contractPaymentsQuery->sum('amount');
+
+        $expenseQuery = ExpenseSchedule::active();
+        $expenseQuery = BusinessUnitHelper::filterQueryByBusinessUnit($expenseQuery);
+        $monthlyExpenses = $expenseQuery->get()->sum('monthly_equivalent_amount');
+
         $netCashFlow = $monthlyIncome - $monthlyExpenses;
-        $activeContracts = Contract::active()->count();
-        $totalContractValue = Contract::active()->sum('total_amount');
+
+        $activeContractsQuery = Contract::active();
+        $activeContractsQuery = BusinessUnitHelper::filterQueryByBusinessUnit($activeContractsQuery);
+        $activeContracts = $activeContractsQuery->count();
+        $totalContractValue = $activeContractsQuery->sum('total_amount');
 
         // Get upcoming payments (next 30 days)
         $upcomingPayments = collect();
 
         // Add expense payments
-        ExpenseSchedule::active()->with('category')->get()->each(function($schedule) use ($upcomingPayments) {
+        $expenseSchedulesQuery = ExpenseSchedule::active()->with('category');
+        $expenseSchedulesQuery = BusinessUnitHelper::filterQueryByBusinessUnit($expenseSchedulesQuery);
+        $expenseSchedulesQuery->get()->each(function($schedule) use ($upcomingPayments) {
             if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addDays(30)) {
                 $upcomingPayments->push([
                     'type' => 'expense',
@@ -77,11 +96,20 @@ class AccountingController extends Controller
         });
 
         // Add income payments from contract payments
-        ContractPayment::with('contract')
+        $incomePaymentsQuery = ContractPayment::with('contract')
             ->where('status', 'pending')
             ->where('due_date', '>=', now())
-            ->where('due_date', '<=', now()->addDays(30))
-            ->get()
+            ->where('due_date', '<=', now()->addDays(30));
+
+        // Apply BU filtering through contract relationship
+        if (!BusinessUnitHelper::isSuperAdmin()) {
+            $accessibleBuIds = BusinessUnitHelper::getAccessibleBusinessUnitIds();
+            $incomePaymentsQuery->whereHas('contract', function($q) use ($accessibleBuIds) {
+                $q->whereIn('business_unit_id', $accessibleBuIds);
+            });
+        }
+
+        $incomePaymentsQuery->get()
             ->each(function($payment) use ($upcomingPayments) {
                 $upcomingPayments->push([
                     'type' => 'income',
@@ -122,7 +150,9 @@ class AccountingController extends Controller
         ];
 
         // Recent contracts
-        $recentContracts = Contract::active()->latest()->take(5)->get();
+        $recentContractsQuery = Contract::active()->latest()->take(5);
+        $recentContractsQuery = BusinessUnitHelper::filterQueryByBusinessUnit($recentContractsQuery);
+        $recentContracts = $recentContractsQuery->get();
 
         // Identify deficit periods
         $deficitPeriods = $projections->where('net_flow', '<', 0);
@@ -131,6 +161,11 @@ class AccountingController extends Controller
         $selectedPeriod = 'monthly';
         $incomeGrowth = 5.2;
         $expenseGrowth = -2.1;
+
+        // Business Unit context
+        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
+        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
+        $canAccessMultipleBus = BusinessUnitHelper::canAccessMultipleBusinessUnits();
 
         return view('accounting::dashboard.index', compact(
             'monthlyIncome',
@@ -145,7 +180,10 @@ class AccountingController extends Controller
             'deficitPeriods',
             'selectedPeriod',
             'incomeGrowth',
-            'expenseGrowth'
+            'expenseGrowth',
+            'currentBusinessUnit',
+            'accessibleBusinessUnits',
+            'canAccessMultipleBus'
         ));
     }
 
@@ -223,10 +261,14 @@ class AccountingController extends Controller
             'periods' => $projectionData->pluck('period')->toArray(),
         ];
 
-        // Breakdowns
+        // Breakdowns - apply BU filtering
+        $contractBreakdownQuery = Contract::active();
+        $contractBreakdownQuery = BusinessUnitHelper::filterQueryByBusinessUnit($contractBreakdownQuery);
+        $contractsForBreakdown = $contractBreakdownQuery->get();
+
         $incomeBreakdown = [
-            'labels' => Contract::active()->pluck('client_name')->toArray(),
-            'amounts' => Contract::active()->pluck('monthly_income')->toArray(),
+            'labels' => $contractsForBreakdown->pluck('client_name')->toArray(),
+            'amounts' => $contractsForBreakdown->pluck('total_amount')->toArray(), // Use total_amount as proxy
         ];
 
         $expenseBreakdown = [
@@ -239,7 +281,9 @@ class AccountingController extends Controller
         $upcomingPayments = collect();
 
         // Add expense payments
-        ExpenseSchedule::active()->with('category')->get()->each(function($schedule) use ($upcomingPayments) {
+        $expenseSchedulesReportQuery = ExpenseSchedule::active()->with('category');
+        $expenseSchedulesReportQuery = BusinessUnitHelper::filterQueryByBusinessUnit($expenseSchedulesReportQuery);
+        $expenseSchedulesReportQuery->get()->each(function($schedule) use ($upcomingPayments) {
             if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addMonths(3)) {
                 $upcomingPayments->push([
                     'type' => 'expense',
@@ -253,18 +297,29 @@ class AccountingController extends Controller
             }
         });
 
-        // Add income payments
-        IncomeSchedule::active()->with('contract')->get()->each(function($schedule) use ($upcomingPayments) {
-            if ($schedule->next_payment_date && $schedule->next_payment_date <= now()->addMonths(3)) {
-                $upcomingPayments->push([
-                    'type' => 'income',
-                    'name' => $schedule->name,
-                    'description' => $schedule->description,
-                    'amount' => $schedule->amount,
-                    'date' => $schedule->next_payment_date,
-                    'source' => $schedule->contract->client_name,
-                ]);
-            }
+        // Add income payments from contract payments
+        $contractPaymentsReportQuery = ContractPayment::with('contract')
+            ->where('status', 'pending')
+            ->where('due_date', '>=', now())
+            ->where('due_date', '<=', now()->addMonths(3));
+
+        // Apply BU filtering through contract relationship
+        if (!BusinessUnitHelper::isSuperAdmin()) {
+            $accessibleBuIds = BusinessUnitHelper::getAccessibleBusinessUnitIds();
+            $contractPaymentsReportQuery->whereHas('contract', function($q) use ($accessibleBuIds) {
+                $q->whereIn('business_unit_id', $accessibleBuIds);
+            });
+        }
+
+        $contractPaymentsReportQuery->get()->each(function($payment) use ($upcomingPayments) {
+            $upcomingPayments->push([
+                'type' => 'income',
+                'name' => $payment->name,
+                'description' => $payment->description ?? '',
+                'amount' => $payment->amount,
+                'date' => $payment->due_date,
+                'source' => $payment->contract->client_name,
+            ]);
         });
 
         $upcomingPayments = $upcomingPayments->sortBy('date');

@@ -12,12 +12,12 @@
                     <li class="breadcrumb-item">
                         <a href="{{ route('administration.products.index') }}">Product Management</a>
                     </li>
-                    <li class="breadcrumb-item active">{{ $department->name }}</li>
+                    <li class="breadcrumb-item active">{{ $product->name }}</li>
                 </ol>
             </nav>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('administration.products.edit', $department) }}" class="btn btn-primary">
+            <a href="{{ route('administration.products.edit', $product) }}" class="btn btn-primary">
                 <i class="ti ti-edit me-2"></i>Edit Product
             </a>
             <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
@@ -32,75 +32,88 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <div class="mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 12px; background-color: {{ '#' . substr(md5($department->code), 0, 6) }}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">
-                            {{ $department->code }}
+                        <div class="mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 12px; background-color: {{ '#' . substr(md5($product->code), 0, 6) }}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">
+                            {{ $product->code }}
                         </div>
-                        <h4 class="mb-1">{{ $department->name }}</h4>
-                        <span class="badge {{ $department->is_active ? 'bg-label-success' : 'bg-label-danger' }}">
-                            {{ $department->is_active ? 'Active' : 'Inactive' }}
+                        <h4 class="mb-1">{{ $product->name }}</h4>
+                        <span class="badge {{ $product->is_active ? 'bg-label-success' : 'bg-label-danger' }}">
+                            {{ $product->is_active ? 'Active' : 'Inactive' }}
                         </span>
                     </div>
 
                     <div class="info-container">
                         <ul class="list-unstyled">
+                            @if($product->businessUnit)
+                            <li class="mb-3">
+                                <span class="fw-medium me-2">Business Unit:</span>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-xs me-2">
+                                        <span class="avatar-initial rounded-circle bg-label-{{ $product->businessUnit->type === 'head_office' ? 'info' : 'primary' }}">
+                                            <i class="ti {{ $product->businessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} ti-xs"></i>
+                                        </span>
+                                    </div>
+                                    <span>{{ $product->businessUnit->name }}</span>
+                                </div>
+                            </li>
+                            @endif
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Product Code:</span>
-                                <span>{{ $department->code }}</span>
+                                <span>{{ $product->code }}</span>
                             </li>
-                            @if($department->description)
+                            @if($product->description)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Description:</span>
-                                <span>{{ $department->description }}</span>
+                                <span>{{ $product->description }}</span>
                             </li>
                             @endif
-                            @if($department->head_of_product)
+                            @if($product->head_of_product)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Head of Product:</span>
-                                <span>{{ $department->head_of_product }}</span>
+                                <span>{{ $product->head_of_product }}</span>
                             </li>
                             @endif
-                            @if($department->email)
+                            @if($product->email)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Email:</span>
-                                <span>{{ $department->email }}</span>
+                                <span>{{ $product->email }}</span>
                             </li>
                             @endif
-                            @if($department->phone)
+                            @if($product->phone)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Phone:</span>
-                                <span>{{ $department->phone }}</span>
+                                <span>{{ $product->phone }}</span>
                             </li>
                             @endif
-                            @if($department->budget_allocation)
+                            @if($product->budget_allocation)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Budget Allocation:</span>
-                                <span>{{ number_format($department->budget_allocation, 2) }} EGP</span>
+                                <span>{{ number_format($product->budget_allocation, 2) }} EGP</span>
                             </li>
                             @endif
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Created:</span>
-                                <span>{{ $department->created_at->format('M d, Y g:i A') }}</span>
+                                <span>{{ $product->created_at->format('M d, Y g:i A') }}</span>
                             </li>
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Last Updated:</span>
-                                <span>{{ $department->updated_at->format('M d, Y g:i A') }}</span>
+                                <span>{{ $product->updated_at->format('M d, Y g:i A') }}</span>
                             </li>
                         </ul>
 
                         <!-- Quick Actions -->
                         <div class="d-grid gap-2 mt-4">
-                            <form method="POST" action="{{ route('administration.products.toggle-status', $department) }}">
+                            <form method="POST" action="{{ route('administration.products.toggle-status', $product) }}">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit"
-                                        class="btn {{ $department->is_active ? 'btn-warning' : 'btn-success' }} w-100"
-                                        onclick="return confirm('Are you sure you want to {{ $department->is_active ? 'deactivate' : 'activate' }} this product?')">
-                                    <i class="ti ti-{{ $department->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
-                                    {{ $department->is_active ? 'Deactivate Product' : 'Activate Product' }}
+                                        class="btn {{ $product->is_active ? 'btn-warning' : 'btn-success' }} w-100"
+                                        onclick="return confirm('Are you sure you want to {{ $product->is_active ? 'deactivate' : 'activate' }} this product?')">
+                                    <i class="ti ti-{{ $product->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
+                                    {{ $product->is_active ? 'Deactivate Product' : 'Activate Product' }}
                                 </button>
                             </form>
-                            @if($department->contracts->count() === 0)
-                            <form method="POST" action="{{ route('administration.products.destroy', $department) }}">
+                            @if($product->contracts->count() === 0)
+                            <form method="POST" action="{{ route('administration.products.destroy', $product) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
@@ -133,7 +146,7 @@
                                     <i class="ti ti-file-text"></i>
                                 </span>
                             </div>
-                            <h5 class="mb-1">{{ $department->contracts->count() }}</h5>
+                            <h5 class="mb-1">{{ $product->contracts->count() }}</h5>
                             <small class="text-muted">Assigned Contracts</small>
                         </div>
                     </div>
@@ -143,10 +156,10 @@
                         <div class="card-body text-center">
                             <div class="avatar mx-auto mb-2">
                                 <span class="avatar-initial rounded bg-label-success">
-                                    <i class="ti ti-currency-dollar"></i>
+                                    <i class="ti ti-currency"></i>
                                 </span>
                             </div>
-                            <h5 class="mb-1">{{ number_format($department->total_contract_allocations, 0) }} EGP</h5>
+                            <h5 class="mb-1">{{ number_format($product->total_contract_allocations, 0) }} EGP</h5>
                             <small class="text-muted">Total Allocated</small>
                         </div>
                     </div>
@@ -159,8 +172,8 @@
                                     <i class="ti ti-percentage"></i>
                                 </span>
                             </div>
-                            @if($department->budget_allocation > 0)
-                                <h5 class="mb-1">{{ number_format(($department->total_contract_allocations / $department->budget_allocation) * 100, 1) }}%</h5>
+                            @if($product->budget_allocation > 0)
+                                <h5 class="mb-1">{{ number_format(($product->total_contract_allocations / $product->budget_allocation) * 100, 1) }}%</h5>
                                 <small class="text-muted">Budget Usage</small>
                             @else
                                 <h5 class="mb-1">-</h5>
@@ -177,10 +190,10 @@
                     <h5 class="mb-0">
                         <i class="ti ti-file-text me-2"></i>Assigned Contracts
                     </h5>
-                    <span class="badge bg-label-primary">{{ $department->contracts->count() }} {{ $department->contracts->count() === 1 ? 'Contract' : 'Contracts' }}</span>
+                    <span class="badge bg-label-primary">{{ $product->contracts->count() }} {{ $product->contracts->count() === 1 ? 'Contract' : 'Contracts' }}</span>
                 </div>
                 <div class="card-body">
-                    @if($department->contracts->count() > 0)
+                    @if($product->contracts->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
@@ -194,7 +207,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($department->contracts as $contract)
+                                    @foreach($product->contracts as $contract)
                                     <tr>
                                         <td>
                                             <div>

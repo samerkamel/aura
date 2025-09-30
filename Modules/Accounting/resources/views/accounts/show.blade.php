@@ -88,47 +88,54 @@
                         <!-- Recent Transactions -->
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="card-title mb-0">Recent Expense Payments</h6>
+                                <h6 class="card-title mb-0">Recent Transactions</h6>
                             </div>
-                            @if($account->expenseSchedules->count() > 0)
+                            @if($transactions->count() > 0)
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th>Expense</th>
-                                                <th>Category</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                                <th>Reference</th>
                                                 <th>Amount</th>
-                                                <th>Payment Date</th>
+                                                <th>Date</th>
                                                 <th>Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($account->expenseSchedules as $expense)
+                                            @foreach($transactions as $transaction)
                                                 <tr>
                                                     <td>
-                                                        <div>
-                                                            <strong>{{ $expense->name }}</strong>
-                                                            @if($expense->description)
-                                                                <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($expense->description, 40) }}</small>
-                                                            @endif
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <small class="text-muted">{{ $expense->full_category_name }}</small>
-                                                    </td>
-                                                    <td>
-                                                        <strong class="text-danger">-{{ number_format($expense->paid_amount ?? $expense->amount, 2) }} {{ $account->currency }}</strong>
-                                                    </td>
-                                                    <td>
-                                                        @if($expense->paid_date)
-                                                            {{ $expense->paid_date->format('M d, Y') }}
+                                                        @if($transaction->type === 'expense')
+                                                            <span class="badge bg-label-danger">
+                                                                <i class="ti ti-arrow-down me-1"></i>Expense
+                                                            </span>
                                                         @else
-                                                            <span class="text-muted">Not paid</span>
+                                                            <span class="badge bg-label-success">
+                                                                <i class="ti ti-arrow-up me-1"></i>Income
+                                                            </span>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <span class="badge {{ $expense->payment_status_badge_class }}">
-                                                            {{ $expense->payment_status_display }}
+                                                        <div>
+                                                            <strong>{{ $transaction->description }}</strong>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <small class="text-muted">{{ $transaction->reference }}</small>
+                                                    </td>
+                                                    <td>
+                                                        <strong class="{{ $transaction->amount < 0 ? 'text-danger' : 'text-success' }}">
+                                                            {{ $transaction->amount < 0 ? '' : '+' }}{{ number_format($transaction->amount, 2) }} {{ $account->currency }}
+                                                        </strong>
+                                                    </td>
+                                                    <td>
+                                                        {{ $transaction->date->format('M d, Y') }}
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-label-success">
+                                                            {{ $transaction->status }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -139,8 +146,8 @@
                             @else
                                 <div class="card-body text-center py-5">
                                     <i class="ti ti-receipt text-muted mb-3" style="font-size: 3rem;"></i>
-                                    <h6 class="text-muted">No expense payments</h6>
-                                    <p class="text-muted mb-0">No expenses have been paid from this account yet.</p>
+                                    <h6 class="text-muted">No transactions</h6>
+                                    <p class="text-muted mb-0">No transactions have been recorded for this account yet.</p>
                                 </div>
                             @endif
                         </div>
@@ -196,14 +203,26 @@
                             <div class="card-body">
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
+                                        <span>Total Income Received</span>
+                                        <strong class="text-success">+{{ number_format($statistics['total_income_received'], 2) }} {{ $account->currency }}</strong>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <span>Total Expenses Paid</span>
-                                        <strong class="text-danger">{{ number_format($statistics['total_expenses_paid'], 2) }} {{ $account->currency }}</strong>
+                                        <strong class="text-danger">-{{ number_format($statistics['total_expenses_paid'], 2) }} {{ $account->currency }}</strong>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span>Pending Expenses</span>
                                         <strong>{{ $statistics['pending_expenses'] }}</strong>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Total Transactions</span>
+                                        <strong>{{ $statistics['transaction_count'] }}</strong>
                                     </div>
                                 </div>
                                 <div class="mb-0">

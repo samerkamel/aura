@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Department extends Model
 {
@@ -19,6 +20,7 @@ class Department extends Model
         'phone',
         'budget_allocation',
         'is_active',
+        'business_unit_id',
     ];
 
     protected $casts = [
@@ -27,7 +29,15 @@ class Department extends Model
     ];
 
     /**
-     * Get the contracts that belong to this department.
+     * Get the business unit this product belongs to.
+     */
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(BusinessUnit::class);
+    }
+
+    /**
+     * Get the contracts that belong to this product.
      */
     public function contracts(): BelongsToMany
     {
@@ -42,6 +52,14 @@ class Department extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope to filter by business unit.
+     */
+    public function scopeForBusinessUnit($query, $businessUnitId)
+    {
+        return $query->where('business_unit_id', $businessUnitId);
     }
 
     /**

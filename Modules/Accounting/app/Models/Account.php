@@ -52,6 +52,14 @@ class Account extends Model
     }
 
     /**
+     * Get invoice payments received by this account.
+     */
+    public function invoicePayments(): HasMany
+    {
+        return $this->hasMany(\Modules\Invoicing\Models\InvoicePayment::class);
+    }
+
+    /**
      * Scope to get only active accounts.
      */
     public function scopeActive(Builder $query): Builder

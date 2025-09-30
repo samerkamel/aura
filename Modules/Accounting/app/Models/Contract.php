@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
@@ -29,6 +30,7 @@ class Contract extends Model
      */
     protected $fillable = [
         'client_name',
+        'customer_id',
         'contract_number',
         'description',
         'total_amount',
@@ -38,6 +40,7 @@ class Contract extends Model
         'is_active',
         'contact_info',
         'notes',
+        'business_unit_id',
     ];
 
     /**
@@ -83,13 +86,38 @@ class Contract extends Model
     }
 
     /**
-     * Get the departments that this contract is allocated to.
+     * Get the business unit this contract belongs to.
+     */
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\BusinessUnit::class);
+    }
+
+    /**
+     * Get the customer this contract belongs to.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Customer::class);
+    }
+
+    /**
+     * Get the products that this contract is allocated to.
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Product::class, 'contract_product', 'contract_id', 'product_id')
+                    ->withPivot(['allocation_type', 'allocation_percentage', 'allocation_amount', 'notes'])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Legacy method for backwards compatibility - redirects to products.
+     * @deprecated Use products() instead
      */
     public function departments(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Department::class, 'contract_department', 'contract_id', 'department_id')
-                    ->withPivot(['allocation_type', 'allocation_percentage', 'allocation_amount', 'notes'])
-                    ->withTimestamps();
+        return $this->products();
     }
 
     /**
@@ -107,6 +135,14 @@ class Contract extends Model
     public function scopeWithStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);
+    }
+
+    /**
+     * Scope to filter by business unit.
+     */
+    public function scopeForBusinessUnit(Builder $query, $businessUnitId): Builder
+    {
+        return $query->where('business_unit_id', $businessUnitId);
     }
 
 

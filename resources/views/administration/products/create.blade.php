@@ -4,6 +4,23 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Business Unit Context Header -->
+    @if($currentBusinessUnit)
+    <div class="alert alert-info mb-4">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded-circle bg-label-{{ $currentBusinessUnit->type === 'head_office' ? 'info' : 'primary' }}">
+                    <i class="ti {{ $currentBusinessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} ti-sm"></i>
+                </span>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-0">Creating Product for {{ $currentBusinessUnit->name }}</h6>
+                <small class="text-muted">This product will be assigned to {{ $currentBusinessUnit->code }}</small>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold py-3 mb-0">Create Product</h4>
@@ -42,6 +59,29 @@
                         @csrf
 
                         <div class="row g-3">
+                            <!-- Business Unit Selection (if user has access to multiple BUs) -->
+                            @if(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() > 1)
+                            <div class="col-12">
+                                <label class="form-label" for="business_unit_id">Business Unit <span class="text-danger">*</span></label>
+                                <select class="form-select @error('business_unit_id') is-invalid @enderror"
+                                        id="business_unit_id" name="business_unit_id" required>
+                                    <option value="">Select Business Unit</option>
+                                    @foreach($accessibleBusinessUnits as $businessUnit)
+                                        <option value="{{ $businessUnit->id }}"
+                                                {{ old('business_unit_id', $currentBusinessUnit?->id) == $businessUnit->id ? 'selected' : '' }}>
+                                            {{ $businessUnit->name }} ({{ $businessUnit->code }})
+                                            @if($businessUnit->type === 'head_office')
+                                                - Head Office
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('business_unit_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            @endif
+
                             <!-- Name -->
                             <div class="col-md-6">
                                 <label class="form-label" for="name">Product Name <span class="text-danger">*</span></label>

@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Accounting\Http\Controllers\AccountingController;
 use Modules\Accounting\Http\Controllers\ExpenseController;
+use Modules\Accounting\Http\Controllers\ExpenseTypeController;
 use Modules\Accounting\Http\Controllers\IncomeController;
+use Modules\Accounting\Http\Controllers\IncomeSheetController;
 use Modules\Accounting\Http\Controllers\AccountController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'business_unit_context'])->group(function () {
 
     // Main Accounting Routes
     Route::prefix('accounting')->name('accounting.')->group(function () {
@@ -21,6 +23,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/paid', [ExpenseController::class, 'paidExpenses'])->name('paid');
             Route::get('/create', [ExpenseController::class, 'create'])->name('create');
             Route::post('/', [ExpenseController::class, 'store'])->name('store');
+
+            // CSV Import routes (must come before dynamic routes)
+            Route::get('/import', [ExpenseController::class, 'importForm'])->name('import');
+            Route::post('/import', [ExpenseController::class, 'import'])->name('import.process');
+            Route::get('/import/sample', [ExpenseController::class, 'downloadSample'])->name('import.sample');
+
+            // Category management
+            Route::get('/categories/manage', [ExpenseController::class, 'categories'])->name('categories');
+            Route::post('/categories', [ExpenseController::class, 'storeCategory'])->name('categories.store');
+            Route::put('/categories/{category}', [ExpenseController::class, 'updateCategory'])->name('categories.update');
+            Route::delete('/categories/{category}', [ExpenseController::class, 'destroyCategory'])->name('categories.destroy');
+            Route::patch('/categories/{category}/toggle-status', [ExpenseController::class, 'toggleCategoryStatus'])->name('categories.toggle-status');
+
+            // Category CSV Import routes
+            Route::get('/categories/import', [ExpenseController::class, 'importCategoriesForm'])->name('categories.import');
+            Route::post('/categories/import', [ExpenseController::class, 'importCategories'])->name('categories.import.process');
+            Route::get('/categories/import/sample', [ExpenseController::class, 'downloadCategoriesSample'])->name('categories.import.sample');
+
+            // Dynamic expense routes (must come after specific routes)
             Route::get('/{expenseSchedule}', [ExpenseController::class, 'show'])->name('show');
             Route::get('/{expenseSchedule}/edit', [ExpenseController::class, 'edit'])->name('edit');
             Route::put('/{expenseSchedule}', [ExpenseController::class, 'update'])->name('update');
@@ -29,13 +50,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Additional expense actions
             Route::patch('/{expenseSchedule}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('toggle-status');
             Route::post('/bulk-action', [ExpenseController::class, 'bulkAction'])->name('bulk-action');
+        });
 
-            // Category management
-            Route::get('/categories/manage', [ExpenseController::class, 'categories'])->name('categories');
-            Route::post('/categories', [ExpenseController::class, 'storeCategory'])->name('categories.store');
-            Route::put('/categories/{category}', [ExpenseController::class, 'updateCategory'])->name('categories.update');
-            Route::delete('/categories/{category}', [ExpenseController::class, 'destroyCategory'])->name('categories.destroy');
-            Route::patch('/categories/{category}/toggle-status', [ExpenseController::class, 'toggleCategoryStatus'])->name('categories.toggle-status');
+        // Expense Type Management Routes
+        Route::prefix('expense-types')->name('expense-types.')->group(function () {
+            Route::get('/', [ExpenseTypeController::class, 'index'])->name('index');
+            Route::post('/', [ExpenseTypeController::class, 'store'])->name('store');
+            Route::put('/{expenseType}', [ExpenseTypeController::class, 'update'])->name('update');
+            Route::delete('/{expenseType}', [ExpenseTypeController::class, 'destroy'])->name('destroy');
+            Route::patch('/{expenseType}/toggle-status', [ExpenseTypeController::class, 'toggleStatus'])->name('toggle-status');
+            Route::post('/update-sort-order', [ExpenseTypeController::class, 'updateSortOrder'])->name('update-sort-order');
+        });
+
+        // Income Sheet Routes
+        Route::prefix('income-sheet')->name('income-sheet.')->group(function () {
+            Route::get('/', [IncomeSheetController::class, 'index'])->name('index');
+            Route::get('/export', [IncomeSheetController::class, 'export'])->name('export');
         });
 
         // Account Management Routes
@@ -71,9 +101,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/{contract}/recurring-payments', [IncomeController::class, 'generateRecurringPayments'])->name('recurring-payments.generate');
                 Route::patch('/{contract}/payments/{payment}/status', [IncomeController::class, 'updatePaymentStatus'])->name('payments.update-status');
                 Route::delete('/{contract}/payments/{payment}', [IncomeController::class, 'deletePayment'])->name('payments.destroy');
+
+                // CSV Import routes for contracts
+                Route::get('/import', [IncomeController::class, 'importForm'])->name('import');
+                Route::post('/import', [IncomeController::class, 'import'])->name('import.process');
+                Route::get('/import/sample', [IncomeController::class, 'downloadSample'])->name('import.sample');
+
+                // API routes for contract creation
+                Route::get('/api/products-by-business-unit', [IncomeController::class, 'getProductsByBusinessUnit'])->name('api.products-by-business-unit');
             });
+        });
 
-
+        // Income Sheet Routes
+        Route::prefix('income-sheet')->name('income-sheet.')->group(function () {
+            Route::get('/', [IncomeSheetController::class, 'index'])->name('index');
+            Route::get('/export', [IncomeSheetController::class, 'export'])->name('export');
+            Route::get('/business-unit/{businessUnit}', [IncomeSheetController::class, 'businessUnitDetail'])->name('business-unit');
         });
     });
 });

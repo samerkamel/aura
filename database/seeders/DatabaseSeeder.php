@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
       EmployeeSeeder::class,
       PermissionSeeder::class, // Set up permissions and verify access
       DefaultLeavePolicySeeder::class, // Create default leave policies
+      BusinessUnitSeeder::class, // Create Business Units for multi-tenant support
+      \Modules\Invoicing\Database\Seeders\InvoicingSeeder::class, // Create invoice sequences and sample data
     ]);
 
     // Create additional random users for testing

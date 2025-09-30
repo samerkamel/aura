@@ -41,6 +41,7 @@ class ExpenseSchedule extends Model
         'paid_date',
         'paid_amount',
         'payment_notes',
+        'business_unit_id',
     ];
 
     /**
@@ -58,6 +59,14 @@ class ExpenseSchedule extends Model
         'excluded_dates' => 'array',
         'frequency_value' => 'integer',
     ];
+
+    /**
+     * Get the business unit this expense belongs to.
+     */
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\BusinessUnit::class);
+    }
 
     /**
      * Get the category this expense schedule belongs to.
@@ -89,6 +98,14 @@ class ExpenseSchedule extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope to filter by business unit.
+     */
+    public function scopeForBusinessUnit(Builder $query, $businessUnitId): Builder
+    {
+        return $query->where('business_unit_id', $businessUnitId);
     }
 
     /**

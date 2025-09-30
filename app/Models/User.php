@@ -50,6 +50,16 @@ class User extends Authenticatable
   }
 
   /**
+   * Get the business units this user has access to.
+   */
+  public function businessUnits(): BelongsToMany
+  {
+    return $this->belongsToMany(BusinessUnit::class, 'business_unit_user')
+                ->withPivot('role')
+                ->withTimestamps();
+  }
+
+  /**
    * Get the roles that belong to the user.
    */
   public function roles(): BelongsToMany
@@ -131,5 +141,29 @@ class User extends Authenticatable
     }
 
     return parent::can($ability, $arguments);
+  }
+
+  /**
+   * Check if user has access to a specific business unit.
+   */
+  public function hasAccessToBusinessUnit($businessUnitId): bool
+  {
+    return $this->businessUnits()->where('business_unit_id', $businessUnitId)->exists();
+  }
+
+  /**
+   * Get user's accessible business unit IDs.
+   */
+  public function getAccessibleBusinessUnitIds(): array
+  {
+    return $this->businessUnits()->pluck('business_unit_id')->toArray();
+  }
+
+  /**
+   * Check if user can access all business units (has super admin role).
+   */
+  public function canAccessAllBusinessUnits(): bool
+  {
+    return $this->hasRole('super-admin');
   }
 }

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Helpers\BusinessUnitHelper;
 
 /**
  * Authorization Service Provider
@@ -43,6 +44,13 @@ class AuthServiceProvider extends ServiceProvider
         // Gate to check if user can manage WFH records (super admins and admins)
         Gate::define('manage-wfh-records', function ($user) {
             return in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Super admin bypass for all product management
+        Gate::before(function ($user, $ability) {
+            if ($user->hasRole('super-admin')) {
+                return true;
+            }
         });
 
         // Gate to check if user can view employee details (super admins and admins)
@@ -85,6 +93,136 @@ class AuthServiceProvider extends ServiceProvider
         // Gate for read-only access to accounting (employees can view some data)
         Gate::define('view-accounting-readonly', function ($user) {
             return in_array($user->role, ['super_admin', 'admin', 'employee']);
+        });
+
+        // Gate to check if user can manage customers
+        Gate::define('manage-customers', function ($user) {
+            // Check new role-based system first
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-customers')) {
+                return true;
+            }
+
+            // Fallback to old role field for backward compatibility
+            return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Business Unit Management Permissions
+
+        // Gate to check if user can manage business units
+        Gate::define('manage-business-units', function ($user) {
+            return $user->role === 'super_admin' || $user->hasPermission('manage-business-units');
+        });
+
+        // Gate to check if user can view all business units
+        Gate::define('view-all-business-units', function ($user) {
+            return $user->role === 'super_admin' || $user->hasPermission('view-all-business-units');
+        });
+
+        // Gate to check if user can assign users to business units
+        Gate::define('assign-users-to-business-units', function ($user) {
+            return $user->role === 'super_admin' || $user->hasPermission('assign-users-to-business-units');
+        });
+
+        // Gate to check if user can manage specific business unit
+        Gate::define('manage-specific-business-unit', function ($user, $businessUnitId = null) {
+            if ($user->role === 'super_admin') {
+                return true;
+            }
+
+            if (!$businessUnitId) {
+                $businessUnitId = BusinessUnitHelper::getCurrentBusinessUnitId();
+            }
+
+            return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
+        });
+
+        // Product/Department Management with BU Context
+        Gate::define('manage-departments', function ($user, $businessUnitId = null) {
+            if ($user->role === 'super_admin') {
+                return true;
+            }
+
+            // Check if user has the permission
+            if (!$user->hasPermission('manage-departments')) {
+                return false;
+            }
+
+            // If no specific BU is provided, check current context
+            if (!$businessUnitId) {
+                $businessUnitId = BusinessUnitHelper::getCurrentBusinessUnitId();
+            }
+
+            return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
+        });
+
+        // Enhanced accounting permissions with BU context
+        Gate::define('view-accounting-dashboard-bu', function ($user, $businessUnitId = null) {
+            if ($user->role === 'super_admin') {
+                return true;
+            }
+
+            if (!in_array($user->role, ['admin', 'employee'])) {
+                return false;
+            }
+
+            if (!$businessUnitId) {
+                $businessUnitId = BusinessUnitHelper::getCurrentBusinessUnitId();
+            }
+
+            return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
+        });
+
+        Gate::define('manage-expense-schedules-bu', function ($user, $businessUnitId = null) {
+            if ($user->role === 'super_admin') {
+                return true;
+            }
+
+            if (!$user->hasPermission('manage-expense-schedules')) {
+                return false;
+            }
+
+            if (!$businessUnitId) {
+                $businessUnitId = BusinessUnitHelper::getCurrentBusinessUnitId();
+            }
+
+            return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
+        });
+
+        Gate::define('manage-income-schedules-bu', function ($user, $businessUnitId = null) {
+            if ($user->role === 'super_admin') {
+                return true;
+            }
+
+            if (!$user->hasPermission('manage-income-schedules')) {
+                return false;
+            }
+
+            if (!$businessUnitId) {
+                $businessUnitId = BusinessUnitHelper::getCurrentBusinessUnitId();
+            }
+
+            return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
+        });
+
+        // Sector Management Permissions
+        Gate::define('manage-sectors', function ($user) {
+            // Check new role-based system first
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-sectors')) {
+                return true;
+            }
+
+            // Fallback to old role field for backward compatibility
+            return isset($user->role) && $user->role === 'super_admin';
+        });
+
+        Gate::define('view-sectors', function ($user) {
+            // Check new role-based system first
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-sectors')) {
+                return true;
+            }
+
+            // Fallback to old role field for backward compatibility
+            return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
         });
     }
 }

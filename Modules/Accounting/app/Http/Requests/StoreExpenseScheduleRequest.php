@@ -14,12 +14,14 @@ class StoreExpenseScheduleRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'expense_type_category' => 'required|exists:expense_types,id',
             'category_id' => 'required|exists:expense_categories,id',
             'subcategory_id' => 'nullable|exists:expense_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0|max:999999.99',
             'expense_type' => 'required|in:recurring,one_time',
+            'business_unit_id' => 'nullable|exists:business_units,id',
 
             // Payment fields
             'mark_as_paid' => 'boolean',
@@ -49,6 +51,8 @@ class StoreExpenseScheduleRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'expense_type_category.required' => 'Please select an expense type.',
+            'expense_type_category.exists' => 'The selected expense type does not exist.',
             'category_id.required' => 'Please select a category.',
             'category_id.exists' => 'The selected category does not exist.',
             'amount.required' => 'Please enter an amount.',

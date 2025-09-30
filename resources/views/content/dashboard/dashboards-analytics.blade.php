@@ -33,6 +33,32 @@
 
 @section('content')
 
+<!-- Business Unit Context Header -->
+@if(isset($currentBusinessUnit) && $currentBusinessUnit)
+<div class="row g-6 mb-6">
+  <div class="col-12">
+    <div class="alert alert-info">
+      <div class="d-flex align-items-center">
+        <div class="avatar avatar-sm me-3">
+          <span class="avatar-initial rounded-circle bg-label-{{ $currentBusinessUnit->type === 'head_office' ? 'info' : 'primary' }}">
+            <i class="ti {{ $currentBusinessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} ti-sm"></i>
+          </span>
+        </div>
+        <div class="flex-grow-1">
+          <h6 class="mb-0">{{ $currentBusinessUnit->name }} Dashboard</h6>
+          <small class="text-muted">
+            Currently viewing analytics for {{ $currentBusinessUnit->code }}
+            @if($currentBusinessUnit->type === 'head_office')
+              - Company-wide overview
+            @endif
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+
 <div class="row g-6">
   <!-- Website Analytics -->
   <div class="col-lg-6">

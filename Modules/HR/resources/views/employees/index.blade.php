@@ -6,9 +6,14 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Employee Management</h5>
-    <a href="{{ route('hr.employees.create') }}" class="btn btn-primary">
-      <i class="ti ti-plus me-1"></i>Create Employee
-    </a>
+    <div class="d-flex gap-2">
+      <a href="{{ route('hr.employees.import.show') }}" class="btn btn-outline-info">
+        <i class="ti ti-upload me-1"></i>Import Employees
+      </a>
+      <a href="{{ route('hr.employees.create') }}" class="btn btn-primary">
+        <i class="ti ti-plus me-1"></i>Create Employee
+      </a>
+    </div>
   </div>
 
   @if(session('success'))
@@ -43,7 +48,7 @@
           <td>{{ $employee->start_date ? $employee->start_date->format('M d, Y') : 'Not Set' }}</td>
           <td>
             @if($employee->base_salary)
-              <span class="text-success fw-bold">${{ number_format($employee->base_salary, 2) }}</span>
+              <span class="text-success fw-bold">EGP {{ number_format($employee->base_salary, 2) }}</span>
             @else
               <span class="text-muted">Not Set</span>
             @endif

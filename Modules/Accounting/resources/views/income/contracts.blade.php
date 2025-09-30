@@ -15,6 +15,9 @@
                     <a href="{{ route('accounting.income.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i>Back to Income
                     </a>
+                    <a href="{{ route('accounting.income.contracts.import') }}" class="btn btn-outline-info btn-sm" title="Import Contracts from CSV">
+                        <i class="ti ti-upload"></i>
+                    </a>
                     <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
                         <i class="ti ti-plus me-1"></i>New Contract
                     </a>

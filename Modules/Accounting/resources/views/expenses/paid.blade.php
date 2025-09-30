@@ -88,6 +88,9 @@
                     <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-calendar me-1"></i>Expense Schedules
                     </a>
+                    <a href="{{ route('accounting.expenses.import') }}" class="btn btn-outline-info btn-sm" title="Import Expenses from CSV">
+                        <i class="ti ti-upload"></i>
+                    </a>
                     <a href="{{ route('accounting.expenses.create') }}" class="btn btn-primary">
                         <i class="ti ti-plus me-1"></i>New Expense
                     </a>

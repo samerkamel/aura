@@ -243,7 +243,7 @@
               </div>
               <div class="chat-contact-info flex-grow-1 ms-4">
                 <h6 class="chat-contact-name text-truncate m-0 fw-normal">Mary Giles</h6>
-                <small class="chat-contact-status text-truncate">Account Department</small>
+                <small class="chat-contact-status text-truncate">Account Product</small>
               </div>
             </a>
           </li>

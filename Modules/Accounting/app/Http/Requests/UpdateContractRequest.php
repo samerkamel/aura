@@ -19,10 +19,19 @@ class UpdateContractRequest extends FormRequest
             'description' => 'nullable|string',
             'total_amount' => 'required|numeric|min:0|max:99999999.99',
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after:start_date',
+            'end_date' => 'required|date|after:start_date',
             'status' => 'required|in:draft,active,completed,cancelled',
             'contact_info' => 'nullable|array',
             'notes' => 'nullable|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'start_date.required' => 'Please enter the contract start date.',
+            'end_date.required' => 'Please enter the contract end date.',
+            'end_date.after' => 'End date must be after start date.',
         ];
     }
 }

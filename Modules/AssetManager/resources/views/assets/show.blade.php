@@ -86,7 +86,7 @@
                 <label class="form-label text-muted">Purchase Price</label>
                 <p>
                   @if($asset->purchase_price)
-                    <span class="fw-semibold">${{ number_format($asset->purchase_price, 2) }}</span>
+                    <span class="fw-semibold">EGP {{ number_format($asset->purchase_price, 2) }}</span>
                   @else
                     <span class="text-muted">Not specified</span>
                   @endif
@@ -293,7 +293,7 @@
                       <small class="text-muted">{{ $asset->purchase_date->format('M d, Y') }}</small>
                     </div>
                     @if($asset->purchase_price)
-                      <p class="mb-0 small text-muted">Price: ${{ number_format($asset->purchase_price, 2) }}</p>
+                      <p class="mb-0 small text-muted">Price: EGP {{ number_format($asset->purchase_price, 2) }}</p>
                     @endif
                   </div>
                 </div>

@@ -2,11 +2,6 @@
 
 @section('title', 'Permissions Management')
 
-@section('vendor-style')
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
-@endsection
 
 @section('page-style')
 <style>
@@ -133,7 +128,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Category</label>
-                        <select class="form-select select2" name="category">
+                        <select class="form-select" name="category">
                             <option value="">All Categories</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category }}" {{ request('category') === $category ? 'selected' : '' }}>
@@ -238,25 +233,17 @@
 </div>
 @endsection
 
-@section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
-@endsection
 
 @section('page-script')
 <script>
-$(document).ready(function() {
-    // Initialize Select2
-    $('.select2').select2({
-        placeholder: 'Select category...',
-        allowClear: true
-    });
-
+document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    console.log('Permissions page loaded successfully');
 });
 </script>
 @endsection

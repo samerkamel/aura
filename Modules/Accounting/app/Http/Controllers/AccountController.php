@@ -98,13 +98,60 @@ class AccountController extends Controller
             $query->latest()->take(10);
         }]);
 
+        // Get all transaction types for this account
+        $transactions = collect();
+
+        // Add expense transactions (outgoing)
+        $expenseTransactions = $account->expenseSchedules()
+            ->paid()
+            ->get()
+            ->map(function ($expense) {
+                return (object) [
+                    'id' => $expense->id,
+                    'type' => 'expense',
+                    'description' => $expense->name,
+                    'amount' => -$expense->paid_amount, // Negative for outgoing
+                    'date' => $expense->paid_date,
+                    'reference' => $expense->full_category_name,
+                    'status' => $expense->payment_status_display,
+                    'related_model' => $expense,
+                ];
+            });
+
+        // Add invoice payment transactions (incoming)
+        $invoicePayments = $account->invoicePayments()
+            ->with(['invoice.customer'])
+            ->latest('payment_date')
+            ->take(10)
+            ->get()
+            ->map(function ($payment) {
+                return (object) [
+                    'id' => $payment->id,
+                    'type' => 'invoice_payment',
+                    'description' => 'Invoice Payment: ' . $payment->invoice->invoice_number . ' - ' . $payment->invoice->customer->name,
+                    'amount' => $payment->amount, // Positive for incoming
+                    'date' => $payment->payment_date,
+                    'reference' => $payment->payment_method_display ?? 'Payment',
+                    'status' => 'Completed',
+                    'related_model' => $payment,
+                ];
+            });
+
+        // Combine and sort transactions
+        $transactions = $expenseTransactions
+            ->concat($invoicePayments)
+            ->sortByDesc('date')
+            ->take(20);
+
         $statistics = [
             'total_expenses_paid' => $account->expenseSchedules()->paid()->sum('paid_amount'),
+            'total_income_received' => $account->invoicePayments()->sum('amount'),
             'pending_expenses' => $account->expenseSchedules()->pending()->count(),
-            'last_transaction_date' => $account->expenseSchedules()->paid()->latest('paid_date')->first()?->paid_date,
+            'last_transaction_date' => $transactions->first()?->date ?? null,
+            'transaction_count' => $transactions->count(),
         ];
 
-        return view('accounting::accounts.show', compact('account', 'statistics'));
+        return view('accounting::accounts.show', compact('account', 'statistics', 'transactions'));
     }
 
     /**

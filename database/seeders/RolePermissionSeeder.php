@@ -55,6 +55,44 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'manage-users', 'display_name' => 'Manage Users', 'description' => 'Can create, edit, and delete users', 'category' => 'administration'],
             ['name' => 'manage-roles', 'display_name' => 'Manage Roles', 'description' => 'Can create and edit roles', 'category' => 'administration'],
             ['name' => 'manage-permissions', 'display_name' => 'Manage Permissions', 'description' => 'Can assign permissions to roles', 'category' => 'administration'],
+
+            // Business Unit Management
+            ['name' => 'manage-business-units', 'display_name' => 'Manage Business Units', 'description' => 'Can create, edit, and delete business units', 'category' => 'business-units'],
+            ['name' => 'view-all-business-units', 'display_name' => 'View All Business Units', 'description' => 'Can view all business units regardless of assignment', 'category' => 'business-units'],
+            ['name' => 'assign-users-to-business-units', 'display_name' => 'Assign Users to Business Units', 'description' => 'Can assign and unassign users to business units', 'category' => 'business-units'],
+
+            // Product Management
+            ['name' => 'manage-products', 'display_name' => 'Manage Products', 'description' => 'Can manage products within assigned business units', 'category' => 'products'],
+
+            // Customer Management
+            ['name' => 'manage-customers', 'display_name' => 'Manage Customers', 'description' => 'Can create, edit, and delete customers', 'category' => 'customers'],
+
+            // Sector Management
+            ['name' => 'manage-sectors', 'display_name' => 'Manage Sectors', 'description' => 'Can create, edit, and delete sectors', 'category' => 'sectors'],
+            ['name' => 'view-sectors', 'display_name' => 'View Sectors', 'description' => 'Can view sector information', 'category' => 'sectors'],
+
+            // Budget Management
+            ['name' => 'view-budgets', 'display_name' => 'View Budgets', 'description' => 'Can view budget information', 'category' => 'budgets'],
+            ['name' => 'create-budgets', 'display_name' => 'Create Budgets', 'description' => 'Can create new budgets', 'category' => 'budgets'],
+            ['name' => 'edit-budgets', 'display_name' => 'Edit Budgets', 'description' => 'Can edit existing budgets', 'category' => 'budgets'],
+            ['name' => 'delete-budgets', 'display_name' => 'Delete Budgets', 'description' => 'Can delete budgets', 'category' => 'budgets'],
+
+            // Additional missing permissions
+            ['name' => 'view-customers', 'display_name' => 'View Customers', 'description' => 'Can view customer information', 'category' => 'customers'],
+            ['name' => 'view-products', 'display_name' => 'View Products', 'description' => 'Can view products within business units', 'category' => 'products'],
+            ['name' => 'view-business-units', 'display_name' => 'View Business Units', 'description' => 'Can view business units', 'category' => 'business-units'],
+
+            // Invoice Management
+            ['name' => 'view-invoices', 'display_name' => 'View Invoices', 'description' => 'Can view customer invoices', 'category' => 'invoicing'],
+            ['name' => 'manage-invoices', 'display_name' => 'Manage Invoices', 'description' => 'Can create, edit, and manage customer invoices', 'category' => 'invoicing'],
+            ['name' => 'generate-invoices', 'display_name' => 'Generate Invoices', 'description' => 'Can generate invoices from contract payments', 'category' => 'invoicing'],
+            ['name' => 'manage-invoice-sequences', 'display_name' => 'Manage Invoice Sequences', 'description' => 'Can configure invoice numbering sequences', 'category' => 'invoicing'],
+
+            // Internal Transaction Management
+            ['name' => 'view-internal-transactions', 'display_name' => 'View Internal Transactions', 'description' => 'Can view inter-business unit transactions', 'category' => 'internal-accounting'],
+            ['name' => 'manage-internal-transactions', 'display_name' => 'Manage Internal Transactions', 'description' => 'Can create and edit internal transactions', 'category' => 'internal-accounting'],
+            ['name' => 'approve-internal-transactions', 'display_name' => 'Approve Internal Transactions', 'description' => 'Can approve or reject internal transactions', 'category' => 'internal-accounting'],
+            ['name' => 'manage-internal-sequences', 'display_name' => 'Manage Internal Sequences', 'description' => 'Can configure internal transaction numbering', 'category' => 'internal-accounting'],
         ];
 
         foreach ($permissions as $permissionData) {
@@ -70,6 +108,23 @@ class RolePermissionSeeder extends Seeder
                 'permissions' => Permission::all()->pluck('name')->toArray()
             ],
             [
+                'name' => 'business-unit-manager',
+                'display_name' => 'Business Unit Manager',
+                'description' => 'Can manage assigned business units and their operations',
+                'permissions' => [
+                    'view-employees', 'create-employees', 'edit-employees',
+                    'view-attendance', 'manage-attendance',
+                    'view-leave-policies', 'manage-leave-policies',
+                    'view-billable-hours', 'manage-billable-hours',
+                    'view-assets', 'manage-assets',
+                    'view-accounting-readonly', 'manage-expense-schedules', 'manage-income', 'view-financial-reports',
+                    'manage-products', 'manage-customers', 'view-customers',
+                    'view-budgets', 'create-budgets', 'edit-budgets', 'delete-budgets',
+                    'view-invoices', 'manage-invoices', 'generate-invoices',
+                    'view-internal-transactions', 'manage-internal-transactions'
+                ]
+            ],
+            [
                 'name' => 'hr-manager',
                 'display_name' => 'HR Manager',
                 'description' => 'Can manage all HR-related functions including financial compensation',
@@ -79,7 +134,8 @@ class RolePermissionSeeder extends Seeder
                     'view-leave-policies', 'manage-leave-policies',
                     'view-billable-hours', 'manage-billable-hours', 'view-payroll', 'manage-payroll',
                     'view-letter-templates', 'manage-letter-templates',
-                    'view-assets', 'manage-assets'
+                    'view-assets', 'manage-assets',
+                    'manage-products'
                 ]
             ],
             [
@@ -100,7 +156,11 @@ class RolePermissionSeeder extends Seeder
                 'permissions' => [
                     'view-accounting-readonly', 'manage-expense-schedules', 'manage-expense-categories',
                     'manage-accounts', 'manage-income', 'view-financial-reports',
-                    'view-employee-financial', 'edit-employee-financial', 'view-payroll', 'manage-payroll'
+                    'view-employee-financial', 'edit-employee-financial', 'view-payroll', 'manage-payroll',
+                    'manage-products', 'manage-customers', 'view-customers',
+                    'view-invoices', 'manage-invoices', 'generate-invoices', 'manage-invoice-sequences',
+                    'view-internal-transactions', 'manage-internal-transactions', 'approve-internal-transactions', 'manage-internal-sequences',
+                    'view-budgets', 'create-budgets', 'edit-budgets', 'delete-budgets'
                 ]
             ],
             [
@@ -108,7 +168,8 @@ class RolePermissionSeeder extends Seeder
                 'display_name' => 'Finance Viewer',
                 'description' => 'Can only view financial information without editing',
                 'permissions' => [
-                    'view-accounting-readonly', 'view-financial-reports'
+                    'view-accounting-readonly', 'view-financial-reports',
+                    'view-invoices', 'view-internal-transactions', 'view-budgets'
                 ]
             ],
             [

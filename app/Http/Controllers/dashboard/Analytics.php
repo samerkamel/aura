@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Accounting\Services\CashFlowProjectionService;
+use App\Helpers\BusinessUnitHelper;
 use Carbon\Carbon;
 
 class Analytics extends Controller
@@ -22,11 +23,13 @@ class Analytics extends Controller
         ->generateProjections($startDate, $endDate, 'monthly');
 
       $chartData = $this->prepareCashFlowChartData($projections);
+      $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
 
-      return view('content.dashboard.dashboards-analytics', compact('chartData'));
+      return view('content.dashboard.dashboards-analytics', compact('chartData', 'currentBusinessUnit'));
     } catch (\Exception $e) {
       $chartData = ['categories' => [], 'income' => [], 'expenses' => []];
-      return view('content.dashboard.dashboards-analytics', compact('chartData'));
+      $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
+      return view('content.dashboard.dashboards-analytics', compact('chartData', 'currentBusinessUnit'));
     }
   }
 

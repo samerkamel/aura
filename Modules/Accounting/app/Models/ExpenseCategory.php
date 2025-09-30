@@ -26,6 +26,7 @@ class ExpenseCategory extends Model
         'color',
         'is_active',
         'parent_id',
+        'expense_type_id',
         'sort_order',
     ];
 
@@ -98,6 +99,14 @@ class ExpenseCategory extends Model
     }
 
     /**
+     * Get the expense type for this category.
+     */
+    public function expenseType()
+    {
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
+    }
+
+    /**
      * Get all expense schedules including those in subcategories.
      */
     public function allExpenseSchedules(): HasMany
@@ -122,6 +131,14 @@ class ExpenseCategory extends Model
     public function scopeSubcategoriesOf(Builder $query, int $parentId): Builder
     {
         return $query->where('parent_id', $parentId);
+    }
+
+    /**
+     * Scope to get categories by expense type.
+     */
+    public function scopeOfType(Builder $query, int $expenseTypeId): Builder
+    {
+        return $query->where('expense_type_id', $expenseTypeId);
     }
 
     /**

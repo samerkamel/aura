@@ -13,14 +13,14 @@
                         <a href="{{ route('administration.products.index') }}">Product Management</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('administration.products.show', $department) }}">{{ $department->name }}</a>
+                        <a href="{{ route('administration.products.show', $product) }}">{{ $product->name }}</a>
                     </li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ol>
             </nav>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('administration.products.show', $department) }}" class="btn btn-outline-info">
+            <a href="{{ route('administration.products.show', $product) }}" class="btn btn-outline-info">
                 <i class="ti ti-eye me-2"></i>View Details
             </a>
             <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
@@ -36,16 +36,39 @@
                     <h5 class="mb-0">Product Information</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('administration.products.update', $department) }}">
+                    <form method="POST" action="{{ route('administration.products.update', $product) }}">
                         @csrf
                         @method('PUT')
 
                         <div class="row g-3">
+                            <!-- Business Unit Selection (if user has access to multiple BUs) -->
+                            @if(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() > 1)
+                            <div class="col-12">
+                                <label class="form-label" for="business_unit_id">Business Unit <span class="text-danger">*</span></label>
+                                <select class="form-select @error('business_unit_id') is-invalid @enderror"
+                                        id="business_unit_id" name="business_unit_id" required>
+                                    <option value="">Select Business Unit</option>
+                                    @foreach($accessibleBusinessUnits as $businessUnit)
+                                        <option value="{{ $businessUnit->id }}"
+                                                {{ old('business_unit_id', $product->business_unit_id) == $businessUnit->id ? 'selected' : '' }}>
+                                            {{ $businessUnit->name }} ({{ $businessUnit->code }})
+                                            @if($businessUnit->type === 'head_office')
+                                                - Head Office
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('business_unit_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            @endif
+
                             <!-- Name -->
                             <div class="col-md-6">
                                 <label class="form-label" for="name">Product Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                       id="name" name="name" value="{{ old('name', $department->name) }}" required>
+                                       id="name" name="name" value="{{ old('name', $product->name) }}" required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -55,7 +78,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="code">Product Code <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('code') is-invalid @enderror"
-                                       id="code" name="code" value="{{ old('code', $department->code) }}" required maxlength="10"
+                                       id="code" name="code" value="{{ old('code', $product->code) }}" required maxlength="10"
                                        style="text-transform: uppercase;">
                                 @error('code')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -67,7 +90,7 @@
                             <div class="col-12">
                                 <label class="form-label" for="description">Description</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror"
-                                          id="description" name="description" rows="3">{{ old('description', $department->description) }}</textarea>
+                                          id="description" name="description" rows="3">{{ old('description', $product->description) }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -77,7 +100,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="head_of_product">Head of Product</label>
                                 <input type="text" class="form-control @error('head_of_product') is-invalid @enderror"
-                                       id="head_of_product" name="head_of_product" value="{{ old('head_of_product', $department->head_of_product) }}">
+                                       id="head_of_product" name="head_of_product" value="{{ old('head_of_product', $product->head_of_product) }}">
                                 @error('head_of_product')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -87,7 +110,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="budget_allocation">Budget Allocation (EGP)</label>
                                 <input type="number" class="form-control @error('budget_allocation') is-invalid @enderror"
-                                       id="budget_allocation" name="budget_allocation" value="{{ old('budget_allocation', $department->budget_allocation) }}"
+                                       id="budget_allocation" name="budget_allocation" value="{{ old('budget_allocation', $product->budget_allocation) }}"
                                        min="0" step="0.01">
                                 @error('budget_allocation')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -98,7 +121,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="email">Email Address</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                       id="email" name="email" value="{{ old('email', $department->email) }}">
+                                       id="email" name="email" value="{{ old('email', $product->email) }}">
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -108,7 +131,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="phone">Phone Number</label>
                                 <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                       id="phone" name="phone" value="{{ old('phone', $department->phone) }}">
+                                       id="phone" name="phone" value="{{ old('phone', $product->phone) }}">
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -118,7 +141,7 @@
                             <div class="col-12">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="is_active"
-                                           name="is_active" {{ old('is_active', $department->is_active) ? 'checked' : '' }}>
+                                           name="is_active" {{ old('is_active', $product->is_active) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_active">
                                         Active Product
                                     </label>
@@ -130,7 +153,7 @@
                         <!-- Form Actions -->
                         <div class="pt-4 border-top mt-4">
                             <div class="d-flex justify-content-end gap-3">
-                                <a href="{{ route('administration.products.show', $department) }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('administration.products.show', $product) }}" class="btn btn-outline-secondary">
                                     <i class="ti ti-x me-1"></i>Cancel
                                 </a>
                                 <button type="submit" class="btn btn-primary">
@@ -152,21 +175,21 @@
                     </h5>
                 </div>
                 <div class="card-body text-center">
-                    <div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 12px; background-color: {{ '#' . substr(md5($department->code), 0, 6) }}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600;">
-                        {{ $department->code }}
+                    <div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 12px; background-color: {{ '#' . substr(md5($product->code), 0, 6) }}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600;">
+                        {{ $product->code }}
                     </div>
-                    <h5>{{ $department->name }}</h5>
-                    @if($department->head_of_product)
-                        <p class="text-muted mb-0">{{ $department->head_of_product }}</p>
+                    <h5>{{ $product->name }}</h5>
+                    @if($product->head_of_product)
+                        <p class="text-muted mb-0">{{ $product->head_of_product }}</p>
                     @endif
-                    <span class="badge {{ $department->is_active ? 'bg-label-success' : 'bg-label-danger' }} mt-2">
-                        {{ $department->is_active ? 'Active' : 'Inactive' }}
+                    <span class="badge {{ $product->is_active ? 'bg-label-success' : 'bg-label-danger' }} mt-2">
+                        {{ $product->is_active ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
             </div>
 
             <!-- Current Contracts -->
-            @if($department->contracts->count() > 0)
+            @if($product->contracts->count() > 0)
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -174,7 +197,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    @foreach($department->contracts->take(5) as $contract)
+                    @foreach($product->contracts->take(5) as $contract)
                     <div class="d-flex align-items-center mb-2">
                         <div class="avatar avatar-xs flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
@@ -193,8 +216,8 @@
                         </div>
                     </div>
                     @endforeach
-                    @if($department->contracts->count() > 5)
-                        <small class="text-muted">and {{ $department->contracts->count() - 5 }} more contracts...</small>
+                    @if($product->contracts->count() > 5)
+                        <small class="text-muted">and {{ $product->contracts->count() - 5 }} more contracts...</small>
                     @endif
                 </div>
             </div>
@@ -234,7 +257,7 @@ $(document).ready(function() {
 
     // Update preview when name changes
     $('#name').on('input', function() {
-        const name = $(this).val() || '{{ $department->name }}';
+        const name = $(this).val() || '{{ $product->name }}';
         $('.card-body h5').text(name);
     });
 });

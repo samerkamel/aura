@@ -18,6 +18,9 @@
                     <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i>Back to Expenses
                     </a>
+                    <a href="{{ route('accounting.expenses.categories.import') }}" class="btn btn-outline-info btn-sm" title="Import Categories from CSV">
+                        <i class="ti ti-upload"></i>
+                    </a>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                         <i class="ti ti-plus me-1"></i>New Category
                     </button>
@@ -43,6 +46,7 @@
                     <thead>
                         <tr>
                             <th>Category</th>
+                            <th>Type</th>
                             <th>Description</th>
                             <th>Total YTD</th>
                             <th>Average per Month YTD</th>
@@ -71,6 +75,19 @@
                                             @endif
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    @if($category->expenseType && !$category->parent_id)
+                                        <span class="badge" style="background-color: {{ $category->expenseType->color }}; color: white;">
+                                            {{ $category->expenseType->code }}
+                                        </span>
+                                    @elseif($category->parent && $category->parent->expenseType)
+                                        <span class="badge badge-light-secondary">
+                                            {{ $category->parent->expenseType->code }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 </td>
                                 <td class="{{ !$category->is_active ? 'text-muted' : '' }}">
                                     {{ $category->description ?: 'No description' }}
@@ -107,7 +124,9 @@
                                                data-id="{{ $category->id }}"
                                                data-name="{{ $category->name }}"
                                                data-description="{{ $category->description }}"
-                                               data-color="{{ $category->color }}">
+                                               data-color="{{ $category->color }}"
+                                               data-parent-id="{{ $category->parent_id }}"
+                                               data-expense-type-id="{{ $category->expense_type_id }}">
                                                 <i class="ti ti-edit me-2"></i>Edit
                                             </a>
                                             <div class="dropdown-divider"></div>
@@ -132,7 +151,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No categories found</h5>
@@ -176,6 +195,19 @@
                             @endforeach
                         </select>
                         <small class="text-muted">Leave blank to create a main category, or select a parent to create a subcategory</small>
+                    </div>
+
+                    <div class="mb-3" id="expense_type_field">
+                        <label for="add_expense_type_id" class="form-label">Expense Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="add_expense_type_id" name="expense_type_id" required>
+                            <option value="">Select expense type</option>
+                            @foreach($expenseTypes as $expenseType)
+                                <option value="{{ $expenseType->id }}" data-color="{{ $expenseType->color }}">
+                                    {{ $expenseType->code }} - {{ $expenseType->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Only required for main categories. Subcategories inherit their parent's type.</small>
                     </div>
 
                     <div class="mb-3">
@@ -223,6 +255,20 @@
                         <label for="edit_name" class="form-label">Category Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="edit_name" name="name" required>
                     </div>
+
+                    <div class="mb-3" id="edit_expense_type_field">
+                        <label for="edit_expense_type_id" class="form-label">Expense Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="edit_expense_type_id" name="expense_type_id" required>
+                            <option value="">Select expense type</option>
+                            @foreach($expenseTypes as $expenseType)
+                                <option value="{{ $expenseType->id }}" data-color="{{ $expenseType->color }}">
+                                    {{ $expenseType->code }} - {{ $expenseType->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Only available for main categories. Subcategories inherit their parent's type.</small>
+                    </div>
+
                     <div class="mb-3">
                         <label for="edit_description" class="form-label">Description</label>
                         <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
@@ -297,6 +343,44 @@ document.addEventListener('DOMContentLoaded', function() {
     syncColorInputs(addColorPicker, addColorText);
     syncColorInputs(editColorPicker, editColorText);
 
+    // Handle parent category selection to show/hide expense type field
+    const parentSelect = document.getElementById('add_parent_id');
+    const expenseTypeField = document.getElementById('expense_type_field');
+    const expenseTypeSelect = document.getElementById('add_expense_type_id');
+
+    function toggleExpenseTypeField() {
+        if (parentSelect.value === '') {
+            // Main category - show expense type field and make it required
+            expenseTypeField.style.display = 'block';
+            expenseTypeSelect.required = true;
+        } else {
+            // Subcategory - hide expense type field and make it not required
+            expenseTypeField.style.display = 'none';
+            expenseTypeSelect.required = false;
+            expenseTypeSelect.value = '';
+        }
+    }
+
+    parentSelect.addEventListener('change', toggleExpenseTypeField);
+    toggleExpenseTypeField(); // Initialize on page load
+
+    // Handle edit expense type field visibility
+    function toggleEditExpenseTypeField(isMainCategory) {
+        const editExpenseTypeField = document.getElementById('edit_expense_type_field');
+        const editExpenseTypeSelect = document.getElementById('edit_expense_type_id');
+
+        if (isMainCategory) {
+            // Main category - show expense type field and make it required
+            editExpenseTypeField.style.display = 'block';
+            editExpenseTypeSelect.required = true;
+        } else {
+            // Subcategory - hide expense type field and make it not required
+            editExpenseTypeField.style.display = 'none';
+            editExpenseTypeSelect.required = false;
+            editExpenseTypeSelect.value = '';
+        }
+    }
+
     // Edit category modal
     const editModal = document.getElementById('editCategoryModal');
     editModal.addEventListener('show.bs.modal', function(event) {
@@ -305,14 +389,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryName = button.getAttribute('data-name');
         const categoryDescription = button.getAttribute('data-description');
         const categoryColor = button.getAttribute('data-color');
+        const parentId = button.getAttribute('data-parent-id');
+        const expenseTypeId = button.getAttribute('data-expense-type-id');
 
         const form = document.getElementById('editCategoryForm');
         form.action = `/accounting/expenses/categories/${categoryId}`;
 
         document.getElementById('edit_name').value = categoryName;
-        document.getElementById('edit_description').value = categoryDescription;
+        document.getElementById('edit_description').value = categoryDescription || '';
         document.getElementById('edit_color').value = categoryColor;
         document.getElementById('edit_color_text').value = categoryColor.toUpperCase();
+
+        // Handle expense type field based on whether this is a main category
+        const isMainCategory = !parentId || parentId === 'null' || parentId === '';
+        toggleEditExpenseTypeField(isMainCategory);
+
+        if (isMainCategory && expenseTypeId) {
+            document.getElementById('edit_expense_type_id').value = expenseTypeId;
+        }
     });
 
     // Delete confirmation
