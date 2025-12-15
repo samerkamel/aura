@@ -24,6 +24,10 @@ class InvoicePayment extends Model
         'payment_method',
         'reference_number',
         'notes',
+        'attachment_path',
+        'attachment_original_name',
+        'attachment_mime_type',
+        'attachment_size',
         'created_by',
     ];
 
@@ -70,6 +74,26 @@ class InvoicePayment extends Model
             'other' => 'Other',
             default => $this->payment_method ? ucfirst(str_replace('_', ' ', $this->payment_method)) : 'Not Specified'
         };
+    }
+
+    /**
+     * Check if payment has an attachment.
+     */
+    public function hasAttachment(): bool
+    {
+        return !empty($this->attachment_path);
+    }
+
+    /**
+     * Get the attachment download URL.
+     */
+    public function getAttachmentUrlAttribute(): ?string
+    {
+        if (!$this->hasAttachment()) {
+            return null;
+        }
+
+        return route('invoicing.payments.attachment', $this->id);
     }
 
     /**

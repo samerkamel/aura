@@ -288,10 +288,13 @@ class ExpenseController extends Controller
             ];
         }
 
+        $accounts = Account::active()->orderBy('name')->get();
+
         return view('accounting::expenses.show', compact(
             'expenseSchedule',
             'upcomingOccurrences',
-            'statistics'
+            'statistics',
+            'accounts'
         ));
     }
 
@@ -967,6 +970,92 @@ class ExpenseController extends Controller
         return response($csvContent)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Mark expense as paid.
+     */
+    public function markAsPaid(Request $request, ExpenseSchedule $expenseSchedule): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-expenses')) {
+            abort(403, 'Unauthorized to mark expenses as paid.');
+        }
+
+        // Verify business unit access
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($expenseSchedule->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to access this expense.');
+        }
+
+        $request->validate([
+            'paid_date' => 'required|date|before_or_equal:today',
+            'paid_amount' => 'required|numeric|min:0.01',
+            'paid_from_account_id' => 'required|exists:accounts,id',
+            'payment_notes' => 'nullable|string|max:1000',
+            'payment_attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png,gif,doc,docx|max:10240', // 10MB max
+        ]);
+
+        // Handle file upload
+        $attachmentData = [];
+        if ($request->hasFile('payment_attachment')) {
+            $file = $request->file('payment_attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('expense_payments', $fileName, 'private');
+
+            $attachmentData = [
+                'payment_attachment_path' => $filePath,
+                'payment_attachment_original_name' => $file->getClientOriginalName(),
+                'payment_attachment_mime_type' => $file->getClientMimeType(),
+                'payment_attachment_size' => $file->getSize(),
+            ];
+        }
+
+        $expenseSchedule->update([
+            'payment_status' => 'paid',
+            'paid_date' => $request->paid_date,
+            'paid_amount' => $request->paid_amount,
+            'paid_from_account_id' => $request->paid_from_account_id,
+            'payment_notes' => $request->payment_notes,
+            ...$attachmentData,
+        ]);
+
+        // Update account balance
+        $account = Account::find($request->paid_from_account_id);
+        if ($account) {
+            $account->updateBalance($request->paid_amount, 'subtract');
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Expense marked as paid successfully.');
+    }
+
+    /**
+     * Download expense payment attachment.
+     */
+    public function downloadPaymentAttachment(ExpenseSchedule $expenseSchedule)
+    {
+        if (!auth()->user()->can('view-expenses') && !auth()->user()->can('manage-expenses')) {
+            abort(403, 'Unauthorized to download expense attachments.');
+        }
+
+        // Verify business unit access
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($expenseSchedule->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to download this attachment.');
+        }
+
+        if (!$expenseSchedule->hasPaymentAttachment()) {
+            abort(404, 'Attachment not found.');
+        }
+
+        $filePath = storage_path('app/private/' . $expenseSchedule->payment_attachment_path);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $expenseSchedule->payment_attachment_original_name);
     }
 
     /**

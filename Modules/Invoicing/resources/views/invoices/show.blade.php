@@ -386,6 +386,7 @@
                                     <th>Method</th>
                                     <th>Reference</th>
                                     <th>Notes</th>
+                                    <th>Attachment</th>
                                     <th>Recorded By</th>
                                     @if(auth()->user()->can('manage-invoices'))
                                         <th>Actions</th>
@@ -418,6 +419,15 @@
                                             <span class="text-truncate" style="max-width: 200px;" title="{{ $payment->notes }}">
                                                 {{ Str::limit($payment->notes, 50) }}
                                             </span>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($payment->hasAttachment())
+                                            <a href="{{ $payment->attachment_url }}" class="btn btn-sm btn-outline-primary" title="Download {{ $payment->attachment_original_name }}">
+                                                <i class="ti ti-paperclip me-1"></i>{{ Str::limit($payment->attachment_original_name, 20) }}
+                                            </a>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
@@ -469,7 +479,7 @@
 <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('invoicing.invoices.payments.store', $invoice) }}" method="POST">
+            <form action="{{ route('invoicing.invoices.payments.store', $invoice) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPaymentModalLabel">Add Payment</h5>
@@ -491,6 +501,21 @@
                             <div class="mb-3">
                                 <label class="form-label required">Payment Date</label>
                                 <input type="date" name="payment_date" class="form-control" value="{{ now()->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label required">Account to Receive Payment</label>
+                                <select name="account_id" class="form-select" required>
+                                    <option value="">Select Account</option>
+                                    @foreach($accounts as $account)
+                                        <option value="{{ $account->id }}">
+                                            {{ $account->name }} ({{ $account->account_number }})
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -519,6 +544,11 @@
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
                         <textarea name="notes" class="form-control" rows="3" placeholder="Optional payment notes"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attachment</label>
+                        <input type="file" name="attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                        <small class="text-muted">Upload receipt or proof of payment (PDF, images, Word docs, max 10MB)</small>
                     </div>
                 </div>
                 <div class="modal-footer">

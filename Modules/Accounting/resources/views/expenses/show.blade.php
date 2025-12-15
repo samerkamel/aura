@@ -160,6 +160,11 @@
                                                 <span class="badge bg-{{ $expenseSchedule->payment_status === 'paid' ? 'success' : ($expenseSchedule->payment_status === 'pending' ? 'warning' : 'secondary') }}">
                                                     {{ ucfirst($expenseSchedule->payment_status) }}
                                                 </span>
+                                                @if($expenseSchedule->payment_status !== 'paid' && auth()->user()->can('manage-expenses'))
+                                                    <button type="button" class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#markAsPaidModal">
+                                                        <i class="ti ti-check me-1"></i>Mark as Paid
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                         @if($expenseSchedule->payment_status === 'paid')
@@ -186,6 +191,16 @@
                                                 <div class="col-12">
                                                     <label class="form-label text-muted">Payment Notes</label>
                                                     <div class="text-info">{{ $expenseSchedule->payment_notes }}</div>
+                                                </div>
+                                            @endif
+                                            @if($expenseSchedule->hasPaymentAttachment())
+                                                <div class="col-12">
+                                                    <label class="form-label text-muted">Payment Attachment</label>
+                                                    <div>
+                                                        <a href="{{ $expenseSchedule->payment_attachment_url }}" class="btn btn-sm btn-outline-primary" title="Download {{ $expenseSchedule->payment_attachment_original_name }}">
+                                                            <i class="ti ti-paperclip me-1"></i>{{ $expenseSchedule->payment_attachment_original_name }}
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             @endif
                                         @endif
@@ -286,4 +301,65 @@
         </div>
     </div>
 </div>
+
+<!-- Mark as Paid Modal -->
+@if($expenseSchedule->payment_status !== 'paid' && auth()->user()->can('manage-expenses'))
+<div class="modal fade" id="markAsPaidModal" tabindex="-1" aria-labelledby="markAsPaidModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('accounting.expenses.mark-as-paid', $expenseSchedule) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="markAsPaidModalLabel">Mark Expense as Paid</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Paid Amount (EGP)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">EGP</span>
+                                    <input type="number" name="paid_amount" class="form-control" step="0.01" min="0.01" value="{{ $expenseSchedule->amount }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Paid Date</label>
+                                <input type="date" name="paid_date" class="form-control" value="{{ now()->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">Paid From Account</label>
+                        <select name="paid_from_account_id" class="form-select" required>
+                            <option value="">Select Account</option>
+                            @foreach($accounts as $account)
+                                <option value="{{ $account->id }}">
+                                    {{ $account->name }} ({{ $account->account_number }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Notes</label>
+                        <textarea name="payment_notes" class="form-control" rows="3" placeholder="Optional payment notes"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Attachment</label>
+                        <input type="file" name="payment_attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                        <small class="text-muted">Upload invoice or proof of payment (PDF, images, Word docs, max 10MB)</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Mark as Paid</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 @endsection

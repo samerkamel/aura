@@ -113,8 +113,24 @@ class InvoicePaymentController extends Controller
             'payment_method' => 'nullable|string|in:cash,bank_transfer,check,card,online,other',
             'reference_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
-            'account_id' => 'nullable|exists:accounts,id',
+            'account_id' => 'required|exists:accounts,id',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png,gif,doc,docx|max:10240', // 10MB max
         ]);
+
+        // Handle file upload
+        $attachmentData = [];
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('invoice_payments', $fileName, 'private');
+
+            $attachmentData = [
+                'attachment_path' => $filePath,
+                'attachment_original_name' => $file->getClientOriginalName(),
+                'attachment_mime_type' => $file->getClientMimeType(),
+                'attachment_size' => $file->getSize(),
+            ];
+        }
 
         $payment = InvoicePayment::create([
             'invoice_id' => $invoice->id,
@@ -125,14 +141,13 @@ class InvoicePaymentController extends Controller
             'notes' => $request->notes,
             'account_id' => $request->account_id,
             'created_by' => auth()->id(),
+            ...$attachmentData,
         ]);
 
-        // Update account balance if account is specified
-        if ($request->account_id) {
-            $account = \Modules\Accounting\Models\Account::find($request->account_id);
-            if ($account) {
-                $account->updateBalance($request->amount, 'add');
-            }
+        // Update account balance
+        $account = \Modules\Accounting\Models\Account::find($request->account_id);
+        if ($account) {
+            $account->updateBalance($request->amount, 'add');
         }
 
         return redirect()
@@ -203,5 +218,33 @@ class InvoicePaymentController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Payment deleted successfully.');
+    }
+
+    /**
+     * Download payment attachment.
+     */
+    public function downloadAttachment(InvoicePayment $invoicePayment)
+    {
+        if (!auth()->user()->can('view-invoices') && !auth()->user()->can('manage-invoices')) {
+            abort(403, 'Unauthorized to download payment attachments.');
+        }
+
+        // Verify business unit access
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($invoicePayment->invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to download this attachment.');
+        }
+
+        if (!$invoicePayment->hasAttachment()) {
+            abort(404, 'Attachment not found.');
+        }
+
+        $filePath = storage_path('app/private/' . $invoicePayment->attachment_path);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $invoicePayment->attachment_original_name);
     }
 }

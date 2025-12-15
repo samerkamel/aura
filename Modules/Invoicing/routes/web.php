@@ -43,6 +43,7 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
         Route::post('/{invoice}/payments', [InvoicePaymentController::class, 'store'])->name('payments.store');
         Route::put('/payments/{invoicePayment}', [InvoicePaymentController::class, 'update'])->name('payments.update');
         Route::delete('/payments/{invoicePayment}', [InvoicePaymentController::class, 'destroy'])->name('payments.destroy');
+        Route::get('/payments/{invoicePayment}/attachment', [InvoicePaymentController::class, 'downloadAttachment'])->name('payments.attachment');
     });
 
     // Payment Management (Aggregated view)

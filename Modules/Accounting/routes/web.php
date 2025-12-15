@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified', 'business_unit_context'])->group(function
 
             // Additional expense actions
             Route::patch('/{expenseSchedule}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('toggle-status');
+            Route::post('/{expenseSchedule}/mark-as-paid', [ExpenseController::class, 'markAsPaid'])->name('mark-as-paid');
+            Route::get('/{expenseSchedule}/payment-attachment', [ExpenseController::class, 'downloadPaymentAttachment'])->name('payment-attachment');
             Route::post('/bulk-action', [ExpenseController::class, 'bulkAction'])->name('bulk-action');
         });
 

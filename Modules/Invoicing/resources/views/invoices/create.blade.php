@@ -48,8 +48,23 @@
                             <h6 class="mb-3">Invoice Information</h6>
 
                             <div class="mb-3">
-                                <label class="form-label">Invoice Sequence</label>
-                                <select name="invoice_sequence_id" class="form-select @error('invoice_sequence_id') is-invalid @enderror">
+                                <label class="form-label required">Business Unit</label>
+                                <select name="business_unit_id" class="form-select @error('business_unit_id') is-invalid @enderror" required>
+                                    <option value="">Select Business Unit</option>
+                                    @foreach($accessibleBusinessUnits as $businessUnit)
+                                        <option value="{{ $businessUnit->id }}" {{ old('business_unit_id') == $businessUnit->id ? 'selected' : '' }}>
+                                            {{ $businessUnit->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('business_unit_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label required">Invoice Sequence</label>
+                                <select name="invoice_sequence_id" class="form-select @error('invoice_sequence_id') is-invalid @enderror" required>
                                     <option value="">Auto-select sequence</option>
                                     @foreach($sequences as $sequence)
                                         <option value="{{ $sequence->id }}" {{ old('invoice_sequence_id') == $sequence->id ? 'selected' : '' }}>
@@ -76,9 +91,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Due Date</label>
+                                        <label class="form-label required">Due Date</label>
                                         <input type="date" name="due_date" class="form-control @error('due_date') is-invalid @enderror"
-                                               value="{{ old('due_date') }}">
+                                               value="{{ old('due_date', date('Y-m-d', strtotime('+1 week'))) }}" required>
                                         @error('due_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

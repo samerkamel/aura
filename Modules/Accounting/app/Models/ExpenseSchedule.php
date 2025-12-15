@@ -41,6 +41,10 @@ class ExpenseSchedule extends Model
         'paid_date',
         'paid_amount',
         'payment_notes',
+        'payment_attachment_path',
+        'payment_attachment_original_name',
+        'payment_attachment_mime_type',
+        'payment_attachment_size',
         'business_unit_id',
     ];
 
@@ -452,5 +456,25 @@ class ExpenseSchedule extends Model
     public function getIsOneTimeAttribute(): bool
     {
         return $this->expense_type === 'one_time';
+    }
+
+    /**
+     * Check if payment has an attachment.
+     */
+    public function hasPaymentAttachment(): bool
+    {
+        return !empty($this->payment_attachment_path);
+    }
+
+    /**
+     * Get the payment attachment download URL.
+     */
+    public function getPaymentAttachmentUrlAttribute(): ?string
+    {
+        if (!$this->hasPaymentAttachment()) {
+            return null;
+        }
+
+        return route('accounting.expenses.payment-attachment', $this->id);
     }
 }
