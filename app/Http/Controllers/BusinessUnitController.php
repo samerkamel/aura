@@ -39,9 +39,7 @@ class BusinessUnitController extends Controller
             abort(403, 'Unauthorized to create business units.');
         }
 
-        $sectors = \App\Models\Sector::active()->orderBy('name')->get();
-
-        return view('administration.business-units.create', compact('sectors'));
+        return view('administration.business-units.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -55,7 +53,6 @@ class BusinessUnitController extends Controller
             'code' => 'required|string|max:10|unique:business_units',
             'description' => 'nullable|string',
             'type' => 'required|in:business_unit,head_office',
-            'sector_id' => 'nullable|integer|exists:sectors,id',
         ]);
 
         $businessUnit = BusinessUnit::create([
@@ -63,7 +60,6 @@ class BusinessUnitController extends Controller
             'code' => strtoupper($request->code),
             'description' => $request->description,
             'type' => $request->type,
-            'sector_id' => $request->sector_id ?? 0,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -107,9 +103,7 @@ class BusinessUnitController extends Controller
             abort(403, 'Unauthorized to edit business units.');
         }
 
-        $sectors = \App\Models\Sector::active()->orderBy('name')->get();
-
-        return view('administration.business-units.edit', compact('businessUnit', 'sectors'));
+        return view('administration.business-units.edit', compact('businessUnit'));
     }
 
     public function update(Request $request, BusinessUnit $businessUnit): RedirectResponse
@@ -123,7 +117,6 @@ class BusinessUnitController extends Controller
             'code' => 'required|string|max:10|unique:business_units,code,' . $businessUnit->id,
             'description' => 'nullable|string',
             'type' => 'required|in:business_unit,head_office',
-            'sector_id' => 'nullable|integer|exists:sectors,id',
         ]);
 
         $businessUnit->update([
@@ -131,7 +124,6 @@ class BusinessUnitController extends Controller
             'code' => strtoupper($request->code),
             'description' => $request->description,
             'type' => $request->type,
-            'sector_id' => $request->sector_id ?? 0,
             'is_active' => $request->has('is_active'),
         ]);
 

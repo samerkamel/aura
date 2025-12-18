@@ -107,26 +107,6 @@
                   </div>
 
                   <div class="mb-6">
-                    <label for="sector_id" class="form-label">Sector</label>
-                    <select class="form-select @error('sector_id') is-invalid @enderror" id="sector_id" name="sector_id">
-                      <option value="0" {{ old('sector_id') == '0' ? 'selected' : '' }}>
-                        All Sectors (Head Office Access)
-                      </option>
-                      @foreach($sectors as $sector)
-                        <option value="{{ $sector->id }}" {{ old('sector_id') == $sector->id ? 'selected' : '' }}>
-                          {{ $sector->name }}
-                        </option>
-                      @endforeach
-                    </select>
-                    @error('sector_id')
-                      <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="form-text text-muted">
-                      Select 0 for head office units with access to all sectors
-                    </small>
-                  </div>
-
-                  <div class="mb-6">
                     <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
                              {{ old('is_active', true) ? 'checked' : '' }}>
