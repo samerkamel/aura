@@ -109,7 +109,7 @@
                       <div>
                         <strong>{{ $asset->name }}</strong>
                         @if($asset->description)
-                          <br><small class="text-muted">{{ Str::limit($asset->description, 50) }}</small>
+                          <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($asset->description, 50) }}</small>
                         @endif
                       </div>
                     </td>
