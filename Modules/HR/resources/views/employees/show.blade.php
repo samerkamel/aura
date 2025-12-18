@@ -491,15 +491,15 @@
                 <h6 class="card-title mb-2">{{ $balance['policy_name'] }}</h6>
                 <div class="d-flex justify-content-between mb-1">
                   <small class="text-muted">Entitled</small>
-                  <span class="badge bg-primary">{{ $balance['entitled_days'] }}</span>
+                  <span class="badge bg-primary">{{ number_format($balance['entitled_days'], 0) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                   <small class="text-muted">Used</small>
-                  <span class="badge bg-secondary">{{ $balance['used_days'] }}</span>
+                  <span class="badge bg-secondary">{{ number_format($balance['used_days'], 0) }}</span>
                 </div>
                 <div class="d-flex justify-content-between">
                   <small class="text-muted">Remaining</small>
-                  <span class="badge bg-{{ $balance['remaining_days'] > 0 ? 'success' : 'warning' }}">{{ $balance['remaining_days'] }}</span>
+                  <span class="badge bg-{{ $balance['remaining_days'] > 0 ? 'success' : 'warning' }}">{{ number_format($balance['remaining_days'], 0) }}</span>
                 </div>
               </div>
             </div>

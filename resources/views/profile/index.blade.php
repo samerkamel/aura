@@ -105,7 +105,7 @@
           <div class="col-md-4 text-center">
             <div class="stat-card">
               <div class="stat-value text-info">
-                {{ $user->created_at->diffInDays(now()) }}
+                {{ floor($user->created_at->diffInDays(now())) }}
               </div>
               <small class="text-muted">Days Since Registration</small>
             </div>
