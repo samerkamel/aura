@@ -192,7 +192,7 @@
                                     <td>
                                         @if($payment->notes)
                                             <span class="text-truncate" style="max-width: 150px;" title="{{ $payment->notes }}">
-                                                {{ Str::limit($payment->notes, 30) }}
+                                                {{ \Illuminate\Support\Str::limit($payment->notes, 30) }}
                                             </span>
                                         @else
                                             <span class="text-muted">—</span>

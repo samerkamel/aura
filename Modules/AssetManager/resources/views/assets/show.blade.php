@@ -153,12 +153,12 @@
                             $duration = $assignedDate->diffInDays($returnedDate);
                           @endphp
                           <small class="text-muted">
-                            {{ $duration }} {{ Str::plural('day', $duration) }}
+                            {{ $duration }} {{ \Illuminate\Support\Str::plural('day', $duration) }}
                           </small>
                         </td>
                         <td>
                           @if($employee->pivot->notes)
-                            <small class="text-muted">{{ Str::limit($employee->pivot->notes, 50) }}</small>
+                            <small class="text-muted">{{ \Illuminate\Support\Str::limit($employee->pivot->notes, 50) }}</small>
                           @else
                             <small class="text-muted">-</small>
                           @endif

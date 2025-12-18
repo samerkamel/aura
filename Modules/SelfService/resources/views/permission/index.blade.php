@@ -93,11 +93,11 @@
                 @endphp
                 <span class="badge {{ $statusClass }}">{{ $request->status_label }}</span>
                 @if($request->status === 'rejected' && $request->rejection_reason)
-                  <br><small class="text-danger">{{ Str::limit($request->rejection_reason, 30) }}</small>
+                  <br><small class="text-danger">{{ \Illuminate\Support\Str::limit($request->rejection_reason, 30) }}</small>
                 @endif
               </td>
               <td>
-                <small class="text-muted">{{ Str::limit($request->notes, 40) ?: '-' }}</small>
+                <small class="text-muted">{{ \Illuminate\Support\Str::limit($request->notes, 40) ?: '-' }}</small>
               </td>
               <td>
                 <small class="text-muted">{{ $request->created_at->format('M d, Y H:i') }}</small>

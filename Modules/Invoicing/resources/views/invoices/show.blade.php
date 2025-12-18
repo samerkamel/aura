@@ -417,7 +417,7 @@
                                     <td>
                                         @if($payment->notes)
                                             <span class="text-truncate" style="max-width: 200px;" title="{{ $payment->notes }}">
-                                                {{ Str::limit($payment->notes, 50) }}
+                                                {{ \Illuminate\Support\Str::limit($payment->notes, 50) }}
                                             </span>
                                         @else
                                             <span class="text-muted">—</span>
@@ -426,7 +426,7 @@
                                     <td>
                                         @if($payment->hasAttachment())
                                             <a href="{{ $payment->attachment_url }}" class="btn btn-sm btn-outline-primary" title="Download {{ $payment->attachment_original_name }}">
-                                                <i class="ti ti-paperclip me-1"></i>{{ Str::limit($payment->attachment_original_name, 20) }}
+                                                <i class="ti ti-paperclip me-1"></i>{{ \Illuminate\Support\Str::limit($payment->attachment_original_name, 20) }}
                                             </a>
                                         @else
                                             <span class="text-muted">—</span>
