@@ -195,20 +195,34 @@
             <h5 class="mb-0">
               <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
             </h5>
-            <span class="badge bg-info">{{ number_format($totalHours, 1) }}h this period</span>
+            <span class="badge bg-info">
+              {{ number_format($totalHours, 1) }}h
+              @if($startDate && $endDate)
+                (filtered)
+              @else
+                (lifetime)
+              @endif
+            </span>
           </div>
           <!-- Date Filter -->
           <form action="{{ route('projects.show', $project) }}" method="GET" class="row g-2">
-            <div class="col-5">
-              <input type="date" name="start_date" class="form-control form-control-sm" value="{{ $startDate }}">
+            <div class="col-4">
+              <input type="date" name="start_date" class="form-control form-control-sm" value="{{ $startDate }}" placeholder="From">
             </div>
-            <div class="col-5">
-              <input type="date" name="end_date" class="form-control form-control-sm" value="{{ $endDate }}">
+            <div class="col-4">
+              <input type="date" name="end_date" class="form-control form-control-sm" value="{{ $endDate }}" placeholder="To">
             </div>
-            <div class="col-2">
-              <button type="submit" class="btn btn-sm btn-primary w-100">
-                <i class="ti ti-filter"></i>
-              </button>
+            <div class="col-4">
+              <div class="btn-group w-100">
+                <button type="submit" class="btn btn-sm btn-primary">
+                  <i class="ti ti-filter"></i>
+                </button>
+                @if($startDate && $endDate)
+                  <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="ti ti-x"></i>
+                  </a>
+                @endif
+              </div>
             </div>
           </form>
         </div>

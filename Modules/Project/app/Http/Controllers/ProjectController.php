@@ -100,14 +100,18 @@ class ProjectController extends Controller
     {
         $project->load(['customer', 'invoices.payments', 'invoices.customer']);
 
-        // Get worklogs with optional date filtering
-        $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->format('Y-m-d');
-        $endDate = $request->filled('end_date') ? $request->end_date : now()->endOfMonth()->format('Y-m-d');
+        // Get worklogs with optional date filtering (default: lifetime/all time)
+        $startDate = $request->filled('start_date') ? $request->start_date : null;
+        $endDate = $request->filled('end_date') ? $request->end_date : null;
 
         $worklogsQuery = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
-            ->whereBetween('worklog_started', [$startDate, $endDate])
             ->with('employee')
             ->orderBy('worklog_started', 'desc');
+
+        // Only apply date filter if dates are provided
+        if ($startDate && $endDate) {
+            $worklogsQuery->whereBetween('worklog_started', [$startDate, $endDate]);
+        }
 
         $worklogs = $worklogsQuery->get();
 
@@ -122,17 +126,22 @@ class ProjectController extends Controller
 
         // Calculate totals
         $totalHours = $worklogs->sum('time_spent_hours');
+        $lifetimeHours = $totalHours; // Same as totalHours when no filter, recalculated below if filtered
         $totalContractValue = $project->invoices->sum('total_amount');
         $totalPaid = $project->invoices->sum('paid_amount');
         $totalRemaining = $totalContractValue - $totalPaid;
 
+        // If date filter is applied, get lifetime hours separately for the stats card
+        if ($startDate && $endDate) {
+            $lifetimeHours = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+                ->sum('time_spent_hours');
+        }
+
         // Calculate project cost (lifetime hours * hourly cost per employee)
         // Hourly cost = Employee Salary / 120
-        $lifetimeWorklogs = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
-            ->with('employee')
-            ->get();
-
-        $lifetimeHours = $lifetimeWorklogs->sum('time_spent_hours');
+        $lifetimeWorklogs = ($startDate && $endDate)
+            ? \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')->with('employee')->get()
+            : $worklogs;
 
         $projectCost = $lifetimeWorklogs->groupBy('employee_id')->sum(function ($employeeWorklogs) {
             $employee = $employeeWorklogs->first()->employee;
