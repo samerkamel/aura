@@ -13,7 +13,7 @@
  */
 
 // Configuration
-define('GITHUB_SECRET', 'your-secret-key-here'); // Change this!
+define('GITHUB_SECRET', '3e1dd610ade11c226a7d62e58fdaeb5e0e4da08c8ea7bfc8cfcfc0bab0d043da'); // GitHub webhook secret
 define('PROJECT_DIR', dirname(__DIR__)); // Adjust path if needed
 define('LOG_FILE', PROJECT_DIR . '/storage/logs/deploy.log');
 define('BRANCH', 'main');
