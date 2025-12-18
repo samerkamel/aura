@@ -40,7 +40,6 @@ class Contract extends Model
         'is_active',
         'contact_info',
         'notes',
-        'business_unit_id',
     ];
 
     /**
@@ -83,14 +82,6 @@ class Contract extends Model
         return $this->hasMany(ContractPayment::class)
                     ->where('status', 'paid')
                     ->orderBy('paid_date', 'desc');
-    }
-
-    /**
-     * Get the business unit this contract belongs to.
-     */
-    public function businessUnit(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\BusinessUnit::class);
     }
 
     /**
@@ -145,15 +136,6 @@ class Contract extends Model
     {
         return $query->where('status', $status);
     }
-
-    /**
-     * Scope to filter by business unit.
-     */
-    public function scopeForBusinessUnit(Builder $query, $businessUnitId): Builder
-    {
-        return $query->where('business_unit_id', $businessUnitId);
-    }
-
 
     /**
      * Get count of active payments.

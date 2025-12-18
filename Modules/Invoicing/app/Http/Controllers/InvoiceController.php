@@ -10,8 +10,6 @@ use Modules\Invoicing\Models\Invoice;
 use Modules\Invoicing\Models\InvoiceSequence;
 use Modules\Project\Models\Project;
 use App\Models\Customer;
-use App\Models\BusinessUnit;
-use App\Helpers\BusinessUnitHelper;
 
 class InvoiceController extends Controller
 {
@@ -24,10 +22,7 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to view invoices.');
         }
 
-        $query = Invoice::with(['customer', 'businessUnit', 'invoiceSequence']);
-
-        // Apply business unit filtering
-        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
+        $query = Invoice::with(['customer', 'invoiceSequence']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {
@@ -69,10 +64,9 @@ class InvoiceController extends Controller
         ];
 
         $customers = Customer::orderBy('name')->get();
-        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
         $accounts = \Modules\Accounting\Models\Account::active()->orderBy('name')->get();
 
-        return view('invoicing::invoices.index', compact('invoices', 'stats', 'customers', 'accessibleBusinessUnits', 'accounts'));
+        return view('invoicing::invoices.index', compact('invoices', 'stats', 'customers', 'accounts'));
     }
 
     /**
@@ -85,7 +79,6 @@ class InvoiceController extends Controller
         }
 
         $customers = Customer::orderBy('name')->get();
-        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
         $sequences = InvoiceSequence::active()->get();
         $projects = Project::active()->orderBy('name')->get();
 
@@ -93,7 +86,7 @@ class InvoiceController extends Controller
         $selectedProjectId = $request->query('project_id');
         $selectedCustomerId = $request->query('customer_id');
 
-        return view('invoicing::invoices.create', compact('customers', 'accessibleBusinessUnits', 'sequences', 'projects', 'selectedProjectId', 'selectedCustomerId'));
+        return view('invoicing::invoices.create', compact('customers', 'sequences', 'projects', 'selectedProjectId', 'selectedCustomerId'));
     }
 
     /**
@@ -108,7 +101,6 @@ class InvoiceController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'project_id' => 'nullable|exists:projects,id',
-            'business_unit_id' => 'required|exists:business_units,id',
             'invoice_sequence_id' => 'required|exists:invoice_sequences,id',
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
@@ -122,12 +114,6 @@ class InvoiceController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($request->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to create invoices for this business unit.');
-        }
-
         $sequence = InvoiceSequence::findOrFail($request->invoice_sequence_id);
         $invoiceNumber = $sequence->generateInvoiceNumber();
 
@@ -140,7 +126,6 @@ class InvoiceController extends Controller
             'total_amount' => 0, // Will be calculated from items
             'customer_id' => $request->customer_id,
             'project_id' => $request->project_id,
-            'business_unit_id' => $request->business_unit_id,
             'invoice_sequence_id' => $request->invoice_sequence_id,
             'created_by' => auth()->id(),
             'notes' => $request->notes,
@@ -183,13 +168,7 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to view invoice details.');
         }
 
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to view this invoice.');
-        }
-
-        $invoice->load(['items', 'customer', 'businessUnit', 'invoiceSequence', 'createdBy', 'payments.createdBy']);
+        $invoice->load(['items', 'customer', 'invoiceSequence', 'createdBy', 'payments.createdBy']);
         $accounts = \Modules\Accounting\Models\Account::active()->orderBy('name')->get();
 
         return view('invoicing::invoices.show', compact('invoice', 'accounts'));
@@ -209,20 +188,13 @@ class InvoiceController extends Controller
             abort(403, 'Only draft invoices can be edited.');
         }
 
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to edit this invoice.');
-        }
-
         $customers = Customer::orderBy('name')->get();
-        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
         $sequences = InvoiceSequence::active()->get();
         $projects = Project::active()->orderBy('name')->get();
 
-        $invoice->load(['items', 'customer', 'businessUnit', 'project']);
+        $invoice->load(['items', 'customer', 'project']);
 
-        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'accessibleBusinessUnits', 'sequences', 'projects'));
+        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'sequences', 'projects'));
     }
 
     /**
@@ -239,16 +211,9 @@ class InvoiceController extends Controller
             abort(403, 'Only draft invoices can be edited.');
         }
 
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to edit this invoice.');
-        }
-
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'project_id' => 'nullable|exists:projects,id',
-            'business_unit_id' => 'required|exists:business_units,id',
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
             'tax_amount' => 'nullable|numeric|min:0',
@@ -264,7 +229,6 @@ class InvoiceController extends Controller
         $invoice->update([
             'customer_id' => $request->customer_id,
             'project_id' => $request->project_id,
-            'business_unit_id' => $request->business_unit_id,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,
             'tax_amount' => $request->tax_amount ?? 0,
@@ -312,12 +276,6 @@ class InvoiceController extends Controller
         // Only allow deletion of draft invoices
         if ($invoice->status !== 'draft') {
             abort(403, 'Only draft invoices can be deleted.');
-        }
-
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to delete this invoice.');
         }
 
         $invoice->delete();

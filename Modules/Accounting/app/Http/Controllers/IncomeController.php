@@ -13,7 +13,6 @@ use Modules\Accounting\Http\Requests\UpdateContractRequest;
 use Modules\Invoicing\Models\Invoice;
 use Modules\Invoicing\Models\InvoiceItem;
 use Carbon\Carbon;
-use App\Helpers\BusinessUnitHelper;
 
 /**
  * IncomeController
@@ -33,10 +32,7 @@ class IncomeController extends Controller
         }
 
         // Get contracts with their payments
-        $query = Contract::with(['payments']);
-
-        // Apply business unit filtering
-        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
+        $query = Contract::with(['payments', 'customer']);
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -53,19 +49,13 @@ class IncomeController extends Controller
 
         $contracts = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        // Statistics - apply BU filtering
-        $totalContractsQuery = Contract::query();
-        $totalContractsQuery = BusinessUnitHelper::filterQueryByBusinessUnit($totalContractsQuery, $request);
-
-        $activeContractsQuery = Contract::active();
-        $activeContractsQuery = BusinessUnitHelper::filterQueryByBusinessUnit($activeContractsQuery, $request);
-
+        // Statistics
         $statistics = [
-            'total_contracts' => $totalContractsQuery->count(),
-            'active_contracts' => $activeContractsQuery->count(),
-            'total_contract_value' => $activeContractsQuery->sum('total_amount'),
-            'total_payments_scheduled' => $activeContractsQuery->get()->sum('total_payment_amount'),
-            'total_paid_amount' => $activeContractsQuery->get()->sum('paid_amount'),
+            'total_contracts' => Contract::count(),
+            'active_contracts' => Contract::active()->count(),
+            'total_contract_value' => Contract::active()->sum('total_amount'),
+            'total_payments_scheduled' => Contract::active()->get()->sum('total_payment_amount'),
+            'total_paid_amount' => Contract::active()->get()->sum('paid_amount'),
         ];
 
         return view('accounting::income.index', compact(
@@ -87,17 +77,10 @@ class IncomeController extends Controller
      */
     public function createContract(Request $request): View
     {
-        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
-        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
-
-        // Get products for the current business unit
-        $products = collect();
-        if ($currentBusinessUnit) {
-            $products = \App\Models\Department::where('is_active', true)
-                ->where('business_unit_id', $currentBusinessUnit->id)
-                ->orderBy('name')
-                ->get();
-        }
+        // Get products/departments
+        $products = \App\Models\Department::where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
         // Get projects for project selection
         $projects = \Modules\Project\Models\Project::active()->orderBy('name')->get();
@@ -107,8 +90,6 @@ class IncomeController extends Controller
         $selectedCustomerId = $request->query('customer_id');
 
         return view('accounting::income.create-contract', compact(
-            'currentBusinessUnit',
-            'accessibleBusinessUnits',
             'products',
             'projects',
             'selectedProjectId',
@@ -121,16 +102,7 @@ class IncomeController extends Controller
      */
     public function storeContract(StoreContractRequest $request): RedirectResponse
     {
-        // Determine business unit ID
-        $businessUnitId = $request->business_unit_id ?? BusinessUnitHelper::getCurrentBusinessUnitId();
-
-        // Verify user has access to the selected business unit
-        if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to create contracts in this business unit.');
-        }
-
         $contractData = $request->validated();
-        $contractData['business_unit_id'] = $businessUnitId;
 
         // Remove project_ids from contract data (handled separately via pivot)
         unset($contractData['project_ids']);
@@ -149,9 +121,7 @@ class IncomeController extends Controller
                     !empty($allocation['allocation_type']) &&
                     (!empty($allocation['allocation_percentage']) || !empty($allocation['allocation_amount']))) {
 
-                    // Verify the department belongs to the same business unit as the contract
                     $department = \App\Models\Department::where('id', $allocation['product_id'])
-                        ->where('business_unit_id', $businessUnitId)
                         ->where('is_active', true)
                         ->first();
 
@@ -159,7 +129,7 @@ class IncomeController extends Controller
                         return redirect()
                             ->back()
                             ->withInput()
-                            ->withErrors(['error' => 'Invalid product selected. Product must belong to the same business unit as the contract.']);
+                            ->withErrors(['error' => 'Invalid product selected.']);
                     }
 
                     $contract->departments()->attach($allocation['product_id'], [
@@ -174,7 +144,7 @@ class IncomeController extends Controller
 
         return redirect()
             ->route('accounting.income.contracts.show', $contract)
-            ->with('success', 'Contract created successfully with department allocations.');
+            ->with('success', 'Contract created successfully.');
     }
 
     /**
@@ -182,13 +152,7 @@ class IncomeController extends Controller
      */
     public function showContract(Contract $contract): View
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to view this contract.');
-        }
-
-        $contract->load('payments');
+        $contract->load(['payments', 'projects', 'customer']);
 
         // Get upcoming payments for next 6 months
         $upcomingPayments = $contract->payments()
@@ -229,14 +193,12 @@ class IncomeController extends Controller
      */
     public function editContract(Contract $contract): View
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to edit this contract.');
-        }
+        $contract->load(['departments', 'projects']);
 
-        $contract->load('departments');
-        return view('accounting::income.edit-contract', compact('contract'));
+        // Get projects for project selection
+        $projects = \Modules\Project\Models\Project::active()->orderBy('name')->get();
+
+        return view('accounting::income.edit-contract', compact('contract', 'projects'));
     }
 
     /**
@@ -244,13 +206,17 @@ class IncomeController extends Controller
      */
     public function updateContract(UpdateContractRequest $request, Contract $contract): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to update this contract.');
-        }
+        $contractData = $request->validated();
 
-        $contract->update($request->validated());
+        // Remove project_ids from contract data (handled separately via pivot)
+        unset($contractData['project_ids']);
+
+        $contract->update($contractData);
+
+        // Sync projects (many-to-many)
+        if ($request->has('project_ids')) {
+            $contract->projects()->sync(array_filter($request->project_ids ?? []));
+        }
 
         // Handle department allocations
         if ($request->has('departments') && is_array($request->departments)) {
@@ -278,7 +244,7 @@ class IncomeController extends Controller
 
         return redirect()
             ->route('accounting.income.contracts.show', $contract)
-            ->with('success', 'Contract updated successfully with department allocations.');
+            ->with('success', 'Contract updated successfully.');
     }
 
     /**
@@ -286,12 +252,6 @@ class IncomeController extends Controller
      */
     public function destroyContract(Contract $contract): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to delete this contract.');
-        }
-
         $contract->delete();
 
         return redirect()
@@ -304,12 +264,6 @@ class IncomeController extends Controller
      */
     public function toggleContractStatus(Contract $contract): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to modify this contract.');
-        }
-
         $contract->update(['is_active' => !$contract->is_active]);
 
         $status = $contract->is_active ? 'activated' : 'deactivated';
@@ -324,12 +278,6 @@ class IncomeController extends Controller
      */
     public function addPayment(Request $request, Contract $contract): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to add payments to this contract.');
-        }
-
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -384,12 +332,6 @@ class IncomeController extends Controller
      */
     public function generateRecurringPayments(Request $request, Contract $contract): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to manage payments for this contract.');
-        }
-
         $request->validate([
             'frequency_type' => 'required|in:weekly,bi-weekly,monthly,quarterly,yearly',
             'frequency_value' => 'required|integer|min:1|max:52',
@@ -430,12 +372,6 @@ class IncomeController extends Controller
      */
     public function updatePaymentStatus(Request $request, Contract $contract, ContractPayment $payment): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to update payments for this contract.');
-        }
-
         $request->validate([
             'status' => 'nullable|in:pending,paid,overdue,cancelled',
             'due_date' => 'nullable|date',
@@ -487,12 +423,6 @@ class IncomeController extends Controller
      */
     public function deletePayment(Contract $contract, ContractPayment $payment): RedirectResponse
     {
-        // Verify user has access to this contract's business unit
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($contract->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to delete payments for this contract.');
-        }
-
         $payment->delete();
 
         return redirect()
@@ -536,33 +466,6 @@ class IncomeController extends Controller
     }
 
     /**
-     * API endpoint to get products for a specific business unit
-     */
-    public function getProductsByBusinessUnit(Request $request)
-    {
-        $request->validate([
-            'business_unit_id' => 'required|exists:business_units,id'
-        ]);
-
-        $businessUnitId = $request->business_unit_id;
-
-        // Verify user has access to this business unit
-        if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            return response()->json(['error' => 'Unauthorized access to this business unit'], 403);
-        }
-
-        $products = \App\Models\Department::where('is_active', true)
-            ->where('business_unit_id', $businessUnitId)
-            ->orderBy('name')
-            ->get(['id', 'name', 'code']);
-
-        return response()->json([
-            'success' => true,
-            'products' => $products
-        ]);
-    }
-
-    /**
      * Show CSV import form for contracts.
      */
     public function importForm(): View
@@ -573,9 +476,8 @@ class IncomeController extends Controller
         }
 
         $customers = \App\Models\Customer::active()->orderBy('name')->get();
-        $businessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
 
-        return view('accounting::income.import-contracts', compact('customers', 'businessUnits'));
+        return view('accounting::income.import-contracts', compact('customers'));
     }
 
     /**
@@ -600,7 +502,7 @@ class IncomeController extends Controller
             $header = array_shift($csvData);
 
             // Validate header format
-            $expectedHeader = ['client_name', 'contract_number', 'description', 'total_amount', 'start_date', 'end_date', 'customer_id', 'business_unit_id', 'contact_info', 'notes'];
+            $expectedHeader = ['client_name', 'contract_number', 'description', 'total_amount', 'start_date', 'end_date', 'customer_id', 'contact_info', 'notes'];
             if (count(array_intersect($header, $expectedHeader)) < 4) { // At least 4 required fields
                 return redirect()->back()
                     ->with('error', 'Invalid CSV format. Please download the sample CSV and follow the format.');
@@ -619,19 +521,6 @@ class IncomeController extends Controller
                 try {
                     // Map CSV row to array using header
                     $data = array_combine($header, $row);
-
-                    // Determine business unit ID
-                    $businessUnitId = !empty($data['business_unit_id']) ?
-                        (int)$data['business_unit_id'] :
-                        BusinessUnitHelper::getCurrentBusinessUnitId();
-
-                    // Verify user has access to the selected business unit
-                    if (!BusinessUnitHelper::isSuperAdmin() &&
-                        !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-                        $errors[] = "Row " . ($rowIndex + 2) . ": Unauthorized to import contracts to business unit ID {$businessUnitId}";
-                        $errorCount++;
-                        continue;
-                    }
 
                     // Validate required fields
                     if (empty($data['client_name']) || empty($data['contract_number']) || empty($data['total_amount'])) {
@@ -664,7 +553,6 @@ class IncomeController extends Controller
                         'start_date' => !empty($data['start_date']) ? date('Y-m-d', strtotime($data['start_date'])) : now()->format('Y-m-d'),
                         'end_date' => !empty($data['end_date']) ? date('Y-m-d', strtotime($data['end_date'])) : null,
                         'customer_id' => $customerId,
-                        'business_unit_id' => $businessUnitId,
                         'contact_info' => !empty($data['contact_info']) ? trim($data['contact_info']) : null,
                         'notes' => !empty($data['notes']) ? trim($data['notes']) : null,
                         'status' => 'active',
@@ -715,7 +603,6 @@ class IncomeController extends Controller
             'start_date',
             'end_date',
             'customer_id',
-            'business_unit_id',
             'contact_info',
             'notes'
         ];
@@ -729,7 +616,6 @@ class IncomeController extends Controller
                 '2024-12-01',
                 '2025-06-30',
                 '1',
-                '1',
                 'john@abccompany.com',
                 'Initial website project with 6 months maintenance'
             ],
@@ -741,22 +627,9 @@ class IncomeController extends Controller
                 '2024-12-15',
                 '2025-08-15',
                 '2',
-                '1',
                 'contact@techsolutions.com',
                 'iOS and Android mobile application'
             ],
-            [
-                'Global Marketing Co',
-                'CONT-2024-003',
-                'Digital marketing campaign',
-                '25000.00',
-                '2025-01-01',
-                '2025-12-31',
-                '',
-                '2',
-                'marketing@globalmc.com',
-                'Annual digital marketing and SEO services'
-            ]
         ];
 
         $csvContent = implode(',', $headers) . "\n";

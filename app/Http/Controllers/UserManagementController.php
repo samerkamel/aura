@@ -149,19 +149,32 @@ class UserManagementController extends Controller
             abort(403, 'Unauthorized to edit users.');
         }
 
+        // Debug logging
+        \Log::info('User update attempt', [
+            'user_id' => $user->id,
+            'request_roles' => $request->roles,
+            'request_all' => $request->all(),
+        ]);
+
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
-            'is_active' => 'boolean',
+            'roles' => 'nullable|array',
+            'roles.*' => 'nullable|exists:roles,id',
+            'is_active' => 'nullable|boolean',
         ];
 
         if ($request->password) {
             $rules['password'] = ['confirmed', Password::defaults()];
         }
 
-        $request->validate($rules);
+        try {
+            $request->validate($rules);
+            \Log::info('Validation passed');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', ['errors' => $e->errors()]);
+            throw $e;
+        }
 
         $userData = [
             'name' => $request->name,
@@ -176,7 +189,10 @@ class UserManagementController extends Controller
         $user->update($userData);
 
         // Sync roles
-        $user->roles()->sync($request->roles ?? []);
+        $rolesToSync = $request->roles ?? [];
+        \Log::info('Syncing roles', ['roles_to_sync' => $rolesToSync]);
+        $user->roles()->sync($rolesToSync);
+        \Log::info('Roles synced successfully', ['user_roles_after' => $user->fresh()->roles->pluck('id')->toArray()]);
 
         return redirect()
             ->route('administration.users.show', $user)

@@ -38,38 +38,12 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
-                                        <!-- Business Unit Selection (if user has access to multiple BUs) -->
-                                        @if(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() > 1)
-                                        <div class="col-12">
-                                            <label class="form-label" for="business_unit_id">Business Unit <span class="text-danger">*</span></label>
-                                            <select class="form-select @error('business_unit_id') is-invalid @enderror"
-                                                    id="business_unit_id" name="business_unit_id" required>
-                                                <option value="">Select Business Unit</option>
-                                                @foreach($accessibleBusinessUnits as $businessUnit)
-                                                    <option value="{{ $businessUnit->id }}"
-                                                            {{ old('business_unit_id', $currentBusinessUnit?->id) == $businessUnit->id ? 'selected' : '' }}>
-                                                        {{ $businessUnit->name }} ({{ $businessUnit->code }})
-                                                        @if($businessUnit->type === 'head_office')
-                                                            - Head Office
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('business_unit_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        @endif
-
                                         <div class="col-md-6">
                                             <label for="customer_id" class="form-label">Customer <span class="text-danger">*</span></label>
                                             <div class="d-flex">
                                                 <select class="form-select @error('customer_id') is-invalid @enderror"
                                                         id="customer_id" name="customer_id" style="width: calc(100% - 40px);" required>
                                                     <option value="">Select Customer</option>
-                                                    @if(old('customer_id'))
-                                                        <!-- Will be populated by JavaScript on page load -->
-                                                    @endif
                                                 </select>
                                                 <button type="button" class="btn btn-outline-primary ms-2"
                                                         data-bs-toggle="modal" data-bs-target="#addCustomerModal"
@@ -236,13 +210,12 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="end_date" class="form-label">End Date <small class="text-muted">(Optional)</small></label>
+                                            <label for="end_date" class="form-label">End Date <span class="text-danger">*</span></label>
                                             <input type="date" class="form-control @error('end_date') is-invalid @enderror"
                                                    id="end_date" name="end_date" value="{{ old('end_date') }}">
                                             @error('end_date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
-                                            <small class="text-muted">Leave blank for ongoing contracts</small>
                                         </div>
                                     </div>
                                 </div>
@@ -305,10 +278,6 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
-                                        <a href="{{ route('administration.products.index') }}"
-                                           class="btn btn-outline-primary" target="_blank">
-                                            <i class="ti ti-building me-2"></i>Manage Products
-                                        </a>
                                         <a href="{{ route('accounting.accounts.index') }}"
                                            class="btn btn-outline-info" target="_blank">
                                             <i class="ti ti-credit-card me-2"></i>Manage Accounts
@@ -415,15 +384,11 @@
                         <label class="form-label">Product <span class="text-danger">*</span></label>
                         <select class="form-select allocation-product" name="products[INDEX][product_id]">
                             <option value="">Select product</option>
-                            @if(isset($products) && $products->count() > 0)
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}">
-                                        {{ $product->name }} ({{ $product->code }})
-                                    </option>
-                                @endforeach
-                            @else
-                                <option value="" disabled>No products available for selected business unit</option>
-                            @endif
+                            @foreach($products ?? [] as $product)
+                                <option value="{{ $product->id }}">
+                                    {{ $product->name }} ({{ $product->code ?? 'N/A' }})
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -469,17 +434,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = 0;
 
-    // Initialize customer dropdown with vanilla JavaScript
-    function initializeCustomerDropdown() {
-        console.log('Initializing customer dropdown...');
-        loadCustomersAsFallback();
-    }
+    // Initialize customer dropdown
+    loadCustomers();
 
-    // Fallback function to load customers without Select2/jQuery
-    function loadCustomersAsFallback() {
-        console.log('Loading customers as fallback...');
-
-        // Use vanilla JavaScript fetch instead of jQuery
+    function loadCustomers() {
         fetch('{{ route("administration.customers.api.index") }}?' + new URLSearchParams({ search: '' }), {
             method: 'GET',
             headers: {
@@ -493,7 +451,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const select = document.getElementById('customer_id');
             select.innerHTML = '<option value="">Select Customer</option>';
 
-            // Pre-selected customer ID from query params
             const preSelectedCustomerId = '{{ $selectedCustomerId ?? '' }}';
 
             if (data.customers) {
@@ -503,7 +460,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = customer.text;
                     option.dataset.customerData = JSON.stringify(customer);
 
-                    // Pre-select if matches
                     if (preSelectedCustomerId && customer.id == preSelectedCustomerId) {
                         option.selected = true;
                     }
@@ -511,7 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     select.appendChild(option);
                 });
 
-                // If customer was pre-selected, trigger the change logic
                 if (preSelectedCustomerId && select.value) {
                     const selectedOption = select.options[select.selectedIndex];
                     const customerData = JSON.parse(selectedOption.dataset.customerData || '{}');
@@ -520,37 +475,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Add change event listener
             select.addEventListener('change', function() {
                 if (this.value) {
                     const customerData = JSON.parse(this.options[this.selectedIndex].dataset.customerData || '{}');
-
-                    // Update hidden client_name field
                     document.getElementById('client_name').value = customerData.name || this.options[this.selectedIndex].textContent;
-
-                    // Auto-generate contract number
                     autoGenerateContractNumber(customerData.name || this.options[this.selectedIndex].textContent);
                 }
             });
-
-            console.log('Fallback customer loading completed');
         })
         .catch(error => {
             console.error('Failed to load customers:', error);
-
-            // Show error to user
             const select = document.getElementById('customer_id');
             select.innerHTML = '<option value="">Failed to load customers</option>';
-
-            // Show toast if available
-            if (typeof showToast === 'function') {
-                showToast('error', 'Failed to load customers. Please refresh the page.');
-            }
         });
     }
-
-    // Call the initialization function
-    initializeCustomerDropdown();
 
     // Handle customer type change in modal
     document.getElementById('modal_type').addEventListener('change', function() {
@@ -568,7 +506,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('addCustomerForm');
         const formData = new FormData(form);
 
-        // Basic validation
         const name = formData.get('name');
         const type = formData.get('type');
 
@@ -577,123 +514,58 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Disable button and show loading
         const saveBtn = this;
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Adding...';
 
-        // Try jQuery first, fall back to fetch
-        if (typeof $ !== 'undefined') {
-            // Send AJAX request using jQuery
-            $.ajax({
-                url: '{{ route("administration.customers.api.store") }}',
-                method: 'POST',
-                data: {
-                    name: formData.get('name'),
-                    type: formData.get('type'),
-                    company_name: formData.get('company_name'),
-                    email: formData.get('email'),
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    handleCustomerCreationSuccess(response, form, saveBtn);
-                },
-                error: function(xhr, status, error) {
-                    handleCustomerCreationError(xhr, saveBtn);
-                }
-            });
-        } else {
-            // Use vanilla JavaScript fetch as fallback
-            fetch('{{ route("administration.customers.api.store") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    name: formData.get('name'),
-                    type: formData.get('type'),
-                    company_name: formData.get('company_name'),
-                    email: formData.get('email')
-                })
+        fetch('{{ route("administration.customers.api.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                name: formData.get('name'),
+                type: formData.get('type'),
+                company_name: formData.get('company_name'),
+                email: formData.get('email')
             })
-            .then(response => response.json())
-            .then(data => {
-                handleCustomerCreationSuccess(data, form, saveBtn);
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                handleCustomerCreationError({ responseJSON: { message: 'Network error occurred' } }, saveBtn);
-            });
-        }
-    });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('customer_id');
+                const newOption = document.createElement('option');
+                newOption.value = data.customer.id;
+                newOption.textContent = data.customer.text;
+                newOption.selected = true;
+                newOption.dataset.customerData = JSON.stringify(data.customer);
+                select.appendChild(newOption);
 
-    // Handle successful customer creation
-    function handleCustomerCreationSuccess(response, form, saveBtn) {
-        if (response.success) {
-            // Add new option to select
-            const select = document.getElementById('customer_id');
-            const newOption = document.createElement('option');
-            newOption.value = response.customer.id;
-            newOption.textContent = response.customer.text;
-            newOption.selected = true;
-            newOption.dataset.customerData = JSON.stringify(response.customer);
-            select.appendChild(newOption);
+                document.getElementById('client_name').value = data.customer.name;
+                autoGenerateContractNumber(data.customer.name);
 
-            // Update hidden client_name field
-            document.getElementById('client_name').value = response.customer.name;
-
-            // Auto-generate contract number
-            autoGenerateContractNumber(response.customer.name);
-
-            // Close modal and reset form
-            const modal = document.getElementById('addCustomerModal');
-            if (typeof bootstrap !== 'undefined') {
-                bootstrap.Modal.getInstance(modal).hide();
+                bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide();
+                form.reset();
+                document.getElementById('modal_company_field').style.display = 'none';
+                showToast('success', data.message || 'Customer added successfully!');
             } else {
-                modal.style.display = 'none';
+                showToast('error', data.error || 'Failed to add customer');
             }
 
-            form.reset();
-            document.getElementById('modal_company_field').style.display = 'none';
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('error', 'Network error occurred');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
+        });
+    });
 
-            // Show success message
-            showToast('success', response.message || 'Customer added successfully!');
-        } else {
-            showToast('error', response.error || 'Failed to add customer');
-        }
-
-        // Re-enable button
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
-    }
-
-    // Handle customer creation errors
-    function handleCustomerCreationError(xhr, saveBtn) {
-        console.error('Customer creation error:', xhr);
-        let errorMessage = 'Failed to add customer';
-
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-            errorMessage = xhr.responseJSON.message;
-        } else if (xhr.responseJSON && xhr.responseJSON.errors) {
-            const errors = Object.values(xhr.responseJSON.errors).flat();
-            errorMessage = errors.join(', ');
-        } else if (xhr.status === 403) {
-            errorMessage = 'Permission denied. Please contact administrator.';
-        } else if (xhr.status === 422) {
-            errorMessage = 'Validation error. Please check your input.';
-        }
-
-        showToast('error', errorMessage);
-
-        // Re-enable button
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
-    }
-
-    // Auto-generate contract number function
     function autoGenerateContractNumber(customerName) {
         const contractNumberField = document.getElementById('contract_number');
         if (!contractNumberField.value && customerName) {
@@ -711,11 +583,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Show toast notification
     function showToast(type, message) {
-        // Create a unique ID for the toast
         const toastId = 'toast-' + Date.now();
-
         const toastHtml = `
             <div id="${toastId}" class="bs-toast toast position-fixed top-0 end-0 m-3 fade bg-${type === 'success' ? 'success' : 'danger'} show"
                  role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
@@ -728,21 +597,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // Add toast to body
         document.body.insertAdjacentHTML('beforeend', toastHtml);
-
-        // Initialize Bootstrap toast and show it
         const toastElement = document.getElementById(toastId);
-        const toast = new bootstrap.Toast(toastElement, {
-            delay: 4000
-        });
-
+        const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
         toast.show();
-
-        // Remove toast element after it's hidden
-        toastElement.addEventListener('hidden.bs.toast', function() {
-            this.remove();
-        });
+        toastElement.addEventListener('hidden.bs.toast', function() { this.remove(); });
     }
 
     // Add new product allocation
@@ -760,8 +619,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.closest('.remove-allocation')) {
             e.target.closest('.allocation-row').remove();
             updateCalculations();
-
-            // Hide summary if no allocations
             if (document.querySelectorAll('.allocation-row').length === 0) {
                 document.getElementById('allocation-summary').style.display = 'none';
             }
@@ -802,7 +659,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Update calculations
     function updateCalculations() {
         const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
         let totalAllocated = 0;
@@ -833,7 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('remaining-amount').textContent = remaining.toLocaleString() + ' EGP';
         document.getElementById('allocation-progress').style.width = Math.min(percentage, 100) + '%';
 
-        // Update progress bar color
         if (percentage > 100) {
             document.getElementById('allocation-progress').className = 'progress-bar bg-danger';
         } else if (percentage >= 90) {
@@ -842,7 +697,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('allocation-progress').className = 'progress-bar bg-success';
         }
 
-        // Update remaining amount color
         const remainingElement = document.getElementById('remaining-amount');
         if (remaining < 0) {
             remainingElement.className = 'text-danger';
@@ -852,117 +706,6 @@ document.addEventListener('DOMContentLoaded', function() {
             remainingElement.className = '';
         }
     }
-
-    // Handle business unit selection change to update products
-    const businessUnitSelect = document.getElementById('business_unit_id');
-    if (businessUnitSelect) {
-        businessUnitSelect.addEventListener('change', function() {
-            const businessUnitId = this.value;
-            console.log('Business unit changed:', businessUnitId);
-
-            if (businessUnitId) {
-                // Fetch products for the selected business unit
-                fetch(`{{ route('accounting.income.contracts.api.products-by-business-unit') }}?business_unit_id=${businessUnitId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Products fetched:', data);
-                    if (data.success) {
-                        updateProductDropdowns(data.products);
-                    } else {
-                        console.error('Failed to fetch products:', data.error);
-                        showToast('error', 'Failed to load products for selected business unit');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching products:', error);
-                    showToast('error', 'Error loading products. Please try again.');
-                });
-            } else {
-                // Clear product dropdowns if no business unit selected
-                updateProductDropdowns([]);
-            }
-        });
-    }
-
-    // Function to update all product dropdowns
-    function updateProductDropdowns(products) {
-        console.log('Updating product dropdowns with:', products);
-
-        // Update all existing product dropdowns
-        document.querySelectorAll('.allocation-product').forEach(function(select) {
-            const currentValue = select.value;
-
-            // Clear existing options except the first one
-            select.innerHTML = '<option value="">Select product</option>';
-
-            if (products.length > 0) {
-                products.forEach(function(product) {
-                    const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = `${product.name} (${product.code})`;
-
-                    // Restore selection if it was previously selected and still exists
-                    if (currentValue == product.id) {
-                        option.selected = true;
-                    }
-
-                    select.appendChild(option);
-                });
-            } else {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No products available for selected business unit';
-                option.disabled = true;
-                select.appendChild(option);
-            }
-        });
-
-        // Update the template for new allocations
-        updateAllocationTemplate(products);
-    }
-
-    // Function to update the allocation template
-    function updateAllocationTemplate(products) {
-        const template = document.getElementById('allocation-template');
-        if (template) {
-            let templateHTML = template.innerHTML;
-
-            // Find the select element in the template
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = templateHTML;
-            const selectElement = tempDiv.querySelector('.allocation-product');
-
-            if (selectElement) {
-                selectElement.innerHTML = '<option value="">Select product</option>';
-
-                if (products.length > 0) {
-                    products.forEach(function(product) {
-                        const option = document.createElement('option');
-                        option.value = product.id;
-                        option.textContent = `${product.name} (${product.code})`;
-                        selectElement.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'No products available for selected business unit';
-                    option.disabled = true;
-                    selectElement.appendChild(option);
-                }
-
-                template.innerHTML = tempDiv.innerHTML;
-            }
-        }
-    }
-
-    // Note: Auto-generate contract number is now handled by customer selection above
 });
 </script>
 @endsection

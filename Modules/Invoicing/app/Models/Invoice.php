@@ -29,7 +29,6 @@ class Invoice extends Model
         'status',
         'customer_id',
         'project_id',
-        'business_unit_id',
         'invoice_sequence_id',
         'created_by',
         'notes',
@@ -80,14 +79,6 @@ class Invoice extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(\Modules\Project\Models\Project::class);
-    }
-
-    /**
-     * Get the business unit this invoice belongs to.
-     */
-    public function businessUnit(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\BusinessUnit::class);
     }
 
     /**

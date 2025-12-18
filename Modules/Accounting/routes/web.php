@@ -8,7 +8,7 @@ use Modules\Accounting\Http\Controllers\IncomeController;
 use Modules\Accounting\Http\Controllers\IncomeSheetController;
 use Modules\Accounting\Http\Controllers\AccountController;
 
-Route::middleware(['auth', 'verified', 'business_unit_context'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     // Main Accounting Routes
     Route::prefix('accounting')->name('accounting.')->group(function () {
@@ -109,16 +109,7 @@ Route::middleware(['auth', 'verified', 'business_unit_context'])->group(function
                 Route::post('/import', [IncomeController::class, 'import'])->name('import.process');
                 Route::get('/import/sample', [IncomeController::class, 'downloadSample'])->name('import.sample');
 
-                // API routes for contract creation
-                Route::get('/api/products-by-business-unit', [IncomeController::class, 'getProductsByBusinessUnit'])->name('api.products-by-business-unit');
             });
-        });
-
-        // Income Sheet Routes
-        Route::prefix('income-sheet')->name('income-sheet.')->group(function () {
-            Route::get('/', [IncomeSheetController::class, 'index'])->name('index');
-            Route::get('/export', [IncomeSheetController::class, 'export'])->name('export');
-            Route::get('/business-unit/{businessUnit}', [IncomeSheetController::class, 'businessUnitDetail'])->name('business-unit');
         });
     });
 });

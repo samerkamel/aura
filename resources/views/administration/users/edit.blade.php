@@ -44,6 +44,17 @@
                         @csrf
                         @method('PUT')
 
+                        @if($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <strong>Validation Errors:</strong>
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
                         <div class="row g-3">
                             <!-- Name -->
                             <div class="col-md-6">
@@ -259,6 +270,11 @@ $(document).ready(function() {
     $('form').on('submit', function(e) {
         const password = $('#password').val();
         const confirmPassword = $('#password_confirmation').val();
+
+        // Debug: Log form data before submission
+        const formData = new FormData(this);
+        console.log('Form submission - roles:', formData.getAll('roles[]'));
+        console.log('Select2 selected:', $('select[name="roles[]"]').val());
 
         // Only validate if password is being changed
         if (password && password !== confirmPassword) {

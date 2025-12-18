@@ -12,7 +12,6 @@ use Modules\Accounting\Models\Account;
 use Modules\Accounting\Http\Requests\StoreExpenseScheduleRequest;
 use Modules\Accounting\Http\Requests\UpdateExpenseScheduleRequest;
 use Modules\Accounting\Services\ScheduleCalculatorService;
-use App\Helpers\BusinessUnitHelper;
 
 /**
  * ExpenseController
@@ -40,9 +39,6 @@ class ExpenseController extends Controller
         $query = ExpenseSchedule::with(['category'])
             ->where('expense_type', 'recurring');
 
-        // Apply business unit filtering
-        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
-
         // Filter by category
         if ($request->has('category_id') && $request->category_id) {
             $query->where('category_id', $request->category_id);
@@ -65,20 +61,11 @@ class ExpenseController extends Controller
         $expenseSchedules = $query->orderBy('name')->paginate(15);
         $categories = ExpenseCategory::active()->orderBy('name')->get();
 
-        // Calculate summary statistics (recurring expenses only) - with BU filtering
-        $totalSchedulesQuery = ExpenseSchedule::where('expense_type', 'recurring');
-        $totalSchedulesQuery = BusinessUnitHelper::filterQueryByBusinessUnit($totalSchedulesQuery, $request);
-
-        $activeSchedulesQuery = ExpenseSchedule::where('expense_type', 'recurring')->active();
-        $activeSchedulesQuery = BusinessUnitHelper::filterQueryByBusinessUnit($activeSchedulesQuery, $request);
-
-        $monthlyAmountQuery = ExpenseSchedule::where('expense_type', 'recurring')->active();
-        $monthlyAmountQuery = BusinessUnitHelper::filterQueryByBusinessUnit($monthlyAmountQuery, $request);
-
+        // Calculate summary statistics (recurring expenses only)
         $statistics = [
-            'total_schedules' => $totalSchedulesQuery->count(),
-            'active_schedules' => $activeSchedulesQuery->count(),
-            'total_monthly_amount' => $monthlyAmountQuery->get()->sum('monthly_equivalent_amount'),
+            'total_schedules' => ExpenseSchedule::where('expense_type', 'recurring')->count(),
+            'active_schedules' => ExpenseSchedule::where('expense_type', 'recurring')->active()->count(),
+            'total_monthly_amount' => ExpenseSchedule::where('expense_type', 'recurring')->active()->get()->sum('monthly_equivalent_amount'),
             'categories_count' => ExpenseCategory::active()->count(),
         ];
 
@@ -101,9 +88,6 @@ class ExpenseController extends Controller
 
         $query = ExpenseSchedule::with(['category', 'subcategory', 'paidFromAccount'])
             ->where('payment_status', 'paid');
-
-        // Apply business unit filtering
-        $query = BusinessUnitHelper::filterQueryByBusinessUnit($query, $request);
 
         // Filter by date range
         if ($request->has('start_date') && $request->start_date) {
@@ -184,8 +168,6 @@ class ExpenseController extends Controller
 
         $accounts = Account::active()->orderBy('name')->get();
         $frequencyOptions = $this->scheduleCalculator->getFrequencyOptions();
-        $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
-        $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
 
         // Get expense types for category filtering
         $expenseTypes = \Modules\Accounting\Models\ExpenseType::active()
@@ -193,7 +175,7 @@ class ExpenseController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('accounting::expenses.create', compact('categories', 'accounts', 'frequencyOptions', 'currentBusinessUnit', 'accessibleBusinessUnits', 'expenseTypes'));
+        return view('accounting::expenses.create', compact('categories', 'accounts', 'frequencyOptions', 'expenseTypes'));
     }
 
     /**
@@ -202,16 +184,6 @@ class ExpenseController extends Controller
     public function store(StoreExpenseScheduleRequest $request): RedirectResponse
     {
         $validatedData = $request->validated();
-
-        // Determine business unit ID
-        $businessUnitId = $request->business_unit_id ?? BusinessUnitHelper::getCurrentBusinessUnitId();
-
-        // Verify user has access to the selected business unit
-        if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to create expenses in this business unit.');
-        }
-
-        $validatedData['business_unit_id'] = $businessUnitId;
 
         // Set default payment status
         $validatedData['payment_status'] = $request->input('mark_as_paid') ? 'paid' : 'pending';
@@ -781,7 +753,7 @@ class ExpenseController extends Controller
             $header = array_shift($csvData);
 
             // Validate header format
-            $expectedHeader = ['name', 'description', 'amount', 'category_id', 'subcategory_id', 'expense_date', 'paid_from_account_id', 'payment_notes', 'business_unit_id'];
+            $expectedHeader = ['name', 'description', 'amount', 'category_id', 'subcategory_id', 'expense_date', 'paid_from_account_id', 'payment_notes'];
             if (count(array_intersect($header, $expectedHeader)) < 4) { // At least 4 required fields
                 return redirect()->back()
                     ->with('error', 'Invalid CSV format. Please download the sample CSV and follow the format.');
@@ -800,19 +772,6 @@ class ExpenseController extends Controller
                 try {
                     // Map CSV row to array using header
                     $data = array_combine($header, $row);
-
-                    // Determine business unit ID
-                    $businessUnitId = !empty($data['business_unit_id']) ?
-                        (int)$data['business_unit_id'] :
-                        BusinessUnitHelper::getCurrentBusinessUnitId();
-
-                    // Verify user has access to the selected business unit
-                    if (!BusinessUnitHelper::isSuperAdmin() &&
-                        !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-                        $errors[] = "Row " . ($rowIndex + 2) . ": Unauthorized to import expenses to business unit ID {$businessUnitId}";
-                        $errorCount++;
-                        continue;
-                    }
 
                     // Validate required fields
                     if (empty($data['name']) || empty($data['amount']) || empty($data['expense_date'])) {
@@ -859,7 +818,6 @@ class ExpenseController extends Controller
                         'paid_from_account_id' => $accountId,
                         'paid_date' => date('Y-m-d', strtotime($data['expense_date'])),
                         'payment_notes' => !empty($data['payment_notes']) ? trim($data['payment_notes']) : null,
-                        'business_unit_id' => $businessUnitId,
                         // Required fields for database constraints
                         'frequency_type' => 'monthly',
                         'frequency_value' => 1,
@@ -920,8 +878,7 @@ class ExpenseController extends Controller
             'subcategory_id',
             'expense_date',
             'paid_from_account_id',
-            'payment_notes',
-            'business_unit_id'
+            'payment_notes'
         ];
 
         $sampleData = [
@@ -933,8 +890,7 @@ class ExpenseController extends Controller
                 '',
                 '2024-11-15',
                 '3',
-                'Paid via company card',
-                '1'
+                'Paid via company card'
             ],
             [
                 'Software License',
@@ -944,8 +900,7 @@ class ExpenseController extends Controller
                 '',
                 '2024-11-01',
                 '1',
-                'Monthly subscription payment',
-                '1'
+                'Monthly subscription payment'
             ],
             [
                 'Internet Bill',
@@ -955,8 +910,7 @@ class ExpenseController extends Controller
                 '',
                 '2024-11-05',
                 '4',
-                'Monthly internet service',
-                '3'
+                'Monthly internet service'
             ]
         ];
 
@@ -979,12 +933,6 @@ class ExpenseController extends Controller
     {
         if (!auth()->user()->can('manage-expenses')) {
             abort(403, 'Unauthorized to mark expenses as paid.');
-        }
-
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($expenseSchedule->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to access this expense.');
         }
 
         $request->validate([
@@ -1037,12 +985,6 @@ class ExpenseController extends Controller
     {
         if (!auth()->user()->can('view-expenses') && !auth()->user()->can('manage-expenses')) {
             abort(403, 'Unauthorized to download expense attachments.');
-        }
-
-        // Verify business unit access
-        if (!BusinessUnitHelper::isSuperAdmin() &&
-            !in_array($expenseSchedule->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
-            abort(403, 'Unauthorized to download this attachment.');
         }
 
         if (!$expenseSchedule->hasPaymentAttachment()) {
