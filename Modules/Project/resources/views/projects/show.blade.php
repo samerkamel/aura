@@ -284,7 +284,7 @@
                   <td>
                     <span class="badge bg-label-primary">{{ $worklog->issue_key }}</span>
                   </td>
-                  <td>{{ Str::limit($worklog->issue_summary ?? $worklog->comment, 50) }}</td>
+                  <td>{{ \Illuminate\Support\Str::limit($worklog->issue_summary ?? $worklog->comment, 50) }}</td>
                   <td class="text-end fw-semibold">{{ number_format($worklog->time_spent_hours, 1) }}h</td>
                 </tr>
               @endforeach
