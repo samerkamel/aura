@@ -78,7 +78,7 @@ class InvoiceController extends Controller
     /**
      * Show the form for creating a new invoice.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         if (!auth()->user()->can('manage-invoices')) {
             abort(403, 'Unauthorized to create invoices.');
@@ -89,7 +89,11 @@ class InvoiceController extends Controller
         $sequences = InvoiceSequence::active()->get();
         $projects = Project::active()->orderBy('name')->get();
 
-        return view('invoicing::invoices.create', compact('customers', 'accessibleBusinessUnits', 'sequences', 'projects'));
+        // Pre-select project and customer from query parameters
+        $selectedProjectId = $request->query('project_id');
+        $selectedCustomerId = $request->query('customer_id');
+
+        return view('invoicing::invoices.create', compact('customers', 'accessibleBusinessUnits', 'sequences', 'projects', 'selectedProjectId', 'selectedCustomerId'));
     }
 
     /**

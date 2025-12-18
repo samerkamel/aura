@@ -123,8 +123,11 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="ti ti-file-invoice me-2 text-primary"></i>Contracts & Invoices
+            <span class="badge bg-primary ms-2">{{ $project->invoices->count() }}</span>
           </h5>
-          <span class="badge bg-primary">{{ $project->invoices->count() }}</span>
+          <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
+            <i class="ti ti-plus me-1"></i>Create Invoice
+          </a>
         </div>
         <div class="card-body">
           @if($project->invoices->count() > 0)
@@ -137,6 +140,7 @@
                     <th class="text-end">Amount</th>
                     <th class="text-end">Paid</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -155,6 +159,28 @@
                           {{ $invoice->status_display }}
                         </span>
                       </td>
+                      <td class="text-center">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                            <i class="ti ti-dots-vertical"></i>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}">
+                              <i class="ti ti-eye me-1"></i> View Invoice
+                            </a>
+                            @if($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
+                              <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}#payments">
+                                <i class="ti ti-cash me-1"></i> Log Payment
+                              </a>
+                            @endif
+                            @if($invoice->status === 'draft')
+                              <a class="dropdown-item" href="{{ route('invoicing.invoices.edit', $invoice) }}">
+                                <i class="ti ti-pencil me-1"></i> Edit Invoice
+                              </a>
+                            @endif
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                     @if($invoice->payments->count() > 0)
                       @foreach($invoice->payments as $payment)
@@ -167,6 +193,7 @@
                           <td class="text-center">
                             <span class="badge bg-label-success">{{ ucfirst($payment->payment_method ?? 'Other') }}</span>
                           </td>
+                          <td></td>
                         </tr>
                       @endforeach
                     @endif
@@ -178,7 +205,7 @@
             <div class="text-center py-4">
               <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted mb-3">No contracts linked to this project yet.</p>
-              <a href="{{ route('invoicing.invoices.create') }}" class="btn btn-sm btn-primary">
+              <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
                 <i class="ti ti-plus me-1"></i>Create Invoice
               </a>
             </div>

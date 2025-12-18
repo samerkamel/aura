@@ -29,7 +29,7 @@
                                 <select name="customer_id" class="form-select @error('customer_id') is-invalid @enderror" required>
                                     <option value="">Select Customer</option>
                                     @foreach($customers as $customer)
-                                        <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                        <option value="{{ $customer->id }}" {{ old('customer_id', $selectedCustomerId ?? '') == $customer->id ? 'selected' : '' }}>
                                             {{ $customer->name }}
                                             @if($customer->email)
                                                 - {{ $customer->email }}
@@ -47,7 +47,7 @@
                                 <select name="project_id" class="form-select @error('project_id') is-invalid @enderror">
                                     <option value="">No Project</option>
                                     @foreach($projects as $project)
-                                        <option value="{{ $project->id }}" {{ old('project_id') == $project->id ? 'selected' : '' }}>
+                                        <option value="{{ $project->id }}" {{ old('project_id', $selectedProjectId ?? '') == $project->id ? 'selected' : '' }}>
                                             [{{ $project->code }}] {{ $project->name }}
                                         </option>
                                     @endforeach
