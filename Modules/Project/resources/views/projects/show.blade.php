@@ -74,23 +74,31 @@
 
   <!-- Stats Cards -->
   <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-lg col-md-6 mb-3 mb-lg-0">
       <div class="card h-100">
         <div class="card-body stat-card">
-          <div class="stat-value text-primary">{{ number_format($totalHours, 1) }}</div>
-          <small class="text-muted">Hours Logged (This Period)</small>
+          <div class="stat-value text-primary">{{ number_format($lifetimeHours, 1) }}</div>
+          <small class="text-muted">Total Hours (Lifetime)</small>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg col-md-6 mb-3 mb-lg-0">
+      <div class="card h-100">
+        <div class="card-body stat-card">
+          <div class="stat-value text-danger">EGP {{ number_format($projectCost, 0) }}</div>
+          <small class="text-muted">Project Cost</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg col-md-6 mb-3 mb-lg-0">
       <div class="card h-100">
         <div class="card-body stat-card">
           <div class="stat-value text-success">EGP {{ number_format($totalContractValue, 0) }}</div>
-          <small class="text-muted">Total Contract Value</small>
+          <small class="text-muted">Contract Value</small>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg col-md-6 mb-3 mb-lg-0">
       <div class="card h-100">
         <div class="card-body stat-card">
           <div class="stat-value text-info">EGP {{ number_format($totalPaid, 0) }}</div>
@@ -98,11 +106,11 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-lg col-md-6">
       <div class="card h-100">
         <div class="card-body stat-card">
           <div class="stat-value {{ $totalRemaining > 0 ? 'text-warning' : 'text-success' }}">EGP {{ number_format($totalRemaining, 0) }}</div>
-          <small class="text-muted">Remaining Balance</small>
+          <small class="text-muted">Remaining</small>
         </div>
       </div>
     </div>
@@ -183,9 +191,12 @@
     <div class="col-lg-6 mb-4">
       <div class="card h-100">
         <div class="card-header">
-          <h5 class="mb-3">
-            <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
-          </h5>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+              <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
+            </h5>
+            <span class="badge bg-info">{{ number_format($totalHours, 1) }}h this period</span>
+          </div>
           <!-- Date Filter -->
           <form action="{{ route('projects.show', $project) }}" method="GET" class="row g-2">
             <div class="col-5">

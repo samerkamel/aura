@@ -126,14 +126,35 @@ class ProjectController extends Controller
         $totalPaid = $project->invoices->sum('paid_amount');
         $totalRemaining = $totalContractValue - $totalPaid;
 
+        // Calculate project cost (lifetime hours * hourly cost per employee)
+        // Hourly cost = Employee Salary / 120
+        $lifetimeWorklogs = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+            ->with('employee')
+            ->get();
+
+        $lifetimeHours = $lifetimeWorklogs->sum('time_spent_hours');
+
+        $projectCost = $lifetimeWorklogs->groupBy('employee_id')->sum(function ($employeeWorklogs) {
+            $employee = $employeeWorklogs->first()->employee;
+            $totalEmployeeHours = $employeeWorklogs->sum('time_spent_hours');
+
+            if ($employee && $employee->base_salary > 0) {
+                $hourlyCost = $employee->base_salary / 120;
+                return $hourlyCost * $totalEmployeeHours;
+            }
+            return 0;
+        });
+
         return view('project::projects.show', [
             'project' => $project,
             'worklogs' => $worklogs,
             'worklogsByEmployee' => $worklogsByEmployee,
             'totalHours' => $totalHours,
+            'lifetimeHours' => $lifetimeHours,
             'totalContractValue' => $totalContractValue,
             'totalPaid' => $totalPaid,
             'totalRemaining' => $totalRemaining,
+            'projectCost' => $projectCost,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
