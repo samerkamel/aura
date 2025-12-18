@@ -82,4 +82,46 @@ class Project extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    /**
+     * Get all invoices (contracts) for this project.
+     */
+    public function invoices()
+    {
+        return $this->hasMany(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
+     * Get all worklogs for this project.
+     * Matches worklogs by issue_key prefix (e.g., VIS-123 matches project with code VIS).
+     */
+    public function worklogs()
+    {
+        return JiraWorklog::where('issue_key', 'LIKE', $this->code . '-%');
+    }
+
+    /**
+     * Get total logged hours for this project.
+     */
+    public function getTotalHoursAttribute()
+    {
+        return JiraWorklog::where('issue_key', 'LIKE', $this->code . '-%')
+            ->sum('time_spent_hours');
+    }
+
+    /**
+     * Get total contract value for this project.
+     */
+    public function getTotalContractValueAttribute()
+    {
+        return $this->invoices()->sum('total_amount');
+    }
+
+    /**
+     * Get total paid amount for this project.
+     */
+    public function getTotalPaidAttribute()
+    {
+        return $this->invoices()->sum('paid_amount');
+    }
 }

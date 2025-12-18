@@ -54,6 +54,22 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Project</label>
+                                <select name="project_id" class="form-select @error('project_id') is-invalid @enderror">
+                                    <option value="">No Project</option>
+                                    @foreach($projects as $project)
+                                        <option value="{{ $project->id }}" {{ (old('project_id', $invoice->project_id) == $project->id) ? 'selected' : '' }}>
+                                            [{{ $project->code }}] {{ $project->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('project_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted">Link this invoice to a project</small>
+                            </div>
                         </div>
 
                         <!-- Invoice Information -->

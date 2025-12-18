@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\Invoicing\Models\Invoice;
 use Modules\Invoicing\Models\InvoiceSequence;
+use Modules\Project\Models\Project;
 use App\Models\Customer;
 use App\Models\BusinessUnit;
 use App\Helpers\BusinessUnitHelper;
@@ -86,8 +87,9 @@ class InvoiceController extends Controller
         $customers = Customer::orderBy('name')->get();
         $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
         $sequences = InvoiceSequence::active()->get();
+        $projects = Project::active()->orderBy('name')->get();
 
-        return view('invoicing::invoices.create', compact('customers', 'accessibleBusinessUnits', 'sequences'));
+        return view('invoicing::invoices.create', compact('customers', 'accessibleBusinessUnits', 'sequences', 'projects'));
     }
 
     /**
@@ -101,6 +103,7 @@ class InvoiceController extends Controller
 
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
+            'project_id' => 'nullable|exists:projects,id',
             'business_unit_id' => 'required|exists:business_units,id',
             'invoice_sequence_id' => 'required|exists:invoice_sequences,id',
             'invoice_date' => 'required|date',
@@ -132,6 +135,7 @@ class InvoiceController extends Controller
             'tax_amount' => $request->tax_amount ?? 0,
             'total_amount' => 0, // Will be calculated from items
             'customer_id' => $request->customer_id,
+            'project_id' => $request->project_id,
             'business_unit_id' => $request->business_unit_id,
             'invoice_sequence_id' => $request->invoice_sequence_id,
             'created_by' => auth()->id(),
@@ -210,10 +214,11 @@ class InvoiceController extends Controller
         $customers = Customer::orderBy('name')->get();
         $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
         $sequences = InvoiceSequence::active()->get();
+        $projects = Project::active()->orderBy('name')->get();
 
-        $invoice->load(['items', 'customer', 'businessUnit']);
+        $invoice->load(['items', 'customer', 'businessUnit', 'project']);
 
-        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'accessibleBusinessUnits', 'sequences'));
+        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'accessibleBusinessUnits', 'sequences', 'projects'));
     }
 
     /**
@@ -238,6 +243,7 @@ class InvoiceController extends Controller
 
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
+            'project_id' => 'nullable|exists:projects,id',
             'business_unit_id' => 'required|exists:business_units,id',
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
@@ -253,6 +259,7 @@ class InvoiceController extends Controller
 
         $invoice->update([
             'customer_id' => $request->customer_id,
+            'project_id' => $request->project_id,
             'business_unit_id' => $request->business_unit_id,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,

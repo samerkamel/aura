@@ -106,7 +106,9 @@
                       <span class="badge bg-label-primary">{{ $project->code }}</span>
                     </td>
                     <td>
-                      <strong>{{ $project->name }}</strong>
+                      <a href="{{ route('projects.show', $project) }}" class="fw-semibold text-body">
+                        {{ $project->name }}
+                      </a>
                       @if($project->jira_project_id)
                         <br><small class="text-muted"><i class="ti ti-brand-jira"></i> Jira ID: {{ $project->jira_project_id }}</small>
                       @endif
@@ -146,9 +148,13 @@
                           <i class="ti ti-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu">
+                          <a class="dropdown-item" href="{{ route('projects.show', $project) }}">
+                            <i class="ti ti-eye me-1"></i> View
+                          </a>
                           <a class="dropdown-item" href="{{ route('projects.edit', $project) }}">
                             <i class="ti ti-pencil me-1"></i> Edit
                           </a>
+                          <div class="dropdown-divider"></div>
                           <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline"
                                 onsubmit="return confirm('Are you sure you want to delete this project?');">
                             @csrf

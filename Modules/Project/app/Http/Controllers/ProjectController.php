@@ -94,6 +94,52 @@ class ProjectController extends Controller
     }
 
     /**
+     * Display the specified project.
+     */
+    public function show(Request $request, Project $project): View
+    {
+        $project->load(['customer', 'invoices.payments', 'invoices.customer']);
+
+        // Get worklogs with optional date filtering
+        $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->format('Y-m-d');
+        $endDate = $request->filled('end_date') ? $request->end_date : now()->endOfMonth()->format('Y-m-d');
+
+        $worklogsQuery = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+            ->whereBetween('worklog_started', [$startDate, $endDate])
+            ->with('employee')
+            ->orderBy('worklog_started', 'desc');
+
+        $worklogs = $worklogsQuery->get();
+
+        // Group worklogs by employee
+        $worklogsByEmployee = $worklogs->groupBy('employee_id')->map(function ($employeeWorklogs) {
+            return [
+                'employee' => $employeeWorklogs->first()->employee,
+                'total_hours' => $employeeWorklogs->sum('time_spent_hours'),
+                'entries' => $employeeWorklogs,
+            ];
+        });
+
+        // Calculate totals
+        $totalHours = $worklogs->sum('time_spent_hours');
+        $totalContractValue = $project->invoices->sum('total_amount');
+        $totalPaid = $project->invoices->sum('paid_amount');
+        $totalRemaining = $totalContractValue - $totalPaid;
+
+        return view('project::projects.show', [
+            'project' => $project,
+            'worklogs' => $worklogs,
+            'worklogsByEmployee' => $worklogsByEmployee,
+            'totalHours' => $totalHours,
+            'totalContractValue' => $totalContractValue,
+            'totalPaid' => $totalPaid,
+            'totalRemaining' => $totalRemaining,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+    }
+
+    /**
      * Show the form for editing a project.
      */
     public function edit(Project $project): View
