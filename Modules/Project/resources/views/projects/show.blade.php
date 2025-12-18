@@ -116,13 +116,135 @@
     </div>
   </div>
 
+  <!-- Contracts Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-file-text me-2 text-success"></i>Contracts
+            <span class="badge bg-success ms-2">{{ $project->contracts->count() }}</span>
+          </h5>
+          <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
+            <i class="ti ti-plus me-1"></i>Create Contract
+          </a>
+        </div>
+        <div class="card-body">
+          @if($project->contracts->count() > 0)
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Contract #</th>
+                    <th>Client</th>
+                    <th>Duration</th>
+                    <th class="text-end">Value</th>
+                    <th class="text-end">Paid</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($project->contracts as $contract)
+                    <tr>
+                      <td>
+                        <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-semibold">
+                          {{ $contract->contract_number }}
+                        </a>
+                      </td>
+                      <td>{{ $contract->customer?->display_name ?? $contract->client_name }}</td>
+                      <td>
+                        @if($contract->start_date && $contract->end_date)
+                          {{ $contract->start_date->format('M d, Y') }} - {{ $contract->end_date->format('M d, Y') }}
+                        @elseif($contract->start_date)
+                          From {{ $contract->start_date->format('M d, Y') }}
+                        @else
+                          -
+                        @endif
+                      </td>
+                      <td class="text-end">EGP {{ number_format($contract->total_amount, 0) }}</td>
+                      <td class="text-end">EGP {{ number_format($contract->paid_amount, 0) }}</td>
+                      <td class="text-center">
+                        <span class="badge bg-{{ $contract->status_color }}">
+                          {{ ucfirst($contract->status) }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <div class="dropdown">
+                          <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                            <i class="ti ti-dots-vertical"></i>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}">
+                              <i class="ti ti-eye me-1"></i> View Contract
+                            </a>
+                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}#payments">
+                              <i class="ti ti-cash me-1"></i> Log Payment
+                            </a>
+                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.edit', $contract) }}">
+                              <i class="ti ti-pencil me-1"></i> Edit Contract
+                            </a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    @if($contract->payments->count() > 0)
+                      @foreach($contract->payments->take(3) as $payment)
+                        <tr class="table-light">
+                          <td colspan="3" class="ps-4 text-muted small">
+                            <i class="ti ti-receipt me-1"></i>{{ $payment->name ?? 'Payment' }} - {{ $payment->due_date?->format('M d, Y') ?? '-' }}
+                          </td>
+                          <td class="text-end small">EGP {{ number_format($payment->amount, 0) }}</td>
+                          <td class="text-end {{ $payment->status === 'paid' ? 'text-success' : '' }} small">
+                            @if($payment->status === 'paid')
+                              +EGP {{ number_format($payment->paid_amount, 0) }}
+                            @else
+                              -
+                            @endif
+                          </td>
+                          <td class="text-center">
+                            <span class="badge bg-label-{{ $payment->status === 'paid' ? 'success' : ($payment->status === 'pending' ? 'warning' : 'secondary') }}">
+                              {{ ucfirst($payment->status) }}
+                            </span>
+                          </td>
+                          <td></td>
+                        </tr>
+                      @endforeach
+                      @if($contract->payments->count() > 3)
+                        <tr class="table-light">
+                          <td colspan="7" class="text-center small text-muted">
+                            <a href="{{ route('accounting.income.contracts.show', $contract) }}">
+                              View all {{ $contract->payments->count() }} payments
+                            </a>
+                          </td>
+                        </tr>
+                      @endif
+                    @endif
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          @else
+            <div class="text-center py-4">
+              <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
+              <p class="text-muted mb-3">No contracts linked to this project yet.</p>
+              <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
+                <i class="ti ti-plus me-1"></i>Create Contract
+              </a>
+            </div>
+          @endif
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
-    <!-- Contracts/Invoices Section -->
+    <!-- Invoices Section -->
     <div class="col-lg-6 mb-4">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-file-invoice me-2 text-primary"></i>Contracts & Invoices
+            <i class="ti ti-file-invoice me-2 text-primary"></i>Invoices
             <span class="badge bg-primary ms-2">{{ $project->invoices->count() }}</span>
           </h5>
           <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
@@ -204,7 +326,7 @@
           @else
             <div class="text-center py-4">
               <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-3">No contracts linked to this project yet.</p>
+              <p class="text-muted mb-3">No invoices linked to this project yet.</p>
               <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
                 <i class="ti ti-plus me-1"></i>Create Invoice
               </a>

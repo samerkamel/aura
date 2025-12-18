@@ -102,6 +102,15 @@ class Contract extends Model
     }
 
     /**
+     * Get the projects associated with this contract.
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(\Modules\Project\Models\Project::class, 'contract_project')
+                    ->withTimestamps();
+    }
+
+    /**
      * Get the products that this contract is allocated to.
      */
     public function products(): BelongsToMany

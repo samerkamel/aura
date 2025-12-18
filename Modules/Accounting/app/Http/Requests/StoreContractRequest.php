@@ -27,6 +27,8 @@ class StoreContractRequest extends FormRequest
             'contact_info.phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
             'business_unit_id' => 'nullable|exists:business_units,id',
+            'project_ids' => 'nullable|array',
+            'project_ids.*' => 'exists:projects,id',
         ];
     }
 

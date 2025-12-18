@@ -98,7 +98,7 @@ class ProjectController extends Controller
      */
     public function show(Request $request, Project $project): View
     {
-        $project->load(['customer', 'invoices.payments', 'invoices.customer']);
+        $project->load(['customer', 'invoices.payments', 'invoices.customer', 'contracts.payments', 'contracts.customer']);
 
         // Get worklogs with optional date filtering (default: lifetime/all time)
         $startDate = $request->filled('start_date') ? $request->start_date : null;

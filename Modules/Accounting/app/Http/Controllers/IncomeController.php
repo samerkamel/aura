@@ -85,7 +85,7 @@ class IncomeController extends Controller
     /**
      * Show the form for creating a new contract.
      */
-    public function createContract(): View
+    public function createContract(Request $request): View
     {
         $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
         $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
@@ -99,7 +99,21 @@ class IncomeController extends Controller
                 ->get();
         }
 
-        return view('accounting::income.create-contract', compact('currentBusinessUnit', 'accessibleBusinessUnits', 'products'));
+        // Get projects for project selection
+        $projects = \Modules\Project\Models\Project::active()->orderBy('name')->get();
+
+        // Pre-select project and customer from query parameters
+        $selectedProjectId = $request->query('project_id');
+        $selectedCustomerId = $request->query('customer_id');
+
+        return view('accounting::income.create-contract', compact(
+            'currentBusinessUnit',
+            'accessibleBusinessUnits',
+            'products',
+            'projects',
+            'selectedProjectId',
+            'selectedCustomerId'
+        ));
     }
 
     /**
@@ -118,7 +132,15 @@ class IncomeController extends Controller
         $contractData = $request->validated();
         $contractData['business_unit_id'] = $businessUnitId;
 
+        // Remove project_ids from contract data (handled separately via pivot)
+        unset($contractData['project_ids']);
+
         $contract = Contract::create($contractData);
+
+        // Attach projects to contract (many-to-many)
+        if ($request->has('project_ids') && is_array($request->project_ids)) {
+            $contract->projects()->attach(array_filter($request->project_ids));
+        }
 
         // Handle department allocations
         if ($request->has('products') && is_array($request->products)) {

@@ -97,6 +97,26 @@
                                         </div>
 
                                         <div class="col-12">
+                                            <label for="project_ids" class="form-label">Projects <small class="text-muted">(Optional - can select multiple)</small></label>
+                                            <select class="form-select @error('project_ids') is-invalid @enderror"
+                                                    id="project_ids" name="project_ids[]" multiple size="4">
+                                                @foreach($projects ?? [] as $project)
+                                                    <option value="{{ $project->id }}"
+                                                        {{ (is_array(old('project_ids')) && in_array($project->id, old('project_ids'))) || ($selectedProjectId ?? null) == $project->id ? 'selected' : '' }}>
+                                                        [{{ $project->code }}] {{ $project->name }}
+                                                        @if($project->customer)
+                                                            - {{ $project->customer->display_name }}
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('project_ids')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="text-muted">Link this contract to one or more projects. Hold Ctrl/Cmd to select multiple.</small>
+                                        </div>
+
+                                        <div class="col-12">
                                             <label for="description" class="form-label">Contract Description</label>
                                             <textarea class="form-control @error('description') is-invalid @enderror"
                                                       id="description" name="description" rows="3"
@@ -473,14 +493,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const select = document.getElementById('customer_id');
             select.innerHTML = '<option value="">Select Customer</option>';
 
+            // Pre-selected customer ID from query params
+            const preSelectedCustomerId = '{{ $selectedCustomerId ?? '' }}';
+
             if (data.customers) {
                 data.customers.forEach(function(customer) {
                     const option = document.createElement('option');
                     option.value = customer.id;
                     option.textContent = customer.text;
                     option.dataset.customerData = JSON.stringify(customer);
+
+                    // Pre-select if matches
+                    if (preSelectedCustomerId && customer.id == preSelectedCustomerId) {
+                        option.selected = true;
+                    }
+
                     select.appendChild(option);
                 });
+
+                // If customer was pre-selected, trigger the change logic
+                if (preSelectedCustomerId && select.value) {
+                    const selectedOption = select.options[select.selectedIndex];
+                    const customerData = JSON.parse(selectedOption.dataset.customerData || '{}');
+                    document.getElementById('client_name').value = customerData.name || selectedOption.textContent;
+                    autoGenerateContractNumber(customerData.name || selectedOption.textContent);
+                }
             }
 
             // Add change event listener

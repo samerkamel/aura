@@ -84,11 +84,20 @@ class Project extends Model
     }
 
     /**
-     * Get all invoices (contracts) for this project.
+     * Get all invoices for this project.
      */
     public function invoices()
     {
         return $this->hasMany(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
+     * Get all contracts for this project.
+     */
+    public function contracts()
+    {
+        return $this->belongsToMany(\Modules\Accounting\Models\Contract::class, 'contract_project')
+                    ->withTimestamps();
     }
 
     /**
