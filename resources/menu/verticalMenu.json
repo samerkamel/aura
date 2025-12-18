@@ -154,14 +154,8 @@
       "name": "Leave Policies",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
-      "roles": ["super-admin", "hr-manager"],
-      "submenu": [
-        {
-          "url": "leave-policies",
-          "name": "Manage Policies",
-          "slug": "leave-policies-index"
-        }
-      ]
+      "url": "leave-policies",
+      "roles": ["super-admin", "hr-manager"]
     },
     {
       "name": "Payroll Management",
@@ -190,37 +184,15 @@
       "name": "Letter Templates",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "letter-templates",
-      "roles": ["super-admin", "hr-manager"],
-      "submenu": [
-        {
-          "url": "letter-templates",
-          "name": "All Templates",
-          "slug": "letter-templates-index"
-        },
-        {
-          "url": "letter-templates/create",
-          "name": "Create Template",
-          "slug": "letter-templates-create"
-        }
-      ]
+      "url": "letter-templates",
+      "roles": ["super-admin", "hr-manager"]
     },
     {
       "name": "Assets",
       "icon": "menu-icon tf-icons ti ti-package",
       "slug": "assets",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"],
-      "submenu": [
-        {
-          "url": "assetmanager/assets",
-          "name": "All Assets",
-          "slug": "assetmanager-assets-index"
-        },
-        {
-          "url": "assetmanager/assets/create",
-          "name": "Add Asset",
-          "slug": "assetmanager-assets-create"
-        }
-      ]
+      "url": "assetmanager/assets",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"]
     },
     {
       "menuHeader": "Projects",
