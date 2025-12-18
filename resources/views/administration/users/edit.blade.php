@@ -232,66 +232,63 @@
 
 @section('page-script')
 <script>
-$(document).ready(function() {
-    // Initialize Select2
-    $('.select2').select2({
-        placeholder: 'Select roles...',
-        allowClear: true
-    });
-
+document.addEventListener('DOMContentLoaded', function() {
     // Password visibility toggle
-    $('#togglePassword').on('click', function() {
-        const passwordInput = $('#password');
-        const icon = $(this).find('i');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('ti-eye');
+                icon.classList.add('ti-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('ti-eye-off');
+                icon.classList.add('ti-eye');
+            }
+        });
+    }
 
-        if (passwordInput.attr('type') === 'password') {
-            passwordInput.attr('type', 'text');
-            icon.removeClass('ti-eye').addClass('ti-eye-off');
-        } else {
-            passwordInput.attr('type', 'password');
-            icon.removeClass('ti-eye-off').addClass('ti-eye');
-        }
-    });
-
-    $('#togglePasswordConfirm').on('click', function() {
-        const passwordInput = $('#password_confirmation');
-        const icon = $(this).find('i');
-
-        if (passwordInput.attr('type') === 'password') {
-            passwordInput.attr('type', 'text');
-            icon.removeClass('ti-eye').addClass('ti-eye-off');
-        } else {
-            passwordInput.attr('type', 'password');
-            icon.removeClass('ti-eye-off').addClass('ti-eye');
-        }
-    });
+    const togglePasswordConfirm = document.getElementById('togglePasswordConfirm');
+    const passwordConfirmInput = document.getElementById('password_confirmation');
+    if (togglePasswordConfirm && passwordConfirmInput) {
+        togglePasswordConfirm.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordConfirmInput.type === 'password') {
+                passwordConfirmInput.type = 'text';
+                icon.classList.remove('ti-eye');
+                icon.classList.add('ti-eye-off');
+            } else {
+                passwordConfirmInput.type = 'password';
+                icon.classList.remove('ti-eye-off');
+                icon.classList.add('ti-eye');
+            }
+        });
+    }
 
     // Form validation
-    $('form').on('submit', function(e) {
-        const password = $('#password').val();
-        const confirmPassword = $('#password_confirmation').val();
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('password_confirmation').value;
 
-        // Debug: Log form data before submission
-        const formData = new FormData(this);
-        console.log('Form submission - roles:', formData.getAll('roles[]'));
-        console.log('Select2 selected:', $('select[name="roles[]"]').val());
+            // Debug: Log form data before submission
+            const formData = new FormData(this);
+            const roles = formData.getAll('roles[]');
+            console.log('Form submission - roles:', roles);
 
-        // Only validate if password is being changed
-        if (password && password !== confirmPassword) {
-            e.preventDefault();
-            alert('Passwords do not match');
-            $('#password_confirmation').focus();
-            return false;
-        }
-    });
-
-    // Update preview when name changes
-    $('#name').on('input', function() {
-        const name = $(this).val() || '{{ $user->name }}';
-        const initials = name.substring(0, 2).toUpperCase();
-        $('.card-body h5').text(name);
-        $('.mx-auto').text(initials);
-    });
+            // Only validate if password is being changed
+            if (password && password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match');
+                document.getElementById('password_confirmation').focus();
+                return false;
+            }
+        });
+    }
 });
 </script>
 @endsection
