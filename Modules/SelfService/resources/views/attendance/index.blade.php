@@ -152,39 +152,48 @@
     <!-- Summary Cards -->
     @if($employeeSummary)
     <div class="row mb-4">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="card summary-card bg-label-primary">
-          <div class="card-body text-center">
-            <i class="ti ti-calendar-check mb-2" style="font-size: 2rem;"></i>
-            <h6 class="mb-1">Work Days</h6>
-            <h3 class="mb-0">{{ number_format($employeeSummary['work_days']) }}</h3>
+          <div class="card-body text-center py-3">
+            <i class="ti ti-calendar-check mb-2" style="font-size: 1.5rem;"></i>
+            <h6 class="mb-1 small">Work Days</h6>
+            <h4 class="mb-0">{{ number_format($employeeSummary['work_days']) }}</h4>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="card summary-card bg-label-info">
-          <div class="card-body text-center">
-            <i class="ti ti-clock-hour-4 mb-2" style="font-size: 2rem;"></i>
-            <h6 class="mb-1">Expected Hours</h6>
-            <h3 class="mb-0">{{ number_format($employeeSummary['expected_work_hours'], 1) }}h</h3>
+          <div class="card-body text-center py-3">
+            <i class="ti ti-clock-hour-4 mb-2" style="font-size: 1.5rem;"></i>
+            <h6 class="mb-1 small">Expected Hours</h6>
+            <h4 class="mb-0">{{ number_format($employeeSummary['expected_work_hours'], 1) }}h</h4>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="card summary-card bg-label-success">
-          <div class="card-body text-center">
-            <i class="ti ti-clock-check mb-2" style="font-size: 2rem;"></i>
-            <h6 class="mb-1">Total Hours</h6>
-            <h3 class="mb-0">{{ number_format($employeeSummary['total_work_hours'], 1) }}h</h3>
+          <div class="card-body text-center py-3">
+            <i class="ti ti-clock-check mb-2" style="font-size: 1.5rem;"></i>
+            <h6 class="mb-1 small">Total Hours</h6>
+            <h4 class="mb-0">{{ number_format($employeeSummary['total_work_hours'], 1) }}h</h4>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="card summary-card {{ $employeeSummary['percentage'] >= 100 ? 'bg-label-success' : ($employeeSummary['percentage'] >= 90 ? 'bg-label-warning' : 'bg-label-danger') }}">
-          <div class="card-body text-center">
-            <i class="ti ti-percentage mb-2" style="font-size: 2rem;"></i>
-            <h6 class="mb-1">Completion</h6>
-            <h3 class="mb-0">{{ number_format($employeeSummary['percentage'], 1) }}%</h3>
+          <div class="card-body text-center py-3">
+            <i class="ti ti-percentage mb-2" style="font-size: 1.5rem;"></i>
+            <h6 class="mb-1 small">Completion</h6>
+            <h4 class="mb-0">{{ number_format($employeeSummary['percentage'], 1) }}%</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card summary-card bg-label-warning">
+          <div class="card-body text-center py-3">
+            <i class="ti ti-brand-asana mb-2" style="font-size: 1.5rem;"></i>
+            <h6 class="mb-1 small">Jira Worklogs</h6>
+            <h4 class="mb-0">{{ number_format($employeeSummary['total_worklog_hours'], 1) }}h</h4>
           </div>
         </div>
       </div>
@@ -222,6 +231,7 @@
               <th>Time In</th>
               <th>Time Out</th>
               <th>Total Time</th>
+              <th>Worklog</th>
               <th>Permission</th>
               <th>Late Penalty</th>
             </tr>
@@ -296,6 +306,19 @@
                 @endif
               </td>
               <td>
+                @if(($record['worklog_hours'] ?? 0) > 0)
+                  @php
+                    $worklogEntries = $record['worklog_entries'] ?? [];
+                    $tooltipContent = collect($worklogEntries)->map(fn($e) => $e->issue_key . ': ' . number_format($e->time_spent_hours, 1) . 'h')->join("\n");
+                  @endphp
+                  <span class="badge bg-warning text-dark" title="{{ $tooltipContent }}" style="cursor: help;">
+                    <i class="ti ti-brand-asana me-1"></i>{{ number_format($record['worklog_hours'], 1) }}h
+                  </span>
+                @else
+                  <span class="text-muted">-</span>
+                @endif
+              </td>
+              <td>
                 @if($record['has_permission'] ?? false)
                   <span class="badge bg-info" title="{{ $record['permission_usage']->reason ?? 'Permission used' }}">
                     <i class="ti ti-clock-pause me-1"></i>{{ $record['permission_usage']->minutes_used ?? $minutesPerPermission }}m
@@ -320,7 +343,7 @@
             </tr>
             @empty
             <tr>
-              <td colspan="6" class="text-center py-5">
+              <td colspan="7" class="text-center py-5">
                 <div class="d-flex flex-column align-items-center">
                   <i class="ti ti-calendar-off text-muted" style="font-size: 3rem;"></i>
                   <h6 class="mt-2">No attendance records found</h6>
@@ -379,6 +402,10 @@
                 <td><strong class="{{ $employeeSummary['percentage'] >= 100 ? 'text-success' : ($employeeSummary['percentage'] >= 90 ? 'text-warning' : 'text-danger') }}">
                   {{ number_format($employeeSummary['total_work_hours'], 1) }} hours ({{ number_format($employeeSummary['percentage'], 1) }}%)
                 </strong></td>
+              </tr>
+              <tr class="table-warning">
+                <td class="text-muted"><strong>Jira Worklogs (Logged Hours)</strong></td>
+                <td><strong class="text-warning">{{ number_format($employeeSummary['total_worklog_hours'], 1) }} hours</strong></td>
               </tr>
             </tbody>
           </table>

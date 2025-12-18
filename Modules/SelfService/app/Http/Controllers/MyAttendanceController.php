@@ -11,6 +11,7 @@ use Modules\Attendance\Models\PublicHoliday;
 use Modules\Attendance\Models\Setting;
 use Modules\Attendance\Models\WfhRecord;
 use Modules\Leave\Models\LeaveRecord;
+use Modules\Payroll\Models\JiraWorklog;
 use Carbon\Carbon;
 
 class MyAttendanceController extends Controller
@@ -173,6 +174,28 @@ class MyAttendanceController extends Controller
             ->get()
             ->keyBy(fn($w) => $w->date->format('Y-m-d'));
 
+        // Get Jira worklogs for this employee
+        $worklogs = JiraWorklog::where('employee_id', $employeeId)
+            ->whereBetween('worklog_started', [$periodStartDate, $periodEndDate])
+            ->orderBy('worklog_started')
+            ->get();
+
+        // Group worklogs by date
+        $worklogsByDate = [];
+        $totalWorklogHours = 0;
+        foreach ($worklogs as $worklog) {
+            $dateStr = $worklog->worklog_started->format('Y-m-d');
+            if (!isset($worklogsByDate[$dateStr])) {
+                $worklogsByDate[$dateStr] = [
+                    'hours' => 0,
+                    'entries' => [],
+                ];
+            }
+            $worklogsByDate[$dateStr]['hours'] += $worklog->time_spent_hours;
+            $worklogsByDate[$dateStr]['entries'][] = $worklog;
+            $totalWorklogHours += $worklog->time_spent_hours;
+        }
+
         // Generate all dates in period
         $currentDate = $periodStartDate->copy();
         while ($currentDate->lte($periodEndDate)) {
@@ -205,6 +228,10 @@ class MyAttendanceController extends Controller
             $dailyRecords[$dateStr]['is_wfh'] = $isWfh;
             $dailyRecords[$dateStr]['is_missing'] = !$isWeekend && !$isHoliday && !$isOnLeave && !$isWfh &&
                 !$dailyRecords[$dateStr]['time_in'] && !$dailyRecords[$dateStr]['time_out'];
+
+            // Add worklog data
+            $dailyRecords[$dateStr]['worklog_hours'] = $worklogsByDate[$dateStr]['hours'] ?? 0;
+            $dailyRecords[$dateStr]['worklog_entries'] = $worklogsByDate[$dateStr]['entries'] ?? [];
 
             $currentDate->addDay();
         }
@@ -251,6 +278,7 @@ class MyAttendanceController extends Controller
             'total_work_hours' => $totalWorkHours,
             'percentage' => $percentage,
             'work_hours_per_day' => $workHoursPerDay,
+            'total_worklog_hours' => $totalWorklogHours,
         ];
 
         // Get years for dropdown
