@@ -19,14 +19,14 @@ class ProjectController extends Controller
     {
         $query = Project::with('customer');
 
-        // Filter by status
-        if ($request->filled('status')) {
-            if ($request->status === 'active') {
-                $query->where('is_active', true);
-            } elseif ($request->status === 'inactive') {
-                $query->where('is_active', false);
-            }
+        // Filter by status (default to active only)
+        $status = $request->get('status', 'active');
+        if ($status === 'active') {
+            $query->where('is_active', true);
+        } elseif ($status === 'inactive') {
+            $query->where('is_active', false);
         }
+        // 'all' shows everything
 
         // Filter by needs_monthly_report
         if ($request->filled('needs_report')) {

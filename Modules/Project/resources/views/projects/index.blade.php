@@ -60,9 +60,9 @@
                 <div class="col-md-2">
                   <label class="form-label">Status</label>
                   <select class="form-select" name="status">
-                    <option value="">All</option>
-                    <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="active" {{ ($filters['status'] ?? 'active') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="all" {{ ($filters['status'] ?? '') === 'all' ? 'selected' : '' }}>All</option>
                   </select>
                 </div>
                 <div class="col-md-2">
