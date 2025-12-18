@@ -32,6 +32,8 @@ class PayrollRunController extends Controller
     /**
      * Display the payroll review page with calculation summaries.
      *
+     * Payroll period runs from 26th of previous month to 25th of current month.
+     *
      * @param Request $request
      * @return View
      * @throws \Exception
@@ -39,15 +41,26 @@ class PayrollRunController extends Controller
     public function review(Request $request): View
     {
         // Get the selected period or default to current month
+        // Period format: Y-m represents the month being paid (e.g., 2025-12 = Dec 2025 payroll)
+        // Actual dates: 26th of previous month to 25th of selected month
         $selectedPeriod = $request->get('period');
 
         if ($selectedPeriod) {
-            $periodStart = Carbon::createFromFormat('Y-m', $selectedPeriod)->startOfMonth();
+            $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
         } else {
-            $periodStart = Carbon::now()->startOfMonth();
+            // Default to current payroll period based on today's date
+            // If today is 26th or later, we're in next month's payroll period
+            $today = Carbon::now();
+            if ($today->day >= 26) {
+                $periodMonth = $today->copy()->addMonth();
+            } else {
+                $periodMonth = $today->copy();
+            }
         }
 
-        $periodEnd = $periodStart->copy()->endOfMonth();
+        // Period runs from 26th of previous month to 25th of current month
+        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
+        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
 
         // Calculate payroll summaries for all employees
         $employeeSummaries = $this->payrollCalculationService->calculatePayrollSummary($periodStart, $periodEnd);
@@ -55,11 +68,11 @@ class PayrollRunController extends Controller
         // Generate period options for the dropdown (last 6 months + current + next month)
         $periodOptions = collect();
         for ($i = -6; $i <= 1; $i++) {
-            $date = Carbon::now()->addMonths($i)->startOfMonth();
+            $date = Carbon::now()->addMonths($i);
             $periodOptions->push([
                 'value' => $date->format('Y-m'),
                 'label' => $date->format('F Y'),
-                'selected' => $date->format('Y-m') === $periodStart->format('Y-m')
+                'selected' => $date->format('Y-m') === $periodMonth->format('Y-m')
             ]);
         }
 
@@ -74,6 +87,8 @@ class PayrollRunController extends Controller
     /**
      * Finalize payroll run and export bank sheet for the selected period.
      *
+     * Payroll period runs from 26th of previous month to 25th of current month.
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Exception
@@ -86,8 +101,11 @@ class PayrollRunController extends Controller
         ]);
 
         $selectedPeriod = $request->get('period');
-        $periodStart = Carbon::createFromFormat('Y-m', $selectedPeriod)->startOfMonth();
-        $periodEnd = $periodStart->copy()->endOfMonth();
+        $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
+
+        // Period runs from 26th of previous month to 25th of current month
+        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
+        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
 
         try {
             // Finalize payroll run (atomic transaction in service)

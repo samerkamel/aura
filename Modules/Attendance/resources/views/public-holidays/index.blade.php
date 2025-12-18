@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (singleDateInput) {
         flatpickr(singleDateInput, {
             dateFormat: 'Y-m-d',
-            minDate: 'today',
             defaultDate: new Date()
         });
     }
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startDateInput) {
         flatpickr(startDateInput, {
             dateFormat: 'Y-m-d',
-            minDate: 'today',
             defaultDate: new Date(),
             onChange: function(selectedDates, dateStr, instance) {
                 // Update end date minimum to selected start date
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (endDateInput) {
         flatpickr(endDateInput, {
             dateFormat: 'Y-m-d',
-            minDate: 'today',
             defaultDate: new Date()
         });
     }
@@ -180,6 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
                           <i class="ti ti-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
+                          <button type="button" class="dropdown-item" onclick="openEditModal({{ $holiday->id }}, '{{ addslashes($holiday->name) }}', '{{ $holiday->date->format('Y-m-d') }}')">
+                            <i class="ti ti-edit me-1"></i>Edit
+                          </button>
                           <form action="{{ route('attendance.public-holidays.destroy', $holiday) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
@@ -289,6 +289,47 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
+<!-- Edit Holiday Modal -->
+<div class="modal fade" id="editHolidayModal" tabindex="-1" aria-labelledby="editHolidayModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editHolidayModalLabel">
+          <i class="ti ti-calendar-event me-2"></i>Edit Public Holiday
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editHolidayForm" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-body">
+          @if($errors->has('edit_date'))
+            <div class="alert alert-danger">
+              {{ $errors->first('edit_date') }}
+            </div>
+          @endif
+          <div class="mb-3">
+            <label for="edit-holiday-name" class="form-label">Holiday Name</label>
+            <input type="text" class="form-control" id="edit-holiday-name" name="name" placeholder="e.g., New Year's Day" required>
+            <div class="form-text">Enter a descriptive name for the holiday</div>
+          </div>
+          <div class="mb-3">
+            <label for="edit-holiday-date" class="form-label">Date</label>
+            <input type="text" class="form-control" id="edit-holiday-date" name="date" placeholder="Select date" required>
+            <div class="form-text">Select the date of the holiday</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ti ti-check me-1"></i>Update Holiday
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
 function filterByYear(year) {
     const currentUrl = new URL(window.location);
@@ -296,10 +337,50 @@ function filterByYear(year) {
     window.location.href = currentUrl.toString();
 }
 
+// Initialize edit date picker
+let editDatePicker = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const editDateInput = document.getElementById('edit-holiday-date');
+    if (editDateInput) {
+        editDatePicker = flatpickr(editDateInput, {
+            dateFormat: 'Y-m-d',
+            allowInput: true
+        });
+    }
+});
+
+function openEditModal(id, name, date) {
+    // Set form action URL
+    const form = document.getElementById('editHolidayForm');
+    form.action = '{{ url("attendance/public-holidays") }}/' + id;
+
+    // Set form values
+    document.getElementById('edit-holiday-name').value = name;
+
+    // Set date value using flatpickr
+    if (editDatePicker) {
+        editDatePicker.setDate(date, true);
+    } else {
+        document.getElementById('edit-holiday-date').value = date;
+    }
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editHolidayModal'));
+    modal.show();
+}
+
 // Auto-open modal if there are validation errors
-@if($errors->any())
+@if($errors->any() && !$errors->has('edit_date'))
   document.addEventListener('DOMContentLoaded', function() {
     const modal = new bootstrap.Modal(document.getElementById('addHolidayModal'));
+    modal.show();
+  });
+@endif
+
+@if($errors->has('edit_date'))
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = new bootstrap.Modal(document.getElementById('editHolidayModal'));
     modal.show();
   });
 @endif

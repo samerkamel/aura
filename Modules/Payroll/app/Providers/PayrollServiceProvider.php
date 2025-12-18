@@ -43,7 +43,9 @@ class PayrollServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            \Modules\Payroll\Console\Commands\SyncJiraBillableHours::class,
+        ]);
     }
 
     /**

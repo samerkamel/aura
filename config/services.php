@@ -31,4 +31,13 @@ return [
     ],
   ],
 
+  'jira' => [
+    'base_url' => env('JIRA_BASE_URL'),
+    'email' => env('JIRA_EMAIL'),
+    'api_token' => env('JIRA_API_TOKEN'),
+    'sync_enabled' => env('JIRA_SYNC_ENABLED', false),
+    'sync_frequency' => env('JIRA_SYNC_FREQUENCY', 'daily'), // daily, weekly, monthly
+    'billable_projects' => env('JIRA_BILLABLE_PROJECTS', ''), // comma-separated project keys
+  ],
+
 ];

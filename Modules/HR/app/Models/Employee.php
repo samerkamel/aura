@@ -4,6 +4,7 @@ namespace Modules\HR\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Employee Model
@@ -18,18 +19,43 @@ class Employee extends Model
   use HasFactory;
 
   /**
+   * Available teams that employees can belong to.
+   * These correspond to income line items in the accounting system.
+   */
+  public const TEAMS = [
+    'PHP' => 'PHP',
+    '.NET' => '.NET',
+    'Mobile' => 'Mobile',
+    'Design' => 'Design',
+    'Websites' => 'Websites',
+  ];
+
+  /**
    * The attributes that are mass assignable.
    */
   protected $fillable = [
     'name',
+    'name_ar',
     'email',
+    'personal_email',
+    'attendance_id',
+    'national_id',
+    'national_insurance_number',
     'position',
+    'position_id',
+    'team',
+    'manager_id',
     'start_date',
     'contact_info',
+    'emergency_contact',
     'bank_info',
     'base_salary',
+    'hourly_rate',
     'status',
     'termination_date',
+    'jira_account_id',
+    'jira_author_name',
+    'billable_hours_applicable',
   ];
 
   /**
@@ -39,7 +65,10 @@ class Employee extends Model
     'start_date' => 'date',
     'termination_date' => 'date',
     'contact_info' => 'array',
+    'emergency_contact' => 'array',
     'base_salary' => 'decimal:2',
+    'hourly_rate' => 'decimal:2',
+    'billable_hours_applicable' => 'boolean',
   ];
 
   /**
@@ -124,6 +153,39 @@ class Employee extends Model
   }
 
   /**
+   * Get the position of this employee.
+   * Named 'positionRelation' to avoid conflict with legacy 'position' string column.
+   */
+  public function positionRelation(): BelongsTo
+  {
+    return $this->belongsTo(Position::class, 'position_id');
+  }
+
+  /**
+   * Get the manager of this employee.
+   */
+  public function manager(): BelongsTo
+  {
+    return $this->belongsTo(Employee::class, 'manager_id');
+  }
+
+  /**
+   * Get the employees that report to this employee.
+   */
+  public function subordinates()
+  {
+    return $this->hasMany(Employee::class, 'manager_id');
+  }
+
+  /**
+   * Check if this employee is a manager (has subordinates).
+   */
+  public function isManager(): bool
+  {
+    return $this->subordinates()->exists();
+  }
+
+  /**
    * Relationship to documents
    */
   public function documents()
@@ -166,6 +228,14 @@ class Employee extends Model
   public function billableHours()
   {
     return $this->hasMany(\Modules\Payroll\Models\BillableHour::class);
+  }
+
+  /**
+   * Get the Jira worklog entries for this employee.
+   */
+  public function jiraWorklogs()
+  {
+    return $this->hasMany(\Modules\Payroll\Models\JiraWorklog::class);
   }
 
   /**

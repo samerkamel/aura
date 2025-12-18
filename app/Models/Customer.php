@@ -38,6 +38,14 @@ class Customer extends Model
     }
 
     /**
+     * Get the projects for this customer.
+     */
+    public function projects(): HasMany
+    {
+        return $this->hasMany(\Modules\Project\Models\Project::class);
+    }
+
+    /**
      * Scope to filter active customers.
      */
     public function scopeActive(Builder $query): Builder

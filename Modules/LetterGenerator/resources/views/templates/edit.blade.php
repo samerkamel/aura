@@ -3,7 +3,27 @@
 @section('title', 'Edit Letter Template')
 
 @section('vendor-style')
-{{-- Vendor Css files --}}
+{{-- Quill Editor CSS --}}
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+  #editor-container {
+    height: 350px;
+    background: #fff;
+  }
+  .ql-editor {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    min-height: 300px;
+  }
+  .ql-toolbar.ql-snow {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+  }
+  #editor-container.ql-container.ql-snow {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+</style>
 @endsection
 
 @section('page-style')
@@ -11,34 +31,53 @@
 @endsection
 
 @section('vendor-script')
-<!-- TinyMCE Editor -->
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+{{-- Quill Editor JS --}}
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 @endsection
 
 @section('page-script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  tinymce.init({
-    selector: '#content',
-    height: 400,
-    menubar: true,
-    plugins: [
-      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
-    ],
-    toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-    setup: function (editor) {
-      editor.on('change', function () {
-        editor.save();
-      });
-    }
+  // Initialize Quill editor
+  var quill = new Quill('#editor-container', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        ['link', 'image'],
+        ['clean']
+      ]
+    },
+    placeholder: 'Enter your template content here...'
+  });
+
+  // Load existing content
+  var existingContent = document.getElementById('content').value;
+  if (existingContent) {
+    quill.root.innerHTML = existingContent;
+  }
+
+  // Sync Quill content to hidden textarea on form submit
+  var form = document.querySelector('form');
+  form.addEventListener('submit', function() {
+    document.getElementById('content').value = quill.root.innerHTML;
+  });
+
+  // Also sync on any text change (for validation)
+  quill.on('text-change', function() {
+    document.getElementById('content').value = quill.root.innerHTML;
   });
 
   // Insert placeholder function
   function insertPlaceholder(placeholder) {
-    tinymce.get('content').insertContent(placeholder + ' ');
+    var range = quill.getSelection(true);
+    quill.insertText(range.index, placeholder + ' ');
+    quill.setSelection(range.index + placeholder.length + 1);
   }
 
   // Add click handlers for placeholder buttons
@@ -123,11 +162,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
           <!-- Template Content -->
           <div class="mb-3">
-            <label class="form-label" for="content">Template Content <span class="text-danger">*</span></label>
-            <textarea class="form-control @error('content') is-invalid @enderror" id="content" name="content"
-                      rows="10" required>{{ old('content', $letterTemplate->content) }}</textarea>
+            <label class="form-label" for="editor-container">Template Content <span class="text-danger">*</span></label>
+            <div id="editor-container" class="@error('content') border-danger @enderror"></div>
+            <textarea class="d-none" id="content" name="content" required>{{ old('content', $letterTemplate->content) }}</textarea>
             @error('content')
-            <div class="invalid-feedback">{{ $message }}</div>
+            <div class="text-danger small mt-1">{{ $message }}</div>
             @enderror
             <div class="form-text">Use the rich text editor above to format your template and insert placeholders.</div>
           </div>

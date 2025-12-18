@@ -1,12 +1,58 @@
 {
   "menu": [
     {
-      "menuHeader": "HR Management"
+      "menuHeader": "My Portal",
+      "roles": ["all"]
+    },
+    {
+      "name": "Self Service",
+      "icon": "menu-icon tf-icons ti ti-user-circle",
+      "slug": "self-service",
+      "roles": ["all"],
+      "submenu": [
+        {
+          "url": "self-service",
+          "name": "Dashboard",
+          "slug": "self-service-dashboard"
+        },
+        {
+          "url": "self-service/attendance",
+          "name": "My Attendance",
+          "slug": "self-service-attendance"
+        },
+        {
+          "url": "self-service/leave-requests",
+          "name": "Leave Requests",
+          "slug": "self-service-leave-requests"
+        },
+        {
+          "url": "self-service/wfh-requests",
+          "name": "WFH Requests",
+          "slug": "self-service-wfh-requests"
+        },
+        {
+          "url": "self-service/permission-requests",
+          "name": "Permission Requests",
+          "slug": "self-service-permission-requests"
+        }
+      ]
+    },
+    {
+      "name": "Approvals",
+      "icon": "menu-icon tf-icons ti ti-checklist",
+      "slug": "self-service-approvals",
+      "url": "self-service/approvals",
+      "roles": ["manager", "super-admin", "hr-manager"]
+    },
+    {
+      "menuHeader": "HR Management",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"]
     },
     {
       "name": "Employees",
       "icon": "menu-icon tf-icons ti ti-users",
       "slug": "hr-employees",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"],
       "submenu": [
         {
           "url": "hr/employees",
@@ -26,14 +72,58 @@
       ]
     },
     {
+      "name": "Positions",
+      "icon": "menu-icon tf-icons ti ti-briefcase",
+      "slug": "hr-positions",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"],
+      "submenu": [
+        {
+          "url": "hr/positions",
+          "name": "All Positions",
+          "slug": "hr-positions-index"
+        },
+        {
+          "url": "hr/positions/create",
+          "name": "Create Position",
+          "slug": "hr-positions-create"
+        }
+      ]
+    },
+    {
       "name": "Attendance Records",
       "icon": "menu-icon tf-icons ti ti-clock",
       "slug": "attendance-records",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"],
       "submenu": [
+        {
+          "url": "attendance/records",
+          "name": "Daily Records",
+          "slug": "attendance-records-index"
+        },
+        {
+          "url": "attendance/summary",
+          "name": "Yearly Summary",
+          "slug": "attendance-summary-index"
+        },
         {
           "url": "attendance/import",
           "name": "Import CSV",
           "slug": "attendance-import-create"
+        },
+        {
+          "url": "attendance/import/zkteco",
+          "name": "Import ZKTeco",
+          "slug": "attendance-import-zkteco"
+        },
+        {
+          "url": "attendance/missing-attendance",
+          "name": "Missing Days",
+          "slug": "attendance-missing-attendance-index"
+        },
+        {
+          "url": "attendance/incomplete-attendance",
+          "name": "Incomplete Records",
+          "slug": "attendance-incomplete-attendance-index"
         }
       ]
     },
@@ -41,6 +131,7 @@
       "name": "Attendance Settings",
       "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "attendance-settings",
+      "roles": ["super-admin", "hr-manager"],
       "submenu": [
         {
           "url": "attendance/settings",
@@ -63,6 +154,7 @@
       "name": "Leave Policies",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
+      "roles": ["super-admin", "hr-manager"],
       "submenu": [
         {
           "url": "leave-policies",
@@ -75,6 +167,7 @@
       "name": "Billable Hours",
       "icon": "menu-icon tf-icons ti ti-clock-hour-4",
       "slug": "billable-hours",
+      "roles": ["super-admin", "hr-manager", "finance-manager"],
       "submenu": [
         {
           "url": "payroll/billable-hours",
@@ -84,9 +177,42 @@
       ]
     },
     {
+      "menuHeader": "Projects",
+      "roles": ["super-admin", "finance-manager", "hr-manager"]
+    },
+    {
+      "name": "Projects",
+      "icon": "menu-icon tf-icons ti ti-folder",
+      "slug": "projects",
+      "roles": ["super-admin", "finance-manager", "hr-manager"],
+      "submenu": [
+        {
+          "url": "projects",
+          "name": "All Projects",
+          "slug": "projects-index"
+        },
+        {
+          "url": "projects/create",
+          "name": "Add Project",
+          "slug": "projects-create"
+        },
+        {
+          "url": "projects/reports",
+          "name": "Monthly Reports",
+          "slug": "projects-reports"
+        },
+        {
+          "url": "projects/reports/create",
+          "name": "Generate Report",
+          "slug": "projects-reports-create"
+        }
+      ]
+    },
+    {
       "name": "Payroll Management",
       "icon": "menu-icon tf-icons ti ti-currency-dollar",
       "slug": "payroll-management",
+      "roles": ["super-admin", "hr-manager", "finance-manager"],
       "submenu": [
         {
           "url": "payroll/run-review",
@@ -104,6 +230,7 @@
       "name": "Letter Templates",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "letter-templates",
+      "roles": ["super-admin", "hr-manager"],
       "submenu": [
         {
           "url": "letter-templates",
@@ -118,12 +245,14 @@
       ]
     },
     {
-      "menuHeader": "Asset Management"
+      "menuHeader": "Asset Management",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"]
     },
     {
       "name": "Assets",
       "icon": "menu-icon tf-icons ti ti-package",
       "slug": "assets",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"],
       "submenu": [
         {
           "url": "assetmanager/assets",
@@ -138,12 +267,14 @@
       ]
     },
     {
-      "menuHeader": "Financial Planning"
+      "menuHeader": "Financial Planning",
+      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"]
     },
     {
       "name": "Accounting",
       "icon": "menu-icon tf-icons ti ti-coin",
       "slug": "accounting-cash-flow",
+      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"],
       "submenu": [
         {
           "url": "accounting",
@@ -201,6 +332,7 @@
       "name": "Invoice Management",
       "icon": "menu-icon tf-icons ti ti-file-invoice",
       "slug": "invoice-management",
+      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"],
       "submenu": [
         {
           "url": "invoicing/invoices",
@@ -233,6 +365,7 @@
       "name": "Invoice Settings",
       "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "invoice-settings",
+      "roles": ["super-admin", "finance-manager"],
       "submenu": [
         {
           "url": "invoicing/admin/sequences",
@@ -247,12 +380,14 @@
       ]
     },
     {
-      "menuHeader": "Administration"
+      "menuHeader": "Administration",
+      "roles": ["super-admin"]
     },
     {
       "name": "User Management",
       "icon": "menu-icon tf-icons ti ti-users-group",
       "slug": "administration-users",
+      "roles": ["super-admin"],
       "submenu": [
         {
           "url": "administration/users",
@@ -270,6 +405,7 @@
       "name": "Roles & Permissions",
       "icon": "menu-icon tf-icons ti ti-shield-check",
       "slug": "administration-roles",
+      "roles": ["super-admin"],
       "submenu": [
         {
           "url": "administration/roles",
@@ -287,19 +423,22 @@
       "name": "Sectors",
       "icon": "menu-icon tf-icons ti ti-world",
       "slug": "administration-sectors-index",
-      "url": "administration/sectors"
+      "url": "administration/sectors",
+      "roles": ["super-admin"]
     },
     {
       "name": "Business Units",
       "icon": "menu-icon tf-icons ti ti-building",
       "slug": "administration-business-units-index",
-      "url": "administration/business-units"
+      "url": "administration/business-units",
+      "roles": ["super-admin", "business-unit-manager"]
     },
     {
       "name": "Customers",
       "icon": "menu-icon tf-icons ti ti-users",
       "slug": "administration-customers-index",
-      "url": "administration/customers"
+      "url": "administration/customers",
+      "roles": ["super-admin", "finance-manager", "business-unit-manager"]
     }
   ]
 }

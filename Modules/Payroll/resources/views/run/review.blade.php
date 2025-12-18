@@ -34,7 +34,11 @@
                 <div class="alert alert-info mb-0">
                   <i class="ti ti-info-circle me-2"></i>
                   <strong>Period:</strong> {{ $periodStart->format('M j, Y') }} - {{ $periodEnd->format('M j, Y') }}
-                  <span class="ms-3"><strong>Total Employees:</strong> {{ $employeeSummaries->count() }}</span>
+                  <span class="ms-3"><strong>Employees:</strong> {{ $employeeSummaries->count() }}</span>
+                  @if($employeeSummaries->count() > 0)
+                    <span class="ms-3"><strong>Required Hours:</strong> {{ $employeeSummaries->first()['required_monthly_hours'] }}h</span>
+                    <span class="ms-3"><strong>Target Billable:</strong> {{ $employeeSummaries->first()['target_billable_hours'] }}h</span>
+                  @endif
                 </div>
               </div>
             </div>
@@ -59,12 +63,10 @@
                 <tr>
                   <th>Employee</th>
                   <th class="text-center">Net Attended<br><small class="text-muted">Hours</small></th>
-                  <th class="text-center">Required<br><small class="text-muted">Hours</small></th>
                   <th class="text-center">Attendance<br><small class="text-muted">%</small></th>
                   <th class="text-center">Billable<br><small class="text-muted">Hours</small></th>
-                  <th class="text-center">Target Billable<br><small class="text-muted">Hours</small></th>
                   <th class="text-center">Billable<br><small class="text-muted">%</small></th>
-                  <th class="text-center">Final Performance<br><small class="text-mused">%</small></th>
+                  <th class="text-center">Final Performance<br><small class="text-muted">%</small></th>
                   <th class="text-center">Additional Info</th>
                 </tr>
               </thead>
@@ -89,9 +91,6 @@
                       <span class="badge bg-label-info">{{ $summary['net_attended_hours'] }}h</span>
                     </td>
                     <td class="text-center">
-                      <span class="badge bg-label-secondary">{{ $summary['required_monthly_hours'] }}h</span>
-                    </td>
-                    <td class="text-center">
                       <span class="badge {{ $summary['attendance_percentage'] >= 90 ? 'bg-label-success' : ($summary['attendance_percentage'] >= 75 ? 'bg-label-warning' : 'bg-label-danger') }}">
                         {{ $summary['attendance_percentage'] }}%
                       </span>
@@ -99,17 +98,33 @@
                       <small class="text-muted">({{ $summary['attendance_weight'] }}% weight)</small>
                     </td>
                     <td class="text-center">
-                      <span class="badge bg-label-info">{{ $summary['billable_hours'] }}h</span>
+                      @if(isset($summary['billable_hours_applicable']) && !$summary['billable_hours_applicable'])
+                        <span class="badge bg-label-secondary">N/A</span>
+                      @else
+                        <span class="badge bg-label-info">{{ $summary['billable_hours'] }}h</span>
+                        @if(isset($summary['jira_worklog_hours']) && $summary['jira_worklog_hours'] > 0)
+                          <br>
+                          <small class="text-muted">
+                            <i class="ti ti-brand-jira"></i> {{ $summary['jira_worklog_hours'] }}h
+                            @if(isset($summary['manual_billable_hours']) && $summary['manual_billable_hours'] > 0)
+                              + {{ $summary['manual_billable_hours'] }}h
+                            @endif
+                          </small>
+                        @endif
+                      @endif
                     </td>
                     <td class="text-center">
-                      <span class="badge bg-label-secondary">{{ $summary['target_billable_hours'] }}h</span>
-                    </td>
-                    <td class="text-center">
-                      <span class="badge {{ $summary['billable_hours_percentage'] >= 90 ? 'bg-label-success' : ($summary['billable_hours_percentage'] >= 75 ? 'bg-label-warning' : 'bg-label-danger') }}">
-                        {{ $summary['billable_hours_percentage'] }}%
-                      </span>
-                      <br>
-                      <small class="text-muted">({{ $summary['billable_hours_weight'] }}% weight)</small>
+                      @if(isset($summary['billable_hours_applicable']) && !$summary['billable_hours_applicable'])
+                        <span class="badge bg-label-secondary">N/A</span>
+                        <br>
+                        <small class="text-muted">(Attendance only)</small>
+                      @else
+                        <span class="badge {{ $summary['billable_hours_percentage'] >= 90 ? 'bg-label-success' : ($summary['billable_hours_percentage'] >= 75 ? 'bg-label-warning' : 'bg-label-danger') }}">
+                          {{ $summary['billable_hours_percentage'] }}%
+                        </span>
+                        <br>
+                        <small class="text-muted">({{ $summary['billable_hours_weight'] }}% weight)</small>
+                      @endif
                     </td>
                     <td class="text-center">
                       <div class="performance-score">
@@ -143,7 +158,7 @@
                   </tr>
                 @empty
                   <tr>
-                    <td colspan="9" class="text-center py-4">
+                    <td colspan="7" class="text-center py-4">
                       <div class="empty-state">
                         <i class="ti ti-users-off display-4 text-muted"></i>
                         <h5 class="mt-3">No Active Employees</h5>

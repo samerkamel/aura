@@ -35,7 +35,12 @@ class LeavePolicyController extends Controller
             ->active()
             ->get();
 
-        return view('leave::policies.index', compact('ptoPolicies', 'sickLeavePolicies'));
+        $emergencyLeavePolicies = LeavePolicy::with('tiers')
+            ->where('type', 'emergency')
+            ->active()
+            ->get();
+
+        return view('leave::policies.index', compact('ptoPolicies', 'sickLeavePolicies', 'emergencyLeavePolicies'));
     }
 
     /**
@@ -129,5 +134,43 @@ class LeavePolicyController extends Controller
         return redirect()
             ->route('leave.policies.index')
             ->with('success', 'Sick Leave policy updated successfully.');
+    }
+
+    /**
+     * Update the Emergency Leave policy configuration.
+     */
+    public function updateEmergencyLeavePolicy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'days_per_year' => 'required|integer|min:1',
+        ]);
+
+        $emergencyPolicy = LeavePolicy::firstOrCreate(
+            ['type' => 'emergency'],
+            [
+                'name' => $request->name,
+                'description' => $request->description,
+                'initial_days' => $request->days_per_year,
+                'is_active' => true,
+                'config' => json_encode([
+                    'carry_forward' => false,
+                    'requires_approval' => true,
+                    'notice_days' => 0,
+                ]),
+            ]
+        );
+
+        // Update policy attributes
+        $emergencyPolicy->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'initial_days' => $request->days_per_year,
+        ]);
+
+        return redirect()
+            ->route('leave.policies.index')
+            ->with('success', 'Emergency Leave policy updated successfully.');
     }
 }

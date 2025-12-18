@@ -4,6 +4,8 @@ namespace Modules\Payroll\Services;
 
 use Modules\HR\Models\Employee;
 use Modules\Payroll\Models\BillableHour;
+use Modules\Payroll\Models\JiraWorklog;
+use Modules\Payroll\Models\PayrollPeriodSetting;
 use Modules\Attendance\Models\Setting;
 use Modules\Attendance\Models\WfhRecord;
 use Carbon\Carbon;
@@ -94,26 +96,62 @@ class PayrollCalculationService
       ? min(100, ($netAttendedHours / $requiredMonthlyHours) * 100)
       : 0;
 
-    // Get billable hours for the period
-    $billableHoursRecord = BillableHour::where('employee_id', $employee->id)
-      ->where('payroll_period_start_date', $periodStart->toDateString())
-      ->first();
+    // Check if billable hours apply to this employee
+    $billableHoursApplicable = $employee->billable_hours_applicable ?? true;
 
-    $billableHours = $billableHoursRecord ? $billableHoursRecord->hours : 0;
+    // Initialize billable hours variables
+    $billableHours = 0;
+    $jiraWorklogHours = 0;
+    $manualBillableHours = 0;
+    $targetBillableHours = 0;
+    $billableHoursPercentage = 0;
 
-    // Calculate target billable hours (e.g., 70% of net attended hours)
-    $targetBillableHours = $netAttendedHours * 0.7;
+    if ($billableHoursApplicable) {
+      // Get manual billable hours for the period
+      $billableHoursRecord = BillableHour::where('employee_id', $employee->id)
+        ->where('payroll_period_start_date', $periodStart->toDateString())
+        ->first();
 
-    // Calculate billable hours percentage
-    $billableHoursPercentage = $targetBillableHours > 0
-      ? min(100, ($billableHours / $targetBillableHours) * 100)
-      : 0;
+      $manualBillableHours = $billableHoursRecord ? $billableHoursRecord->hours : 0;
+
+      // Get Jira worklog hours for the period
+      $jiraWorklogHours = JiraWorklog::where('employee_id', $employee->id)
+        ->whereBetween('worklog_started', [$periodStart, $periodEnd])
+        ->sum('time_spent_hours');
+
+      // Total billable hours = Jira worklogs + manual entry
+      $billableHours = (float) $jiraWorklogHours + (float) $manualBillableHours;
+
+      // Get target billable hours: admin override or calculated (6 hours/day, max 120)
+      // Use periodEnd to determine the payroll month (Dec 25 = December payroll)
+      $periodSetting = PayrollPeriodSetting::forPeriod($periodEnd);
+      if ($periodSetting && $periodSetting->target_billable_hours !== null) {
+        $targetBillableHours = (float) $periodSetting->target_billable_hours;
+      } else {
+        $workingDays = $this->countWorkingDays($periodStart, $periodEnd);
+        $targetBillableHours = min($workingDays * 6, 120);
+      }
+
+      // Calculate billable hours percentage
+      $billableHoursPercentage = $targetBillableHours > 0
+        ? min(100, ($billableHours / $targetBillableHours) * 100)
+        : 0;
+    }
 
     // Calculate final weighted performance percentage
-    $finalPerformancePercentage = (
-      ($attendancePercentage * ($attendanceWeight / 100)) +
-      ($billableHoursPercentage * ($billableHoursWeight / 100))
-    );
+    // For employees where billable hours don't apply, use 100% attendance weight
+    $effectiveAttendanceWeight = $billableHoursApplicable ? $attendanceWeight : 100;
+    $effectiveBillableWeight = $billableHoursApplicable ? $billableHoursWeight : 0;
+
+    if ($billableHoursApplicable) {
+      $finalPerformancePercentage = (
+        ($attendancePercentage * ($attendanceWeight / 100)) +
+        ($billableHoursPercentage * ($billableHoursWeight / 100))
+      );
+    } else {
+      // If billable hours don't apply, salary is 100% based on attendance
+      $finalPerformancePercentage = $attendancePercentage;
+    }
 
     // Get additional metrics
     $additionalMetrics = $this->getAdditionalMetrics($employee, $periodStart, $periodEnd);
@@ -123,16 +161,41 @@ class PayrollCalculationService
       'net_attended_hours' => round($netAttendedHours, 2),
       'required_monthly_hours' => $requiredMonthlyHours,
       'attendance_percentage' => round($attendancePercentage, 2),
+      'billable_hours_applicable' => $billableHoursApplicable,
       'billable_hours' => round($billableHours, 2),
+      'jira_worklog_hours' => round((float) $jiraWorklogHours, 2),
+      'manual_billable_hours' => round((float) $manualBillableHours, 2),
       'target_billable_hours' => round($targetBillableHours, 2),
       'billable_hours_percentage' => round($billableHoursPercentage, 2),
       'final_performance_percentage' => round($finalPerformancePercentage, 2),
-      'attendance_weight' => $attendanceWeight,
-      'billable_hours_weight' => $billableHoursWeight,
+      'attendance_weight' => $effectiveAttendanceWeight,
+      'billable_hours_weight' => $effectiveBillableWeight,
       'pto_days' => $additionalMetrics['pto_days'],
       'wfh_days' => $additionalMetrics['wfh_days'],
       'penalty_minutes' => $additionalMetrics['penalty_minutes'],
     ];
+  }
+
+  /**
+   * Count working days (Monday to Friday) in the given period.
+   *
+   * @param Carbon $periodStart
+   * @param Carbon $periodEnd
+   * @return int Number of working days
+   */
+  private function countWorkingDays(Carbon $periodStart, Carbon $periodEnd): int
+  {
+    $workingDays = 0;
+    $current = $periodStart->copy();
+
+    while ($current->lte($periodEnd)) {
+      if ($current->isWeekday()) {
+        $workingDays++;
+      }
+      $current->addDay();
+    }
+
+    return $workingDays;
   }
 
   /**
@@ -144,19 +207,8 @@ class PayrollCalculationService
    */
   private function calculateRequiredMonthlyHours(Carbon $periodStart, Carbon $periodEnd): float
   {
-    // Count working days (Monday to Friday) in the period
-    $workingDays = 0;
-    $current = $periodStart->copy();
-
-    while ($current->lte($periodEnd)) {
-      if ($current->isWeekday()) {
-        $workingDays++;
-      }
-      $current->addDay();
-    }
-
     // Assuming 8 hours per working day
-    return $workingDays * 8;
+    return $this->countWorkingDays($periodStart, $periodEnd) * 8;
   }
 
   /**
@@ -234,6 +286,8 @@ class PayrollCalculationService
           ],
           'billable_hours' => [
             'billable_hours' => $summary['billable_hours'],
+            'jira_worklog_hours' => $summary['jira_worklog_hours'],
+            'manual_billable_hours' => $summary['manual_billable_hours'],
             'target_billable_hours' => $summary['target_billable_hours'],
             'percentage' => $summary['billable_hours_percentage'],
             'weight' => $summary['billable_hours_weight'],

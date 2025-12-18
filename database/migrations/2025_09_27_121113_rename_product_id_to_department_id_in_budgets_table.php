@@ -12,16 +12,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // The column is already renamed to department_id, we just need to fix the index names
-        Schema::table('budgets', function (Blueprint $table) {
-            // Drop the old index names
-            $table->dropIndex('budgets_product_id_budget_year_index');
-            $table->dropUnique('unique_budget_per_bu_product_year');
+        // Skip if indexes already have correct names (fresh install)
+        $indexes = collect(DB::select('SHOW INDEX FROM budgets'))->pluck('Key_name')->unique();
 
-            // Add the new index names
-            $table->index(['department_id', 'budget_year']);
-            $table->unique(['business_unit_id', 'department_id', 'budget_year'], 'unique_budget_per_bu_dept_year');
-        });
+        if ($indexes->contains('budgets_product_id_budget_year_index')) {
+            Schema::table('budgets', function (Blueprint $table) {
+                $table->dropIndex('budgets_product_id_budget_year_index');
+            });
+        }
+
+        if ($indexes->contains('unique_budget_per_bu_product_year')) {
+            Schema::table('budgets', function (Blueprint $table) {
+                $table->dropUnique('unique_budget_per_bu_product_year');
+            });
+        }
+
+        // Add new indexes if they don't exist
+        if (!$indexes->contains('budgets_department_id_budget_year_index')) {
+            Schema::table('budgets', function (Blueprint $table) {
+                $table->index(['department_id', 'budget_year']);
+            });
+        }
+
+        if (!$indexes->contains('unique_budget_per_bu_dept_year')) {
+            Schema::table('budgets', function (Blueprint $table) {
+                $table->unique(['business_unit_id', 'department_id', 'budget_year'], 'unique_budget_per_bu_dept_year');
+            });
+        }
     }
 
     /**

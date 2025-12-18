@@ -204,6 +204,17 @@ class AuthServiceProvider extends ServiceProvider
             return $businessUnitId && $user->hasAccessToBusinessUnit($businessUnitId);
         });
 
+        // Roles & Permissions Management
+        Gate::define('manage-roles-permissions', function ($user) {
+            // Check new role-based system first
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-roles-permissions')) {
+                return true;
+            }
+
+            // Fallback to old role field for backward compatibility
+            return isset($user->role) && $user->role === 'super_admin';
+        });
+
         // Sector Management Permissions
         Gate::define('manage-sectors', function ($user) {
             // Check new role-based system first

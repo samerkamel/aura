@@ -12,7 +12,18 @@
           <i class="ti ti-user me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">{{ $employee->name }}</h5>
-            <small class="text-muted">{{ $employee->position ?? 'No Position Assigned' }}</small>
+            <small class="text-muted">
+              @if($employee->position_id && $employee->positionRelation)
+                {{ $employee->positionRelation->full_title }}
+                @if($employee->positionRelation->department)
+                  <span class="badge bg-label-info ms-1">{{ $employee->positionRelation->department }}</span>
+                @endif
+              @elseif($employee->position && is_string($employee->position))
+                {{ $employee->position }}
+              @else
+                No Position Assigned
+              @endif
+            </small>
           </div>
         </div>
         <div class="d-flex gap-2">
@@ -52,12 +63,68 @@
                 {{ $employee->name }}
               </div>
             </div>
+            @if($employee->name_ar)
             <div class="row mb-3">
               <div class="col-sm-4">
-                <strong>Email:</strong>
+                <strong>Arabic Name:</strong>
+              </div>
+              <div class="col-sm-8" dir="rtl">
+                {{ $employee->name_ar }}
+              </div>
+            </div>
+            @endif
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Work Email:</strong>
               </div>
               <div class="col-sm-8">
                 <a href="mailto:{{ $employee->email }}">{{ $employee->email }}</a>
+              </div>
+            </div>
+            @if($employee->personal_email)
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Personal Email:</strong>
+              </div>
+              <div class="col-sm-8">
+                <a href="mailto:{{ $employee->personal_email }}">{{ $employee->personal_email }}</a>
+              </div>
+            </div>
+            @endif
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Attendance ID:</strong>
+              </div>
+              <div class="col-sm-8">
+                @if($employee->attendance_id)
+                  <span class="font-monospace">{{ $employee->attendance_id }}</span>
+                @else
+                  <span class="text-muted">Not Set</span>
+                @endif
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>National ID:</strong>
+              </div>
+              <div class="col-sm-8">
+                @if($employee->national_id)
+                  <span class="font-monospace">{{ $employee->national_id }}</span>
+                @else
+                  <span class="text-muted">Not Set</span>
+                @endif
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>NIN:</strong>
+              </div>
+              <div class="col-sm-8">
+                @if($employee->national_insurance_number)
+                  <span class="font-monospace">{{ $employee->national_insurance_number }}</span>
+                @else
+                  <span class="text-muted">Not Set</span>
+                @endif
               </div>
             </div>
             <div class="row mb-3">
@@ -65,7 +132,18 @@
                 <strong>Position:</strong>
               </div>
               <div class="col-sm-8">
-                {{ $employee->position ?? 'Not Specified' }}
+                @if($employee->position_id && $employee->positionRelation)
+                  <a href="{{ route('hr.positions.show', $employee->positionRelation) }}" class="text-decoration-none">
+                    <span class="badge bg-label-primary">{{ $employee->positionRelation->full_title }}</span>
+                  </a>
+                  @if($employee->positionRelation->department)
+                    <small class="text-muted ms-1">({{ $employee->positionRelation->department }})</small>
+                  @endif
+                @elseif($employee->position && is_string($employee->position))
+                  <span class="badge bg-label-secondary">{{ $employee->position }}</span>
+                @else
+                  <span class="text-muted">Not Assigned</span>
+                @endif
               </div>
             </div>
             <div class="row mb-3">
@@ -103,6 +181,7 @@
                 {{ $employee->start_date ? $employee->start_date->format('F d, Y') : 'Not Set' }}
               </div>
             </div>
+            @if($canViewSalary)
             <div class="row mb-3">
               <div class="col-sm-4">
                 <strong>Base Salary:</strong>
@@ -115,6 +194,7 @@
                 @endif
               </div>
             </div>
+            @endif
             @if($employee->termination_date)
             <div class="row mb-3">
               <div class="col-sm-4">
@@ -139,23 +219,53 @@
             </h6>
           </div>
           <div class="card-body">
-            @if(isset($employee->contact_info['phone']))
+            @if(isset($employee->contact_info['mobile_number']) || isset($employee->contact_info['phone']))
             <div class="row mb-3">
               <div class="col-sm-4">
-                <strong>Phone:</strong>
+                <strong>Mobile Number:</strong>
               </div>
               <div class="col-sm-8">
-                <a href="tel:{{ $employee->contact_info['phone'] }}">{{ $employee->contact_info['phone'] }}</a>
+                @php $mobileNumber = $employee->contact_info['mobile_number'] ?? $employee->contact_info['phone'] ?? null; @endphp
+                <a href="tel:{{ $mobileNumber }}">{{ $mobileNumber }}</a>
               </div>
             </div>
             @endif
-            @if(isset($employee->contact_info['address']))
+            @if(isset($employee->contact_info['secondary_number']))
             <div class="row mb-3">
               <div class="col-sm-4">
-                <strong>Address:</strong>
+                <strong>Secondary Number:</strong>
+              </div>
+              <div class="col-sm-8">
+                <a href="tel:{{ $employee->contact_info['secondary_number'] }}">{{ $employee->contact_info['secondary_number'] }}</a>
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->contact_info['current_address']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Current Address:</strong>
+              </div>
+              <div class="col-sm-8">
+                {{ $employee->contact_info['current_address'] }}
+              </div>
+            </div>
+            @elseif(isset($employee->contact_info['address']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Current Address:</strong>
               </div>
               <div class="col-sm-8">
                 {{ $employee->contact_info['address'] }}
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->contact_info['permanent_address']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Permanent Address:</strong>
+              </div>
+              <div class="col-sm-8">
+                {{ $employee->contact_info['permanent_address'] }}
               </div>
             </div>
             @endif
@@ -191,6 +301,71 @@
               </div>
               <div class="col-sm-8">
                 <span class="font-monospace">{{ $employee->bank_info['account_number'] }}</span>
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->bank_info['account_id']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Account ID:</strong>
+              </div>
+              <div class="col-sm-8">
+                <span class="font-monospace">{{ $employee->bank_info['account_id'] }}</span>
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->bank_info['iban']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>IBAN:</strong>
+              </div>
+              <div class="col-sm-8">
+                <span class="font-monospace">{{ $employee->bank_info['iban'] }}</span>
+              </div>
+            </div>
+            @endif
+          </div>
+        </div>
+      </div>
+      @endif
+
+      <!-- Emergency Contact -->
+      @if($employee->emergency_contact && (isset($employee->emergency_contact['name']) || isset($employee->emergency_contact['phone'])))
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header">
+            <h6 class="mb-0">
+              <i class="ti ti-urgent me-2"></i>Emergency Contact
+            </h6>
+          </div>
+          <div class="card-body">
+            @if(isset($employee->emergency_contact['name']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Name:</strong>
+              </div>
+              <div class="col-sm-8">
+                {{ $employee->emergency_contact['name'] }}
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->emergency_contact['phone']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Phone:</strong>
+              </div>
+              <div class="col-sm-8">
+                <a href="tel:{{ $employee->emergency_contact['phone'] }}">{{ $employee->emergency_contact['phone'] }}</a>
+              </div>
+            </div>
+            @endif
+            @if(isset($employee->emergency_contact['relationship']))
+            <div class="row mb-3">
+              <div class="col-sm-4">
+                <strong>Relationship:</strong>
+              </div>
+              <div class="col-sm-8">
+                {{ $employee->emergency_contact['relationship'] }}
               </div>
             </div>
             @endif
@@ -435,7 +610,8 @@
     </div>
     @endcan
 
-    <!-- Salary History Section -->
+    @if($canViewSalary)
+    <!-- Salary History Section (Permission Protected) -->
     <div class="row mb-4">
       <div class="col-12">
         <div class="card">
@@ -466,19 +642,19 @@
                       <small class="text-muted d-block">{{ $history->change_date->format('g:i A') }}</small>
                     </td>
                     <td>
-                      <span class="text-muted">${{ $history->formatted_old_salary }}</span>
+                      <span class="text-muted">EGP {{ $history->formatted_old_salary }}</span>
                     </td>
                     <td>
-                      <span class="fw-bold text-success">${{ $history->formatted_new_salary }}</span>
+                      <span class="fw-bold text-success">EGP {{ $history->formatted_new_salary }}</span>
                     </td>
                     <td>
                       @if($history->salary_change >= 0)
                         <span class="badge bg-success">
-                          <i class="ti ti-arrow-up me-1"></i>${{ $history->formatted_salary_change }}
+                          <i class="ti ti-arrow-up me-1"></i>EGP {{ $history->formatted_salary_change }}
                         </span>
                       @else
                         <span class="badge bg-danger">
-                          <i class="ti ti-arrow-down me-1"></i>${{ $history->formatted_salary_change }}
+                          <i class="ti ti-arrow-down me-1"></i>EGP {{ $history->formatted_salary_change }}
                         </span>
                       @endif
                     </td>
@@ -501,6 +677,7 @@
         </div>
       </div>
     </div>
+    @endif
 
     <!-- Assigned Assets Section -->
     <div class="row mb-4">

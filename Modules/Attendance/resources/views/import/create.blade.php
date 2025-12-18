@@ -15,7 +15,10 @@
             <small class="text-muted">Upload a CSV file containing employee attendance logs</small>
           </div>
         </div>
-        <div>
+        <div class="d-flex gap-2">
+          <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-outline-primary">
+            <i class="ti ti-fingerprint me-1"></i>ZKTeco Import
+          </a>
           <a href="{{ route('attendance.index') }}" class="btn btn-secondary">
             <i class="ti ti-arrow-left me-1"></i>Back to Attendance
           </a>

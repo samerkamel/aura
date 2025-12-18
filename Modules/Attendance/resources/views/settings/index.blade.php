@@ -66,6 +66,33 @@
                 @enderror
               </div>
 
+              <!-- Allow Past Date Requests -->
+              <div class="mb-4">
+                <label class="form-label">
+                  Self-Service Request Settings
+                </label>
+                <div class="form-text mb-3">
+                  <i class="ti ti-info-circle me-1"></i>
+                  Configure options for employee self-service requests
+                </div>
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         id="allow_past_date_requests"
+                         name="allow_past_date_requests"
+                         value="1"
+                         {{ old('allow_past_date_requests', $allowPastDateRequests ?? false) ? 'checked' : '' }}>
+                  <label class="form-check-label" for="allow_past_date_requests">
+                    <strong>Allow Past Date Requests</strong>
+                  </label>
+                </div>
+                <div class="form-text text-warning mb-3">
+                  <i class="ti ti-alert-triangle me-1"></i>
+                  When enabled, employees can submit leave, WFH, and permission requests for past dates.
+                  This is useful during system transitions when employees need to submit retroactive requests.
+                </div>
+              </div>
+
               <!-- Weekend Days Selection -->
               <div class="mb-4">
                 <label class="form-label">
@@ -121,6 +148,13 @@
                       {{ implode(', ', array_map('ucfirst', $weekendDays)) }}
                     @else
                       None configured
+                    @endif
+                  </li>
+                  <li><strong>Past Date Requests:</strong>
+                    @if($allowPastDateRequests ?? false)
+                      <span class="badge bg-success">Enabled</span>
+                    @else
+                      <span class="badge bg-secondary">Disabled</span>
                     @endif
                   </li>
                 </ul>

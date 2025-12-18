@@ -12,5 +12,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [LeavePolicyController::class, 'index'])->name('index');
     Route::put('/pto', [LeavePolicyController::class, 'updatePtoPolicy'])->name('update-pto');
     Route::put('/sick-leave', [LeavePolicyController::class, 'updateSickLeavePolicy'])->name('update-sick-leave');
+    Route::put('/emergency', [LeavePolicyController::class, 'updateEmergencyLeavePolicy'])->name('update-emergency');
   });
 });

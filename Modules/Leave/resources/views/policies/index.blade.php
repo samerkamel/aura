@@ -194,6 +194,53 @@
         </form>
       </div>
     </div>
+
+    <!-- Emergency Leave Policy Configuration -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="ti ti-urgent me-2"></i>Emergency Leave Policy Configuration
+        </h5>
+      </div>
+      <div class="card-body">
+        <form action="{{ route('leave.policies.update-emergency') }}" method="POST">
+          @csrf
+          @method('PUT')
+
+          <div class="mb-3">
+            <label for="emergency_name" class="form-label">Policy Name</label>
+            <input type="text" class="form-control" id="emergency_name" name="name"
+                   value="{{ $emergencyLeavePolicies->first()->name ?? 'Emergency Leave' }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="emergency_description" class="form-label">Description</label>
+            <textarea class="form-control" id="emergency_description" name="description" rows="2">{{ $emergencyLeavePolicies->first()->description ?? 'Emergency leave for urgent personal or family matters' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="emergency_days" class="form-label">Days Per Year</label>
+            <input type="number" class="form-control" id="emergency_days" name="days_per_year"
+                   value="{{ $emergencyLeavePolicies->first()->initial_days ?? 6 }}" min="1" required>
+            <small class="form-text text-muted">Number of emergency leave days granted each year.</small>
+          </div>
+
+          <div class="mb-3">
+            <div class="alert alert-warning">
+              <i class="ti ti-alert-triangle me-2"></i>
+              <strong>Current Policy:</strong>
+              <span id="emergencyLeavePreview">
+                {{ $emergencyLeavePolicies->first()->initial_days ?? 6 }} days per year
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="ti ti-device-floppy me-1"></i>Save Emergency Leave Policy
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -266,6 +313,14 @@ document.addEventListener('DOMContentLoaded', function() {
       const days = document.getElementById('sick_days').value;
       const period = document.getElementById('sick_period').value;
       document.getElementById('sickLeavePreview').textContent = `${days} days every ${period} years`;
+    }
+  });
+
+  // Update emergency leave preview
+  document.addEventListener('input', function(e) {
+    if (e.target.id === 'emergency_days') {
+      const days = document.getElementById('emergency_days').value;
+      document.getElementById('emergencyLeavePreview').textContent = `${days} days per year`;
     }
   });
 });

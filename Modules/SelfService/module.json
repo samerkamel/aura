@@ -1,0 +1,11 @@
+{
+    "name": "SelfService",
+    "alias": "selfservice",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SelfService\\Providers\\SelfServiceServiceProvider"
+    ],
+    "files": []
+}

@@ -132,14 +132,17 @@ class User extends Authenticatable
   }
 
   /**
-   * Check if user can perform action (alias for hasPermission).
+   * Check if user can perform action.
+   * Uses Laravel's Gate system first, falls back to role-based permissions.
    */
   public function can($ability, $arguments = []): bool
   {
-    if (is_string($ability)) {
-      return $this->hasPermission($ability);
+    // Super admin bypasses all checks
+    if ($this->role === 'super_admin') {
+      return true;
     }
 
+    // Use Laravel's Gate system (which checks AuthServiceProvider gates)
     return parent::can($ability, $arguments);
   }
 

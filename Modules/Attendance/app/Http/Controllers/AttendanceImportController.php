@@ -7,19 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\Attendance\Services\AttendanceImportService;
+use Modules\Attendance\Services\ZktecoImportService;
 
 /**
  * AttendanceImportController
  *
- * Handles CSV import of attendance logs
+ * Handles CSV and ZKTeco DAT file import of attendance logs
  */
 class AttendanceImportController extends Controller
 {
     protected AttendanceImportService $importService;
+    protected ZktecoImportService $zktecoService;
 
-    public function __construct(AttendanceImportService $importService)
-    {
+    public function __construct(
+        AttendanceImportService $importService,
+        ZktecoImportService $zktecoService
+    ) {
         $this->importService = $importService;
+        $this->zktecoService = $zktecoService;
     }
 
     /**
@@ -52,6 +57,75 @@ class AttendanceImportController extends Controller
         return view('attendance::import.summary', [
             'results' => $results,
             'filename' => $file->getClientOriginalName()
+        ]);
+    }
+
+    /**
+     * Show the form for importing ZKTeco fingerprint data
+     */
+    public function zktecoCreate(): View
+    {
+        return view('attendance::import.zkteco');
+    }
+
+    /**
+     * Handle the ZKTeco DAT file upload and preview
+     */
+    public function zktecoPreview(Request $request): View
+    {
+        $request->validate([
+            'dat_file' => 'required|file|max:51200' // 50MB max for large attendance files
+        ]);
+
+        $file = $request->file('dat_file');
+        $filePath = $file->getPathname();
+
+        // Store file temporarily for import
+        $tempPath = storage_path('app/temp/' . uniqid('zkteco_') . '.dat');
+        if (!is_dir(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+        copy($filePath, $tempPath);
+
+        // Get preview data
+        $preview = $this->zktecoService->previewDatFile($tempPath);
+
+        return view('attendance::import.zkteco-preview', [
+            'preview' => $preview,
+            'filename' => $file->getClientOriginalName(),
+            'tempPath' => $tempPath,
+        ]);
+    }
+
+    /**
+     * Process the ZKTeco import after preview confirmation
+     */
+    public function zktecoStore(Request $request): View
+    {
+        $request->validate([
+            'temp_path' => 'required|string',
+            'filename' => 'required|string',
+        ]);
+
+        $tempPath = $request->input('temp_path');
+        $filename = $request->input('filename');
+
+        if (!file_exists($tempPath)) {
+            return view('attendance::import.zkteco', [
+                'error' => 'The uploaded file has expired. Please upload again.',
+            ]);
+        }
+
+        // Import the DAT file
+        $results = $this->zktecoService->importFromDatFile($tempPath);
+
+        // Clean up temp file
+        @unlink($tempPath);
+
+        // Return to summary view with results
+        return view('attendance::import.zkteco-summary', [
+            'results' => $results,
+            'filename' => $filename,
         ]);
     }
 }

@@ -27,8 +27,9 @@ class AttendanceSettingsController extends Controller
         // Get current settings with defaults
         $workHoursPerDay = Setting::get('work_hours_per_day', 8);
         $weekendDays = Setting::get('weekend_days', ['friday', 'saturday']);
+        $allowPastDateRequests = (bool) Setting::get('allow_past_date_requests', false);
 
-        return view('attendance::settings.index', compact('workHoursPerDay', 'weekendDays'));
+        return view('attendance::settings.index', compact('workHoursPerDay', 'weekendDays', 'allowPastDateRequests'));
     }
 
     /**
@@ -39,7 +40,8 @@ class AttendanceSettingsController extends Controller
         $request->validate([
             'work_hours_per_day' => 'required|numeric|min:0.5|max:24',
             'weekend_days' => 'required|array|min:1|max:7',
-            'weekend_days.*' => 'required|string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday'
+            'weekend_days.*' => 'required|string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
+            'allow_past_date_requests' => 'nullable|boolean'
         ]);
 
         // Save work hours per day
@@ -54,6 +56,13 @@ class AttendanceSettingsController extends Controller
             'weekend_days',
             $request->weekend_days,
             'Official weekend days when employees are not expected to work'
+        );
+
+        // Save allow past date requests setting
+        Setting::set(
+            'allow_past_date_requests',
+            $request->boolean('allow_past_date_requests'),
+            'Allow employees to submit self-service requests for past dates'
         );
 
         return redirect()

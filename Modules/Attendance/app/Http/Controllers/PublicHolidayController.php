@@ -52,12 +52,11 @@ class PublicHolidayController extends Controller
             // Validate date range inputs
             $request->validate([
                 'name' => 'required|string|max:255',
-                'start_date' => 'required|date|after_or_equal:today',
+                'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date'
             ], [
                 'name.required' => 'Holiday name is required.',
                 'start_date.required' => 'Start date is required.',
-                'start_date.after_or_equal' => 'Start date must be today or in the future.',
                 'end_date.required' => 'End date is required.',
                 'end_date.after_or_equal' => 'End date must be same as or after start date.'
             ]);
@@ -67,11 +66,10 @@ class PublicHolidayController extends Controller
             // Validate single date input
             $request->validate([
                 'name' => 'required|string|max:255',
-                'date' => 'required|date|after_or_equal:today'
+                'date' => 'required|date'
             ], [
                 'name.required' => 'Holiday name is required.',
-                'date.required' => 'Holiday date is required.',
-                'date.after_or_equal' => 'Holiday date must be today or in the future.'
+                'date.required' => 'Holiday date is required.'
             ]);
 
             return $this->createSingleHoliday($request);
@@ -145,6 +143,43 @@ class PublicHolidayController extends Controller
 
         return redirect()->route('attendance.public-holidays.index')
             ->with('success', $message);
+    }
+
+    /**
+     * Update the specified public holiday in storage
+     *
+     * @param Request $request
+     * @param PublicHoliday $publicHoliday
+     * @return RedirectResponse
+     */
+    public function update(Request $request, PublicHoliday $publicHoliday): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'date' => 'required|date'
+        ], [
+            'name.required' => 'Holiday name is required.',
+            'date.required' => 'Holiday date is required.'
+        ]);
+
+        // Check if another holiday already exists on this date (excluding current)
+        $existingHoliday = PublicHoliday::where('date', $request->date)
+            ->where('id', '!=', $publicHoliday->id)
+            ->first();
+
+        if ($existingHoliday) {
+            return back()->withErrors(['edit_date' => 'Another holiday already exists on this date.'])->withInput();
+        }
+
+        $publicHoliday->update([
+            'name' => $request->name,
+            'date' => $request->date
+        ]);
+
+        $year = Carbon::parse($request->date)->year;
+
+        return redirect()->route('attendance.public-holidays.index', ['year' => $year])
+            ->with('success', 'Public holiday updated successfully.');
     }
 
     /**

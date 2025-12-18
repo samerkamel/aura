@@ -26,3 +26,8 @@ yarn-error.log
 !/public/assets/*
 /public/css
 /public/js
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md
+database/exports/
+.playwright-mcp/

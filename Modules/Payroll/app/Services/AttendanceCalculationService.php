@@ -95,8 +95,16 @@ class AttendanceCalculationService
       ->sum('extra_permissions_granted');
 
     // Calculate total permission minutes available
-    $standardPermissionMinutes = $permissionRule ? ($permissionRule->config['monthly_allowance_minutes'] ?? 0) : 0;
-    $totalPermissionMinutes = $standardPermissionMinutes + $permissionOverrides;
+    // Config may have 'monthly_allowance_minutes' or 'max_per_month' + 'minutes_per_permission'
+    $standardPermissionMinutes = 0;
+    if ($permissionRule) {
+      if (isset($permissionRule->config['monthly_allowance_minutes'])) {
+        $standardPermissionMinutes = $permissionRule->config['monthly_allowance_minutes'];
+      } elseif (isset($permissionRule->config['max_per_month']) && isset($permissionRule->config['minutes_per_permission'])) {
+        $standardPermissionMinutes = $permissionRule->config['max_per_month'] * $permissionRule->config['minutes_per_permission'];
+      }
+    }
+    $totalPermissionMinutes = $standardPermissionMinutes + ($permissionOverrides * 60); // overrides are in hours, convert to minutes
 
     // Get public holidays within the period
     $publicHolidays = PublicHoliday::whereBetween('date', [$periodStartInclusive, $periodEndInclusive])
@@ -285,7 +293,9 @@ class AttendanceCalculationService
   }
 
   /**
-   * Apply permission deductions to offset penalties.
+   * Apply permissions to attendance hours.
+   * Permissions first offset late penalties, then any remaining permission minutes
+   * are added to the total attended hours.
    *
    * @param array $adjustedHours
    * @param int $totalPermissionMinutes
@@ -301,11 +311,15 @@ class AttendanceCalculationService
       $totalPenaltyMinutes += $dayData['penalty_minutes'] ?? 0;
     }
 
-    // Calculate how much of the penalty can be offset by available permissions
+    // First, use permissions to offset penalties
     $permissionOffsetMinutes = min($totalPenaltyMinutes, $totalPermissionMinutes);
 
-    // Add back the offset as hours
+    // Add back the penalty offset as hours
     $finalHours = $totalWorkHours + ($permissionOffsetMinutes / 60);
+
+    // Add any remaining unused permission minutes as attended hours
+    $remainingPermissionMinutes = $totalPermissionMinutes - $permissionOffsetMinutes;
+    $finalHours += ($remainingPermissionMinutes / 60);
 
     return max(0, $finalHours);
   }
@@ -410,10 +424,8 @@ class AttendanceCalculationService
     }
 
     // Get WFH contribution percentage (default to 100% if no rule)
-    $wfhContributionPercentage = 1.0; // 100% by default
-    if ($wfhRule && isset($wfhRule->config['attendance_contribution_percentage'])) {
-      $wfhContributionPercentage = $wfhRule->config['attendance_contribution_percentage'] / 100;
-    }
+    // WFH days should count as full work days for payroll
+    $wfhContributionPercentage = 1.0; // 100% - WFH counts as full attendance
 
     // Get standard work hours (default to 8 hours)
     $standardWorkHours = 8.0;

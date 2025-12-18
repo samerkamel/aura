@@ -1,0 +1,182 @@
+<?php
+
+namespace Modules\Project\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Modules\Project\Models\Project;
+use Modules\Project\Services\JiraProjectSyncService;
+
+class ProjectController extends Controller
+{
+    /**
+     * Display a listing of projects.
+     */
+    public function index(Request $request): View
+    {
+        $query = Project::with('customer');
+
+        // Filter by status
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        // Filter by needs_monthly_report
+        if ($request->filled('needs_report')) {
+            $query->where('needs_monthly_report', $request->needs_report === '1');
+        }
+
+        // Filter by customer
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $query->orderBy('name')->paginate(20);
+        $customers = Customer::active()->orderBy('name')->get();
+
+        return view('project::projects.index', [
+            'projects' => $projects,
+            'customers' => $customers,
+            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id']),
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new project.
+     */
+    public function create(): View
+    {
+        $customers = Customer::active()->orderBy('name')->get();
+
+        return view('project::projects.create', [
+            'customers' => $customers,
+        ]);
+    }
+
+    /**
+     * Store a newly created project.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'customer_id' => 'nullable|exists:customers,id',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:20|unique:projects,code',
+            'description' => 'nullable|string',
+            'needs_monthly_report' => 'boolean',
+            'is_active' => 'boolean',
+        ]);
+
+        $validated['needs_monthly_report'] = $request->has('needs_monthly_report');
+        $validated['is_active'] = $request->has('is_active') || !$request->filled('is_active');
+
+        Project::create($validated);
+
+        return redirect()
+            ->route('projects.index')
+            ->with('success', 'Project created successfully.');
+    }
+
+    /**
+     * Show the form for editing a project.
+     */
+    public function edit(Project $project): View
+    {
+        $customers = Customer::active()->orderBy('name')->get();
+
+        return view('project::projects.edit', [
+            'project' => $project,
+            'customers' => $customers,
+        ]);
+    }
+
+    /**
+     * Update the specified project.
+     */
+    public function update(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'customer_id' => 'nullable|exists:customers,id',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:20|unique:projects,code,' . $project->id,
+            'description' => 'nullable|string',
+            'needs_monthly_report' => 'boolean',
+            'is_active' => 'boolean',
+        ]);
+
+        $validated['needs_monthly_report'] = $request->has('needs_monthly_report');
+        $validated['is_active'] = $request->has('is_active');
+
+        $project->update($validated);
+
+        return redirect()
+            ->route('projects.index')
+            ->with('success', 'Project updated successfully.');
+    }
+
+    /**
+     * Remove the specified project.
+     */
+    public function destroy(Project $project): RedirectResponse
+    {
+        $project->delete();
+
+        return redirect()
+            ->route('projects.index')
+            ->with('success', 'Project deleted successfully.');
+    }
+
+    /**
+     * Sync projects from Jira.
+     */
+    public function syncFromJira(JiraProjectSyncService $jiraService): RedirectResponse
+    {
+        try {
+            $results = $jiraService->syncProjects();
+
+            $message = "Sync completed: {$results['created']} created, {$results['updated']} updated.";
+            if (!empty($results['errors'])) {
+                $message .= " " . count($results['errors']) . " errors occurred.";
+            }
+
+            return redirect()
+                ->route('projects.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('projects.index')
+                ->with('error', 'Sync failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Toggle the needs_monthly_report flag.
+     */
+    public function toggleMonthlyReport(Project $project): RedirectResponse
+    {
+        $project->needs_monthly_report = !$project->needs_monthly_report;
+        $project->save();
+
+        $status = $project->needs_monthly_report ? 'enabled' : 'disabled';
+
+        return redirect()
+            ->back()
+            ->with('success', "Monthly report {$status} for {$project->name}.");
+    }
+}

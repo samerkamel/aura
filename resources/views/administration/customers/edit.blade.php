@@ -3,30 +3,39 @@
 @section('title', 'Edit Customer - Administration')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{asset('assets/vendor/libs/select2/select2.css')}}" />
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 @section('vendor-script')
-<script src="{{asset('assets/vendor/libs/select2/select2.js')}}"></script>
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('page-script')
 <script>
-$(document).ready(function() {
-    // Initialize Select2
-    $('.select2').select2();
-
-    // Toggle company fields based on type
-    $('#type').on('change', function() {
-        const isCompany = $(this).val() === 'company';
-        $('#company-fields').toggle(isCompany);
-        if (!isCompany) {
-            $('#company_name, #tax_id, #website').val('');
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for jQuery to be available (loaded via Vite)
+    const initPage = function() {
+        if (typeof $ === 'undefined' || typeof jQuery === 'undefined') {
+            setTimeout(initPage, 50);
+            return;
         }
-    });
 
-    // Trigger initial toggle
-    $('#type').trigger('change');
+        // Initialize Select2
+        $('.select2').select2();
+
+        // Toggle company fields based on type
+        $('#type').on('change', function() {
+            const isCompany = $(this).val() === 'company';
+            $('#company-fields').toggle(isCompany);
+            if (!isCompany) {
+                $('#company_name, #tax_id, #website').val('');
+            }
+        });
+
+        // Trigger initial toggle
+        $('#type').trigger('change');
+    };
+    initPage();
 });
 </script>
 @endsection

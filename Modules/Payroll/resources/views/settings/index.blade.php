@@ -126,6 +126,232 @@
           </form>
         </div>
       </div>
+
+      <!-- Target Billable Hours per Period -->
+      <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-target me-2"></i>Target Billable Hours
+          </h5>
+          <small class="text-muted">
+            Set monthly targets (default: 6 hrs/day, max 120)
+          </small>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info mb-4">
+            <i class="ti ti-info-circle me-2"></i>
+            Override the default target billable hours for specific months. Leave empty to use the calculated default (6 hours × working days, capped at 120).
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Period</th>
+                  <th>Default Target</th>
+                  <th>Custom Target</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($periodSettings as $setting)
+                  <tr>
+                    <td><strong>{{ $setting['period_label'] }}</strong></td>
+                    <td>
+                      <span class="badge bg-label-secondary">{{ $setting['default_target'] }} hrs</span>
+                    </td>
+                    <td>
+                      <form action="{{ route('payroll.settings.period.store') }}" method="POST" class="d-flex align-items-center gap-2">
+                        @csrf
+                        <input type="hidden" name="period" value="{{ $setting['period'] }}">
+                        <input type="number" name="target_billable_hours" class="form-control form-control-sm" style="width: 100px;"
+                               value="{{ $setting['target_billable_hours'] }}" placeholder="{{ $setting['default_target'] }}"
+                               min="0" max="999" step="0.01">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                          <i class="ti ti-check"></i>
+                        </button>
+                      </form>
+                    </td>
+                    <td>
+                      @if($setting['target_billable_hours'] !== null)
+                        <span class="badge bg-success">Custom: {{ $setting['target_billable_hours'] }} hrs</span>
+                      @else
+                        <span class="badge bg-label-secondary">Using Default</span>
+                      @endif
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jira Integration Settings -->
+      <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-brand-jira me-2"></i>Jira Integration Settings
+          </h5>
+          <small class="text-muted">
+            Configure Jira API connection
+          </small>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <i class="ti ti-info-circle me-2"></i>
+            Configure your Jira connection to automatically sync billable hours from worklogs.
+          </div>
+
+          <form action="{{ route('payroll.settings.jira.store') }}" method="POST" id="jiraSettingsForm">
+            @csrf
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-floating form-floating-outline mb-4">
+                  <input
+                    type="url"
+                    class="form-control @error('jira_base_url') is-invalid @enderror"
+                    id="jira_base_url"
+                    name="jira_base_url"
+                    value="{{ old('jira_base_url', $jiraSettings->base_url) }}"
+                    placeholder="https://yourcompany.atlassian.net"
+                    required
+                  >
+                  <label for="jira_base_url">Jira Base URL</label>
+                  @error('jira_base_url')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-outline mb-4">
+                  <input
+                    type="email"
+                    class="form-control @error('jira_email') is-invalid @enderror"
+                    id="jira_email"
+                    name="jira_email"
+                    value="{{ old('jira_email', $jiraSettings->email) }}"
+                    placeholder="user@company.com"
+                    required
+                  >
+                  <label for="jira_email">Jira Email</label>
+                  @error('jira_email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-floating form-floating-outline mb-4">
+                  <input
+                    type="password"
+                    class="form-control @error('jira_api_token') is-invalid @enderror"
+                    id="jira_api_token"
+                    name="jira_api_token"
+                    placeholder="{{ $jiraSettings->api_token ? '••••••••••••••••' : 'Enter API token' }}"
+                  >
+                  <label for="jira_api_token">API Token {{ $jiraSettings->api_token ? '(saved)' : '' }}</label>
+                  @error('jira_api_token')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                  @if($jiraSettings->api_token)
+                    <small class="form-text text-success">
+                      <i class="ti ti-check me-1"></i>API token is saved. Leave empty to keep current token.
+                    </small>
+                  @else
+                    <small class="form-text text-muted">
+                      Generate at: <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank">Atlassian Account Settings</a>
+                    </small>
+                  @endif
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-outline mb-4">
+                  <input
+                    type="text"
+                    class="form-control @error('jira_billable_projects') is-invalid @enderror"
+                    id="jira_billable_projects"
+                    name="jira_billable_projects"
+                    value="{{ old('jira_billable_projects', $jiraSettings->billable_projects) }}"
+                    placeholder="Leave empty for all projects"
+                  >
+                  <label for="jira_billable_projects">Billable Projects (comma-separated)</label>
+                  @error('jira_billable_projects')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                  <small class="form-text text-muted">
+                    Leave empty to include worklogs from ALL projects
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check form-switch mb-4">
+                  <input
+                    type="hidden"
+                    name="jira_sync_enabled"
+                    value="0"
+                  >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="jira_sync_enabled"
+                    name="jira_sync_enabled"
+                    value="1"
+                    {{ old('jira_sync_enabled', $jiraSettings->sync_enabled) ? 'checked' : '' }}
+                  >
+                  <label class="form-check-label" for="jira_sync_enabled">
+                    Enable Jira Sync
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-outline mb-4">
+                  <select
+                    class="form-select @error('jira_sync_frequency') is-invalid @enderror"
+                    id="jira_sync_frequency"
+                    name="jira_sync_frequency"
+                  >
+                    <option value="daily" {{ old('jira_sync_frequency', $jiraSettings->sync_frequency) === 'daily' ? 'selected' : '' }}>Daily</option>
+                    <option value="weekly" {{ old('jira_sync_frequency', $jiraSettings->sync_frequency) === 'weekly' ? 'selected' : '' }}>Weekly</option>
+                    <option value="monthly" {{ old('jira_sync_frequency', $jiraSettings->sync_frequency) === 'monthly' ? 'selected' : '' }}>Monthly</option>
+                  </select>
+                  <label for="jira_sync_frequency">Sync Frequency</label>
+                  @error('jira_sync_frequency')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <button type="button" class="btn btn-outline-info me-2" onclick="testJiraConnection()">
+                  <i class="ti ti-plug me-2"></i>Test Connection
+                </button>
+                <button type="submit" class="btn btn-primary me-2">
+                  <i class="ti ti-device-floppy me-2"></i>Save Jira Settings
+                </button>
+                @if($jiraSettings->isConfigured())
+                  <span class="badge bg-success ms-2">
+                    <i class="ti ti-check me-1"></i>Configured
+                  </span>
+                @endif
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -190,5 +416,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function testJiraConnection() {
+    const button = event.target;
+    const originalText = button.innerHTML;
+
+    // Show loading state
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Testing...';
+
+    // Get current form values
+    const baseUrl = document.getElementById('jira_base_url').value;
+    const email = document.getElementById('jira_email').value;
+    const apiToken = document.getElementById('jira_api_token').value;
+    const hasStoredToken = {{ $jiraSettings->api_token ? 'true' : 'false' }};
+
+    if (!baseUrl || !email) {
+        alert('Please fill in the Jira Base URL and Email before testing.');
+        button.disabled = false;
+        button.innerHTML = originalText;
+        return;
+    }
+
+    if (!apiToken && !hasStoredToken) {
+        alert('Please enter an API token before testing.');
+        button.disabled = false;
+        button.innerHTML = originalText;
+        return;
+    }
+    
+    // Make AJAX request to test endpoint
+    fetch('{{ route("payroll.settings.jira.test") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            jira_base_url: baseUrl,
+            jira_email: email,
+            jira_api_token: apiToken
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Connection test successful! ✓');
+        } else {
+            alert('Connection test failed: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Connection test failed: Network error');
+    })
+    .finally(() => {
+        // Restore button state
+        button.disabled = false;
+        button.innerHTML = originalText;
+    });
+}
 </script>
 @endsection

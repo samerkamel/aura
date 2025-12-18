@@ -5,11 +5,14 @@ namespace Modules\HR\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Modules\HR\Http\Requests\StoreEmployeeRequest;
 use Modules\HR\Http\Requests\UpdateEmployeeRequest;
 use Modules\HR\Models\Employee;
+use Modules\HR\Models\Position;
 use Modules\AssetManager\Models\Asset;
+use Modules\Attendance\Models\AttendanceLog;
 use Modules\Payroll\Services\FinalPayrollService;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -27,11 +30,27 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the employees.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $employees = Employee::active()->latest()->get();
+        $status = $request->get('status', 'active');
 
-        return view('hr::employees.index', compact('employees'));
+        $query = Employee::with('positionRelation')->latest();
+
+        if ($status === 'active') {
+            $query->active();
+        } elseif ($status === 'inactive') {
+            $query->whereIn('status', ['terminated', 'resigned']);
+        }
+        // 'all' shows everyone
+
+        $employees = $query->get();
+        $canViewSalary = Gate::allows('view-employee-financial');
+
+        // Get counts for badges
+        $activeCount = Employee::active()->count();
+        $inactiveCount = Employee::whereIn('status', ['terminated', 'resigned'])->count();
+
+        return view('hr::employees.index', compact('employees', 'canViewSalary', 'status', 'activeCount', 'inactiveCount'));
     }
 
     /**
@@ -39,7 +58,10 @@ class EmployeeController extends Controller
      */
     public function create(): View
     {
-        return view('hr::employees.create');
+        $positions = Position::active()->ordered()->get();
+        $canEditSalary = Gate::allows('edit-employee-financial');
+
+        return view('hr::employees.create', compact('positions', 'canEditSalary'));
     }
 
     /**
@@ -59,9 +81,10 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee): View
     {
-        $employee->load(['documents', 'salaryHistories']);
+        $employee->load(['documents', 'salaryHistories', 'positionRelation']);
+        $canViewSalary = Gate::allows('view-employee-financial');
 
-        return view('hr::employees.show', compact('employee'));
+        return view('hr::employees.show', compact('employee', 'canViewSalary'));
     }
 
     /**
@@ -69,7 +92,17 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee): View
     {
-        return view('hr::employees.edit', compact('employee'));
+        $positions = Position::active()->ordered()->get();
+        $canEditSalary = Gate::allows('edit-employee-financial');
+
+        // Get the last sign-in date for this employee
+        $lastSignIn = AttendanceLog::where('employee_id', $employee->id)
+            ->where('type', 'sign_in')
+            ->orderBy('timestamp', 'desc')
+            ->first();
+        $lastSignInDate = $lastSignIn?->timestamp;
+
+        return view('hr::employees.edit', compact('employee', 'positions', 'canEditSalary', 'lastSignInDate'));
     }
 
     /**
@@ -286,16 +319,43 @@ class EmployeeController extends Controller
         // Clean and validate data
         $cleanData = [
             'name' => trim($data['name'] ?? ''),
+            'name_ar' => !empty($data['name_ar']) ? trim($data['name_ar']) : null,
             'email' => trim(strtolower($data['email'] ?? '')),
-            'position' => trim($data['position'] ?? ''),
+            'personal_email' => !empty($data['personal_email']) ? trim(strtolower($data['personal_email'])) : null,
+            'attendance_id' => !empty($data['attendance_id']) ? trim($data['attendance_id']) : null,
+            'national_id' => !empty($data['national_id']) ? trim($data['national_id']) : null,
+            'national_insurance_number' => !empty($data['national_insurance_number']) ? trim($data['national_insurance_number']) : null,
             'start_date' => $this->parseDate($data['start_date'] ?? ''),
-            'base_salary' => $this->parseDecimal($data['base_salary'] ?? 0),
             'contact_info' => [
-                'phone' => trim($data['phone'] ?? ''),
-                'address' => trim($data['address'] ?? ''),
+                'mobile_number' => trim($data['mobile_number'] ?? $data['phone'] ?? ''),
+                'secondary_number' => trim($data['secondary_number'] ?? ''),
+                'current_address' => trim($data['current_address'] ?? $data['address'] ?? ''),
+                'permanent_address' => trim($data['permanent_address'] ?? ''),
+            ],
+            'bank_info' => [
+                'bank_name' => trim($data['bank_name'] ?? ''),
+                'account_number' => trim($data['account_number'] ?? ''),
+                'account_id' => trim($data['account_id'] ?? ''),
+                'iban' => trim($data['iban'] ?? ''),
+            ],
+            'emergency_contact' => [
+                'name' => trim($data['emergency_contact_name'] ?? ''),
+                'phone' => trim($data['emergency_contact_phone'] ?? ''),
+                'relationship' => trim($data['emergency_contact_relationship'] ?? ''),
             ],
             'status' => 'active',
         ];
+
+        // Clean empty arrays
+        if (empty(array_filter($cleanData['emergency_contact']))) {
+            $cleanData['emergency_contact'] = null;
+        }
+        if (empty(array_filter($cleanData['contact_info']))) {
+            $cleanData['contact_info'] = null;
+        }
+        if (empty(array_filter($cleanData['bank_info']))) {
+            unset($cleanData['bank_info']); // Don't overwrite existing bank info if import has none
+        }
 
         // Validate required fields
         if (empty($cleanData['name']) || empty($cleanData['email'])) {

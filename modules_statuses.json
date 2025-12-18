@@ -6,5 +6,7 @@
     "Leave": true,
     "LetterGenerator": true,
     "Accounting": true,
-    "Invoicing": true
+    "Invoicing": true,
+    "SelfService": true,
+    "Project": true
 }

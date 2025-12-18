@@ -42,16 +42,28 @@
                                 <h6>Required Columns:</h6>
                                 <ul class="mb-3">
                                     <li><strong>name</strong> - Full name of the employee</li>
-                                    <li><strong>email</strong> - Email address (used for duplicate checking)</li>
-                                    <li><strong>position</strong> - Job title/position</li>
-                                    <li><strong>start_date</strong> - Start date (YYYY-MM-DD or DD/MM/YYYY)</li>
-                                    <li><strong>base_salary</strong> - Monthly salary amount</li>
+                                    <li><strong>email</strong> - Work email address (used for duplicate checking)</li>
                                 </ul>
 
                                 <h6>Optional Columns:</h6>
                                 <ul class="mb-3">
-                                    <li><strong>phone</strong> - Phone number</li>
-                                    <li><strong>address</strong> - Home address</li>
+                                    <li><strong>name_ar</strong> - Arabic name</li>
+                                    <li><strong>personal_email</strong> - Personal email address</li>
+                                    <li><strong>attendance_id</strong> - ID to match attendance machine records</li>
+                                    <li><strong>national_id</strong> - National ID number</li>
+                                    <li><strong>national_insurance_number</strong> - National Insurance Number (NIN)</li>
+                                    <li><strong>start_date</strong> - Start date (YYYY-MM-DD or DD/MM/YYYY)</li>
+                                    <li><strong>mobile_number</strong> - Mobile phone number</li>
+                                    <li><strong>secondary_number</strong> - Secondary/home phone number</li>
+                                    <li><strong>current_address</strong> - Current address</li>
+                                    <li><strong>permanent_address</strong> - Permanent address</li>
+                                    <li><strong>bank_name</strong> - Bank name</li>
+                                    <li><strong>account_number</strong> - Bank account number</li>
+                                    <li><strong>account_id</strong> - Account ID</li>
+                                    <li><strong>iban</strong> - IBAN</li>
+                                    <li><strong>emergency_contact_name</strong> - Emergency contact name</li>
+                                    <li><strong>emergency_contact_phone</strong> - Emergency contact phone</li>
+                                    <li><strong>emergency_contact_relationship</strong> - Relationship (e.g., Spouse, Parent)</li>
                                 </ul>
 
                                 <div class="alert alert-warning">
@@ -122,10 +134,10 @@
 function downloadSampleCSV() {
     // Create sample CSV content
     const csvContent = [
-        ['name', 'email', 'position', 'start_date', 'base_salary', 'phone', 'address'],
-        ['John Doe', 'john.doe@company.com', 'Software Developer', '2024-01-15', '5000.00', '+1234567890', '123 Main St, City, Country'],
-        ['Jane Smith', 'jane.smith@company.com', 'Marketing Manager', '2024-02-01', '6000.00', '+1234567891', '456 Oak Ave, City, Country'],
-        ['Mike Johnson', 'mike.johnson@company.com', 'Sales Representative', '2024-01-20', '4500.00', '+1234567892', '789 Pine Rd, City, Country']
+        ['name', 'name_ar', 'email', 'personal_email', 'attendance_id', 'national_id', 'national_insurance_number', 'start_date', 'mobile_number', 'secondary_number', 'current_address', 'permanent_address', 'bank_name', 'account_number', 'account_id', 'iban', 'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'],
+        ['John Doe', 'جون دو', 'john.doe@company.com', 'john.personal@email.com', 'ATT001', '12345678901234', 'NIN123456', '2024-01-15', '+1234567890', '+1234567800', '123 Main St, City', '456 Home St, Town', 'ABC Bank', '1234567890', 'ACC001', 'EG123456789012345678901234', 'Jane Doe', '+1234567899', 'Spouse'],
+        ['Jane Smith', 'جين سميث', 'jane.smith@company.com', 'jane.personal@email.com', 'ATT002', '12345678901235', 'NIN123457', '2024-02-01', '+1234567891', '', '456 Oak Ave, City', '789 Family Rd, Village', 'XYZ Bank', '0987654321', 'ACC002', 'EG987654321098765432109876', 'John Smith', '+1234567898', 'Parent'],
+        ['Mike Johnson', 'مايك جونسون', 'mike.johnson@company.com', '', 'ATT003', '12345678901236', 'NIN123458', '2024-01-20', '+1234567892', '+1234567801', '789 Pine Rd, City', '321 Origin St, Hometown', 'DEF Bank', '5678901234', 'ACC003', 'EG567890123456789012345678', 'Sarah Johnson', '+1234567897', 'Sibling']
     ];
 
     // Convert to CSV string

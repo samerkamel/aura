@@ -6,6 +6,7 @@ use Modules\HR\Models\Employee;
 use Modules\Leave\Models\LeaveRecord;
 use Modules\Leave\Models\LeavePolicy;
 use Modules\Leave\Models\LeavePolicyTier;
+use Modules\Attendance\Services\WorkingDaysService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -59,8 +60,16 @@ class LeaveBalanceService
      */
     protected function calculatePolicyBalance(Employee $employee, LeavePolicy $policy, Carbon $yearStart, Carbon $yearEnd): array
     {
+        // Check if this is a rolling window policy (like sick leave)
+        $config = $policy->config ?? [];
+        if ($policy->type === 'sick_leave' && isset($config['period_in_years']) && isset($config['days'])) {
+            return $this->calculateRollingWindowBalance($employee, $policy, $config);
+        }
+
+        // Standard annual leave calculation
         // Calculate employee's tenure in years
-        $employeeStartDate = $employee->start_date;
+        // If no start_date, assume employee started at the beginning of the year (0 tenure years)
+        $employeeStartDate = $employee->start_date ?? $yearStart->copy();
         $tenureYears = (int)$employeeStartDate->diffInYears($yearStart);
 
         // Get applicable policy tier based on tenure
@@ -88,6 +97,47 @@ class LeaveBalanceService
                 'max_years' => $applicableTier->max_years,
                 'annual_days' => $applicableTier->annual_days,
             ] : null,
+        ];
+    }
+
+    /**
+     * Calculate balance for rolling window policies (e.g., sick leave).
+     * These policies have a total allowance over a rolling period (e.g., 60 days over 3 years).
+     *
+     * @param Employee $employee
+     * @param LeavePolicy $policy
+     * @param array $config
+     * @return array
+     */
+    protected function calculateRollingWindowBalance(Employee $employee, LeavePolicy $policy, array $config): array
+    {
+        $totalDays = (float) ($config['days'] ?? 0);
+        $periodInYears = (int) ($config['period_in_years'] ?? 1);
+        $periodInMonths = $periodInYears * 12;
+
+        // Calculate the rolling window: from (today - period) to today
+        $windowEnd = Carbon::now()->endOfDay();
+        $windowStart = Carbon::now()->subMonths($periodInMonths)->startOfDay();
+
+        // Calculate used days within the rolling window
+        $usedDays = $this->calculateUsedDays($employee, $policy, $windowStart, $windowEnd);
+
+        // Calculate remaining days
+        $remainingDays = max(0, $totalDays - $usedDays);
+
+        return [
+            'policy_id' => $policy->id,
+            'policy_name' => $policy->name,
+            'policy_type' => $policy->type,
+            'entitled_days' => $totalDays,
+            'used_days' => $usedDays,
+            'remaining_days' => $remainingDays,
+            'applicable_tier' => null,
+            'rolling_window' => [
+                'period_in_years' => $periodInYears,
+                'window_start' => $windowStart->format('Y-m-d'),
+                'window_end' => $windowEnd->format('Y-m-d'),
+            ],
         ];
     }
 
@@ -136,6 +186,7 @@ class LeaveBalanceService
 
     /**
      * Calculate used leave days from records.
+     * Only counts working days (excludes weekends and public holidays).
      *
      * @param Employee $employee
      * @param LeavePolicy $policy
@@ -151,6 +202,7 @@ class LeaveBalanceService
             ->inDateRange($yearStart, $yearEnd)
             ->get();
 
+        $workingDaysService = app(WorkingDaysService::class);
         $totalUsedDays = 0;
 
         foreach ($leaveRecords as $record) {
@@ -159,7 +211,8 @@ class LeaveBalanceService
             $effectiveEndDate = $record->end_date->min($yearEnd);
 
             if ($effectiveStartDate->lte($effectiveEndDate)) {
-                $totalUsedDays += (int)($effectiveStartDate->diffInDays($effectiveEndDate)) + 1;
+                // Use WorkingDaysService to count only working days
+                $totalUsedDays += $workingDaysService->calculateWorkingDays($effectiveStartDate, $effectiveEndDate);
             }
         }
 
@@ -168,6 +221,7 @@ class LeaveBalanceService
 
     /**
      * Check if employee has sufficient leave balance for a request.
+     * Counts only working days (excludes weekends and public holidays).
      *
      * @param Employee $employee
      * @param LeavePolicy $policy
@@ -178,12 +232,31 @@ class LeaveBalanceService
      */
     public function checkLeaveAvailability(Employee $employee, LeavePolicy $policy, Carbon $startDate, Carbon $endDate, ?int $year = null): array
     {
-        $year = $year ?? $startDate->year;
-        $yearStart = Carbon::create($year, 1, 1, 0, 0, 0);
-        $yearEnd = Carbon::create($year, 12, 31, 23, 59, 59);
+        // For rolling window policies, we don't need year-based calculation
+        $config = $policy->config ?? [];
+        if ($policy->type === 'sick_leave' && isset($config['period_in_years']) && isset($config['days'])) {
+            $balance = $this->calculateRollingWindowBalance($employee, $policy, $config);
+        } else {
+            $year = $year ?? $startDate->year;
+            $yearStart = Carbon::create($year, 1, 1, 0, 0, 0);
+            $yearEnd = Carbon::create($year, 12, 31, 23, 59, 59);
+            $balance = $this->calculatePolicyBalance($employee, $policy, $yearStart, $yearEnd);
+        }
 
-        $balance = $this->calculatePolicyBalance($employee, $policy, $yearStart, $yearEnd);
-        $requestedDays = (int)$startDate->diffInDays($endDate) + 1;
+        // Calculate requested working days (excluding weekends and public holidays)
+        $workingDaysService = app(WorkingDaysService::class);
+        $requestedDays = $workingDaysService->calculateWorkingDays($startDate, $endDate);
+
+        // Check if there are any working days in the requested period
+        if ($requestedDays === 0) {
+            return [
+                'available' => false,
+                'requested_days' => 0,
+                'remaining_days' => $balance['remaining_days'],
+                'shortfall' => 0,
+                'message' => 'The selected date range contains no working days.',
+            ];
+        }
 
         return [
             'available' => $balance['remaining_days'] >= $requestedDays,

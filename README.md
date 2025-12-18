@@ -22,35 +22,41 @@ Aura is a comprehensive HR Management System built with Laravel's elegant syntax
 ## Core Modules
 
 ### 🏢 HR Management
+
 - **Employee Management** - Complete employee lifecycle management
 - **Document Management** - Secure storage and organization of employee documents
 - **Onboarding & Offboarding** - Streamlined processes for new hires and departures
 
 ### ⏰ Attendance System
+
 - **Time Tracking** - Comprehensive attendance logging and monitoring
 - **Attendance Rules** - Flexible rule engine for different employee types
 - **Public Holidays** - Automated holiday management and calculations
 - **Work From Home** - Remote work tracking and approval workflows
 
 ### 🏖️ Leave Management
+
 - **Leave Policies** - Configurable leave types and entitlements
 - **Leave Applications** - Digital leave request and approval process
 - **Balance Tracking** - Real-time leave balance calculations
 - **Policy Tiers** - Different leave policies based on tenure and role
 
 ### 💰 Payroll System
+
 - **Salary Processing** - Automated payroll calculations
 - **Billable Hours** - Project-based time tracking and billing
 - **Bank Exports** - Direct export to banking systems
 - **Payroll Reports** - Comprehensive salary and tax reporting
 
 ### 📋 Asset Management
+
 - **Asset Tracking** - Complete lifecycle management of company assets
 - **Employee Assignments** - Track asset allocation to employees
 - **Maintenance Scheduling** - Automated maintenance reminders
 - **Asset Reporting** - Detailed asset utilization reports
 
 ### 📄 Letter Generator
+
 - **Document Templates** - Professional letter and certificate templates
 - **Automated Generation** - Dynamic document creation with employee data
 - **Multi-language Support** - English and Arabic document generation
@@ -81,6 +87,7 @@ Aura is a comprehensive HR Management System built with Laravel's elegant syntax
 ## Installation
 
 ### Prerequisites
+
 - PHP 8.2 or higher
 - Composer
 - Node.js & NPM
@@ -89,34 +96,40 @@ Aura is a comprehensive HR Management System built with Laravel's elegant syntax
 ### Setup Instructions
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/samerkamel/aura.git
    cd aura
    ```
 
 2. **Install PHP dependencies**
+
    ```bash
    composer install
    ```
 
 3. **Install Node dependencies**
+
    ```bash
    npm install
    ```
 
 4. **Environment setup**
+
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
 5. **Database setup**
+
    ```bash
    php artisan migrate
    php artisan db:seed
    ```
 
 6. **Build assets**
+
    ```bash
    npm run build
    ```
@@ -129,12 +142,14 @@ Aura is a comprehensive HR Management System built with Laravel's elegant syntax
 ## Development Guidelines
 
 ### Code Quality Standards
+
 - All code must follow Laravel best practices and PSR standards
 - PHPDoc documentation required for all classes and methods
 - Minimum 85% test coverage for new features
 - All UI components must adhere to Vuexy design guidelines
 
 ### Testing
+
 ```bash
 # Run all tests
 php artisan test
@@ -147,7 +162,9 @@ php artisan test tests/Feature/HR/
 ```
 
 ### Documentation
+
 Comprehensive documentation is available in the `/docs` directory:
+
 - [Project Structure](docs/project-structure.md)
 - [API Reference](docs/API/api.md)
 - [Database Schema](docs/database/database_tables.md)
@@ -164,6 +181,7 @@ We welcome contributions to Aura! Please follow these guidelines:
 5. Open a Pull Request
 
 ### Contribution Requirements
+
 - All new features must include comprehensive tests
 - Follow the existing code style and documentation standards
 - Update relevant documentation

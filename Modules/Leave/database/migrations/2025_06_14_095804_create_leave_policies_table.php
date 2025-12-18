@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('leave_policies', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // e.g., "Standard PTO", "Sick Leave"
-            $table->enum('type', ['pto', 'sick_leave']); // Policy type
+            $table->enum('type', ['pto', 'sick_leave', 'emergency']); // Policy type
             $table->text('description')->nullable(); // Policy description
             $table->integer('initial_days')->nullable(); // Initial days granted (for PTO)
             $table->json('config')->nullable(); // For flexible configuration (sick leave specific settings)

@@ -85,6 +85,46 @@ class AttendanceRule extends Model
   }
 
   /**
+   * Get all late penalty rules ordered by late_minutes ascending
+   */
+  public static function getLatePenaltyRules(): \Illuminate\Database\Eloquent\Collection
+  {
+    return self::where('rule_type', self::TYPE_LATE_PENALTY)
+      ->get()
+      ->sortBy(function ($rule) {
+        return $rule->config['late_minutes'] ?? 0;
+      });
+  }
+
+  /**
+   * Calculate the penalty minutes for a given late duration
+   *
+   * @param int $lateMinutes The number of minutes late
+   * @return int The penalty in minutes (0 if no penalty applies)
+   */
+  public static function calculateLatePenalty(int $lateMinutes): int
+  {
+    if ($lateMinutes <= 0) {
+      return 0;
+    }
+
+    $rules = self::getLatePenaltyRules();
+    $penalty = 0;
+
+    // Find the highest applicable penalty tier
+    foreach ($rules as $rule) {
+      $ruleThreshold = $rule->config['late_minutes'] ?? 0;
+      $rulePenalty = $rule->config['penalty_minutes'] ?? 0;
+
+      if ($lateMinutes >= $ruleThreshold) {
+        $penalty = $rulePenalty;
+      }
+    }
+
+    return $penalty;
+  }
+
+  /**
    * Create a new factory instance for the model.
    */
   protected static function newFactory()

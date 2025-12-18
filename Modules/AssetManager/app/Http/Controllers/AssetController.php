@@ -21,202 +21,202 @@ use Modules\HR\Models\Employee;
  */
 class AssetController extends Controller
 {
-    /**
-     * Display a listing of all assets
-     *
-     * @param Request $request
-     * @return View
-     */
-    public function index(Request $request): View
-    {
-        $query = Asset::with('currentEmployee');
+  /**
+   * Display a listing of all assets
+   *
+   * @param Request $request
+   * @return View
+   */
+  public function index(Request $request): View
+  {
+    $query = Asset::with('currentEmployee');
 
-        // Filter by status if provided
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by type if provided
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        // Search functionality
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('type', 'like', '%' . $search . '%')
-                    ->orWhere('serial_number', 'like', '%' . $search . '%');
-            });
-        }
-
-        $assets = $query->orderBy('created_at', 'desc')->paginate(15);
-
-        // Get unique asset types for filter dropdown
-        $assetTypes = Asset::distinct()->pluck('type')->sort();
-
-        // Get available employees for assignment
-        $employees = Employee::orderBy('name')->get();
-
-        return view('assetmanager::assets.index', compact('assets', 'assetTypes', 'employees'));
+    // Filter by status if provided
+    if ($request->filled('status')) {
+      $query->where('status', $request->status);
     }
 
-    /**
-     * Show the form for creating a new asset
-     *
-     * @return View
-     */
-    public function create(): View
-    {
-        return view('assetmanager::assets.create');
+    // Filter by type if provided
+    if ($request->filled('type')) {
+      $query->where('type', $request->type);
     }
 
-    /**
-     * Store a newly created asset in storage
-     *
-     * @param StoreAssetRequest $request
-     * @return RedirectResponse
-     */
-    public function store(StoreAssetRequest $request): RedirectResponse
-    {
-        Asset::create($request->validated());
-
-        return redirect()->route('assetmanager.assets.index')
-            ->with('success', 'Asset created successfully.');
+    // Search functionality
+    if ($request->filled('search')) {
+      $search = $request->search;
+      $query->where(function ($q) use ($search) {
+        $q->where('name', 'like', '%' . $search . '%')
+          ->orWhere('type', 'like', '%' . $search . '%')
+          ->orWhere('serial_number', 'like', '%' . $search . '%');
+      });
     }
 
-    /**
-     * Display the specified asset
-     *
-     * @param Asset $asset
-     * @return View
-     */
-    public function show(Asset $asset): View
-    {
-        $asset->load(['employees' => function ($query) {
-            $query->withPivot(['assigned_date', 'returned_date', 'notes'])
-                ->orderBy('asset_employee.assigned_date', 'desc');
-        }]);
+    $assets = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('assetmanager::assets.show', compact('asset'));
+    // Get unique asset types for filter dropdown
+    $assetTypes = Asset::distinct()->pluck('type')->sort();
+
+    // Get available employees for assignment
+    $employees = Employee::orderBy('name')->get();
+
+    return view('assetmanager::assets.index', compact('assets', 'assetTypes', 'employees'));
+  }
+
+  /**
+   * Show the form for creating a new asset
+   *
+   * @return View
+   */
+  public function create(): View
+  {
+    return view('assetmanager::assets.create');
+  }
+
+  /**
+   * Store a newly created asset in storage
+   *
+   * @param StoreAssetRequest $request
+   * @return RedirectResponse
+   */
+  public function store(StoreAssetRequest $request): RedirectResponse
+  {
+    Asset::create($request->validated());
+
+    return redirect()->route('assetmanager.assets.index')
+      ->with('success', 'Asset created successfully.');
+  }
+
+  /**
+   * Display the specified asset
+   *
+   * @param Asset $asset
+   * @return View
+   */
+  public function show(Asset $asset): View
+  {
+    $asset->load(['employees' => function ($query) {
+      $query->withPivot(['assigned_date', 'returned_date', 'notes'])
+        ->orderBy('asset_employee.assigned_date', 'desc');
+    }]);
+
+    return view('assetmanager::assets.show', compact('asset'));
+  }
+
+  /**
+   * Show the form for editing the specified asset
+   *
+   * @param Asset $asset
+   * @return View
+   */
+  public function edit(Asset $asset): View
+  {
+    return view('assetmanager::assets.edit', compact('asset'));
+  }
+
+  /**
+   * Update the specified asset in storage
+   *
+   * @param UpdateAssetRequest $request
+   * @param Asset $asset
+   * @return RedirectResponse
+   */
+  public function update(UpdateAssetRequest $request, Asset $asset): RedirectResponse
+  {
+    $asset->update($request->validated());
+
+    return redirect()->route('assetmanager.assets.index')
+      ->with('success', 'Asset updated successfully.');
+  }
+
+  /**
+   * Remove the specified asset from storage
+   *
+   * @param Asset $asset
+   * @return RedirectResponse
+   */
+  public function destroy(Asset $asset): RedirectResponse
+  {
+    // Check if asset is currently assigned
+    if ($asset->isAssigned()) {
+      return redirect()->route('assetmanager.assets.index')
+        ->with('error', 'Cannot delete an asset that is currently assigned to an employee.');
     }
 
-    /**
-     * Show the form for editing the specified asset
-     *
-     * @param Asset $asset
-     * @return View
-     */
-    public function edit(Asset $asset): View
-    {
-        return view('assetmanager::assets.edit', compact('asset'));
+    $asset->delete();
+
+    return redirect()->route('assetmanager.assets.index')
+      ->with('success', 'Asset deleted successfully.');
+  }
+
+  /**
+   * Assign an asset to an employee
+   *
+   * @param Request $request
+   * @return RedirectResponse
+   */
+  public function assign(Request $request): RedirectResponse
+  {
+    $request->validate([
+      'asset_id' => 'required|exists:assets,id',
+      'employee_id' => 'required|exists:employees,id',
+      'notes' => 'nullable|string|max:1000',
+    ]);
+
+    $asset = Asset::findOrFail($request->asset_id);
+    $employee = Employee::findOrFail($request->employee_id);
+
+    // Check if asset is already assigned
+    if ($asset->isAssigned()) {
+      return redirect()->route('assetmanager.assets.index')
+        ->with('error', 'Asset is already assigned to another employee.');
     }
 
-    /**
-     * Update the specified asset in storage
-     *
-     * @param UpdateAssetRequest $request
-     * @param Asset $asset
-     * @return RedirectResponse
-     */
-    public function update(UpdateAssetRequest $request, Asset $asset): RedirectResponse
-    {
-        $asset->update($request->validated());
+    // Assign asset to employee
+    $asset->employees()->attach($employee->id, [
+      'assigned_date' => now(),
+      'notes' => $request->notes,
+    ]);
 
-        return redirect()->route('assetmanager.assets.index')
-            ->with('success', 'Asset updated successfully.');
+    // Update asset status
+    $asset->update(['status' => 'assigned']);
+
+    return redirect()->route('assetmanager.assets.index')
+      ->with('success', "Asset '{$asset->name}' has been successfully assigned to {$employee->name}.");
+  }
+
+  /**
+   * Unassign an asset from an employee
+   *
+   * @param Request $request
+   * @return RedirectResponse
+   */
+  public function unassign(Request $request): RedirectResponse
+  {
+    $request->validate([
+      'asset_id' => 'required|exists:assets,id',
+      'notes' => 'nullable|string|max:1000',
+    ]);
+
+    $asset = Asset::findOrFail($request->asset_id);
+
+    // Check if asset is currently assigned
+    if (!$asset->isAssigned()) {
+      return redirect()->route('assetmanager.assets.index')
+        ->with('error', 'Asset is not currently assigned to any employee.');
     }
 
-    /**
-     * Remove the specified asset from storage
-     *
-     * @param Asset $asset
-     * @return RedirectResponse
-     */
-    public function destroy(Asset $asset): RedirectResponse
-    {
-        // Check if asset is currently assigned
-        if ($asset->isAssigned()) {
-            return redirect()->route('assetmanager.assets.index')
-                ->with('error', 'Cannot delete an asset that is currently assigned to an employee.');
-        }
+    $currentEmployee = $asset->currentEmployee;
 
-        $asset->delete();
+    // Update the pivot record with return information
+    $asset->employees()->updateExistingPivot($currentEmployee->id, [
+      'returned_date' => now(),
+      'notes' => $request->notes,
+    ]);
 
-        return redirect()->route('assetmanager.assets.index')
-            ->with('success', 'Asset deleted successfully.');
-    }
+    // Update asset status
+    $asset->update(['status' => 'available']);
 
-    /**
-     * Assign an asset to an employee
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function assign(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'asset_id' => 'required|exists:assets,id',
-            'employee_id' => 'required|exists:employees,id',
-            'notes' => 'nullable|string|max:1000',
-        ]);
-
-        $asset = Asset::findOrFail($request->asset_id);
-        $employee = Employee::findOrFail($request->employee_id);
-
-        // Check if asset is already assigned
-        if ($asset->isAssigned()) {
-            return redirect()->route('assetmanager.assets.index')
-                ->with('error', 'Asset is already assigned to another employee.');
-        }
-
-        // Assign asset to employee
-        $asset->employees()->attach($employee->id, [
-            'assigned_date' => now(),
-            'notes' => $request->notes,
-        ]);
-
-        // Update asset status
-        $asset->update(['status' => 'assigned']);
-
-        return redirect()->route('assetmanager.assets.index')
-            ->with('success', "Asset '{$asset->name}' has been successfully assigned to {$employee->name}.");
-    }
-
-    /**
-     * Unassign an asset from an employee
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function unassign(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'asset_id' => 'required|exists:assets,id',
-            'notes' => 'nullable|string|max:1000',
-        ]);
-
-        $asset = Asset::findOrFail($request->asset_id);
-
-        // Check if asset is currently assigned
-        if (!$asset->isAssigned()) {
-            return redirect()->route('assetmanager.assets.index')
-                ->with('error', 'Asset is not currently assigned to any employee.');
-        }
-
-        $currentEmployee = $asset->currentEmployee;
-
-        // Update the pivot record with return information
-        $asset->employees()->updateExistingPivot($currentEmployee->id, [
-            'returned_date' => now(),
-            'notes' => $request->notes,
-        ]);
-
-        // Update asset status
-        $asset->update(['status' => 'available']);
-
-        return redirect()->route('assetmanager.assets.index')
-            ->with('success', "Asset '{$asset->name}' has been successfully returned by {$currentEmployee->name}.");
-    }
+    return redirect()->route('assetmanager.assets.index')
+      ->with('success', "Asset '{$asset->name}' has been successfully returned by {$currentEmployee->name}.");
+  }
 }

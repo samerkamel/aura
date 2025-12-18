@@ -3,8 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use Modules\HR\Http\Controllers\EmployeeController;
 use Modules\HR\Http\Controllers\EmployeeDocumentController;
+use Modules\HR\Http\Controllers\PositionController;
 
 Route::prefix('hr')->name('hr.')->group(function () {
+  // Position routes
+  Route::resource('positions', PositionController::class);
+  Route::post('positions/{position}/toggle-status', [PositionController::class, 'toggleStatus'])->name('positions.toggle-status');
+
   Route::resource('employees', EmployeeController::class);
 
   // Employee import routes

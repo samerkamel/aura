@@ -55,6 +55,7 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'manage-users', 'display_name' => 'Manage Users', 'description' => 'Can create, edit, and delete users', 'category' => 'administration'],
             ['name' => 'manage-roles', 'display_name' => 'Manage Roles', 'description' => 'Can create and edit roles', 'category' => 'administration'],
             ['name' => 'manage-permissions', 'display_name' => 'Manage Permissions', 'description' => 'Can assign permissions to roles', 'category' => 'administration'],
+            ['name' => 'manage-roles-permissions', 'display_name' => 'Manage Roles & Permissions', 'description' => 'Full access to roles and permissions management', 'category' => 'administration'],
 
             // Business Unit Management
             ['name' => 'manage-business-units', 'display_name' => 'Manage Business Units', 'description' => 'Can create, edit, and delete business units', 'category' => 'business-units'],
