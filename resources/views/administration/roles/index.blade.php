@@ -3,9 +3,11 @@
 @section('title', 'Roles Management')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
+@vite([
+    'resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss',
+    'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss',
+    'resources/assets/vendor/libs/select2/select2.scss'
+])
 @endsection
 
 @section('page-style')
@@ -265,18 +267,23 @@
 @endsection
 
 @section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+@vite([
+    'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js',
+    'resources/assets/vendor/libs/select2/select2.js'
+])
 @endsection
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Initialize Select2
-    $('.select2').select2({
-        placeholder: 'Select status...',
-        allowClear: true
-    });
+    const select2Elements = document.querySelectorAll('.select2');
+    if (select2Elements.length && typeof jQuery !== 'undefined') {
+        jQuery('.select2').select2({
+            placeholder: 'Select status...',
+            allowClear: true
+        });
+    }
 
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

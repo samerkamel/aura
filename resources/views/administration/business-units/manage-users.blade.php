@@ -221,11 +221,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Initialize Select2
-  $('.select2').select2({
-    theme: 'bootstrap5',
-    placeholder: 'Choose a user...',
-    allowClear: true
-  });
+  const select2Elements = document.querySelectorAll('.select2');
+  if (select2Elements.length && typeof jQuery !== 'undefined') {
+    jQuery('.select2').select2({
+      theme: 'bootstrap5',
+      placeholder: 'Choose a user...',
+      allowClear: true
+    });
+  }
 });
 </script>
 @endsection

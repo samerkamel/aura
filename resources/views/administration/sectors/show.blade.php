@@ -201,8 +201,8 @@ $configData = Helper::appClasses();
 // Initialize DataTable
 document.addEventListener('DOMContentLoaded', function() {
   const table = document.getElementById('businessUnitsTable');
-  if (table && table.rows.length > 1) {
-    $('#businessUnitsTable').DataTable({
+  if (table && table.rows.length > 1 && typeof jQuery !== 'undefined') {
+    jQuery('#businessUnitsTable').DataTable({
       responsive: true,
       pageLength: 25,
       order: [[0, 'asc']],

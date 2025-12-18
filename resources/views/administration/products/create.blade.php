@@ -212,26 +212,33 @@
 
 @section('page-script')
 <script>
-$(document).ready(function() {
-    // Auto-generate product code from name
-    $('#name').on('input', function() {
-        if (!$('#code').val()) {
-            const productName = $(this).val();
-            let productCode = productName.toUpperCase()
-                .replace(/[^A-Z0-9\s]/g, '')
-                .split(' ')
-                .map(word => word.substring(0, 3))
-                .join('')
-                .substring(0, 10);
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('name');
+    const codeInput = document.getElementById('code');
 
-            $('#code').val(productCode);
-        }
-    });
+    // Auto-generate product code from name
+    if (nameInput && codeInput) {
+        nameInput.addEventListener('input', function() {
+            if (!codeInput.value) {
+                const productName = this.value;
+                let productCode = productName.toUpperCase()
+                    .replace(/[^A-Z0-9\s]/g, '')
+                    .split(' ')
+                    .map(word => word.substring(0, 3))
+                    .join('')
+                    .substring(0, 10);
+
+                codeInput.value = productCode;
+            }
+        });
+    }
 
     // Force uppercase for product code
-    $('#code').on('input', function() {
-        $(this).val($(this).val().toUpperCase());
-    });
+    if (codeInput) {
+        codeInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
 });
 </script>
 @endsection

@@ -249,17 +249,26 @@
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Force uppercase for product code
-    $('#code').on('input', function() {
-        $(this).val($(this).val().toUpperCase());
-    });
+    const codeInput = document.getElementById('code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
 
     // Update preview when name changes
-    $('#name').on('input', function() {
-        const name = $(this).val() || '{{ $product->name }}';
-        $('.card-body h5').text(name);
-    });
+    const nameInput = document.getElementById('name');
+    if (nameInput) {
+        nameInput.addEventListener('input', function() {
+            const name = this.value || '{{ $product->name }}';
+            const previewTitle = document.querySelector('.card-body h5');
+            if (previewTitle) {
+                previewTitle.textContent = name;
+            }
+        });
+    }
 });
 </script>
 @endsection

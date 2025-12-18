@@ -251,55 +251,67 @@
 @endsection
 
 @section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Select all permissions
-    $('#selectAll').on('click', function() {
-        $('.permission-checkbox').prop('checked', true);
-        updateCategoryButtons();
-    });
+    const selectAllBtn = document.getElementById('selectAll');
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function() {
+            document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = true);
+            updateCategoryButtons();
+        });
+    }
 
     // Deselect all permissions
-    $('#deselectAll').on('click', function() {
-        $('.permission-checkbox').prop('checked', false);
-        updateCategoryButtons();
-    });
+    const deselectAllBtn = document.getElementById('deselectAll');
+    if (deselectAllBtn) {
+        deselectAllBtn.addEventListener('click', function() {
+            document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+            updateCategoryButtons();
+        });
+    }
 
     // Category select all
-    $('.category-select-all').on('click', function() {
-        const category = $(this).data('category');
-        const isAllSelected = $(`.permission-checkbox[data-category="${category}"]:not(:checked)`).length === 0;
+    document.querySelectorAll('.category-select-all').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const category = this.dataset.category;
+            const categoryCheckboxes = document.querySelectorAll(`.permission-checkbox[data-category="${category}"]`);
+            const uncheckedCount = Array.from(categoryCheckboxes).filter(cb => !cb.checked).length;
+            const isAllSelected = uncheckedCount === 0;
 
-        if (isAllSelected) {
-            $(`.permission-checkbox[data-category="${category}"]`).prop('checked', false);
-            $(this).text('Select All');
-        } else {
-            $(`.permission-checkbox[data-category="${category}"]`).prop('checked', true);
-            $(this).text('Deselect All');
-        }
+            if (isAllSelected) {
+                categoryCheckboxes.forEach(cb => cb.checked = false);
+                this.textContent = 'Select All';
+            } else {
+                categoryCheckboxes.forEach(cb => cb.checked = true);
+                this.textContent = 'Deselect All';
+            }
+        });
     });
 
     // Update category button text when individual permissions are changed
-    $('.permission-checkbox').on('change', function() {
-        updateCategoryButtons();
+    document.querySelectorAll('.permission-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            updateCategoryButtons();
+        });
     });
 
     // Function to update all category button states
     function updateCategoryButtons() {
-        $('.category-select-all').each(function() {
-            const category = $(this).data('category');
-            const categoryCheckboxes = $(`.permission-checkbox[data-category="${category}"]`);
-            const checkedCount = categoryCheckboxes.filter(':checked').length;
+        document.querySelectorAll('.category-select-all').forEach(function(button) {
+            const category = button.dataset.category;
+            const categoryCheckboxes = document.querySelectorAll(`.permission-checkbox[data-category="${category}"]`);
+            const checkedCount = Array.from(categoryCheckboxes).filter(cb => cb.checked).length;
             const totalCount = categoryCheckboxes.length;
 
             if (checkedCount === totalCount) {
-                $(this).text('Deselect All');
+                button.textContent = 'Deselect All';
             } else {
-                $(this).text('Select All');
+                button.textContent = 'Select All';
             }
         });
     }
@@ -308,12 +320,17 @@ $(document).ready(function() {
     updateCategoryButtons();
 
     // Update preview when display name changes
-    $('#display_name').on('input', function() {
-        const displayName = $(this).val() || '{{ $role->display_name }}';
-        const initials = displayName.substring(0, 2).toUpperCase();
-        $('.card-body h5').text(displayName);
-        $('.mx-auto').text(initials);
-    });
+    const displayNameInput = document.getElementById('display_name');
+    if (displayNameInput) {
+        displayNameInput.addEventListener('input', function() {
+            const displayName = this.value || '{{ $role->display_name }}';
+            const initials = displayName.substring(0, 2).toUpperCase();
+            const previewTitle = document.querySelector('.card-body h5');
+            const previewInitials = document.querySelector('.mx-auto');
+            if (previewTitle) previewTitle.textContent = displayName;
+            if (previewInitials) previewInitials.textContent = initials;
+        });
+    }
 });
 </script>
 @endsection

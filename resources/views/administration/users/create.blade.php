@@ -3,7 +3,7 @@
 @section('title', 'Create User')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 @section('content')
@@ -187,57 +187,71 @@
 @endsection
 
 @section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Initialize Select2
-    $('.select2').select2({
-        placeholder: 'Select roles...',
-        allowClear: true
-    });
+    const select2Elements = document.querySelectorAll('.select2');
+    if (select2Elements.length && typeof jQuery !== 'undefined') {
+        jQuery('.select2').select2({
+            placeholder: 'Select roles...',
+            allowClear: true
+        });
+    }
 
     // Password visibility toggle
-    $('#togglePassword').on('click', function() {
-        const passwordInput = $('#password');
-        const icon = $(this).find('i');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('ti-eye');
+                icon.classList.add('ti-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('ti-eye-off');
+                icon.classList.add('ti-eye');
+            }
+        });
+    }
 
-        if (passwordInput.attr('type') === 'password') {
-            passwordInput.attr('type', 'text');
-            icon.removeClass('ti-eye').addClass('ti-eye-off');
-        } else {
-            passwordInput.attr('type', 'password');
-            icon.removeClass('ti-eye-off').addClass('ti-eye');
-        }
-    });
-
-    $('#togglePasswordConfirm').on('click', function() {
-        const passwordInput = $('#password_confirmation');
-        const icon = $(this).find('i');
-
-        if (passwordInput.attr('type') === 'password') {
-            passwordInput.attr('type', 'text');
-            icon.removeClass('ti-eye').addClass('ti-eye-off');
-        } else {
-            passwordInput.attr('type', 'password');
-            icon.removeClass('ti-eye-off').addClass('ti-eye');
-        }
-    });
+    const togglePasswordConfirm = document.getElementById('togglePasswordConfirm');
+    const passwordConfirmInput = document.getElementById('password_confirmation');
+    if (togglePasswordConfirm && passwordConfirmInput) {
+        togglePasswordConfirm.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (passwordConfirmInput.type === 'password') {
+                passwordConfirmInput.type = 'text';
+                icon.classList.remove('ti-eye');
+                icon.classList.add('ti-eye-off');
+            } else {
+                passwordConfirmInput.type = 'password';
+                icon.classList.remove('ti-eye-off');
+                icon.classList.add('ti-eye');
+            }
+        });
+    }
 
     // Form validation
-    $('form').on('submit', function(e) {
-        const password = $('#password').val();
-        const confirmPassword = $('#password_confirmation').val();
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('password_confirmation').value;
 
-        if (password !== confirmPassword) {
-            e.preventDefault();
-            alert('Passwords do not match');
-            $('#password_confirmation').focus();
-            return false;
-        }
-    });
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match');
+                document.getElementById('password_confirmation').focus();
+                return false;
+            }
+        });
+    }
 });
 </script>
 @endsection

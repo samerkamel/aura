@@ -168,37 +168,43 @@
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // File upload validation
-    $('#csv_file').on('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const fileName = file.name;
-            const fileExtension = fileName.split('.').pop().toLowerCase();
+    const csvFileInput = document.getElementById('csv_file');
+    if (csvFileInput) {
+        csvFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileExtension = fileName.split('.').pop().toLowerCase();
 
-            if (!['csv', 'txt'].includes(fileExtension)) {
-                alert('Please select a CSV or TXT file.');
-                $(this).val('');
-                return;
-            }
+                if (!['csv', 'txt'].includes(fileExtension)) {
+                    alert('Please select a CSV or TXT file.');
+                    this.value = '';
+                    return;
+                }
 
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                alert('File size must be less than 2MB.');
-                $(this).val('');
-                return;
+                if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                    alert('File size must be less than 2MB.');
+                    this.value = '';
+                    return;
+                }
             }
-        }
-    });
+        });
+    }
 
     // Form validation
-    $('form').on('submit', function(e) {
-        const fileInput = $('#csv_file')[0];
-        if (!fileInput.files.length) {
-            e.preventDefault();
-            alert('Please select a CSV file to upload.');
-            return false;
-        }
-    });
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('csv_file');
+            if (!fileInput || !fileInput.files.length) {
+                e.preventDefault();
+                alert('Please select a CSV file to upload.');
+                return false;
+            }
+        });
+    }
 });
 </script>
 @endsection
