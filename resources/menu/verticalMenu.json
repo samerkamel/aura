@@ -164,15 +164,61 @@
       ]
     },
     {
-      "name": "Billable Hours",
-      "icon": "menu-icon tf-icons ti ti-clock-hour-4",
-      "slug": "billable-hours",
+      "name": "Payroll Management",
+      "icon": "menu-icon tf-icons ti ti-currency-dollar",
+      "slug": "payroll-management",
       "roles": ["super-admin", "hr-manager", "finance-manager"],
       "submenu": [
         {
+          "url": "payroll/run-review",
+          "name": "Run & Review",
+          "slug": "payroll-run-review"
+        },
+        {
           "url": "payroll/billable-hours",
-          "name": "Manage Hours",
+          "name": "Billable Hours",
           "slug": "payroll-billable-hours-index"
+        },
+        {
+          "url": "payroll/settings",
+          "name": "Settings",
+          "slug": "payroll-settings-index"
+        }
+      ]
+    },
+    {
+      "name": "Letter Templates",
+      "icon": "menu-icon tf-icons ti ti-file-text",
+      "slug": "letter-templates",
+      "roles": ["super-admin", "hr-manager"],
+      "submenu": [
+        {
+          "url": "letter-templates",
+          "name": "All Templates",
+          "slug": "letter-templates-index"
+        },
+        {
+          "url": "letter-templates/create",
+          "name": "Create Template",
+          "slug": "letter-templates-create"
+        }
+      ]
+    },
+    {
+      "name": "Assets",
+      "icon": "menu-icon tf-icons ti ti-package",
+      "slug": "assets",
+      "roles": ["super-admin", "hr-manager", "hr-assistant"],
+      "submenu": [
+        {
+          "url": "assetmanager/assets",
+          "name": "All Assets",
+          "slug": "assetmanager-assets-index"
+        },
+        {
+          "url": "assetmanager/assets/create",
+          "name": "Add Asset",
+          "slug": "assetmanager-assets-create"
         }
       ]
     },
@@ -209,72 +255,14 @@
       ]
     },
     {
-      "name": "Payroll Management",
-      "icon": "menu-icon tf-icons ti ti-currency-dollar",
-      "slug": "payroll-management",
-      "roles": ["super-admin", "hr-manager", "finance-manager"],
-      "submenu": [
-        {
-          "url": "payroll/run-review",
-          "name": "Run & Review",
-          "slug": "payroll-run-review"
-        },
-        {
-          "url": "payroll/settings",
-          "name": "Settings",
-          "slug": "payroll-settings-index"
-        }
-      ]
-    },
-    {
-      "name": "Letter Templates",
-      "icon": "menu-icon tf-icons ti ti-file-text",
-      "slug": "letter-templates",
-      "roles": ["super-admin", "hr-manager"],
-      "submenu": [
-        {
-          "url": "letter-templates",
-          "name": "All Templates",
-          "slug": "letter-templates-index"
-        },
-        {
-          "url": "letter-templates/create",
-          "name": "Create Template",
-          "slug": "letter-templates-create"
-        }
-      ]
-    },
-    {
-      "menuHeader": "Asset Management",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"]
-    },
-    {
-      "name": "Assets",
-      "icon": "menu-icon tf-icons ti ti-package",
-      "slug": "assets",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"],
-      "submenu": [
-        {
-          "url": "assetmanager/assets",
-          "name": "All Assets",
-          "slug": "assetmanager-assets-index"
-        },
-        {
-          "url": "assetmanager/assets/create",
-          "name": "Add Asset",
-          "slug": "assetmanager-assets-create"
-        }
-      ]
-    },
-    {
       "menuHeader": "Financial Planning",
-      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"]
+      "roles": ["super-admin", "finance-manager", "finance-readonly"]
     },
     {
       "name": "Accounting",
       "icon": "menu-icon tf-icons ti ti-coin",
       "slug": "accounting-cash-flow",
-      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"],
+      "roles": ["super-admin", "finance-manager", "finance-readonly"],
       "submenu": [
         {
           "url": "accounting",
@@ -332,7 +320,7 @@
       "name": "Invoice Management",
       "icon": "menu-icon tf-icons ti ti-file-invoice",
       "slug": "invoice-management",
-      "roles": ["super-admin", "finance-manager", "finance-readonly", "business-unit-manager"],
+      "roles": ["super-admin", "finance-manager", "finance-readonly"],
       "submenu": [
         {
           "url": "invoicing/invoices",
@@ -424,7 +412,7 @@
       "icon": "menu-icon tf-icons ti ti-users",
       "slug": "administration-customers-index",
       "url": "administration/customers",
-      "roles": ["super-admin", "finance-manager", "business-unit-manager"]
+      "roles": ["super-admin", "finance-manager"]
     }
   ]
 }
