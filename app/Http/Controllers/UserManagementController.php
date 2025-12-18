@@ -151,7 +151,7 @@ class UserManagementController extends Controller
         }
 
         // Debug logging
-        \Log::info('User update attempt', [
+        Log::info('User update attempt', [
             'user_id' => $user->id,
             'request_roles' => $request->roles,
             'request_all' => $request->all(),
@@ -171,9 +171,9 @@ class UserManagementController extends Controller
 
         try {
             $request->validate($rules);
-            \Log::info('Validation passed');
+            Log::info('Validation passed');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation failed', ['errors' => $e->errors()]);
+            Log::error('Validation failed', ['errors' => $e->errors()]);
             throw $e;
         }
 
@@ -191,9 +191,9 @@ class UserManagementController extends Controller
 
         // Sync roles
         $rolesToSync = $request->roles ?? [];
-        \Log::info('Syncing roles', ['roles_to_sync' => $rolesToSync]);
+        Log::info('Syncing roles', ['roles_to_sync' => $rolesToSync]);
         $user->roles()->sync($rolesToSync);
-        \Log::info('Roles synced successfully', ['user_roles_after' => $user->fresh()->roles->pluck('id')->toArray()]);
+        Log::info('Roles synced successfully', ['user_roles_after' => $user->fresh()->roles->pluck('id')->toArray()]);
 
         return redirect()
             ->route('administration.users.show', $user)
