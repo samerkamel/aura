@@ -162,7 +162,7 @@ class UserManagementController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'roles' => 'nullable|array',
             'roles.*' => 'nullable|exists:roles,id',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'nullable',
         ];
 
         if ($request->password) {
