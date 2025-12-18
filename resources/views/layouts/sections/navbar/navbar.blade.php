@@ -408,11 +408,13 @@ $navbarDetached = ($navbarDetached ?? '');
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a class="dropdown-item mt-0" href="{{ Route::has('profile.show') ? route('profile.show') : url('pages/profile-user') }}">
+                <a class="dropdown-item mt-0" href="{{ route('profile.index') }}">
                   <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-2">
                       <div class="avatar avatar-online">
-                        <img src="{{ Auth::user() ? Auth::user()->profile_photo_url : asset('assets/img/avatars/1.png') }}" alt class="rounded-circle">
+                        <div class="avatar-initial rounded-circle bg-primary text-white">
+                          {{ Auth::check() ? strtoupper(substr(Auth::user()->name, 0, 2)) : 'JD' }}
+                        </div>
                       </div>
                     </div>
                     <div class="flex-grow-1">
@@ -423,7 +425,13 @@ $navbarDetached = ($navbarDetached ?? '');
                           John Doe
                         @endif
                       </h6>
-                      <small class="text-muted">Admin</small>
+                      <small class="text-muted">
+                        @if (Auth::check())
+                          {{ Auth::user()->getRoleNames()->first() ? ucfirst(str_replace('-', ' ', Auth::user()->getRoleNames()->first())) : 'User' }}
+                        @else
+                          User
+                        @endif
+                      </small>
                     </div>
                   </div>
                 </a>
@@ -432,24 +440,8 @@ $navbarDetached = ($navbarDetached ?? '');
                 <div class="dropdown-divider my-1 mx-n2"></div>
               </li>
               <li>
-                <a class="dropdown-item" href="{{ Route::has('profile.show') ? route('profile.show') : url('pages/profile-user') }}">
+                <a class="dropdown-item" href="{{ route('profile.index') }}">
                   <i class="ti ti-user me-3 ti-md"></i><span class="align-middle">My Profile</span>
-                </a>
-              </li>
-
-              @if (Auth::check() && class_exists('\Laravel\Jetstream\Jetstream') && Laravel\Jetstream\Jetstream::hasApiFeatures())
-                <li>
-                  <a class="dropdown-item" href="{{ route('api-tokens.index') }}">
-                    <i class="ti ti-key ti-md me-3"></i><span class="align-middle">API Tokens</span>
-                  </a>
-                </li>
-              @endif
-              <li>
-                <a class="dropdown-item" href="{{url('pages/account-settings-billing')}}">
-                  <span class="d-flex align-items-center align-middle">
-                    <i class="flex-shrink-0 ti ti-file-dollar me-3 ti-md"></i><span class="flex-grow-1 align-middle">Billing</span>
-                    <span class="flex-shrink-0 badge bg-danger d-flex align-items-center justify-content-center">4</span>
-                  </span>
                 </a>
               </li>
 

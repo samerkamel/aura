@@ -48,6 +48,7 @@ use App\Http\Controllers\apps\UserViewNotifications;
 use App\Http\Controllers\apps\UserViewConnections;
 use App\Http\Controllers\apps\AccessRoles;
 use App\Http\Controllers\apps\AccessPermission;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\pages\UserProfile;
 use App\Http\Controllers\pages\UserTeams;
 use App\Http\Controllers\pages\UserProjects;
@@ -151,6 +152,13 @@ Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->midd
 
 // Redirect after login
 Route::get('/home', [Analytics::class, 'index'])->name('home')->middleware(['auth']);
+
+// User Profile Routes
+Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('index');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password');
+});
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
