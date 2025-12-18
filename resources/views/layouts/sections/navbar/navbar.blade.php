@@ -1,20 +1,8 @@
 @php
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Helpers\BusinessUnitHelper;
 $containerNav = ($configData['contentLayout'] === 'compact') ? 'container-xxl' : 'container-fluid';
 $navbarDetached = ($navbarDetached ?? '');
-
-// Get Business Unit context for navbar
-$currentBusinessUnit = null;
-$accessibleBusinessUnits = collect();
-$canAccessMultipleBus = false;
-
-if (Auth::check()) {
-    $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit();
-    $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
-    $canAccessMultipleBus = BusinessUnitHelper::canAccessMultipleBusinessUnits();
-}
 @endphp
 
 <!-- Navbar -->
@@ -106,77 +94,6 @@ if (Auth::check()) {
           </li>
           <!--/ Language -->
 
-          <!-- Business Unit Selector -->
-          @if(Auth::check() && ($canAccessMultipleBus || $currentBusinessUnit))
-            <li class="nav-item dropdown-business-unit dropdown">
-              <a class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                <i class='ti ti-building rounded-circle ti-md'></i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                @if($currentBusinessUnit)
-                  <li class="dropdown-header">
-                    <div class="d-flex align-items-center">
-                      <i class="ti ti-building me-2"></i>
-                      <div>
-                        <h6 class="mb-0">Current Business Unit</h6>
-                        <small class="text-muted">{{ $currentBusinessUnit->name }}</small>
-                      </div>
-                    </div>
-                  </li>
-                  <li><hr class="dropdown-divider"></li>
-                @endif
-
-                @if($canAccessMultipleBus)
-                  @foreach($accessibleBusinessUnits as $businessUnit)
-                    <li>
-                      <form method="POST" action="{{ route('business-units.switch') }}" class="d-inline">
-                        @csrf
-                        <input type="hidden" name="business_unit_id" value="{{ $businessUnit->id }}">
-                        <button type="submit" class="dropdown-item {{ $currentBusinessUnit && $currentBusinessUnit->id === $businessUnit->id ? 'active' : '' }}">
-                          <div class="d-flex align-items-center">
-                            <i class="ti {{ $businessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} me-2"></i>
-                            <div>
-                              <div class="fw-medium">{{ $businessUnit->name }}</div>
-                              @if($businessUnit->description)
-                                <small class="text-muted">{{ $businessUnit->description }}</small>
-                              @endif
-                            </div>
-                          </div>
-                        </button>
-                      </form>
-                    </li>
-                  @endforeach
-                @elseif($currentBusinessUnit)
-                  <li>
-                    <div class="dropdown-item-text">
-                      <div class="d-flex align-items-center">
-                        <i class="ti {{ $currentBusinessUnit->type === 'head_office' ? 'ti-building-skyscraper' : 'ti-building' }} me-2"></i>
-                        <div>
-                          <div class="fw-medium">{{ $currentBusinessUnit->name }}</div>
-                          @if($currentBusinessUnit->description)
-                            <small class="text-muted">{{ $currentBusinessUnit->description }}</small>
-                          @endif
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                @endif
-
-                @auth
-                  @if(auth()->user()->can('manage-business-units'))
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                      <a class="dropdown-item" href="{{ route('administration.business-units.index') }}">
-                        <i class="ti ti-settings me-2"></i>
-                        <span>Manage Business Units</span>
-                      </a>
-                    </li>
-                  @endif
-                @endauth
-              </ul>
-            </li>
-          @endif
-          <!--/ Business Unit Selector -->
 
           @if($configData['hasCustomizer'] == true)
             <!-- Style Switcher -->

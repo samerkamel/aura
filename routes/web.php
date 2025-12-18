@@ -145,12 +145,12 @@ use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\maps\Leaflet;
 
 // Main Page Route
-Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics')->middleware(['auth', 'business_unit_context']);
-Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics-full')->middleware(['auth', 'business_unit_context']);
-Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['auth', 'business_unit_context']);
+Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics')->middleware(['auth']);
+Route::get('/dashboard/analytics', [Analytics::class, 'index'])->name('dashboard-analytics-full')->middleware(['auth']);
+Route::get('/dashboard/crm', [Crm::class, 'index'])->name('dashboard-crm')->middleware(['auth']);
 
 // Redirect after login
-Route::get('/home', [Analytics::class, 'index'])->name('home')->middleware(['auth', 'business_unit_context']);
+Route::get('/home', [Analytics::class, 'index'])->name('home')->middleware(['auth']);
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -339,12 +339,9 @@ Route::resource('/user-list', UserManagement::class);
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\BusinessUnitController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\BudgetController;
-use App\Http\Controllers\SectorController;
 
-Route::middleware(['auth', 'business_unit_context'])->prefix('administration')->name('administration.')->group(function () {
+Route::middleware(['auth'])->prefix('administration')->name('administration.')->group(function () {
     // User Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('index');
@@ -385,34 +382,6 @@ Route::middleware(['auth', 'business_unit_context'])->prefix('administration')->
         Route::patch('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
     });
 
-    // Sector Management
-    Route::prefix('sectors')->name('sectors.')->group(function () {
-        Route::get('/', [SectorController::class, 'index'])->name('index');
-        Route::get('/create', [SectorController::class, 'create'])->name('create');
-        Route::post('/', [SectorController::class, 'store'])->name('store');
-        Route::get('/{sector}', [SectorController::class, 'show'])->name('show');
-        Route::get('/{sector}/edit', [SectorController::class, 'edit'])->name('edit');
-        Route::put('/{sector}', [SectorController::class, 'update'])->name('update');
-        Route::delete('/{sector}', [SectorController::class, 'destroy'])->name('destroy');
-        Route::patch('/{sector}/toggle-status', [SectorController::class, 'toggleStatus'])->name('toggle-status');
-        Route::get('/api/list', [SectorController::class, 'apiIndex'])->name('api.index');
-    });
-
-    // Business Unit Management
-    Route::prefix('business-units')->name('business-units.')->group(function () {
-        Route::get('/', [BusinessUnitController::class, 'index'])->name('index');
-        Route::get('/create', [BusinessUnitController::class, 'create'])->name('create');
-        Route::post('/', [BusinessUnitController::class, 'store'])->name('store');
-        Route::get('/{businessUnit}', [BusinessUnitController::class, 'show'])->name('show');
-        Route::get('/{businessUnit}/edit', [BusinessUnitController::class, 'edit'])->name('edit');
-        Route::put('/{businessUnit}', [BusinessUnitController::class, 'update'])->name('update');
-        Route::delete('/{businessUnit}', [BusinessUnitController::class, 'destroy'])->name('destroy');
-        Route::patch('/{businessUnit}/toggle-status', [BusinessUnitController::class, 'toggleStatus'])->name('toggle-status');
-        Route::get('/{businessUnit}/manage-users', [BusinessUnitController::class, 'manageUsers'])->name('manage-users');
-        Route::post('/{businessUnit}/assign-user', [BusinessUnitController::class, 'assignUser'])->name('assign-user');
-        Route::delete('/{businessUnit}/unassign-user', [BusinessUnitController::class, 'unassignUser'])->name('unassign-user');
-    });
-
     // Customer Management
     Route::prefix('customers')->name('customers.')->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('index');
@@ -435,23 +404,3 @@ Route::middleware(['auth', 'business_unit_context'])->prefix('administration')->
     });
 });
 
-// Business Unit Switching (outside admin group for easier access)
-Route::post('/business-units/switch', [BusinessUnitController::class, 'switchBusinessUnit'])
-    ->name('business-units.switch')
-    ->middleware('auth');
-
-// Budget Management Routes
-Route::middleware(['auth', 'business_unit_context'])->prefix('budgets')->name('budgets.')->group(function () {
-    Route::get('/business-unit/{businessUnit}', [BudgetController::class, 'index'])->name('index');
-    Route::post('/business-unit/{businessUnit}', [BudgetController::class, 'store'])->name('store');
-    Route::get('/{budget}', [BudgetController::class, 'show'])->name('show');
-    Route::put('/{budget}', [BudgetController::class, 'update'])->name('update');
-    Route::delete('/{budget}', [BudgetController::class, 'destroy'])->name('destroy');
-
-    Route::post('/{budget}/allocate', [BudgetController::class, 'allocate'])->name('allocate');
-    Route::post('/{budget}/spend', [BudgetController::class, 'spend'])->name('spend');
-    Route::get('/{budget}/history', [BudgetController::class, 'history'])->name('history');
-
-    Route::get('/business-unit/{businessUnit}/summary', [BudgetController::class, 'summary'])->name('summary');
-    Route::post('/business-unit/{businessUnit}/create-product', [BudgetController::class, 'createProduct'])->name('createProduct');
-});

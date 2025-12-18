@@ -48,21 +48,6 @@
                             <h6 class="mb-3">Invoice Information</h6>
 
                             <div class="mb-3">
-                                <label class="form-label required">Business Unit</label>
-                                <select name="business_unit_id" class="form-select @error('business_unit_id') is-invalid @enderror" required>
-                                    <option value="">Select Business Unit</option>
-                                    @foreach($accessibleBusinessUnits as $businessUnit)
-                                        <option value="{{ $businessUnit->id }}" {{ old('business_unit_id') == $businessUnit->id ? 'selected' : '' }}>
-                                            {{ $businessUnit->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('business_unit_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
                                 <label class="form-label required">Invoice Sequence</label>
                                 <select name="invoice_sequence_id" class="form-select @error('invoice_sequence_id') is-invalid @enderror" required>
                                     <option value="">Auto-select sequence</option>
@@ -75,7 +60,7 @@
                                 @error('invoice_sequence_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Leave blank to auto-select based on business unit and sector</small>
+                                <small class="text-muted">Leave blank to auto-select the default sequence</small>
                             </div>
 
                             <div class="row">

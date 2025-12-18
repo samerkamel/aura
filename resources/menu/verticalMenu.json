@@ -420,20 +420,6 @@
       ]
     },
     {
-      "name": "Sectors",
-      "icon": "menu-icon tf-icons ti ti-world",
-      "slug": "administration-sectors-index",
-      "url": "administration/sectors",
-      "roles": ["super-admin"]
-    },
-    {
-      "name": "Business Units",
-      "icon": "menu-icon tf-icons ti ti-building",
-      "slug": "administration-business-units-index",
-      "url": "administration/business-units",
-      "roles": ["super-admin", "business-unit-manager"]
-    },
-    {
       "name": "Customers",
       "icon": "menu-icon tf-icons ti ti-users",
       "slug": "administration-customers-index",
