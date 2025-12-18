@@ -95,7 +95,7 @@
             <div class="stat-card">
               <div class="stat-value text-success">
                 @php
-                  $roles = $user->getRoleNames();
+                  $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames() : collect([]);
                 @endphp
                 {{ $roles->count() }}
               </div>
@@ -149,9 +149,13 @@
               <div class="mb-3">
                 <label class="form-label">Roles</label>
                 <div>
-                  @foreach($user->getRoleNames() as $role)
-                  <span class="badge bg-label-primary me-1">{{ ucfirst(str_replace('-', ' ', $role)) }}</span>
-                  @endforeach
+                  @if(method_exists($user, 'getRoleNames'))
+                    @foreach($user->getRoleNames() as $role)
+                    <span class="badge bg-label-primary me-1">{{ ucfirst(str_replace('-', ' ', $role)) }}</span>
+                    @endforeach
+                  @else
+                    <span class="text-muted">No roles assigned</span>
+                  @endif
                 </div>
               </div>
 

@@ -426,7 +426,7 @@ $navbarDetached = ($navbarDetached ?? '');
                         @endif
                       </h6>
                       <small class="text-muted">
-                        @if (Auth::check())
+                        @if (Auth::check() && method_exists(Auth::user(), 'getRoleNames'))
                           {{ Auth::user()->getRoleNames()->first() ? ucfirst(str_replace('-', ' ', Auth::user()->getRoleNames()->first())) : 'User' }}
                         @else
                           User

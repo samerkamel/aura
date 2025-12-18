@@ -33,8 +33,10 @@ class EmployeeController extends Controller
     public function index(Request $request): View
     {
         $status = $request->get('status', 'active');
+        $search = $request->get('search', '');
+        $view = $request->get('view', 'grid'); // grid or table
 
-        $query = Employee::with('positionRelation')->latest();
+        $query = Employee::with(['positionRelation', 'manager'])->latest();
 
         if ($status === 'active') {
             $query->active();
@@ -43,6 +45,20 @@ class EmployeeController extends Controller
         }
         // 'all' shows everyone
 
+        // Apply search filter
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('name_ar', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%")
+                  ->orWhereHas('positionRelation', function ($q) use ($search) {
+                      $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('department', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         $employees = $query->get();
         $canViewSalary = Gate::allows('view-employee-financial');
 
@@ -50,7 +66,17 @@ class EmployeeController extends Controller
         $activeCount = Employee::active()->count();
         $inactiveCount = Employee::whereIn('status', ['terminated', 'resigned'])->count();
 
-        return view('hr::employees.index', compact('employees', 'canViewSalary', 'status', 'activeCount', 'inactiveCount'));
+        // Get departments for filter (from positions)
+        $departments = Position::whereNotNull('department')
+            ->groupBy('department')
+            ->pluck('department')
+            ->filter()
+            ->values();
+
+        return view('hr::employees.index', compact(
+            'employees', 'canViewSalary', 'status', 'activeCount', 'inactiveCount',
+            'search', 'view', 'departments'
+        ));
     }
 
     /**
