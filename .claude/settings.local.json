@@ -39,7 +39,8 @@
       "mcp__plugin_testing-suite_playwright-server__browser_close",
       "Bash(pkill:*)",
       "mcp__plugin_testing-suite_playwright-server__browser_click",
-      "Bash(composer show:*)"
+      "Bash(composer show:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }
