@@ -186,7 +186,7 @@
           <!-- Pagination -->
           @if($projects->hasPages())
             <div class="d-flex justify-content-center mt-4">
-              {{ $projects->links() }}
+              {{ $projects->withQueryString()->links() }}
             </div>
           @endif
         </div>
