@@ -388,6 +388,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const employeeRates = {};
   let customProjectIndex = 0;
 
+  // Helper function to format numbers with thousand separators
+  function formatNumber(num, decimals = 2) {
+    return num.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
+
   // Initialize rates from existing values
   rateInputs.forEach(function(input) {
     const employeeId = input.dataset.employee;
@@ -433,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update amount display
     const amountDisplay = row.querySelector('.amount-display');
     const amount = hours * newRate;
-    amountDisplay.textContent = amount.toFixed(2) + ' EGP';
+    amountDisplay.textContent = formatNumber(amount) + ' EGP';
 
     recalculateTotals();
   }
@@ -456,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update amount display
     const amountDisplay = row.querySelector('.amount-display');
     const amount = hours * newRate;
-    amountDisplay.textContent = amount.toFixed(2) + ' EGP';
+    amountDisplay.textContent = formatNumber(amount) + ' EGP';
 
     // Store and auto-fill rate for same employee
     if (newRate > 0) {
@@ -478,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
           } else {
             otherHours = parseFloat(otherInput.dataset.hours) || 0;
           }
-          otherAmountDisplay.textContent = (otherHours * newRate).toFixed(2) + ' EGP';
+          otherAmountDisplay.textContent = formatNumber(otherHours * newRate) + ' EGP';
         }
       });
     }
@@ -510,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update amount display
     const amountDisplay = row.querySelector('.amount-display');
     const amount = hours * rate;
-    amountDisplay.textContent = amount.toFixed(2) + ' EGP';
+    amountDisplay.textContent = formatNumber(amount) + ' EGP';
 
     recalculateTotals();
   }
@@ -564,9 +572,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const projectHoursTotalEl = card.querySelector('.project-hours-total');
       const projectAvgRateEl = card.querySelector('.project-avg-rate');
 
-      if (projectHoursEl) projectHoursEl.textContent = projectHours.toFixed(2);
-      if (projectAmountEl) projectAmountEl.textContent = projectAmount.toFixed(2) + ' EGP';
-      if (projectHoursTotalEl) projectHoursTotalEl.textContent = projectHours.toFixed(2) + ' hrs';
+      if (projectHoursEl) projectHoursEl.textContent = formatNumber(projectHours);
+      if (projectAmountEl) projectAmountEl.textContent = formatNumber(projectAmount) + ' EGP';
+      if (projectHoursTotalEl) projectHoursTotalEl.textContent = formatNumber(projectHours) + ' hrs';
 
       // Calculate and update average rate
       const avgRate = projectHours > 0 ? projectAmount / projectHours : 0;
@@ -603,12 +611,12 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       // Update custom project totals
-      card.querySelector('.custom-project-hours').textContent = projectHours.toFixed(2);
-      card.querySelector('.custom-project-amount').textContent = projectAmount.toFixed(2) + ' EGP';
+      card.querySelector('.custom-project-hours').textContent = formatNumber(projectHours);
+      card.querySelector('.custom-project-amount').textContent = formatNumber(projectAmount) + ' EGP';
 
       // Calculate and update average rate for custom projects
       const customAvgRate = projectHours > 0 ? projectAmount / projectHours : 0;
-      card.querySelector('.custom-project-avg-rate').textContent = customAvgRate.toFixed(2) + ' EGP/hr';
+      card.querySelector('.custom-project-avg-rate').textContent = formatNumber(customAvgRate) + ' EGP/hr';
 
       grandTotalHours += projectHours;
       grandTotalAmount += projectAmount;
@@ -622,25 +630,25 @@ document.addEventListener('DOMContentLoaded', function() {
       teamSummaryBody.querySelectorAll('tr[data-team]').forEach(function(row) {
         const team = row.dataset.team;
         const data = teamTotals[team] || { hours: 0, amount: 0 };
-        row.querySelector('.team-hours').textContent = data.hours.toFixed(2);
-        row.querySelector('.team-amount').textContent = data.amount.toFixed(2);
+        row.querySelector('.team-hours').textContent = formatNumber(data.hours);
+        row.querySelector('.team-amount').textContent = formatNumber(data.amount);
         teamSummaryTotalHours += data.hours;
         teamSummaryTotalAmount += data.amount;
       });
 
       const totalHoursEl = document.getElementById('teamSummaryTotalHours');
       const totalAmountEl = document.getElementById('teamSummaryTotalAmount');
-      if (totalHoursEl) totalHoursEl.textContent = teamSummaryTotalHours.toFixed(2);
-      if (totalAmountEl) totalAmountEl.textContent = teamSummaryTotalAmount.toFixed(2);
+      if (totalHoursEl) totalHoursEl.textContent = formatNumber(teamSummaryTotalHours);
+      if (totalAmountEl) totalAmountEl.textContent = formatNumber(teamSummaryTotalAmount);
     }
 
     // Update grand totals
-    document.getElementById('grandTotalHours').textContent = grandTotalHours.toFixed(2);
-    document.getElementById('grandTotalAmount').textContent = grandTotalAmount.toFixed(2);
+    document.getElementById('grandTotalHours').textContent = formatNumber(grandTotalHours);
+    document.getElementById('grandTotalAmount').textContent = formatNumber(grandTotalAmount);
 
     // Calculate and update grand average rate
     const grandAvgRate = grandTotalHours > 0 ? grandTotalAmount / grandTotalHours : 0;
-    document.getElementById('grandAvgRate').textContent = grandAvgRate.toFixed(2);
+    document.getElementById('grandAvgRate').textContent = formatNumber(grandAvgRate);
   }
 
   // Custom Projects functionality
@@ -789,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function() {
       function updateAmount() {
         const hours = parseFloat(hoursInput.value) || 0;
         const rate = parseFloat(rateInput.value) || 0;
-        amountDisplay.textContent = (hours * rate).toFixed(2) + ' EGP';
+        amountDisplay.textContent = formatNumber(hours * rate) + ' EGP';
         recalculateTotals();
       }
 
