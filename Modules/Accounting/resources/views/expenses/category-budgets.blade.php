@@ -41,10 +41,13 @@
             @endif
 
             <div class="card-body">
-                <div class="alert alert-info">
+                <div class="alert alert-info mb-3">
                     <i class="ti ti-info-circle me-2"></i>
-                    <strong>Budget Percentage:</strong> The percentage represents the portion of total monthly revenue allocated to each expense category.
-                    For example, if a category has a 10% budget and monthly revenue is 100,000 EGP, the budget for that category would be 10,000 EGP/month.
+                    <strong>Two-Tier Budget System:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Tier 1 (Total Revenue):</strong> Budget percentage is calculated from total monthly revenue (e.g., VAT, Cost of Sales). Total: {{ \Modules\Accounting\Models\ExpenseCategoryBudget::TIER1_PERCENTAGE }}%</li>
+                        <li><strong>Tier 2 (Net Income / عائد الدخل):</strong> Budget percentage is calculated from net income after Tier 1 deductions ({{ 100 - \Modules\Accounting\Models\ExpenseCategoryBudget::TIER1_PERCENTAGE }}% of revenue)</li>
+                    </ul>
                 </div>
             </div>
 
@@ -54,6 +57,7 @@
                         <tr>
                             <th>Category</th>
                             <th>Type</th>
+                            <th class="text-center">Tier</th>
                             <th class="text-center">{{ $year }} Budget %</th>
                             <th class="text-end">YTD Spending</th>
                             <th class="text-end">Avg/Month</th>
@@ -88,6 +92,19 @@
                                         <span class="badge" style="background-color: {{ $category->expenseType->color }}; color: white;">
                                             {{ $category->expenseType->code }}
                                         </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($budget)
+                                        @if($budget->calculation_base === 'total_revenue')
+                                            <span class="badge bg-danger">Tier 1</span>
+                                            <br><small class="text-muted">Total Revenue</small>
+                                        @else
+                                            <span class="badge bg-success">Tier 2</span>
+                                            <br><small class="text-muted">Net Income</small>
+                                        @endif
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -131,6 +148,7 @@
                                                 data-category-name="{{ $category->name }}"
                                                 data-budget-id="{{ $budget->id }}"
                                                 data-budget-percentage="{{ $budget->budget_percentage }}"
+                                                data-calculation-base="{{ $budget->calculation_base }}"
                                                 data-budget-notes="{{ $budget->notes }}"
                                                 title="Edit Budget">
                                             <i class="ti ti-edit"></i>
@@ -158,7 +176,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No main categories found</h5>
@@ -174,16 +192,12 @@
                     @if($categories->count() > 0)
                     <tfoot>
                         <tr class="table-light">
-                            <td colspan="2"><strong>Total</strong></td>
+                            <td colspan="3"><strong>Total</strong></td>
                             <td class="text-center">
-                                <span class="badge {{ $totalBudgetPercentage > 100 ? 'bg-danger' : ($totalBudgetPercentage == 100 ? 'bg-success' : 'bg-warning') }} fs-6">
+                                <span class="badge bg-info fs-6">
                                     {{ number_format($totalBudgetPercentage, 2) }}%
                                 </span>
-                                @if($totalBudgetPercentage > 100)
-                                    <br><small class="text-danger">Exceeds 100%!</small>
-                                @elseif($totalBudgetPercentage < 100)
-                                    <br><small class="text-warning">{{ number_format(100 - $totalBudgetPercentage, 2) }}% unallocated</small>
-                                @endif
+                                <br><small class="text-muted">(combined)</small>
                             </td>
                             <td class="text-end">
                                 <strong>{{ number_format($categories->sum('ytd_spending'), 2) }} EGP</strong>
@@ -215,6 +229,17 @@
                     <input type="hidden" name="budget_year" value="{{ $year }}">
 
                     <div class="mb-3">
+                        <label for="add_calculation_base" class="form-label">
+                            Calculation Base <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="add_calculation_base" name="calculation_base" required>
+                            <option value="total_revenue">Tier 1 - Total Revenue</option>
+                            <option value="net_income" selected>Tier 2 - Net Income (عائد الدخل)</option>
+                        </select>
+                        <small class="text-muted">Tier 1: From total revenue | Tier 2: From net income after Tier 1 deductions</small>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="add_budget_percentage" class="form-label">
                             Budget Percentage <span class="text-danger">*</span>
                         </label>
@@ -223,7 +248,7 @@
                                    name="budget_percentage" step="0.01" min="0" max="100" required>
                             <span class="input-group-text">%</span>
                         </div>
-                        <small class="text-muted">Percentage of monthly revenue allocated to this category</small>
+                        <small class="text-muted">Percentage based on selected calculation base</small>
                     </div>
 
                     <div class="mb-3">
@@ -253,6 +278,17 @@
                 @method('PUT')
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label for="edit_calculation_base" class="form-label">
+                            Calculation Base <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="edit_calculation_base" name="calculation_base" required>
+                            <option value="total_revenue">Tier 1 - Total Revenue</option>
+                            <option value="net_income">Tier 2 - Net Income (عائد الدخل)</option>
+                        </select>
+                        <small class="text-muted">Tier 1: From total revenue | Tier 2: From net income after Tier 1 deductions</small>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="edit_budget_percentage" class="form-label">
                             Budget Percentage <span class="text-danger">*</span>
                         </label>
@@ -261,7 +297,7 @@
                                    name="budget_percentage" step="0.01" min="0" max="100" required>
                             <span class="input-group-text">%</span>
                         </div>
-                        <small class="text-muted">Percentage of monthly revenue allocated to this category</small>
+                        <small class="text-muted">Percentage based on selected calculation base</small>
                     </div>
 
                     <div class="mb-3">
@@ -307,11 +343,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryName = button.getAttribute('data-category-name');
         const budgetId = button.getAttribute('data-budget-id');
         const budgetPercentage = button.getAttribute('data-budget-percentage');
+        const calculationBase = button.getAttribute('data-calculation-base');
         const budgetNotes = button.getAttribute('data-budget-notes');
 
         document.getElementById('editBudgetCategoryName').textContent = categoryName;
         document.getElementById('editBudgetForm').action = `/accounting/expenses/categories/${categoryId}/budgets/${budgetId}`;
         document.getElementById('edit_budget_percentage').value = budgetPercentage;
+        document.getElementById('edit_calculation_base').value = calculationBase || 'net_income';
         document.getElementById('edit_budget_notes').value = budgetNotes || '';
     });
 });

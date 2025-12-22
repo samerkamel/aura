@@ -595,6 +595,7 @@ class ExpenseController extends Controller
         $request->validate([
             'budget_year' => 'required|integer|min:2020|max:2050',
             'budget_percentage' => 'required|numeric|min:0|max:100',
+            'calculation_base' => 'required|in:total_revenue,net_income',
             'notes' => 'nullable|string|max:500',
         ]);
 
@@ -611,6 +612,7 @@ class ExpenseController extends Controller
             'expense_category_id' => $category->id,
             'budget_year' => $request->budget_year,
             'budget_percentage' => $request->budget_percentage,
+            'calculation_base' => $request->calculation_base,
             'notes' => $request->notes,
             'created_by' => auth()->id(),
         ]);
@@ -637,11 +639,13 @@ class ExpenseController extends Controller
 
         $request->validate([
             'budget_percentage' => 'required|numeric|min:0|max:100',
+            'calculation_base' => 'required|in:total_revenue,net_income',
             'notes' => 'nullable|string|max:500',
         ]);
 
         $budget->update([
             'budget_percentage' => $request->budget_percentage,
+            'calculation_base' => $request->calculation_base,
             'notes' => $request->notes,
             'updated_by' => auth()->id(),
         ]);
