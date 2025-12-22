@@ -686,6 +686,70 @@ class ExpenseController extends Controller
     }
 
     /**
+     * Copy budgets from a previous year to the target year.
+     */
+    public function copyBudgetsFromYear(Request $request): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to manage expense category budgets.');
+        }
+
+        $request->validate([
+            'source_year' => 'required|integer|min:2020|max:2050',
+            'target_year' => 'required|integer|min:2020|max:2050|different:source_year',
+        ]);
+
+        $sourceYear = (int) $request->source_year;
+        $targetYear = (int) $request->target_year;
+
+        // Get budgets from source year
+        $sourceBudgets = ExpenseCategoryBudget::where('budget_year', $sourceYear)->get();
+
+        if ($sourceBudgets->isEmpty()) {
+            return redirect()
+                ->back()
+                ->with('error', "No budgets found for {$sourceYear} to copy.");
+        }
+
+        $copiedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($sourceBudgets as $sourceBudget) {
+            // Check if budget already exists for target year
+            $existingBudget = ExpenseCategoryBudget::where('expense_category_id', $sourceBudget->expense_category_id)
+                ->where('budget_year', $targetYear)
+                ->first();
+
+            if ($existingBudget) {
+                $skippedCount++;
+                continue;
+            }
+
+            // Copy the budget
+            ExpenseCategoryBudget::create([
+                'expense_category_id' => $sourceBudget->expense_category_id,
+                'budget_year' => $targetYear,
+                'budget_percentage' => $sourceBudget->budget_percentage,
+                'calculation_base' => $sourceBudget->calculation_base,
+                'notes' => $sourceBudget->notes ? "Copied from {$sourceYear}: " . $sourceBudget->notes : "Copied from {$sourceYear}",
+                'created_by' => auth()->id(),
+            ]);
+
+            $copiedCount++;
+        }
+
+        $message = "{$copiedCount} budget(s) copied from {$sourceYear} to {$targetYear}.";
+        if ($skippedCount > 0) {
+            $message .= " {$skippedCount} skipped (already exist).";
+        }
+
+        return redirect()
+            ->route('accounting.expenses.categories.budgets', ['year' => $targetYear])
+            ->with('success', $message);
+    }
+
+    /**
      * Delete an expense category.
      */
     public function destroyCategory(ExpenseCategory $category): RedirectResponse

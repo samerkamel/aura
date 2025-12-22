@@ -38,6 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             // Category Budget management
             Route::get('/categories/budgets', [ExpenseController::class, 'categoryBudgets'])->name('categories.budgets');
+            Route::post('/categories/budgets/copy-from-year', [ExpenseController::class, 'copyBudgetsFromYear'])->name('categories.budgets.copy');
             Route::post('/categories/{category}/budgets', [ExpenseController::class, 'storeCategoryBudget'])->name('categories.budgets.store');
             Route::put('/categories/{category}/budgets/{budget}', [ExpenseController::class, 'updateCategoryBudget'])->name('categories.budgets.update');
             Route::delete('/categories/{category}/budgets/{budget}', [ExpenseController::class, 'destroyCategoryBudget'])->name('categories.budgets.destroy');

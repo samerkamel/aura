@@ -20,6 +20,9 @@
                             @endforeach
                         </select>
                     </form>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#copyBudgetsModal">
+                        <i class="ti ti-copy me-1"></i>Copy from Year
+                    </button>
                     <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i>Back to Categories
                     </a>
@@ -308,6 +311,55 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Copy Budgets Modal -->
+<div class="modal fade" id="copyBudgetsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Copy Budgets from Previous Year</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('accounting.expenses.categories.budgets.copy') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="ti ti-info-circle me-2"></i>
+                        Copy all budget percentages from a source year to a target year. Existing budgets in the target year will be skipped.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="source_year" class="form-label">
+                            Copy From (Source Year) <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="source_year" name="source_year" required>
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $y == ($year - 1) ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="target_year" class="form-label">
+                            Copy To (Target Year) <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="target_year" name="target_year" required>
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-copy me-1"></i>Copy Budgets
+                    </button>
                 </div>
             </form>
         </div>
