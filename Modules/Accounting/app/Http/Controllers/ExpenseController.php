@@ -550,7 +550,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized to manage expense category budgets.');
         }
 
-        $year = $request->get('year', (int) date('Y'));
+        $year = (int) $request->get('year', date('Y'));
 
         // Get only main categories (top-level) with their budgets
         $categories = ExpenseCategory::mainCategories()
