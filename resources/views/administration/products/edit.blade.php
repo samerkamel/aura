@@ -106,16 +106,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Budget Allocation -->
-                            <div class="col-md-6">
-                                <label class="form-label" for="budget_allocation">Budget Allocation (EGP)</label>
-                                <input type="number" class="form-control @error('budget_allocation') is-invalid @enderror"
-                                       id="budget_allocation" name="budget_allocation" value="{{ old('budget_allocation', $product->budget_allocation) }}"
-                                       min="0" step="0.01">
-                                @error('budget_allocation')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            <!-- Note: Budget is now managed separately in the Budget History section below -->
 
                             <!-- Email -->
                             <div class="col-md-6">
@@ -162,6 +153,114 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- Annual Budget History -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="ti ti-calendar-dollar me-2"></i>Annual Budget History
+                    </h5>
+                    @if(count($availableYears) > 0)
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+                        <i class="ti ti-plus me-1"></i>Add Budget Year
+                    </button>
+                    @endif
+                </div>
+                <div class="card-body">
+                    @if($product->budgets->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Year</th>
+                                        <th class="text-end">Budget Amount</th>
+                                        <th>Notes</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($product->budgets as $budget)
+                                    <tr class="{{ $budget->budget_year == date('Y') ? 'table-info' : '' }}">
+                                        <td>
+                                            <span class="fw-semibold">{{ $budget->budget_year }}</span>
+                                            @if($budget->budget_year == date('Y'))
+                                                <span class="badge bg-label-info ms-1">Current</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end fw-semibold">{{ number_format($budget->projected_revenue, 2) }} EGP</td>
+                                        <td>
+                                            @if($budget->notes)
+                                                <small class="text-muted">{{ Str::limit($budget->notes, 50) }}</small>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-icon btn-outline-primary"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editBudgetModal{{ $budget->id }}">
+                                                <i class="ti ti-edit"></i>
+                                            </button>
+                                            <form action="{{ route('administration.products.budgets.destroy', [$product, $budget]) }}"
+                                                  method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-icon btn-outline-danger"
+                                                        onclick="return confirm('Are you sure you want to delete the {{ $budget->budget_year }} budget?')">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Edit Budget Modal for {{ $budget->budget_year }} -->
+                                    <div class="modal fade" id="editBudgetModal{{ $budget->id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form action="{{ route('administration.products.budgets.update', [$product, $budget]) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit {{ $budget->budget_year }} Budget</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Year</label>
+                                                            <input type="text" class="form-control" value="{{ $budget->budget_year }}" disabled>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="budget_amount_{{ $budget->id }}">Budget Amount (EGP) <span class="text-danger">*</span></label>
+                                                            <input type="number" class="form-control" id="budget_amount_{{ $budget->id }}"
+                                                                   name="budget_amount" value="{{ $budget->projected_revenue }}"
+                                                                   min="0" step="0.01" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="notes_{{ $budget->id }}">Notes</label>
+                                                            <textarea class="form-control" id="notes_{{ $budget->id }}"
+                                                                      name="notes" rows="2">{{ $budget->notes }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update Budget</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="ti ti-calendar-off display-6 text-muted mb-3 d-block"></i>
+                            <p class="text-muted mb-0">No budget history found. Add a budget for a specific year.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -245,6 +344,46 @@
         </div>
     </div>
 </div>
+
+<!-- Add Budget Modal -->
+@if(count($availableYears) > 0)
+<div class="modal fade" id="addBudgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('administration.products.budgets.store', $product) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Budget for Year</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="new_budget_year">Year <span class="text-danger">*</span></label>
+                        <select class="form-select" id="new_budget_year" name="budget_year" required>
+                            @foreach($availableYears as $year)
+                                <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>{{ $year }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="new_budget_amount">Budget Amount (EGP) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="new_budget_amount"
+                               name="budget_amount" min="0" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="new_budget_notes">Notes</label>
+                        <textarea class="form-control" id="new_budget_notes" name="notes" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @section('page-script')

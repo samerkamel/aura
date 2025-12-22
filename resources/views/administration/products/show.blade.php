@@ -84,7 +84,12 @@
                                 <span>{{ $product->phone }}</span>
                             </li>
                             @endif
-                            @if($product->budget_allocation)
+                            @if($currentYearBudget)
+                            <li class="mb-3">
+                                <span class="fw-medium me-2">{{ date('Y') }} Budget:</span>
+                                <span>{{ number_format($currentYearBudget->projected_revenue, 2) }} EGP</span>
+                            </li>
+                            @elseif($product->budget_allocation)
                             <li class="mb-3">
                                 <span class="fw-medium me-2">Budget Allocation:</span>
                                 <span>{{ number_format($product->budget_allocation, 2) }} EGP</span>
@@ -185,7 +190,7 @@
             </div>
 
             <!-- Assigned Contracts -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="ti ti-file-text me-2"></i>Assigned Contracts
@@ -254,6 +259,60 @@
                             <i class="ti ti-file-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Assigned Contracts</h5>
                             <p class="text-muted mb-0">This product has no contracts assigned yet.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Annual Budget History -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="ti ti-calendar-dollar me-2"></i>Annual Budget History
+                    </h5>
+                    <span class="badge bg-label-info">{{ $product->budgets->count() }} {{ $product->budgets->count() === 1 ? 'Year' : 'Years' }}</span>
+                </div>
+                <div class="card-body">
+                    @if($product->budgets->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th class="text-end">Budget Amount</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($product->budgets as $budget)
+                                    <tr class="{{ $budget->budget_year == date('Y') ? 'table-info' : '' }}">
+                                        <td>
+                                            <span class="fw-semibold">{{ $budget->budget_year }}</span>
+                                            @if($budget->budget_year == date('Y'))
+                                                <span class="badge bg-label-info ms-1">Current</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end fw-semibold">{{ number_format($budget->projected_revenue, 2) }} EGP</td>
+                                        <td>
+                                            @if($budget->notes)
+                                                <small class="text-muted">{{ \Illuminate\Support\Str::limit($budget->notes, 50) }}</small>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="ti ti-calendar-off ti-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Budget History</h5>
+                            <p class="text-muted mb-0">No annual budgets have been set for this product.</p>
+                            <a href="{{ route('administration.products.edit', $product) }}" class="btn btn-primary mt-3">
+                                <i class="ti ti-plus me-1"></i>Add Budget
+                            </a>
                         </div>
                     @endif
                 </div>

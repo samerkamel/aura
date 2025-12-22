@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\Budget;
 use App\Models\BusinessUnit;
 use App\Helpers\BusinessUnitHelper;
 
@@ -163,7 +164,8 @@ class ProductController extends Controller
                 'head_of_product' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'phone' => 'nullable|string|max:20',
-                'budget_allocation' => 'nullable|numeric|min:0',
+                'budget_year' => 'required|integer|min:2020|max:2050',
+                'budget_allocation' => 'required|numeric|min:0',
                 'business_unit_id' => 'nullable|exists:business_units,id',
             ]);
 
@@ -175,6 +177,9 @@ class ProductController extends Controller
                 abort(403, 'Unauthorized to create products in this business unit.');
             }
 
+            DB::beginTransaction();
+
+            // Create the product (budget_allocation stores current year's budget for quick access)
             $product = Product::create([
                 'name' => $request->name,
                 'code' => strtoupper($request->code),
@@ -187,11 +192,24 @@ class ProductController extends Controller
                 'business_unit_id' => $businessUnitId,
             ]);
 
+            // Create the budget record for the specified year
+            Budget::create([
+                'business_unit_id' => $businessUnitId,
+                'product_id' => $product->id,
+                'budget_year' => $request->budget_year,
+                'projected_revenue' => $request->budget_allocation,
+                'notes' => 'Initial budget created with product',
+                'created_by' => auth()->id(),
+            ]);
+
+            DB::commit();
+
             return redirect()
                 ->route('administration.products.show', $product)
-                ->with('success', 'Product created successfully.');
+                ->with('success', 'Product created successfully with ' . $request->budget_year . ' budget.');
 
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()
                 ->withInput()
                 ->withErrors(['error' => 'Failed to create product: ' . $e->getMessage()]);
@@ -213,9 +231,14 @@ class ProductController extends Controller
             abort(403, 'Unauthorized to view this product.');
         }
 
-        $product->load(['contracts', 'businessUnit']);
+        $product->load(['contracts', 'businessUnit', 'budgets' => function($query) {
+            $query->orderBy('budget_year', 'desc');
+        }]);
 
-        return view('administration.products.show', compact('product'));
+        // Get current year budget
+        $currentYearBudget = $product->budgets->where('budget_year', date('Y'))->first();
+
+        return view('administration.products.show', compact('product', 'currentYearBudget'));
     }
 
     /**
@@ -233,9 +256,22 @@ class ProductController extends Controller
             abort(403, 'Unauthorized to edit this product.');
         }
 
+        $product->load(['budgets' => function($query) {
+            $query->orderBy('budget_year', 'desc');
+        }]);
+
         $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
 
-        return view('administration.products.edit', compact('product', 'accessibleBusinessUnits'));
+        // Get years that don't have budgets yet
+        $existingYears = $product->budgets->pluck('budget_year')->toArray();
+        $availableYears = [];
+        for ($year = date('Y') + 1; $year >= date('Y') - 5; $year--) {
+            if (!in_array($year, $existingYears)) {
+                $availableYears[] = $year;
+            }
+        }
+
+        return view('administration.products.edit', compact('product', 'accessibleBusinessUnits', 'availableYears'));
     }
 
     /**
@@ -353,5 +389,130 @@ class ProductController extends Controller
         return redirect()
             ->back()
             ->with('success', "Product {$status} successfully.");
+    }
+
+    /**
+     * Add a budget for a specific year.
+     */
+    public function addBudget(Request $request, Product $product): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-products')) {
+            abort(403, 'Unauthorized to manage product budgets.');
+        }
+
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to manage this product.');
+        }
+
+        $request->validate([
+            'budget_year' => 'required|integer|min:2020|max:2050',
+            'budget_amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        // Check if budget already exists for this year
+        $existingBudget = Budget::where('product_id', $product->id)
+            ->where('budget_year', $request->budget_year)
+            ->first();
+
+        if ($existingBudget) {
+            return redirect()
+                ->back()
+                ->with('error', 'A budget already exists for ' . $request->budget_year . '. Please edit the existing budget instead.');
+        }
+
+        Budget::create([
+            'business_unit_id' => $product->business_unit_id,
+            'product_id' => $product->id,
+            'budget_year' => $request->budget_year,
+            'projected_revenue' => $request->budget_amount,
+            'notes' => $request->notes,
+            'created_by' => auth()->id(),
+        ]);
+
+        // Update product's budget_allocation if this is for current year
+        if ($request->budget_year == date('Y')) {
+            $product->update(['budget_allocation' => $request->budget_amount]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Budget for ' . $request->budget_year . ' added successfully.');
+    }
+
+    /**
+     * Update an existing budget.
+     */
+    public function updateBudget(Request $request, Product $product, Budget $budget): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-products')) {
+            abort(403, 'Unauthorized to manage product budgets.');
+        }
+
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to manage this product.');
+        }
+
+        // Verify budget belongs to this product
+        if ($budget->product_id !== $product->id) {
+            abort(404, 'Budget not found for this product.');
+        }
+
+        $request->validate([
+            'budget_amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $budget->update([
+            'projected_revenue' => $request->budget_amount,
+            'notes' => $request->notes,
+            'updated_by' => auth()->id(),
+        ]);
+
+        // Update product's budget_allocation if this is for current year
+        if ($budget->budget_year == date('Y')) {
+            $product->update(['budget_allocation' => $request->budget_amount]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Budget for ' . $budget->budget_year . ' updated successfully.');
+    }
+
+    /**
+     * Delete a budget.
+     */
+    public function deleteBudget(Product $product, Budget $budget): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-products')) {
+            abort(403, 'Unauthorized to manage product budgets.');
+        }
+
+        // Verify user has access to this product's business unit
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($product->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to manage this product.');
+        }
+
+        // Verify budget belongs to this product
+        if ($budget->product_id !== $product->id) {
+            abort(404, 'Budget not found for this product.');
+        }
+
+        $year = $budget->budget_year;
+        $budget->delete();
+
+        // If this was the current year's budget, reset the product's budget_allocation
+        if ($year == date('Y')) {
+            $product->update(['budget_allocation' => 0]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Budget for ' . $year . ' deleted successfully.');
     }
 }

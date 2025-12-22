@@ -388,6 +388,11 @@ Route::middleware(['auth'])->prefix('administration')->name('administration.')->
         Route::put('/{product}', [ProductController::class, 'update'])->name('update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
         Route::patch('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle-status');
+
+        // Product Budget Management
+        Route::post('/{product}/budgets', [ProductController::class, 'addBudget'])->name('budgets.store');
+        Route::put('/{product}/budgets/{budget}', [ProductController::class, 'updateBudget'])->name('budgets.update');
+        Route::delete('/{product}/budgets/{budget}', [ProductController::class, 'deleteBudget'])->name('budgets.destroy');
     });
 
     // Customer Management

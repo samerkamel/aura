@@ -124,15 +124,38 @@
                                 @enderror
                             </div>
 
+                            <!-- Annual Budget Section -->
+                            <div class="col-12">
+                                <hr class="my-3">
+                                <h6 class="mb-3"><i class="ti ti-calendar-dollar me-2"></i>Annual Budget</h6>
+                            </div>
+
+                            <!-- Budget Year -->
+                            <div class="col-md-6">
+                                <label class="form-label" for="budget_year">Budget Year <span class="text-danger">*</span></label>
+                                <select class="form-select @error('budget_year') is-invalid @enderror"
+                                        id="budget_year" name="budget_year" required>
+                                    @for($year = date('Y') + 1; $year >= date('Y') - 5; $year--)
+                                        <option value="{{ $year }}" {{ old('budget_year', date('Y')) == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('budget_year')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <!-- Budget Allocation -->
                             <div class="col-md-6">
-                                <label class="form-label" for="budget_allocation">Budget Allocation (EGP)</label>
+                                <label class="form-label" for="budget_allocation">Budget Amount (EGP) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control @error('budget_allocation') is-invalid @enderror"
                                        id="budget_allocation" name="budget_allocation" value="{{ old('budget_allocation') }}"
-                                       min="0" step="0.01">
+                                       min="0" step="0.01" required>
                                 @error('budget_allocation')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted">Annual target budget for this product</small>
                             </div>
 
                             <!-- Email -->
@@ -198,9 +221,16 @@
                         <ul class="mb-0 ps-3">
                             <li>Product name and code are required</li>
                             <li>Product codes must be unique</li>
-                            <li>Budget allocation is optional but recommended</li>
                             <li>Products can be assigned to contracts for cost allocation</li>
                             <li>Inactive products cannot receive new contract assignments</li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <h6><i class="ti ti-calendar-dollar me-1"></i>Annual Budget</h6>
+                        <ul class="mb-0 ps-3">
+                            <li>Budgets are tracked per year</li>
+                            <li>You can add budgets for different years after creation</li>
+                            <li>Budget history is maintained for reporting</li>
                         </ul>
                     </div>
                 </div>
