@@ -258,6 +258,97 @@ class ProjectController extends Controller
     }
 
     /**
+     * Display all worklogs for a project with filtering and pagination.
+     */
+    public function worklogs(Request $request, Project $project): View
+    {
+        $project->load(['customer', 'employees']);
+
+        // Build query
+        $query = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+            ->with('employee')
+            ->orderBy('worklog_started', 'desc');
+
+        // Filter by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('worklog_started', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter by employee
+        if ($request->filled('employee_id')) {
+            $query->where('employee_id', $request->employee_id);
+        }
+
+        // Filter by issue key
+        if ($request->filled('issue_key')) {
+            $query->where('issue_key', 'LIKE', '%' . $request->issue_key . '%');
+        }
+
+        // Search in description/comment
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('comment', 'LIKE', '%' . $search . '%')
+                  ->orWhere('issue_summary', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        // Get paginated results
+        $worklogs = $query->paginate(50)->withQueryString();
+
+        // Get summary stats for current filter
+        $statsQuery = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%');
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $statsQuery->whereBetween('worklog_started', [$request->start_date, $request->end_date]);
+        }
+        if ($request->filled('employee_id')) {
+            $statsQuery->where('employee_id', $request->employee_id);
+        }
+        if ($request->filled('issue_key')) {
+            $statsQuery->where('issue_key', 'LIKE', '%' . $request->issue_key . '%');
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $statsQuery->where(function ($q) use ($search) {
+                $q->where('comment', 'LIKE', '%' . $search . '%')
+                  ->orWhere('issue_summary', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $totalHours = $statsQuery->sum('time_spent_hours');
+        $totalEntries = $statsQuery->count();
+
+        // Get employees who have worklogs on this project for the filter dropdown
+        $employeesWithWorklogs = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+            ->whereNotNull('employee_id')
+            ->with('employee')
+            ->get()
+            ->pluck('employee')
+            ->filter()
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
+
+        // Get unique issue keys for filter suggestions
+        $issueKeys = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
+            ->distinct()
+            ->pluck('issue_key')
+            ->sort()
+            ->values();
+
+        return view('project::projects.worklogs', [
+            'project' => $project,
+            'worklogs' => $worklogs,
+            'totalHours' => $totalHours,
+            'totalEntries' => $totalEntries,
+            'employeesWithWorklogs' => $employeesWithWorklogs,
+            'issueKeys' => $issueKeys,
+            'filters' => $request->only(['start_date', 'end_date', 'employee_id', 'issue_key', 'search']),
+        ]);
+    }
+
+    /**
      * Show the employees management page for a project.
      */
     public function manageEmployees(Project $project): View

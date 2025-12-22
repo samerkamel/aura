@@ -33,6 +33,7 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::put('/{project}', [ProjectController::class, 'update'])->name('update');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
     Route::post('/{project}/toggle-monthly-report', [ProjectController::class, 'toggleMonthlyReport'])->name('toggle-monthly-report');
+    Route::get('/{project}/worklogs', [ProjectController::class, 'worklogs'])->name('worklogs');
 
     // Employee assignment routes
     Route::get('/{project}/employees', [ProjectController::class, 'manageEmployees'])->name('manage-employees');

@@ -495,7 +495,12 @@
       <h5 class="mb-0">
         <i class="ti ti-list me-2 text-warning"></i>Recent Work Entries
       </h5>
-      <span class="badge bg-secondary">{{ $worklogs->count() }} entries</span>
+      <div>
+        <span class="badge bg-secondary me-2">{{ $worklogs->count() }} entries</span>
+        <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-sm btn-outline-primary">
+          <i class="ti ti-eye me-1"></i>View All
+        </a>
+      </div>
     </div>
     <div class="card-body">
       @if($worklogs->count() > 0)
@@ -533,7 +538,9 @@
         </div>
         @if($worklogs->count() > 20)
           <div class="text-center mt-3">
-            <small class="text-muted">Showing 20 of {{ $worklogs->count() }} entries</small>
+            <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-outline-primary btn-sm">
+              <i class="ti ti-eye me-1"></i>View all {{ $worklogs->count() }} entries
+            </a>
           </div>
         @endif
       @else
