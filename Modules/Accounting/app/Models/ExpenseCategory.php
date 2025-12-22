@@ -5,6 +5,7 @@ namespace Modules\Accounting\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -159,5 +160,39 @@ class ExpenseCategory extends Model
         }
 
         return $this->name;
+    }
+
+    /**
+     * Get all budgets for this category.
+     */
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(ExpenseCategoryBudget::class, 'expense_category_id');
+    }
+
+    /**
+     * Get budget for a specific year.
+     */
+    public function budgetForYear(int $year): ?ExpenseCategoryBudget
+    {
+        return $this->budgets()->where('budget_year', $year)->first();
+    }
+
+    /**
+     * Get the current year's budget.
+     */
+    public function currentYearBudget(): HasOne
+    {
+        return $this->hasOne(ExpenseCategoryBudget::class, 'expense_category_id')
+            ->where('budget_year', (int) date('Y'));
+    }
+
+    /**
+     * Get the current year's budget percentage.
+     */
+    public function getCurrentYearBudgetPercentageAttribute(): ?float
+    {
+        $budget = $this->currentYearBudget;
+        return $budget ? $budget->budget_percentage : null;
     }
 }

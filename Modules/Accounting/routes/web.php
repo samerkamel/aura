@@ -36,6 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/categories/{category}', [ExpenseController::class, 'destroyCategory'])->name('categories.destroy');
             Route::patch('/categories/{category}/toggle-status', [ExpenseController::class, 'toggleCategoryStatus'])->name('categories.toggle-status');
 
+            // Category Budget management
+            Route::get('/categories/budgets', [ExpenseController::class, 'categoryBudgets'])->name('categories.budgets');
+            Route::post('/categories/{category}/budgets', [ExpenseController::class, 'storeCategoryBudget'])->name('categories.budgets.store');
+            Route::put('/categories/{category}/budgets/{budget}', [ExpenseController::class, 'updateCategoryBudget'])->name('categories.budgets.update');
+            Route::delete('/categories/{category}/budgets/{budget}', [ExpenseController::class, 'destroyCategoryBudget'])->name('categories.budgets.destroy');
+
             // Category CSV Import routes
             Route::get('/categories/import', [ExpenseController::class, 'importCategoriesForm'])->name('categories.import');
             Route::post('/categories/import', [ExpenseController::class, 'importCategories'])->name('categories.import.process');

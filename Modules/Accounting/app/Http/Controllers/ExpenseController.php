@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\ExpenseCategory;
+use Modules\Accounting\Models\ExpenseCategoryBudget;
 use Modules\Accounting\Models\Account;
 use Modules\Accounting\Http\Requests\StoreExpenseScheduleRequest;
 use Modules\Accounting\Http\Requests\UpdateExpenseScheduleRequest;
@@ -535,6 +536,140 @@ class ExpenseController extends Controller
         return redirect()
             ->back()
             ->with('success', "Category {$status} successfully.");
+    }
+
+    /**
+     * Display budget management page for expense categories.
+     */
+    public function categoryBudgets(Request $request): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to manage expense category budgets.');
+        }
+
+        $year = $request->get('year', (int) date('Y'));
+
+        // Get only main categories (top-level) with their budgets
+        $categories = ExpenseCategory::mainCategories()
+            ->active()
+            ->with(['budgets' => function ($query) use ($year) {
+                $query->where('budget_year', $year);
+            }, 'expenseType'])
+            ->orderBy('name')
+            ->get();
+
+        // Calculate YTD spending for each category
+        $yearStart = now()->setYear($year)->startOfYear();
+        $currentDate = $year == date('Y') ? now() : now()->setYear($year)->endOfYear();
+        $monthsElapsed = $yearStart->diffInMonths($currentDate) + 1;
+
+        foreach ($categories as $category) {
+            $category->ytd_spending = $this->calculateYtdTotal($category);
+            $category->ytd_average_per_month = $monthsElapsed > 0 ? $category->ytd_spending / $monthsElapsed : 0;
+        }
+
+        // Get available years for selection
+        $availableYears = range(date('Y') - 2, date('Y') + 2);
+
+        return view('accounting::expenses.category-budgets', compact('categories', 'year', 'availableYears'));
+    }
+
+    /**
+     * Store a new category budget.
+     */
+    public function storeCategoryBudget(Request $request, ExpenseCategory $category): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to manage expense category budgets.');
+        }
+
+        // Ensure this is a main category (top-level)
+        if ($category->parent_id !== null) {
+            return redirect()->back()->with('error', 'Budgets can only be set for main categories.');
+        }
+
+        $request->validate([
+            'budget_year' => 'required|integer|min:2020|max:2050',
+            'budget_percentage' => 'required|numeric|min:0|max:100',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        // Check if budget already exists for this category and year
+        $existingBudget = ExpenseCategoryBudget::where('expense_category_id', $category->id)
+            ->where('budget_year', $request->budget_year)
+            ->first();
+
+        if ($existingBudget) {
+            return redirect()->back()->with('error', "A budget for {$request->budget_year} already exists for this category.");
+        }
+
+        ExpenseCategoryBudget::create([
+            'expense_category_id' => $category->id,
+            'budget_year' => $request->budget_year,
+            'budget_percentage' => $request->budget_percentage,
+            'notes' => $request->notes,
+            'created_by' => auth()->id(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', "Budget for {$request->budget_year} added to {$category->name}.");
+    }
+
+    /**
+     * Update an existing category budget.
+     */
+    public function updateCategoryBudget(Request $request, ExpenseCategory $category, ExpenseCategoryBudget $budget): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to manage expense category budgets.');
+        }
+
+        // Verify budget belongs to this category
+        if ($budget->expense_category_id !== $category->id) {
+            abort(404, 'Budget not found for this category.');
+        }
+
+        $request->validate([
+            'budget_percentage' => 'required|numeric|min:0|max:100',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $budget->update([
+            'budget_percentage' => $request->budget_percentage,
+            'notes' => $request->notes,
+            'updated_by' => auth()->id(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', "Budget for {$budget->budget_year} updated successfully.");
+    }
+
+    /**
+     * Delete a category budget.
+     */
+    public function destroyCategoryBudget(ExpenseCategory $category, ExpenseCategoryBudget $budget): RedirectResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-expense-categories')) {
+            abort(403, 'Unauthorized to manage expense category budgets.');
+        }
+
+        // Verify budget belongs to this category
+        if ($budget->expense_category_id !== $category->id) {
+            abort(404, 'Budget not found for this category.');
+        }
+
+        $year = $budget->budget_year;
+        $budget->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', "Budget for {$year} deleted successfully.");
     }
 
     /**

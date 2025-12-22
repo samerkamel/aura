@@ -12,6 +12,9 @@
                     <small class="text-muted">Organize and manage expense categories with YTD tracking</small>
                 </div>
                 <div class="d-flex gap-2">
+                    <a href="{{ route('accounting.expenses.categories.budgets') }}" class="btn btn-warning">
+                        <i class="ti ti-percentage me-1"></i>Manage Budgets
+                    </a>
                     <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-info">
                         <i class="ti ti-receipt me-1"></i>Paid Expenses
                     </a>
