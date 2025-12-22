@@ -5,6 +5,7 @@ namespace Modules\Project\Models;
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\HR\Models\Employee;
 use Modules\Payroll\Models\JiraWorklog;
 
 class Project extends Model
@@ -132,5 +133,71 @@ class Project extends Model
     public function getTotalPaidAttribute()
     {
         return $this->invoices()->sum('paid_amount');
+    }
+
+    /**
+     * Get the employees assigned to this project.
+     */
+    public function employees()
+    {
+        return $this->belongsToMany(Employee::class, 'project_employee')
+                    ->withPivot(['role', 'auto_assigned', 'assigned_at'])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Sync employees from worklogs - auto-assign employees who have logged time.
+     */
+    public function syncEmployeesFromWorklogs(): array
+    {
+        $employeeIds = JiraWorklog::where('issue_key', 'LIKE', $this->code . '-%')
+            ->whereNotNull('employee_id')
+            ->distinct()
+            ->pluck('employee_id')
+            ->toArray();
+
+        $added = 0;
+        foreach ($employeeIds as $employeeId) {
+            // Only add if not already assigned
+            if (!$this->employees()->where('employee_id', $employeeId)->exists()) {
+                $this->employees()->attach($employeeId, [
+                    'role' => 'member',
+                    'auto_assigned' => true,
+                    'assigned_at' => now(),
+                ]);
+                $added++;
+            }
+        }
+
+        return [
+            'total_with_worklogs' => count($employeeIds),
+            'newly_added' => $added,
+        ];
+    }
+
+    /**
+     * Check if an employee is assigned to this project.
+     */
+    public function hasEmployee(Employee $employee): bool
+    {
+        return $this->employees()->where('employee_id', $employee->id)->exists();
+    }
+
+    /**
+     * Get employees who have worklogs but are not assigned.
+     */
+    public function getUnassignedWorklogEmployees()
+    {
+        $worklogEmployeeIds = JiraWorklog::where('issue_key', 'LIKE', $this->code . '-%')
+            ->whereNotNull('employee_id')
+            ->distinct()
+            ->pluck('employee_id')
+            ->toArray();
+
+        $assignedEmployeeIds = $this->employees()->pluck('employees.id')->toArray();
+
+        $unassignedIds = array_diff($worklogEmployeeIds, $assignedEmployeeIds);
+
+        return Employee::whereIn('id', $unassignedIds)->get();
     }
 }

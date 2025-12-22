@@ -7,6 +7,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
 use Modules\Project\Services\JiraProjectSyncService;
 
@@ -98,7 +99,7 @@ class ProjectController extends Controller
      */
     public function show(Request $request, Project $project): View
     {
-        $project->load(['customer', 'invoices.payments', 'invoices.customer', 'contracts.payments', 'contracts.customer']);
+        $project->load(['customer', 'employees', 'invoices.payments', 'invoices.customer', 'contracts.payments', 'contracts.customer']);
 
         // Get worklogs with optional date filtering (default: lifetime/all time)
         $startDate = $request->filled('start_date') ? $request->start_date : null;
@@ -254,5 +255,110 @@ class ProjectController extends Controller
         return redirect()
             ->back()
             ->with('success', "Monthly report {$status} for {$project->name}.");
+    }
+
+    /**
+     * Show the employees management page for a project.
+     */
+    public function manageEmployees(Project $project): View
+    {
+        $project->load('employees');
+
+        // Get all active employees not already assigned
+        $assignedEmployeeIds = $project->employees->pluck('id')->toArray();
+        $availableEmployees = Employee::active()
+            ->whereNotIn('id', $assignedEmployeeIds)
+            ->orderBy('name')
+            ->get();
+
+        // Get employees with worklogs but not assigned
+        $unassignedWorklogEmployees = $project->getUnassignedWorklogEmployees();
+
+        return view('project::projects.manage-employees', [
+            'project' => $project,
+            'availableEmployees' => $availableEmployees,
+            'unassignedWorklogEmployees' => $unassignedWorklogEmployees,
+        ]);
+    }
+
+    /**
+     * Assign an employee to a project.
+     */
+    public function assignEmployee(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'role' => 'required|in:member,lead',
+        ]);
+
+        // Check if already assigned
+        if ($project->employees()->where('employee_id', $validated['employee_id'])->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Employee is already assigned to this project.');
+        }
+
+        $project->employees()->attach($validated['employee_id'], [
+            'role' => $validated['role'],
+            'auto_assigned' => false,
+            'assigned_at' => now(),
+        ]);
+
+        $employee = Employee::find($validated['employee_id']);
+
+        return redirect()
+            ->back()
+            ->with('success', "{$employee->name} has been assigned to the project.");
+    }
+
+    /**
+     * Update an employee's role in a project.
+     */
+    public function updateEmployeeRole(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'role' => 'required|in:member,lead',
+        ]);
+
+        $project->employees()->updateExistingPivot($validated['employee_id'], [
+            'role' => $validated['role'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Employee role updated successfully.');
+    }
+
+    /**
+     * Remove an employee from a project.
+     */
+    public function unassignEmployee(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $project->employees()->detach($validated['employee_id']);
+
+        $employee = Employee::find($validated['employee_id']);
+
+        return redirect()
+            ->back()
+            ->with('success', "{$employee->name} has been removed from the project.");
+    }
+
+    /**
+     * Sync employees from worklogs for a project.
+     */
+    public function syncEmployeesFromWorklogs(Project $project): RedirectResponse
+    {
+        $result = $project->syncEmployeesFromWorklogs();
+
+        $message = "Sync complete: {$result['newly_added']} new employees added from {$result['total_with_worklogs']} with worklogs.";
+
+        return redirect()
+            ->back()
+            ->with('success', $message);
     }
 }

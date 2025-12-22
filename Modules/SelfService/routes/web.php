@@ -7,6 +7,7 @@ use Modules\SelfService\Http\Controllers\WfhRequestController;
 use Modules\SelfService\Http\Controllers\PermissionRequestController;
 use Modules\SelfService\Http\Controllers\MyAttendanceController;
 use Modules\SelfService\Http\Controllers\ApprovalController;
+use Modules\SelfService\Http\Controllers\MyProjectsController;
 
 Route::middleware(['auth', 'verified', 'ensure.has.employee'])->prefix('self-service')->name('self-service.')->group(function () {
 
@@ -42,4 +43,8 @@ Route::middleware(['auth', 'verified', 'ensure.has.employee'])->prefix('self-ser
     Route::get('approvals/{selfServiceRequest}', [ApprovalController::class, 'show'])->name('approvals.show');
     Route::post('approvals/{selfServiceRequest}/approve', [ApprovalController::class, 'approve'])->name('approvals.approve');
     Route::post('approvals/{selfServiceRequest}/reject', [ApprovalController::class, 'reject'])->name('approvals.reject');
+
+    // My Projects
+    Route::get('projects', [MyProjectsController::class, 'index'])->name('projects.index');
+    Route::get('projects/{project}', [MyProjectsController::class, 'show'])->name('projects.show');
 });

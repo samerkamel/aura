@@ -34,6 +34,11 @@
           "url": "self-service/permission-requests",
           "name": "Permission Requests",
           "slug": "self-service-permission-requests"
+        },
+        {
+          "url": "self-service/projects",
+          "name": "My Projects",
+          "slug": "self-service-projects"
         }
       ]
     },

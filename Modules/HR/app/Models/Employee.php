@@ -239,6 +239,24 @@ class Employee extends Model
   }
 
   /**
+   * Get the projects this employee is assigned to.
+   */
+  public function projects()
+  {
+    return $this->belongsToMany(\Modules\Project\Models\Project::class, 'project_employee')
+      ->withPivot(['role', 'auto_assigned', 'assigned_at'])
+      ->withTimestamps();
+  }
+
+  /**
+   * Get the user account linked to this employee.
+   */
+  public function user()
+  {
+    return $this->hasOne(\App\Models\User::class, 'email', 'email');
+  }
+
+  /**
    * Create a new factory instance for the model.
    */
   protected static function newFactory()

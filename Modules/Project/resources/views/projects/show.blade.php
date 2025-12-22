@@ -53,9 +53,14 @@
         @endif
       </div>
       <div>
+        <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
+          <i class="ti ti-users me-1"></i>Manage Team
+        </a>
+        @can('view-financial-reports')
         <a href="{{ route('projects.edit', $project) }}" class="btn btn-light btn-sm">
           <i class="ti ti-pencil me-1"></i>Edit
         </a>
+        @endcan
         <a href="{{ route('projects.index') }}" class="btn btn-outline-light btn-sm">
           <i class="ti ti-arrow-left me-1"></i>Back
         </a>
@@ -82,6 +87,15 @@
         </div>
       </div>
     </div>
+    <div class="col-lg col-md-6 mb-3 mb-lg-0">
+      <div class="card h-100">
+        <div class="card-body stat-card">
+          <div class="stat-value text-info">{{ $project->employees->count() }}</div>
+          <small class="text-muted">Team Members</small>
+        </div>
+      </div>
+    </div>
+    @can('view-financial-reports')
     <div class="col-lg col-md-6 mb-3 mb-lg-0">
       <div class="card h-100">
         <div class="card-body stat-card">
@@ -114,8 +128,10 @@
         </div>
       </div>
     </div>
+    @endcan
   </div>
 
+  @can('view-financial-reports')
   <!-- Contracts Section -->
   <div class="row mb-4">
     <div class="col-12">
@@ -237,8 +253,57 @@
       </div>
     </div>
   </div>
+  @endcan
+
+  <!-- Team Members Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-users me-2 text-info"></i>Team Members
+            <span class="badge bg-info ms-2">{{ $project->employees->count() }}</span>
+          </h5>
+          <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
+            <i class="ti ti-settings me-1"></i>Manage Team
+          </a>
+        </div>
+        <div class="card-body">
+          @if($project->employees->count() > 0)
+            <div class="row">
+              @foreach($project->employees->sortByDesc('pivot.role') as $employee)
+                <div class="col-md-4 col-sm-6 mb-3">
+                  <div class="d-flex align-items-center p-2 border rounded">
+                    <div class="avatar avatar-sm me-3" style="background-color: {{ '#' . substr(md5($employee->name), 0, 6) }}; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                      {{ strtoupper(substr($employee->name, 0, 2)) }}
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0">{{ $employee->name }}</h6>
+                      <small class="text-muted">{{ $employee->position ?? 'Team Member' }}</small>
+                      @if($employee->pivot->role === 'lead')
+                        <span class="badge bg-label-warning ms-1">Lead</span>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <div class="text-center py-4">
+              <i class="ti ti-users-group display-6 text-muted mb-3 d-block"></i>
+              <p class="text-muted mb-3">No team members assigned yet.</p>
+              <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
+                <i class="ti ti-user-plus me-1"></i>Add Team Members
+              </a>
+            </div>
+          @endif
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
+    @can('view-financial-reports')
     <!-- Invoices Section -->
     <div class="col-lg-6 mb-4">
       <div class="card h-100">
@@ -335,6 +400,7 @@
         </div>
       </div>
     </div>
+    @endcan
 
     <!-- Hours by Employee Section -->
     <div class="col-lg-6 mb-4">
