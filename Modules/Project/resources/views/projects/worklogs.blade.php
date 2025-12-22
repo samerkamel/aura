@@ -161,10 +161,6 @@
                   </td>
                   <td>
                     <span class="badge bg-label-primary">{{ $worklog->issue_key }}</span>
-                    @if($worklog->issue_summary)
-                      <br>
-                      <small class="text-muted">{{ \Illuminate\Support\Str::limit($worklog->issue_summary, 30) }}</small>
-                    @endif
                   </td>
                   <td>
                     @if($worklog->issue_summary)
