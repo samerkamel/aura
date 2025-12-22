@@ -133,7 +133,7 @@
                 <th style="width: 100px;">Date</th>
                 <th style="width: 150px;">Employee</th>
                 <th style="width: 120px;">Issue</th>
-                <th>Task Name <small class="text-muted fw-normal">(hover for details)</small></th>
+                <th>Task Name</th>
                 <th style="width: 80px;" class="text-end">Hours</th>
               </tr>
             </thead>
@@ -165,11 +165,11 @@
                   <td>
                     @if($worklog->issue_summary)
                       <div class="text-wrap" style="max-width: 400px;">
-                        <span class="fw-semibold" @if($worklog->comment) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ e($worklog->comment) }}" @endif>
-                          {{ $worklog->issue_summary }}
-                        </span>
+                        <span class="fw-semibold">{{ $worklog->issue_summary }}</span>
                         @if($worklog->comment)
-                          <i class="ti ti-info-circle text-muted ms-1" style="cursor: help;"></i>
+                          <span class="badge bg-label-info ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ e($worklog->comment) }}" style="cursor: help;">
+                            <i class="ti ti-message-circle me-1"></i>Details
+                          </span>
                         @endif
                       </div>
                     @elseif($worklog->comment)
