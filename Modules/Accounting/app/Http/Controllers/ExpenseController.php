@@ -397,13 +397,28 @@ class ExpenseController extends Controller
         if (!auth()->user()->can('manage-expense-categories')) {
             abort(403, 'Unauthorized to manage expense categories.');
         }
+
+        $currentYear = (int) date('Y');
+
+        // Get total projected revenue from all products for current year
+        $totalYearlyRevenue = \App\Models\Budget::where('budget_year', $currentYear)
+            ->sum('projected_revenue');
+        $totalMonthlyRevenue = $totalYearlyRevenue / 12;
+
+        // Calculate Net Income (after Tier 1 deductions)
+        $tier1Percentage = ExpenseCategoryBudget::TIER1_PERCENTAGE;
+        $yearlyNetIncome = $totalYearlyRevenue * (1 - $tier1Percentage / 100);
+        $monthlyNetIncome = $yearlyNetIncome / 12;
+
         // Get main categories first
         $mainCategories = ExpenseCategory::withCount(['expenseSchedules', 'activeExpenseSchedules'])
             ->with(['subcategories' => function ($query) {
                 $query->withCount(['expenseSchedules', 'activeExpenseSchedules'])
                       ->orderBy('sort_order')
                       ->orderBy('name');
-            }, 'expenseType'])
+            }, 'expenseType', 'budgets' => function ($query) use ($currentYear) {
+                $query->where('budget_year', $currentYear);
+            }])
             ->mainCategories()
             ->orderBy('name')
             ->get();
@@ -420,6 +435,23 @@ class ExpenseController extends Controller
             $mainCategory->ytd_average_per_month = $monthsElapsed > 0 ? $mainCategory->ytd_total / $monthsElapsed : 0;
             $mainCategory->average_scheduled_per_month = $mainCategory->monthly_amount;
 
+            // Calculate planned budget based on tier
+            $budget = $mainCategory->budgets->first();
+            if ($budget) {
+                $percentage = $budget->budget_percentage;
+                if ($budget->calculation_base === 'total_revenue') {
+                    // Tier 1: from total revenue
+                    $mainCategory->planned_monthly = ($percentage / 100) * $totalMonthlyRevenue;
+                } else {
+                    // Tier 2: from net income
+                    $mainCategory->planned_monthly = ($percentage / 100) * $monthlyNetIncome;
+                }
+                $mainCategory->planned_ytd = $mainCategory->planned_monthly * $monthsElapsed;
+            } else {
+                $mainCategory->planned_monthly = 0;
+                $mainCategory->planned_ytd = 0;
+            }
+
             $categories->push($mainCategory);
 
             // Add subcategories right after their parent
@@ -431,6 +463,10 @@ class ExpenseController extends Controller
                 $subcategory->ytd_total = $this->calculateYtdTotal($subcategory);
                 $subcategory->ytd_average_per_month = $monthsElapsed > 0 ? $subcategory->ytd_total / $monthsElapsed : 0;
                 $subcategory->average_scheduled_per_month = $subcategory->monthly_amount;
+
+                // Subcategories don't have their own budget - set to 0
+                $subcategory->planned_monthly = 0;
+                $subcategory->planned_ytd = 0;
 
                 $categories->push($subcategory);
             }
@@ -447,7 +483,17 @@ class ExpenseController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes'));
+        // Pass revenue summary to the view
+        $revenueSummary = [
+            'total_yearly_revenue' => $totalYearlyRevenue,
+            'total_monthly_revenue' => $totalMonthlyRevenue,
+            'yearly_net_income' => $yearlyNetIncome,
+            'monthly_net_income' => $monthlyNetIncome,
+            'tier1_percentage' => $tier1Percentage,
+            'months_elapsed' => $monthsElapsed,
+        ];
+
+        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary'));
     }
 
     /**

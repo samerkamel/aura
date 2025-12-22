@@ -44,6 +44,31 @@
                 </div>
             @endif
 
+            @if(isset($revenueSummary) && $revenueSummary['total_yearly_revenue'] > 0)
+            <div class="card-body pt-0">
+                <div class="alert alert-light border mb-0">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Yearly Revenue Target</small>
+                            <strong class="text-primary">{{ number_format($revenueSummary['total_yearly_revenue'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Monthly Revenue</small>
+                            <strong class="text-primary">{{ number_format($revenueSummary['total_monthly_revenue'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Monthly Net Income ({{ 100 - $revenueSummary['tier1_percentage'] }}%)</small>
+                            <strong class="text-success">{{ number_format($revenueSummary['monthly_net_income'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Months Elapsed ({{ date('Y') }})</small>
+                            <strong>{{ $revenueSummary['months_elapsed'] }} / 12</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="table-responsive text-nowrap">
                 <table class="table">
                     <thead>
@@ -51,9 +76,10 @@
                             <th>Category</th>
                             <th>Type</th>
                             <th>Description</th>
-                            <th>Total YTD</th>
-                            <th>Average per Month YTD</th>
-                            <th>Average Scheduled per Month</th>
+                            <th class="text-end">Plan (Monthly)</th>
+                            <th class="text-end">Plan (YTD)</th>
+                            <th class="text-end">Actual YTD</th>
+                            <th class="text-end">Avg/Month YTD</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -96,27 +122,41 @@
                                     @endif
                                 </td>
                                 <td class="{{ !$category->is_active ? 'text-muted' : '' }}">
-                                    {{ $category->description ?: 'No description' }}
+                                    {{ \Illuminate\Support\Str::limit($category->description, 30) ?: '-' }}
                                 </td>
-                                <td>
+                                <td class="text-end">
+                                    @if($category->planned_monthly > 0)
+                                        <strong class="text-info">{{ number_format($category->planned_monthly, 0) }}</strong>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">
+                                    @if($category->planned_ytd > 0)
+                                        <strong class="text-info">{{ number_format($category->planned_ytd, 0) }}</strong>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">
                                     @if($category->ytd_total > 0)
-                                        <strong class="text-danger">{{ number_format($category->ytd_total, 2) }} EGP</strong>
+                                        @php
+                                            $variance = $category->planned_ytd > 0 ? (($category->ytd_total - $category->planned_ytd) / $category->planned_ytd) * 100 : 0;
+                                            $varianceClass = $category->ytd_total > $category->planned_ytd ? 'text-danger' : 'text-success';
+                                        @endphp
+                                        <strong class="{{ $category->planned_ytd > 0 ? $varianceClass : 'text-warning' }}">{{ number_format($category->ytd_total, 0) }}</strong>
+                                        @if($category->planned_ytd > 0)
+                                            <br><small class="{{ $varianceClass }}">({{ $variance >= 0 ? '+' : '' }}{{ number_format($variance, 1) }}%)</small>
+                                        @endif
                                     @else
-                                        <span class="text-muted">0.00 EGP</span>
+                                        <span class="text-muted">0</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-end">
                                     @if($category->ytd_average_per_month > 0)
-                                        <strong class="text-warning">{{ number_format($category->ytd_average_per_month, 2) }} EGP</strong>
+                                        <strong class="text-warning">{{ number_format($category->ytd_average_per_month, 0) }}</strong>
                                     @else
-                                        <span class="text-muted">0.00 EGP</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($category->average_scheduled_per_month > 0)
-                                        <strong class="text-info">{{ number_format($category->average_scheduled_per_month, 2) }} EGP</strong>
-                                    @else
-                                        <span class="text-muted">0.00 EGP</span>
+                                        <span class="text-muted">0</span>
                                     @endif
                                 </td>
                                 <td>
@@ -158,7 +198,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No categories found</h5>
