@@ -192,7 +192,7 @@
                                         <td class="text-end fw-semibold">{{ number_format($budget->projected_revenue, 2) }} EGP</td>
                                         <td>
                                             @if($budget->notes)
-                                                <small class="text-muted">{{ Str::limit($budget->notes, 50) }}</small>
+                                                <small class="text-muted">{{ \Illuminate\Support\Str::limit($budget->notes, 50) }}</small>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
