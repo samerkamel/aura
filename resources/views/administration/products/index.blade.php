@@ -114,7 +114,7 @@
                             </span>
                         </div>
                         <div>
-                            <small class="text-muted d-block">Total YTD Budget</small>
+                            <small class="text-muted d-block">{{ date('Y') }} YTD Budget</small>
                             <div class="d-flex align-items-center">
                                 <h6 class="mb-0 me-1">{{ number_format($statistics['total_ytd_budget'], 0) }} EGP</h6>
                             </div>
@@ -133,7 +133,7 @@
                             </span>
                         </div>
                         <div>
-                            <small class="text-muted d-block">Total Budget</small>
+                            <small class="text-muted d-block">{{ date('Y') }} Total Budget</small>
                             <div class="d-flex align-items-center">
                                 <h6 class="mb-0 me-1">{{ number_format($statistics['total_budget'], 0) }} EGP</h6>
                             </div>
@@ -195,7 +195,7 @@
                         <th>Business Unit</th>
                         <th>Contracts</th>
                         <th>YTD Budget</th>
-                        <th>Budget</th>
+                        <th>{{ date('Y') }} Budget</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -250,16 +250,16 @@
                             </small>
                         </td>
                         <td>
-                            @if($product->budget_allocation)
+                            @if($product->current_year_budget > 0)
                                 <div class="d-flex align-items-center">
-                                    <span class="fw-medium me-2">{{ number_format($product->budget_allocation, 0) }} EGP</span>
+                                    <span class="fw-medium me-2">{{ number_format($product->current_year_budget, 0) }} EGP</span>
                                     <span class="badge bg-label-info">{{ number_format($product->budget_percentage, 1) }}%</span>
                                 </div>
                                 <small class="text-muted d-block">
-                                    {{ number_format($product->budget_percentage, 1) }}% of total budget
+                                    {{ date('Y') }} budget ({{ number_format($product->budget_percentage, 1) }}% of total)
                                 </small>
                             @else
-                                <span class="text-muted">Not set</span>
+                                <span class="text-muted">No {{ date('Y') }} budget</span>
                             @endif
                         </td>
                         <td>

@@ -62,17 +62,23 @@ class ProductController extends Controller
 
         $products = $query->with(['contracts' => function($q) {
             $q->where('status', 'active');
-        }, 'businessUnit'])->orderBy('name')->paginate(15);
+        }, 'businessUnit', 'budgets'])->orderBy('name')->paginate(15);
 
         // Calculate YTD budget and contract values for each product
+        $currentYear = (int) date('Y');
         foreach ($products as $product) {
+            // Get current year's budget from budgets table
+            $currentYearBudget = $product->budgets->where('budget_year', $currentYear)->first();
+            $budgetAmount = $currentYearBudget ? $currentYearBudget->projected_revenue : 0;
+
             // Calculate YTD budget (pro-rated based on how much of the year has passed)
             $currentDate = now();
             $yearStart = $currentDate->copy()->startOfYear();
             $daysInYear = $yearStart->daysInYear;
             $daysPassed = $yearStart->diffInDays($currentDate) + 1;
 
-            $product->ytd_budget = ($product->budget_allocation * $daysPassed) / $daysInYear;
+            $product->ytd_budget = ($budgetAmount * $daysPassed) / $daysInYear;
+            $product->current_year_budget = $budgetAmount;
 
             // Calculate total contract allocations for this product
             $contractValue = $product->contracts->sum(function($contract) {
@@ -92,15 +98,16 @@ class ProductController extends Controller
                 : 0;
         }
 
-        // Calculate total budget for percentage calculations (using same filtering as main query)
-        $totalBudgetQuery = Product::where('is_active', true);
-        $totalBudgetQuery = $this->applyBusinessUnitFilter($totalBudgetQuery, $request);
-        $totalActiveBudget = $totalBudgetQuery->sum('budget_allocation');
-
-        // Add budget percentage to each product
+        // Calculate total budget for percentage calculations using current year budgets
+        $totalActiveBudget = 0;
         foreach ($products as $product) {
-            $product->budget_percentage = $totalActiveBudget > 0 && $product->budget_allocation > 0
-                ? ($product->budget_allocation / $totalActiveBudget) * 100
+            $totalActiveBudget += $product->current_year_budget;
+        }
+
+        // Add budget percentage to each product (based on current year budget)
+        foreach ($products as $product) {
+            $product->budget_percentage = $totalActiveBudget > 0 && $product->current_year_budget > 0
+                ? ($product->current_year_budget / $totalActiveBudget) * 100
                 : 0;
         }
 
