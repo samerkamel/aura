@@ -138,8 +138,8 @@ class ProjectController extends Controller
                 ->sum('time_spent_hours');
         }
 
-        // Calculate project cost (lifetime hours * hourly cost per employee)
-        // Hourly cost = Employee Salary / 120
+        // Calculate project cost (lifetime hours * hourly cost per employee * 3)
+        // Hourly cost = Employee Salary / 120, then multiplied by 3 for full cost
         $lifetimeWorklogs = ($startDate && $endDate)
             ? \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')->with('employee')->get()
             : $worklogs;
@@ -150,7 +150,7 @@ class ProjectController extends Controller
 
             if ($employee && $employee->base_salary > 0) {
                 $hourlyCost = $employee->base_salary / 120;
-                return $hourlyCost * $totalEmployeeHours;
+                return $hourlyCost * $totalEmployeeHours * 3;
             }
             return 0;
         });
