@@ -133,7 +133,7 @@
                 <th style="width: 100px;">Date</th>
                 <th style="width: 150px;">Employee</th>
                 <th style="width: 120px;">Issue</th>
-                <th>Description</th>
+                <th>Task Name <small class="text-muted fw-normal">(hover for details)</small></th>
                 <th style="width: 80px;" class="text-end">Hours</th>
               </tr>
             </thead>
@@ -167,7 +167,16 @@
                     @endif
                   </td>
                   <td>
-                    @if($worklog->comment)
+                    @if($worklog->issue_summary)
+                      <div class="text-wrap" style="max-width: 400px;">
+                        <span class="fw-semibold" @if($worklog->comment) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ e($worklog->comment) }}" @endif>
+                          {{ $worklog->issue_summary }}
+                        </span>
+                        @if($worklog->comment)
+                          <i class="ti ti-info-circle text-muted ms-1" style="cursor: help;"></i>
+                        @endif
+                      </div>
+                    @elseif($worklog->comment)
                       <div class="text-wrap" style="max-width: 400px;">
                         {{ $worklog->comment }}
                       </div>
@@ -263,6 +272,14 @@ document.addEventListener('DOMContentLoaded', function() {
       allowClear: true
     });
   }
+
+  // Initialize Bootstrap tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl, {
+      container: 'body'
+    });
+  });
 });
 </script>
 @endsection
