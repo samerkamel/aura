@@ -59,7 +59,7 @@
                         @csrf
 
                         <div class="row g-3">
-                            <!-- Business Unit Selection (if user has access to multiple BUs) -->
+                            <!-- Business Unit Selection -->
                             @if(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() > 1)
                             <div class="col-12">
                                 <label class="form-label" for="business_unit_id">Business Unit <span class="text-danger">*</span></label>
@@ -80,6 +80,10 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            @elseif(isset($currentBusinessUnit) && $currentBusinessUnit)
+                                <input type="hidden" name="business_unit_id" value="{{ $currentBusinessUnit->id }}">
+                            @elseif(isset($accessibleBusinessUnits) && $accessibleBusinessUnits->count() == 1)
+                                <input type="hidden" name="business_unit_id" value="{{ $accessibleBusinessUnits->first()->id }}">
                             @endif
 
                             <!-- Name -->

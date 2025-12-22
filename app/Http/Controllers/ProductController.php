@@ -169,11 +169,15 @@ class ProductController extends Controller
                 'business_unit_id' => 'nullable|exists:business_units,id',
             ]);
 
-            // Determine business unit ID
-            $businessUnitId = $request->business_unit_id ?? BusinessUnitHelper::getCurrentBusinessUnitId();
+            // Determine business unit ID (default to 1 if business units are disabled)
+            $businessUnitId = $request->business_unit_id
+                ?? BusinessUnitHelper::getCurrentBusinessUnitId()
+                ?? BusinessUnit::first()?->id
+                ?? 1;
 
-            // Verify user has access to the selected business unit
-            if (!BusinessUnitHelper::isSuperAdmin() && !in_array($businessUnitId, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            // Verify user has access to the selected business unit (skip if business units disabled)
+            $accessibleIds = BusinessUnitHelper::getAccessibleBusinessUnitIds();
+            if (!BusinessUnitHelper::isSuperAdmin() && !empty($accessibleIds) && !in_array($businessUnitId, $accessibleIds)) {
                 abort(403, 'Unauthorized to create products in this business unit.');
             }
 
