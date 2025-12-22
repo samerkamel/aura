@@ -190,6 +190,7 @@ class ProductController extends Controller
                 'budget_allocation' => $request->budget_allocation,
                 'is_active' => $request->has('is_active'),
                 'business_unit_id' => $businessUnitId,
+                'created_by' => auth()->id(),
             ]);
 
             // Create the budget record for the specified year

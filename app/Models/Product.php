@@ -22,6 +22,8 @@ class Product extends Model
         'budget_allocation',
         'is_active',
         'business_unit_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
