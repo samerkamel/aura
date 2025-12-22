@@ -201,13 +201,13 @@
     },
     {
       "menuHeader": "Projects",
-      "roles": ["super-admin", "finance-manager", "hr-manager"]
+      "roles": ["super-admin", "finance-manager", "hr-manager", "project-manager"]
     },
     {
       "name": "Projects",
       "icon": "menu-icon tf-icons ti ti-folder",
       "slug": "projects",
-      "roles": ["super-admin", "finance-manager", "hr-manager"],
+      "roles": ["super-admin", "finance-manager", "hr-manager", "project-manager"],
       "submenu": [
         {
           "url": "projects",

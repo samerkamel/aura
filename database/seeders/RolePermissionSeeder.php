@@ -94,6 +94,13 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'manage-internal-transactions', 'display_name' => 'Manage Internal Transactions', 'description' => 'Can create and edit internal transactions', 'category' => 'internal-accounting'],
             ['name' => 'approve-internal-transactions', 'display_name' => 'Approve Internal Transactions', 'description' => 'Can approve or reject internal transactions', 'category' => 'internal-accounting'],
             ['name' => 'manage-internal-sequences', 'display_name' => 'Manage Internal Sequences', 'description' => 'Can configure internal transaction numbering', 'category' => 'internal-accounting'],
+
+            // Project Management
+            ['name' => 'view-projects', 'display_name' => 'View Projects', 'description' => 'Can view project list and details', 'category' => 'projects'],
+            ['name' => 'manage-projects', 'display_name' => 'Manage Projects', 'description' => 'Can create, edit, and delete projects', 'category' => 'projects'],
+            ['name' => 'view-project-financials', 'display_name' => 'View Project Financials', 'description' => 'Can view project financial data including costs and rates', 'category' => 'projects'],
+            ['name' => 'manage-project-reports', 'display_name' => 'Manage Project Reports', 'description' => 'Can generate and manage project reports', 'category' => 'projects'],
+            ['name' => 'manage-project-employees', 'display_name' => 'Manage Project Employees', 'description' => 'Can assign and unassign employees to projects', 'category' => 'projects'],
         ];
 
         foreach ($permissions as $permissionData) {
@@ -171,6 +178,17 @@ class RolePermissionSeeder extends Seeder
                 'permissions' => [
                     'view-accounting-readonly', 'view-financial-reports',
                     'view-invoices', 'view-internal-transactions', 'view-budgets'
+                ]
+            ],
+            [
+                'name' => 'project-manager',
+                'display_name' => 'Project Manager',
+                'description' => 'Can view all projects and their financial data, but no access to accounting or other financial modules',
+                'permissions' => [
+                    'view-projects', 'manage-projects',
+                    'view-project-financials', 'manage-project-reports',
+                    'manage-project-employees',
+                    'view-employees'
                 ]
             ],
             [
