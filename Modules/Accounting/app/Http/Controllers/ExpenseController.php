@@ -457,6 +457,7 @@ class ExpenseController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:expense_categories,name',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
             'parent_id' => 'nullable|exists:expense_categories,id',
@@ -464,7 +465,7 @@ class ExpenseController extends Controller
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
-        $data = $request->only(['name', 'description', 'color', 'parent_id', 'expense_type_id', 'sort_order']);
+        $data = $request->only(['name', 'name_ar', 'description', 'color', 'parent_id', 'expense_type_id', 'sort_order']);
 
         // If creating a subcategory, inherit expense type from parent
         if (!empty($data['parent_id']) && empty($data['expense_type_id'])) {
@@ -492,6 +493,7 @@ class ExpenseController extends Controller
         // Validate based on category type
         $rules = [
             'name' => 'required|string|max:255|unique:expense_categories,name,' . $category->id,
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
         ];
@@ -505,7 +507,7 @@ class ExpenseController extends Controller
 
         $request->validate($rules);
 
-        $data = $request->only(['name', 'description', 'color', 'expense_type_id']);
+        $data = $request->only(['name', 'name_ar', 'description', 'color', 'expense_type_id']);
 
         // Only main categories can have expense types
         if ($category->parent_id !== null) {

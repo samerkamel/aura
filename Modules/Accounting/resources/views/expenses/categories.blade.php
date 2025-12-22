@@ -68,6 +68,9 @@
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
                                             <strong>{{ $category->name }}</strong>
+                                            @if($category->name_ar)
+                                                <br><span class="text-muted" dir="rtl">{{ $category->name_ar }}</span>
+                                            @endif
                                             @if($category->parent)
                                                 <br><small class="text-muted">Under: {{ $category->parent->name }}</small>
                                             @elseif($category->subcategories->count() > 0)
@@ -126,6 +129,7 @@
                                                data-bs-target="#editCategoryModal"
                                                data-id="{{ $category->id }}"
                                                data-name="{{ $category->name }}"
+                                               data-name-ar="{{ $category->name_ar }}"
                                                data-description="{{ $category->description }}"
                                                data-color="{{ $category->color }}"
                                                data-parent-id="{{ $category->parent_id }}"
@@ -184,9 +188,15 @@
             <form action="{{ route('accounting.expenses.categories.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="add_name" class="form-label">Category Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="add_name" name="name" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="add_name" class="form-label">Category Name (English) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add_name_ar" class="form-label">Category Name (Arabic)</label>
+                            <input type="text" class="form-control" id="add_name_ar" name="name_ar" dir="rtl">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -254,9 +264,15 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="edit_name" class="form-label">Category Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_name" class="form-label">Category Name (English) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_name_ar" class="form-label">Category Name (Arabic)</label>
+                            <input type="text" class="form-control" id="edit_name_ar" name="name_ar" dir="rtl">
+                        </div>
                     </div>
 
                     <div class="mb-3" id="edit_expense_type_field">
@@ -390,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const button = event.relatedTarget;
         const categoryId = button.getAttribute('data-id');
         const categoryName = button.getAttribute('data-name');
+        const categoryNameAr = button.getAttribute('data-name-ar');
         const categoryDescription = button.getAttribute('data-description');
         const categoryColor = button.getAttribute('data-color');
         const parentId = button.getAttribute('data-parent-id');
@@ -399,6 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.action = `/accounting/expenses/categories/${categoryId}`;
 
         document.getElementById('edit_name').value = categoryName;
+        document.getElementById('edit_name_ar').value = categoryNameAr || '';
         document.getElementById('edit_description').value = categoryDescription || '';
         document.getElementById('edit_color').value = categoryColor;
         document.getElementById('edit_color_text').value = categoryColor.toUpperCase();

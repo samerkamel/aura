@@ -75,7 +75,12 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
-                                        <strong>{{ $category->name }}</strong>
+                                        <div>
+                                            <strong>{{ $category->name }}</strong>
+                                            @if($category->name_ar)
+                                                <br><span class="text-muted" dir="rtl">{{ $category->name_ar }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
