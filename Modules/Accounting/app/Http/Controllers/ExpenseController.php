@@ -571,6 +571,13 @@ class ExpenseController extends Controller
             $category->ytd_average_per_month = $monthsElapsed > 0 ? $category->ytd_spending / $monthsElapsed : 0;
         }
 
+        // Sort by tier: Tier 1 (total_revenue) first, then Tier 2 (net_income), then by name
+        $tierOrder = ['total_revenue' => 1, 'net_income' => 2];
+        $categories = $categories->sortBy([
+            fn ($a, $b) => ($tierOrder[$a->budgets->first()?->calculation_base ?? 'net_income'] ?? 2) <=> ($tierOrder[$b->budgets->first()?->calculation_base ?? 'net_income'] ?? 2),
+            fn ($a, $b) => $a->name <=> $b->name,
+        ])->values();
+
         // Get available years for selection
         $availableYears = range(date('Y') - 2, date('Y') + 2);
 
