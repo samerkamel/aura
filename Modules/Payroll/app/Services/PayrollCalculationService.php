@@ -8,6 +8,7 @@ use Modules\Payroll\Models\JiraWorklog;
 use Modules\Payroll\Models\PayrollPeriodSetting;
 use Modules\Attendance\Models\Setting;
 use Modules\Attendance\Models\WfhRecord;
+use Modules\Leave\Models\LeaveRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -221,8 +222,8 @@ class PayrollCalculationService
    */
   private function getAdditionalMetrics(Employee $employee, Carbon $periodStart, Carbon $periodEnd): array
   {
-    // Get PTO days - will be implemented when Leave module is available
-    $ptoDays = 0;
+    // Get PTO/Leave days - count actual leave days within the period
+    $ptoDays = $this->calculateLeaveDaysInPeriod($employee, $periodStart, $periodEnd);
 
     // Get WFH days
     $wfhDays = WfhRecord::where('employee_id', $employee->id)
@@ -237,6 +238,49 @@ class PayrollCalculationService
       'wfh_days' => $wfhDays,
       'penalty_minutes' => $penaltyMinutes,
     ];
+  }
+
+  /**
+   * Calculate the number of leave days within the payroll period.
+   * Only counts approved leave records and calculates the overlap with the period.
+   *
+   * @param Employee $employee
+   * @param Carbon $periodStart
+   * @param Carbon $periodEnd
+   * @return int Number of leave days within the period
+   */
+  private function calculateLeaveDaysInPeriod(Employee $employee, Carbon $periodStart, Carbon $periodEnd): int
+  {
+    // Get approved leave records that overlap with the period
+    $leaveRecords = LeaveRecord::where('employee_id', $employee->id)
+      ->approved()
+      ->inDateRange($periodStart, $periodEnd)
+      ->get();
+
+    $totalLeaveDays = 0;
+
+    foreach ($leaveRecords as $leaveRecord) {
+      // Calculate the overlap between leave dates and payroll period
+      $leaveStart = $leaveRecord->start_date;
+      $leaveEnd = $leaveRecord->end_date;
+
+      // Get the actual start (max of leave start and period start)
+      $effectiveStart = $leaveStart->gt($periodStart) ? $leaveStart : $periodStart;
+
+      // Get the actual end (min of leave end and period end)
+      $effectiveEnd = $leaveEnd->lt($periodEnd) ? $leaveEnd : $periodEnd;
+
+      // Count working days (excluding weekends) in the effective range
+      $current = $effectiveStart->copy();
+      while ($current->lte($effectiveEnd)) {
+        if ($current->isWeekday()) {
+          $totalLeaveDays++;
+        }
+        $current->addDay();
+      }
+    }
+
+    return $totalLeaveDays;
   }
 
   /**
