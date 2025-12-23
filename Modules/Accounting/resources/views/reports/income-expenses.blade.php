@@ -113,16 +113,24 @@
                             <td class="text-end">-</td>
                             <td class="text-end">-</td>
                         </tr>
+                        @php
+                            // Find VAT category to get its percentage
+                            $vatCategory = $categories->first(fn($c) => stripos($c->name, 'VAT') !== false && !$c->parent_id);
+                            $vatPercentage = $vatCategory ? $vatCategory->budget_percentage : 0;
+                            $monthlyRevenueLessVat = $revenueSummary['total_monthly_revenue'] * (1 - $vatPercentage / 100);
+                        @endphp
+                        <tr class="fw-bold" style="background-color: #e8f5e9;">
+                            <td>Total Revenue Less VAT ({{ number_format($vatPercentage, 0) }}%)</td>
+                            <td class="text-center"><span class="badge bg-label-success">{{ number_format(100 - $vatPercentage, 1) }}%</span></td>
+                            <td class="text-end text-success">{{ number_format($monthlyRevenueLessVat, 0) }}</td>
+                            <td class="text-end text-success">{{ number_format($monthlyRevenueLessVat * $revenueSummary['months_elapsed'], 0) }}</td>
+                            <td class="text-end">-</td>
+                            <td class="text-end">-</td>
+                            <td class="text-end">-</td>
+                        </tr>
 
                         {{-- Separator --}}
-                        <tr><td colspan="7" class="py-2"></td></tr>
-
-                        {{-- Expenses Section Header --}}
-                        <tr class="table-danger">
-                            <td colspan="7" class="fw-bold">
-                                <i class="ti ti-arrow-up-right me-1"></i> EXPENSES
-                            </td>
-                        </tr>
+                        <tr><td colspan="7" class="py-1"></td></tr>
 
                         @php $currentTier = null; @endphp
                         @foreach($categories as $category)
@@ -152,16 +160,6 @@
                                     </tr>
                                 @endif
                                 @php $currentTier = $category->tier; @endphp
-                                {{-- Tier Header --}}
-                                <tr class="table-secondary">
-                                    <td colspan="7" class="fw-bold">
-                                        @if($category->tier == 1)
-                                            <i class="ti ti-arrow-right me-1"></i> From Total Revenue (R)
-                                        @else
-                                            <i class="ti ti-arrow-right me-1"></i> From Net Income (NI)
-                                        @endif
-                                    </td>
-                                </tr>
                             @endif
                             <tr class="{{ !$category->is_active ? 'opacity-50' : '' }}">
                                 <td>
