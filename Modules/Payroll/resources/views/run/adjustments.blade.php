@@ -74,6 +74,13 @@
               <small class="text-muted">Adjust salaries, add bonuses or deductions</small>
             </div>
             <div>
+              <form method="POST" action="{{ route('payroll.run.recalculate') }}" class="d-inline me-2">
+                @csrf
+                <input type="hidden" name="period" value="{{ $selectedPeriod }}">
+                <button type="submit" class="btn btn-label-info btn-sm" onclick="return confirm('This will recalculate all payroll data from current employee records. Any unsaved adjustments will be lost. Continue?')">
+                  <i class="ti ti-calculator me-1"></i>Recalculate
+                </button>
+              </form>
               <button type="button" class="btn btn-label-warning btn-sm" onclick="resetAllAdjustments()">
                 <i class="ti ti-refresh me-1"></i>Reset All
               </button>
