@@ -298,8 +298,25 @@
 
 <style>
 @media print {
-    /* Hide navigation and controls */
-    .layout-navbar, .layout-menu, .card-header .d-flex.gap-2, .btn { display: none !important; }
+    /* Hide navigation and controls - remove from flow completely */
+    .layout-navbar, .layout-menu, .menu-vertical, .card-header .d-flex.gap-2, .btn,
+    .layout-page, .content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .layout-navbar, .layout-menu, .menu-vertical {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+    .layout-wrapper, .layout-container, .layout-page, .content-wrapper, .container-xxl {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
 
     /* Hide subtitle */
     .card-header small.text-muted { display: none !important; }
@@ -308,14 +325,23 @@
     .net-income-percentage { display: none !important; }
 
     /* Card styling */
-    .card { border: none !important; box-shadow: none !important; }
+    .card { border: none !important; box-shadow: none !important; margin: 0 !important; }
 
     /* Table styling */
-    .table { font-size: 10px !important; }
+    .table { font-size: 9px !important; table-layout: fixed !important; width: 100% !important; }
 
-    /* Give category column more space */
+    /* Category column - fixed width with ellipsis for overflow */
     .table th:first-child, .table td:first-child {
-        width: 35% !important;
+        width: 25% !important;
+        max-width: 180px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    /* Other columns */
+    .table th, .table td {
+        padding: 2px 4px !important;
         white-space: nowrap !important;
     }
 
@@ -323,10 +349,18 @@
     .category-color-dot { display: none !important; }
 
     /* Print colors */
-    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
     /* Reduce padding */
-    .card-body, .card-header { padding: 0.5rem !important; }
+    .card-body, .card-header { padding: 0.25rem !important; }
+
+    /* Alert box compact */
+    .alert { padding: 0.25rem !important; margin-bottom: 0.25rem !important; }
 }
 </style>
 
