@@ -425,14 +425,13 @@ class ExpenseController extends Controller
             ->get();
 
         // Calculate YTD values for each category
-        $yearStart = now()->setYear($currentYear)->startOfYear();
         $isCurrentYear = $currentYear == (int) date('Y');
         $isFutureYear = $currentYear > (int) date('Y');
 
-        // For current year: months elapsed so far
+        // For current year: use current month number (1-12)
         // For past years: full 12 months
         // For future years: full 12 months (projection)
-        $monthsElapsed = $isCurrentYear ? (now()->diffInMonths($yearStart) + 1) : 12;
+        $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
 
         // Flatten the hierarchy for the table display
         $categories = collect();
