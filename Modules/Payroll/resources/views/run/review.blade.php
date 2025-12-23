@@ -236,7 +236,7 @@
                 <i class="ti ti-settings me-2"></i>Adjust Weights
               </a>
 
-              <a href="{{ route('payroll.run.adjustments', ['period' => $periodStart->format('Y-m')]) }}" class="btn btn-primary">
+              <a href="{{ route('payroll.run.adjustments', ['period' => $periodEnd->format('Y-m')]) }}" class="btn btn-primary">
                 <i class="ti ti-adjustments me-2"></i>Proceed to Adjustments
               </a>
             </div>

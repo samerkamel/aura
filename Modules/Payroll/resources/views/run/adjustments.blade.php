@@ -14,7 +14,7 @@
               <i class="ti ti-adjustments me-2"></i>Adjust Payroll
             </h5>
             <small class="text-muted">
-              Make adjustments before finalizing payroll for {{ $periodStart->format('F Y') }}
+              Make adjustments before finalizing payroll for {{ $periodEnd->format('F Y') }}
             </small>
           </div>
           <a href="{{ route('payroll.run.review', ['period' => $selectedPeriod]) }}" class="btn btn-label-secondary">
