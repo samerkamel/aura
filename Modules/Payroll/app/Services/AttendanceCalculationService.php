@@ -6,6 +6,7 @@ use Modules\HR\Models\Employee;
 use Modules\Attendance\Models\AttendanceLog;
 use Modules\Attendance\Models\AttendanceRule;
 use Modules\Attendance\Models\PermissionOverride;
+use Modules\Attendance\Models\PermissionUsage;
 use Modules\Attendance\Models\PublicHoliday;
 use Modules\Attendance\Models\Setting;
 use Modules\Attendance\Models\WfhRecord;
@@ -46,6 +47,9 @@ class AttendanceCalculationService
 
     // Apply WFH records - these contribute based on WFH policy percentage
     $dailyHours = $this->applyWfhRecords($dailyHours, $data['wfhRecords'], $data['wfhRule']);
+
+    // Apply permission usages - add permission hours to daily attendance
+    $dailyHours = $this->applyPermissionUsages($dailyHours, $data['permissionUsages']);
 
     // Check if daily hours were calculated
     if (empty($dailyHours)) {
@@ -128,6 +132,11 @@ class AttendanceCalculationService
     // Get WFH policy rule
     $wfhRule = AttendanceRule::where('rule_type', 'wfh_policy')->first();
 
+    // Get actual permission usages for the employee within the period
+    $permissionUsages = PermissionUsage::where('employee_id', $employee->id)
+      ->whereBetween('date', [$periodStartInclusive, $periodEndInclusive])
+      ->get();
+
     return [
       'attendanceLogs' => $attendanceLogs,
       'flexibleHoursRule' => $flexibleHoursRule,
@@ -137,6 +146,7 @@ class AttendanceCalculationService
       'leaveRecords' => $leaveRecords,
       'wfhRecords' => $wfhRecords,
       'wfhRule' => $wfhRule,
+      'permissionUsages' => $permissionUsages,
     ];
   }
 
@@ -451,6 +461,45 @@ class AttendanceCalculationService
         $dailyHours[$dateKey]['raw_hours'] = $wfhHours;
         $dailyHours[$dateKey]['is_wfh_day'] = true;
         $dailyHours[$dateKey]['wfh_hours'] = $wfhHours;
+      }
+    }
+
+    return $dailyHours;
+  }
+
+  /**
+   * Apply permission usages to daily hours calculation.
+   * Each permission usage adds its minutes as attendance hours for that day.
+   *
+   * @param array $dailyHours
+   * @param Collection $permissionUsages
+   * @return array
+   */
+  protected function applyPermissionUsages(array $dailyHours, Collection $permissionUsages): array
+  {
+    if ($permissionUsages->isEmpty()) {
+      return $dailyHours;
+    }
+
+    foreach ($permissionUsages as $permissionUsage) {
+      $dateKey = $permissionUsage->date->format('Y-m-d');
+      $permissionHours = $permissionUsage->minutes_used / 60;
+
+      if (isset($dailyHours[$dateKey])) {
+        // Add permission hours to existing day's attendance
+        $dailyHours[$dateKey]['raw_hours'] += $permissionHours;
+        $dailyHours[$dateKey]['permission_hours'] = $permissionHours;
+        $dailyHours[$dateKey]['has_permission'] = true;
+      } else {
+        // Create entry for permission-only day (rare case)
+        $dailyHours[$dateKey] = [
+          'raw_hours' => $permissionHours,
+          'sign_in_time' => null,
+          'sign_out_time' => null,
+          'issue' => null,
+          'permission_hours' => $permissionHours,
+          'has_permission' => true,
+        ];
       }
     }
 

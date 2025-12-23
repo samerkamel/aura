@@ -172,6 +172,12 @@ class AttendanceController extends Controller
             $permissionUsage = $permissionUsages->get($permissionKey);
             $record['permission_usage'] = $permissionUsage;
             $record['has_permission'] = $permissionUsage !== null;
+            $record['permission_minutes'] = $permissionUsage ? $permissionUsage->minutes_used : 0;
+
+            // Add permission minutes to total (permission hours count as attendance)
+            if ($record['has_permission']) {
+                $record['total_minutes'] += $permissionUsage->minutes_used;
+            }
 
             // Calculate late minutes (how late after flexible hours end)
             $record['late_minutes'] = 0;
@@ -743,6 +749,11 @@ class AttendanceController extends Controller
                             $totalLatePenaltyMinutes += AttendanceRule::calculateLatePenalty($lateMinutes);
                         }
                     }
+                }
+
+                // Add permission minutes to total attendance (permission hours count as attendance)
+                foreach ($permissionUsages as $permissionUsage) {
+                    $totalMinutes += $permissionUsage->minutes_used;
                 }
 
                 // Get public holidays in period
