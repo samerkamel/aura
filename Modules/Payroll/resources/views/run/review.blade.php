@@ -227,7 +227,7 @@
         <div class="card-body text-center py-4">
           <p class="text-muted mb-3">
             <i class="ti ti-info-circle me-2"></i>
-            Review the calculations above before finalizing the payroll. This is for verification purposes only.
+            Review the calculations above. Click "Proceed to Adjustments" to make salary adjustments before finalizing.
           </p>
 
           @if($employeeSummaries->count() > 0)
@@ -236,14 +236,9 @@
                 <i class="ti ti-settings me-2"></i>Adjust Weights
               </a>
 
-              <form method="POST" action="{{ route('payroll.run.finalize') }}" class="d-inline"
-                    onsubmit="return confirm('Are you sure you want to finalize this payroll? This action cannot be undone and will generate the bank submission file.')">
-                @csrf
-                <input type="hidden" name="period" value="{{ $periodStart->format('Y-m') }}">
-                <button type="submit" class="btn btn-success">
-                  <i class="ti ti-file-export me-2"></i>Finalize & Export Bank Sheet
-                </button>
-              </form>
+              <a href="{{ route('payroll.run.adjustments', ['period' => $periodStart->format('Y-m')]) }}" class="btn btn-primary">
+                <i class="ti ti-adjustments me-2"></i>Proceed to Adjustments
+              </a>
             </div>
 
             @if ($errors->has('finalization'))

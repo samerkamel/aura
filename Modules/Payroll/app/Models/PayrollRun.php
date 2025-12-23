@@ -28,6 +28,12 @@ class PayrollRun extends Model
         'period_end_date',
         'base_salary',
         'final_salary',
+        'calculated_salary',
+        'adjusted_salary',
+        'bonus_amount',
+        'deduction_amount',
+        'adjustment_notes',
+        'is_adjusted',
         'performance_percentage',
         'calculation_snapshot',
         'status',
@@ -41,6 +47,11 @@ class PayrollRun extends Model
         'period_end_date' => 'date',
         'base_salary' => 'decimal:2',
         'final_salary' => 'decimal:2',
+        'calculated_salary' => 'decimal:2',
+        'adjusted_salary' => 'decimal:2',
+        'bonus_amount' => 'decimal:2',
+        'deduction_amount' => 'decimal:2',
+        'is_adjusted' => 'boolean',
         'performance_percentage' => 'decimal:2',
         'calculation_snapshot' => 'array',
     ];
@@ -68,5 +79,23 @@ class PayrollRun extends Model
     {
         return $query->where('period_start_date', $startDate)
             ->where('period_end_date', $endDate);
+    }
+
+    /**
+     * Get the effective salary after all adjustments.
+     * Priority: adjusted_salary (if set) OR calculated_salary + bonus - deductions
+     */
+    public function getEffectiveSalaryAttribute(): float
+    {
+        $baseSalary = $this->adjusted_salary ?? $this->calculated_salary ?? $this->final_salary ?? 0;
+        return (float) $baseSalary + (float) ($this->bonus_amount ?? 0) - (float) ($this->deduction_amount ?? 0);
+    }
+
+    /**
+     * Scope to get payroll runs pending adjustment.
+     */
+    public function scopePendingAdjustment($query)
+    {
+        return $query->where('status', 'pending_adjustment');
     }
 }

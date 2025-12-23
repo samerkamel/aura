@@ -37,5 +37,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Payroll Run & Review Routes
         Route::get('run-review', [PayrollRunController::class, 'review'])->name('run.review');
         Route::post('run-finalize', [PayrollRunController::class, 'finalizeAndExport'])->name('run.finalize');
+
+        // Payroll Adjustments Routes
+        Route::get('run-adjustments', [PayrollRunController::class, 'adjustments'])->name('run.adjustments');
+        Route::post('run-adjustments', [PayrollRunController::class, 'saveAdjustments'])->name('run.adjustments.save');
+        Route::post('run-finalize-adjusted', [PayrollRunController::class, 'finalizeFromAdjustments'])->name('run.finalize-adjusted');
+        Route::post('run-recalculate', [PayrollRunController::class, 'recalculate'])->name('run.recalculate');
     });
 });
