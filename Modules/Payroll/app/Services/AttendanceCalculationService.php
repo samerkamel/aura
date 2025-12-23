@@ -7,6 +7,7 @@ use Modules\Attendance\Models\AttendanceLog;
 use Modules\Attendance\Models\AttendanceRule;
 use Modules\Attendance\Models\PermissionOverride;
 use Modules\Attendance\Models\PublicHoliday;
+use Modules\Attendance\Models\Setting;
 use Modules\Attendance\Models\WfhRecord;
 use Modules\Leave\Models\LeaveRecord;
 use Carbon\Carbon;
@@ -410,7 +411,7 @@ class AttendanceCalculationService
 
   /**
    * Apply WFH records to daily hours calculation.
-   * WFH days contribute to attendance based on the percentage defined in the WFH Policy.
+   * WFH days contribute a fixed number of hours from settings (default 6 hours).
    *
    * @param array $dailyHours
    * @param Collection $wfhRecords
@@ -423,12 +424,8 @@ class AttendanceCalculationService
       return $dailyHours;
     }
 
-    // Get WFH contribution percentage (default to 100% if no rule)
-    // WFH days should count as full work days for payroll
-    $wfhContributionPercentage = 1.0; // 100% - WFH counts as full attendance
-
-    // Get standard work hours (default to 8 hours)
-    $standardWorkHours = 8.0;
+    // Get WFH hours from settings (default to 6 hours)
+    $wfhHours = (float) Setting::get('wfh_attendance_hours', 6);
 
     foreach ($wfhRecords as $wfhRecord) {
       $dateKey = $wfhRecord->date->format('Y-m-d');
@@ -441,19 +438,19 @@ class AttendanceCalculationService
       // If there's no attendance record for this date, create one for WFH
       if (!isset($dailyHours[$dateKey])) {
         $dailyHours[$dateKey] = [
-          'raw_hours' => $standardWorkHours * $wfhContributionPercentage,
+          'raw_hours' => $wfhHours,
           'sign_in_time' => null,
           'sign_out_time' => null,
           'issue' => null,
           'is_wfh_day' => true,
-          'wfh_contribution_percentage' => $wfhContributionPercentage * 100,
+          'wfh_hours' => $wfhHours,
         ];
       } else {
-        // If there's already an attendance record, apply WFH contribution
-        // WFH percentage applies to the existing hours
-        $dailyHours[$dateKey]['raw_hours'] *= $wfhContributionPercentage;
+        // If there's already an attendance record, use WFH hours instead
+        // WFH replaces existing hours for that day
+        $dailyHours[$dateKey]['raw_hours'] = $wfhHours;
         $dailyHours[$dateKey]['is_wfh_day'] = true;
-        $dailyHours[$dateKey]['wfh_contribution_percentage'] = $wfhContributionPercentage * 100;
+        $dailyHours[$dateKey]['wfh_hours'] = $wfhHours;
       }
     }
 

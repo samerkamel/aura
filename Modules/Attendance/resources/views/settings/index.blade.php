@@ -59,9 +59,35 @@
                 </div>
                 <div class="form-text">
                   <i class="ti ti-info-circle me-1"></i>
-                  Enter the standard number of work hours required per day (e.g., 8)
+                  Enter the standard number of work hours required per day (e.g., 8). Also used for vacation days.
                 </div>
                 @error('work_hours_per_day')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+
+              <!-- WFH Attendance Hours -->
+              <div class="mb-4">
+                <label for="wfh_attendance_hours" class="form-label">
+                  WFH Attendance Hours <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number"
+                         class="form-control @error('wfh_attendance_hours') is-invalid @enderror"
+                         id="wfh_attendance_hours"
+                         name="wfh_attendance_hours"
+                         value="{{ old('wfh_attendance_hours', $wfhAttendanceHours) }}"
+                         step="0.5"
+                         min="0.5"
+                         max="24"
+                         required>
+                  <span class="input-group-text">hours</span>
+                </div>
+                <div class="form-text">
+                  <i class="ti ti-info-circle me-1"></i>
+                  Hours counted as attendance for Work From Home days (e.g., 6)
+                </div>
+                @error('wfh_attendance_hours')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>
@@ -143,6 +169,7 @@
                 <h6><i class="ti ti-info-circle me-1"></i>Current Settings Summary</h6>
                 <ul class="mb-0">
                   <li><strong>Work Hours per Day:</strong> {{ $workHoursPerDay }} hours</li>
+                  <li><strong>WFH Attendance Hours:</strong> {{ $wfhAttendanceHours }} hours</li>
                   <li><strong>Weekend Days:</strong>
                     @if(is_array($weekendDays) && count($weekendDays) > 0)
                       {{ implode(', ', array_map('ucfirst', $weekendDays)) }}

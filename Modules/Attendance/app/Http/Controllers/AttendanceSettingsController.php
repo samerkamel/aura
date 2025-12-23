@@ -26,10 +26,11 @@ class AttendanceSettingsController extends Controller
     {
         // Get current settings with defaults
         $workHoursPerDay = Setting::get('work_hours_per_day', 8);
+        $wfhAttendanceHours = Setting::get('wfh_attendance_hours', 6);
         $weekendDays = Setting::get('weekend_days', ['friday', 'saturday']);
         $allowPastDateRequests = (bool) Setting::get('allow_past_date_requests', false);
 
-        return view('attendance::settings.index', compact('workHoursPerDay', 'weekendDays', 'allowPastDateRequests'));
+        return view('attendance::settings.index', compact('workHoursPerDay', 'wfhAttendanceHours', 'weekendDays', 'allowPastDateRequests'));
     }
 
     /**
@@ -39,6 +40,7 @@ class AttendanceSettingsController extends Controller
     {
         $request->validate([
             'work_hours_per_day' => 'required|numeric|min:0.5|max:24',
+            'wfh_attendance_hours' => 'required|numeric|min:0.5|max:24',
             'weekend_days' => 'required|array|min:1|max:7',
             'weekend_days.*' => 'required|string|in:sunday,monday,tuesday,wednesday,thursday,friday,saturday',
             'allow_past_date_requests' => 'nullable|boolean'
@@ -49,6 +51,13 @@ class AttendanceSettingsController extends Controller
             'work_hours_per_day',
             $request->work_hours_per_day,
             'Standard work hours required per day'
+        );
+
+        // Save WFH attendance hours
+        Setting::set(
+            'wfh_attendance_hours',
+            $request->wfh_attendance_hours,
+            'Hours counted as attendance for WFH days'
         );
 
         // Save weekend days
