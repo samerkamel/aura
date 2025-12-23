@@ -406,8 +406,12 @@ class ExpenseController extends Controller
             ->sum('projected_revenue');
         $totalMonthlyRevenue = $totalYearlyRevenue / 12;
 
+        // Calculate actual Tier 1 percentage from database (sum of all total_revenue based budgets)
+        $tier1Percentage = ExpenseCategoryBudget::where('budget_year', $currentYear)
+            ->where('calculation_base', 'total_revenue')
+            ->sum('budget_percentage');
+
         // Calculate Net Income (after Tier 1 deductions)
-        $tier1Percentage = ExpenseCategoryBudget::TIER1_PERCENTAGE;
         $yearlyNetIncome = $totalYearlyRevenue * (1 - $tier1Percentage / 100);
         $monthlyNetIncome = $yearlyNetIncome / 12;
 
