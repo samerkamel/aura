@@ -138,7 +138,7 @@
                                 @if($currentTier == 1)
                                     {{-- Tier 1 Subtotal Row --}}
                                     <tr class="table-primary fw-bold">
-                                        <td colspan="2">Subtotal - From Revenue (R)</td>
+                                        <td colspan="2">اجمالي المنصرف</td>
                                         <td class="text-end">{{ number_format($tier1Total['planned_monthly'], 0) }}</td>
                                         <td class="text-end">{{ number_format($tier1Total['planned_ytd'], 0) }}</td>
                                         <td class="text-end">{{ number_format($tier1Total['ytd_total'], 0) }}</td>
