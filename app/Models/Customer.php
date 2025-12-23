@@ -46,6 +46,14 @@ class Customer extends Model
     }
 
     /**
+     * Get the invoices for this customer.
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
      * Scope to filter active customers.
      */
     public function scopeActive(Builder $query): Builder

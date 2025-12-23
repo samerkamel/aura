@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
+use Modules\Payroll\Models\JiraWorklog;
 
 class CustomerController extends Controller
 {
@@ -105,17 +107,102 @@ class CustomerController extends Controller
     /**
      * Display the specified customer.
      */
-    public function show(Customer $customer): View
+    public function show(Request $request, Customer $customer): View
     {
         if (!auth()->user()->can('manage-customers')) {
             abort(403, 'Unauthorized to view customer details.');
         }
 
-        $customer->load(['contracts' => function($query) {
-            $query->with('businessUnit')->orderBy('created_at', 'desc');
-        }]);
+        // Get year filter (default: current year, 'lifetime' for all)
+        $selectedYear = $request->get('year', date('Y'));
+        $isLifetime = $selectedYear === 'lifetime';
 
-        return view('administration.customers.show', compact('customer'));
+        // Build date range for filtering
+        $startDate = $isLifetime ? null : Carbon::create($selectedYear, 1, 1)->startOfDay();
+        $endDate = $isLifetime ? null : Carbon::create($selectedYear, 12, 31)->endOfDay();
+
+        // Load contracts with filtering
+        $contractsQuery = $customer->contracts()->with('products')->orderBy('created_at', 'desc');
+        if (!$isLifetime) {
+            $contractsQuery->where(function($q) use ($startDate, $endDate) {
+                // Contract overlaps with the year
+                $q->where(function($q2) use ($startDate, $endDate) {
+                    $q2->where('start_date', '<=', $endDate)
+                       ->where(function($q3) use ($startDate) {
+                           $q3->whereNull('end_date')
+                              ->orWhere('end_date', '>=', $startDate);
+                       });
+                })->orWhere(function($q2) use ($startDate, $endDate) {
+                    // Or was created in the year
+                    $q2->whereBetween('created_at', [$startDate, $endDate]);
+                });
+            });
+        }
+        $contracts = $contractsQuery->get();
+
+        // Load projects with total hours
+        $projectsQuery = $customer->projects()->active()->orderBy('name');
+        $projects = $projectsQuery->get();
+
+        // Calculate hours for each project
+        foreach ($projects as $project) {
+            $hoursQuery = JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%');
+            if (!$isLifetime) {
+                $hoursQuery->whereBetween('worklog_started', [$startDate, $endDate]);
+            }
+            $project->filtered_hours = $hoursQuery->sum('time_spent_hours');
+        }
+
+        // Load invoices with filtering
+        $invoicesQuery = $customer->invoices()->with('project')->orderBy('invoice_date', 'desc');
+        if (!$isLifetime) {
+            $invoicesQuery->whereBetween('invoice_date', [$startDate, $endDate]);
+        }
+        $invoices = $invoicesQuery->get();
+
+        // Get available years for dropdown (from contracts, invoices, projects)
+        $years = collect();
+
+        // Years from contracts
+        $contractYears = $customer->contracts()
+            ->selectRaw('YEAR(start_date) as year')
+            ->whereNotNull('start_date')
+            ->distinct()
+            ->pluck('year');
+        $years = $years->merge($contractYears);
+
+        // Years from invoices
+        $invoiceYears = $customer->invoices()
+            ->selectRaw('YEAR(invoice_date) as year')
+            ->whereNotNull('invoice_date')
+            ->distinct()
+            ->pluck('year');
+        $years = $years->merge($invoiceYears);
+
+        // Add current year if not present
+        $currentYear = (int) date('Y');
+        $years = $years->push($currentYear)->unique()->filter()->sort()->reverse()->values();
+
+        // Calculate totals
+        $totals = [
+            'projects_count' => $projects->count(),
+            'projects_hours' => $projects->sum('filtered_hours'),
+            'contracts_count' => $contracts->count(),
+            'contracts_value' => $contracts->sum('total_amount'),
+            'invoices_count' => $invoices->count(),
+            'invoices_value' => $invoices->sum('total_amount'),
+            'invoices_paid' => $invoices->sum('paid_amount'),
+        ];
+
+        return view('administration.customers.show', compact(
+            'customer',
+            'projects',
+            'contracts',
+            'invoices',
+            'years',
+            'selectedYear',
+            'totals'
+        ));
     }
 
     /**
