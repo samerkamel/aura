@@ -199,6 +199,7 @@ class WfhRecordController extends Controller
 
     /**
      * Check if adding a WFH day would exceed monthly allowance.
+     * Super admins are exempt from the monthly WFH limit.
      *
      * @param Employee $employee
      * @param Carbon $date
@@ -206,6 +207,11 @@ class WfhRecordController extends Controller
      */
     protected function checkMonthlyWfhAllowance(Employee $employee, Carbon $date): bool
     {
+        // Super admins can bypass the monthly WFH limit
+        if (Auth::user()->hasRole('super-admin')) {
+            return false;
+        }
+
         // Get the WFH policy rule
         $wfhRule = AttendanceRule::where('rule_type', 'wfh_policy')->first();
 
