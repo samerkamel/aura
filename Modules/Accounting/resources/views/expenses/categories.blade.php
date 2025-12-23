@@ -115,9 +115,9 @@
                                                 <strong @if($category->description) data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $category->description }}" @endif style="cursor: {{ $category->description ? 'help' : 'default' }}">{{ $category->name }}</strong>
                                                 @if(!$category->parent_id)
                                                     @if($category->tier == 1)
-                                                        <span class="badge bg-label-primary">Tier 1</span>
+                                                        <span class="badge bg-label-primary" data-bs-toggle="tooltip" title="From Total Revenue">R</span>
                                                     @else
-                                                        <span class="badge bg-label-warning">Tier 2</span>
+                                                        <span class="badge bg-label-warning" data-bs-toggle="tooltip" title="From Net Income">NI</span>
                                                     @endif
                                                     @if($category->expenseType)
                                                         <span class="badge" style="background-color: {{ $category->expenseType->color }}; color: white;">
