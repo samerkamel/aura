@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Vite;
 
@@ -20,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
+    // Use Bootstrap 5 pagination globally
+    Paginator::defaultView('pagination::bootstrap-5');
+    Paginator::defaultSimpleView('pagination::simple-bootstrap-5');
+
     // Increase execution time limit for long-running operations
     set_time_limit(300);
     ini_set('max_execution_time', 300);
