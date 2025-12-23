@@ -413,15 +413,17 @@ class ExpenseController extends Controller
 
         // Get main categories first
         $mainCategories = ExpenseCategory::withCount(['expenseSchedules', 'activeExpenseSchedules'])
-            ->with(['subcategories' => function ($query) {
+            ->with(['subcategories' => function ($query) use ($currentYear) {
                 $query->withCount(['expenseSchedules', 'activeExpenseSchedules'])
+                      ->with(['budgets' => function ($q) use ($currentYear) {
+                          $q->where('budget_year', $currentYear);
+                      }])
                       ->orderBy('sort_order')
                       ->orderBy('name');
             }, 'expenseType', 'budgets' => function ($query) use ($currentYear) {
                 $query->where('budget_year', $currentYear);
             }])
             ->mainCategories()
-            ->orderBy('name')
             ->get();
 
         // Calculate YTD values for each category
@@ -432,6 +434,21 @@ class ExpenseController extends Controller
         // For past years: full 12 months
         // For future years: full 12 months (projection)
         $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
+
+        // Add tier and budget info to main categories for sorting
+        foreach ($mainCategories as $mainCategory) {
+            $budget = $mainCategory->budgets->first();
+            $mainCategory->tier = $budget ? ($budget->calculation_base === 'total_revenue' ? 1 : 2) : 2;
+            $mainCategory->budget_percentage = $budget ? $budget->budget_percentage : 0;
+            $mainCategory->calculation_base = $budget ? $budget->calculation_base : 'net_income';
+        }
+
+        // Sort main categories by tier first, then by sort_order within each tier
+        $mainCategories = $mainCategories->sortBy([
+            fn ($a, $b) => $a->tier <=> $b->tier,
+            fn ($a, $b) => ($a->sort_order ?? 0) <=> ($b->sort_order ?? 0),
+            fn ($a, $b) => $a->name <=> $b->name,
+        ])->values();
 
         // Flatten the hierarchy for the table display
         $categories = collect();
@@ -460,7 +477,7 @@ class ExpenseController extends Controller
 
             $categories->push($mainCategory);
 
-            // Add subcategories right after their parent
+            // Add subcategories right after their parent (already sorted by sort_order in query)
             foreach ($mainCategory->subcategories as $subcategory) {
                 // Load the parent relationship for subcategory
                 $subcategory->load('parent');
@@ -470,7 +487,10 @@ class ExpenseController extends Controller
                 $subcategory->ytd_average_per_month = $monthsElapsed > 0 ? $subcategory->ytd_total / $monthsElapsed : 0;
                 $subcategory->average_scheduled_per_month = $subcategory->monthly_amount;
 
-                // Subcategories don't have their own budget - set to 0
+                // Subcategories inherit parent's tier and budget info for display
+                $subcategory->tier = $mainCategory->tier;
+                $subcategory->budget_percentage = 0;
+                $subcategory->calculation_base = $mainCategory->calculation_base;
                 $subcategory->planned_monthly = 0;
                 $subcategory->planned_ytd = 0;
 
@@ -550,6 +570,7 @@ class ExpenseController extends Controller
             'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'color' => 'required|string|regex:/^#[a-fA-F0-9]{6}$/',
+            'sort_order' => 'nullable|integer|min:0',
         ];
 
         // Only main categories need expense_type_id
@@ -561,17 +582,22 @@ class ExpenseController extends Controller
 
         $request->validate($rules);
 
-        $data = $request->only(['name', 'name_ar', 'description', 'color', 'expense_type_id']);
+        $data = $request->only(['name', 'name_ar', 'description', 'color', 'expense_type_id', 'sort_order']);
 
         // Only main categories can have expense types
         if ($category->parent_id !== null) {
             unset($data['expense_type_id']);
         }
 
+        // Set default sort_order if not provided
+        if (!isset($data['sort_order']) || $data['sort_order'] === null) {
+            $data['sort_order'] = $category->sort_order ?? 0;
+        }
+
         $category->update($data);
 
         return redirect()
-            ->route('accounting.expenses.categories')
+            ->route('accounting.expenses.categories', ['year' => $request->get('year', date('Y'))])
             ->with('success', 'Category updated successfully.');
     }
 

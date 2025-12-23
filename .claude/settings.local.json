@@ -40,7 +40,15 @@
       "Bash(pkill:*)",
       "mcp__plugin_testing-suite_playwright-server__browser_click",
       "Bash(composer show:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "mcp__playwright__browser_fill_form",
+      "Bash(Modules/Accounting/app/Models/ExpenseCategoryBudget.php )",
+      "Bash(Modules/Accounting/resources/views/expenses/category-budgets.blade.php )",
+      "Bash(Modules/Accounting/database/migrations/2025_12_22_120000_add_calculation_base_to_expense_category_budgets_table.php )",
+      "Bash(Modules/Accounting/database/seeders/ExpenseCategorySeeder.php)",
+      "Bash(Modules/Accounting/routes/web.php)",
+      "Bash(Modules/Accounting/resources/views/expenses/categories.blade.php)"
     ],
     "deny": []
   }

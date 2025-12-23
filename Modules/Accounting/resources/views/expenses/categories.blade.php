@@ -93,8 +93,7 @@
                     <thead>
                         <tr>
                             <th>Category</th>
-                            <th>Type</th>
-                            <th>Description</th>
+                            <th class="text-center">Budget %</th>
                             <th class="text-end">Plan (Monthly)</th>
                             <th class="text-end">Plan (YTD)</th>
                             <th class="text-end">Actual YTD</th>
@@ -112,7 +111,21 @@
                                         @endif
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
-                                            <strong>{{ $category->name }}</strong>
+                                            <span class="d-inline-flex align-items-center gap-2">
+                                                <strong @if($category->description) data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $category->description }}" @endif style="cursor: {{ $category->description ? 'help' : 'default' }}">{{ $category->name }}</strong>
+                                                @if(!$category->parent_id)
+                                                    @if($category->tier == 1)
+                                                        <span class="badge bg-label-primary">Tier 1</span>
+                                                    @else
+                                                        <span class="badge bg-label-warning">Tier 2</span>
+                                                    @endif
+                                                    @if($category->expenseType)
+                                                        <span class="badge" style="background-color: {{ $category->expenseType->color }}; color: white;">
+                                                            {{ $category->expenseType->code }}
+                                                        </span>
+                                                    @endif
+                                                @endif
+                                            </span>
                                             @if($category->name_ar)
                                                 <br><span class="text-muted" dir="rtl">{{ $category->name_ar }}</span>
                                             @endif
@@ -127,21 +140,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    @if($category->expenseType && !$category->parent_id)
-                                        <span class="badge" style="background-color: {{ $category->expenseType->color }}; color: white;">
-                                            {{ $category->expenseType->code }}
-                                        </span>
-                                    @elseif($category->parent && $category->parent->expenseType)
-                                        <span class="badge badge-light-secondary">
-                                            {{ $category->parent->expenseType->code }}
-                                        </span>
+                                <td class="text-center">
+                                    @if(!$category->parent_id && $category->budget_percentage > 0)
+                                        <span class="badge bg-label-info">{{ number_format($category->budget_percentage, 2) }}%</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
-                                </td>
-                                <td class="{{ !$category->is_active ? 'text-muted' : '' }}">
-                                    {{ \Illuminate\Support\Str::limit($category->description, 30) ?: '-' }}
                                 </td>
                                 <td class="text-end">
                                     @if($category->planned_monthly > 0)
@@ -192,7 +196,8 @@
                                                data-description="{{ $category->description }}"
                                                data-color="{{ $category->color }}"
                                                data-parent-id="{{ $category->parent_id }}"
-                                               data-expense-type-id="{{ $category->expense_type_id }}">
+                                               data-expense-type-id="{{ $category->expense_type_id }}"
+                                               data-sort-order="{{ $category->sort_order ?? 0 }}">
                                                 <i class="ti ti-edit me-2"></i>Edit
                                             </a>
                                             <div class="dropdown-divider"></div>
@@ -217,7 +222,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No categories found</h5>
@@ -348,6 +353,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="edit_sort_order" class="form-label">Sort Order</label>
+                        <input type="number" class="form-control" id="edit_sort_order" name="sort_order" min="0" placeholder="0">
+                        <small class="text-muted">Categories are sorted by tier first, then by this order within each tier (lower numbers appear first)</small>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="edit_description" class="form-label">Description</label>
                         <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
                     </div>
@@ -459,6 +470,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     // Edit category modal
     const editModal = document.getElementById('editCategoryModal');
     editModal.addEventListener('show.bs.modal', function(event) {
@@ -470,6 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryColor = button.getAttribute('data-color');
         const parentId = button.getAttribute('data-parent-id');
         const expenseTypeId = button.getAttribute('data-expense-type-id');
+        const sortOrder = button.getAttribute('data-sort-order');
 
         const form = document.getElementById('editCategoryForm');
         form.action = `/accounting/expenses/categories/${categoryId}`;
@@ -479,6 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit_description').value = categoryDescription || '';
         document.getElementById('edit_color').value = categoryColor;
         document.getElementById('edit_color_text').value = categoryColor.toUpperCase();
+        document.getElementById('edit_sort_order').value = sortOrder || 0;
 
         // Handle expense type field based on whether this is a main category
         const isMainCategory = !parentId || parentId === 'null' || parentId === '';
