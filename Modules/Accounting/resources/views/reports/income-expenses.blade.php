@@ -39,7 +39,7 @@
                             <strong class="text-primary">{{ number_format($revenueSummary['total_monthly_revenue'], 0) }} EGP</strong>
                         </div>
                         <div class="col-md-3">
-                            <small class="text-muted d-block">Monthly Net Income ({{ number_format(100 - $revenueSummary['tier1_percentage'], 1) }}%)</small>
+                            <small class="text-muted d-block">Monthly Net Income <span class="net-income-percentage">({{ number_format(100 - $revenueSummary['tier1_percentage'], 1) }}%)</span></small>
                             <strong class="text-success">{{ number_format($revenueSummary['monthly_net_income'], 0) }} EGP</strong>
                         </div>
                         <div class="col-md-3">
@@ -83,7 +83,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="rounded me-2" style="width: 10px; height: 10px; background-color: #28a745;"></div>
+                                        <div class="rounded me-2 category-color-dot" style="width: 10px; height: 10px; background-color: #28a745;"></div>
                                         <span>{{ $product->name }}</span>
                                         @if($product->code)
                                             <span class="badge bg-label-success ms-2">{{ $product->code }}</span>
@@ -167,7 +167,7 @@
                                         @if($category->parent_id)
                                             <div class="me-2 text-muted ps-3">└─</div>
                                         @endif
-                                        <div class="rounded me-2" style="width: 10px; height: 10px; background-color: {{ $category->color }};"></div>
+                                        <div class="rounded me-2 category-color-dot" style="width: 10px; height: 10px; background-color: {{ $category->color }};"></div>
                                         <div>
                                             <span @if($category->description) data-bs-toggle="tooltip" title="{{ $category->description }}" @endif>
                                                 {{ $category->name }}
@@ -298,11 +298,35 @@
 
 <style>
 @media print {
-    .card-header .d-flex.gap-2 { display: none !important; }
-    .btn { display: none !important; }
+    /* Hide navigation and controls */
+    .layout-navbar, .layout-menu, .card-header .d-flex.gap-2, .btn { display: none !important; }
+
+    /* Hide subtitle */
+    .card-header small.text-muted { display: none !important; }
+
+    /* Hide percentage in net income label */
+    .net-income-percentage { display: none !important; }
+
+    /* Card styling */
     .card { border: none !important; box-shadow: none !important; }
+
+    /* Table styling */
     .table { font-size: 10px !important; }
+
+    /* Give category column more space */
+    .table th:first-child, .table td:first-child {
+        width: 35% !important;
+        white-space: nowrap !important;
+    }
+
+    /* Hide color circles in print */
+    .category-color-dot { display: none !important; }
+
+    /* Print colors */
     body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* Reduce padding */
+    .card-body, .card-header { padding: 0.5rem !important; }
 }
 </style>
 
