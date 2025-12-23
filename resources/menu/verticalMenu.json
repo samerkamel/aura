@@ -272,6 +272,11 @@
           "slug": "accounting-income-sheet-index"
         },
         {
+          "url": "accounting/reports/income-expenses",
+          "name": "I&E Report",
+          "slug": "accounting-reports-income-expenses"
+        },
+        {
           "url": "accounting/expenses/categories/manage",
           "name": "Expense Categories",
           "slug": "accounting-expenses-categories"

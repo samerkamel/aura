@@ -17,6 +17,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [AccountingController::class, 'index'])->name('dashboard');
         Route::match(['GET', 'POST'], '/reports', [AccountingController::class, 'reports'])->name('reports');
 
+        // I&E Report
+        Route::get('/reports/income-expenses', [ExpenseController::class, 'incomeExpensesReport'])->name('reports.income-expenses');
+
         // Expense Management Routes
         Route::prefix('expenses')->name('expenses.')->group(function () {
             Route::get('/', [ExpenseController::class, 'index'])->name('index');

@@ -1297,6 +1297,151 @@ class ExpenseController extends Controller
     }
 
     /**
+     * Display the Income & Expenses (I&E) report.
+     */
+    public function incomeExpensesReport(Request $request): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            abort(403, 'Unauthorized to view I&E report.');
+        }
+
+        $currentYear = (int) $request->get('year', date('Y'));
+        $availableYears = range(date('Y') - 2, date('Y') + 2);
+
+        // Get total projected revenue from all products for current year
+        $totalYearlyRevenue = \App\Models\Budget::where('budget_year', $currentYear)
+            ->sum('projected_revenue');
+        $totalMonthlyRevenue = $totalYearlyRevenue / 12;
+
+        // Calculate actual Tier 1 percentage from database (sum of all total_revenue based budgets)
+        $tier1Percentage = ExpenseCategoryBudget::where('budget_year', $currentYear)
+            ->where('calculation_base', 'total_revenue')
+            ->sum('budget_percentage');
+
+        // Calculate Net Income (after Tier 1 deductions)
+        $yearlyNetIncome = $totalYearlyRevenue * (1 - $tier1Percentage / 100);
+        $monthlyNetIncome = $yearlyNetIncome / 12;
+
+        // Get main categories first
+        $mainCategories = ExpenseCategory::withCount(['expenseSchedules', 'activeExpenseSchedules'])
+            ->with(['subcategories' => function ($query) use ($currentYear) {
+                $query->withCount(['expenseSchedules', 'activeExpenseSchedules'])
+                      ->with(['budgets' => function ($q) use ($currentYear) {
+                          $q->where('budget_year', $currentYear);
+                      }])
+                      ->orderBy('sort_order')
+                      ->orderBy('name');
+            }, 'expenseType', 'budgets' => function ($query) use ($currentYear) {
+                $query->where('budget_year', $currentYear);
+            }])
+            ->mainCategories()
+            ->get();
+
+        // Calculate YTD values for each category
+        $isCurrentYear = $currentYear == (int) date('Y');
+        $isFutureYear = $currentYear > (int) date('Y');
+        $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
+
+        // Add tier and budget info to main categories for sorting
+        foreach ($mainCategories as $mainCategory) {
+            $budget = $mainCategory->budgets->first();
+            $mainCategory->tier = $budget ? ($budget->calculation_base === 'total_revenue' ? 1 : 2) : 2;
+            $mainCategory->budget_percentage = $budget ? $budget->budget_percentage : 0;
+            $mainCategory->calculation_base = $budget ? $budget->calculation_base : 'net_income';
+        }
+
+        // Sort main categories by tier first, then by sort_order within each tier
+        $mainCategories = $mainCategories->sortBy([
+            fn ($a, $b) => $a->tier <=> $b->tier,
+            fn ($a, $b) => ($a->sort_order ?? 0) <=> ($b->sort_order ?? 0),
+            fn ($a, $b) => $a->name <=> $b->name,
+        ])->values();
+
+        // Flatten the hierarchy for the table display
+        $categories = collect();
+        $tier1Total = ['planned_monthly' => 0, 'planned_ytd' => 0, 'ytd_total' => 0];
+        $tier2Total = ['planned_monthly' => 0, 'planned_ytd' => 0, 'ytd_total' => 0];
+
+        foreach ($mainCategories as $mainCategory) {
+            // Calculate YTD and average values for main category
+            $mainCategory->ytd_total = $this->calculateYtdTotal($mainCategory, $currentYear);
+            $mainCategory->ytd_average_per_month = $monthsElapsed > 0 ? $mainCategory->ytd_total / $monthsElapsed : 0;
+
+            // Calculate planned budget based on tier
+            $budget = $mainCategory->budgets->first();
+            if ($budget) {
+                $percentage = $budget->budget_percentage;
+                if ($budget->calculation_base === 'total_revenue') {
+                    $mainCategory->planned_monthly = ($percentage / 100) * $totalMonthlyRevenue;
+                } else {
+                    $mainCategory->planned_monthly = ($percentage / 100) * $monthlyNetIncome;
+                }
+                $mainCategory->planned_ytd = $mainCategory->planned_monthly * $monthsElapsed;
+            } else {
+                $mainCategory->planned_monthly = 0;
+                $mainCategory->planned_ytd = 0;
+            }
+
+            // Accumulate totals by tier
+            if ($mainCategory->tier == 1) {
+                $tier1Total['planned_monthly'] += $mainCategory->planned_monthly;
+                $tier1Total['planned_ytd'] += $mainCategory->planned_ytd;
+                $tier1Total['ytd_total'] += $mainCategory->ytd_total;
+            } else {
+                $tier2Total['planned_monthly'] += $mainCategory->planned_monthly;
+                $tier2Total['planned_ytd'] += $mainCategory->planned_ytd;
+                $tier2Total['ytd_total'] += $mainCategory->ytd_total;
+            }
+
+            $categories->push($mainCategory);
+
+            // Add subcategories right after their parent
+            foreach ($mainCategory->subcategories as $subcategory) {
+                $subcategory->load('parent');
+                $subcategory->ytd_total = $this->calculateYtdTotal($subcategory, $currentYear);
+                $subcategory->ytd_average_per_month = $monthsElapsed > 0 ? $subcategory->ytd_total / $monthsElapsed : 0;
+                $subcategory->tier = $mainCategory->tier;
+                $subcategory->budget_percentage = 0;
+                $subcategory->calculation_base = $mainCategory->calculation_base;
+                $subcategory->planned_monthly = 0;
+                $subcategory->planned_ytd = 0;
+
+                $categories->push($subcategory);
+            }
+        }
+
+        // Calculate grand totals
+        $grandTotal = [
+            'planned_monthly' => $tier1Total['planned_monthly'] + $tier2Total['planned_monthly'],
+            'planned_ytd' => $tier1Total['planned_ytd'] + $tier2Total['planned_ytd'],
+            'ytd_total' => $tier1Total['ytd_total'] + $tier2Total['ytd_total'],
+        ];
+
+        // Pass revenue summary to the view
+        $revenueSummary = [
+            'total_yearly_revenue' => $totalYearlyRevenue,
+            'total_monthly_revenue' => $totalMonthlyRevenue,
+            'yearly_net_income' => $yearlyNetIncome,
+            'monthly_net_income' => $monthlyNetIncome,
+            'tier1_percentage' => $tier1Percentage,
+            'months_elapsed' => $monthsElapsed,
+            'is_current_year' => $isCurrentYear,
+            'is_future_year' => $isFutureYear,
+        ];
+
+        return view('accounting::reports.income-expenses', compact(
+            'categories',
+            'revenueSummary',
+            'currentYear',
+            'availableYears',
+            'tier1Total',
+            'tier2Total',
+            'grandTotal'
+        ));
+    }
+
+    /**
      * Calculate year-to-date total for a category.
      */
     private function calculateYtdTotal(ExpenseCategory $category, ?int $year = null): float
