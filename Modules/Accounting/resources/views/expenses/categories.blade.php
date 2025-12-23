@@ -11,8 +11,16 @@
                     <h5 class="mb-0">Expense Categories</h5>
                     <small class="text-muted">Organize and manage expense categories with YTD tracking</small>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('accounting.expenses.categories.budgets') }}" class="btn btn-warning">
+                <div class="d-flex gap-2 align-items-center">
+                    <form method="GET" action="{{ route('accounting.expenses.categories') }}" class="d-flex align-items-center gap-2">
+                        <label class="form-label mb-0 me-2">Year:</label>
+                        <select name="year" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                            @foreach($availableYears as $y)
+                                <option value="{{ $y }}" {{ $currentYear == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                    <a href="{{ route('accounting.expenses.categories.budgets', ['year' => $currentYear]) }}" class="btn btn-warning">
                         <i class="ti ti-percentage me-1"></i>Manage Budgets
                     </a>
                     <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-info">
@@ -44,13 +52,16 @@
                 </div>
             @endif
 
-            @if(isset($revenueSummary) && $revenueSummary['total_yearly_revenue'] > 0)
+            @if(isset($revenueSummary))
             <div class="card-body pt-0">
                 <div class="alert alert-light border mb-0">
                     <div class="row text-center">
                         <div class="col-md-3">
-                            <small class="text-muted d-block">Yearly Revenue Target</small>
+                            <small class="text-muted d-block">{{ $currentYear }} Revenue Target</small>
                             <strong class="text-primary">{{ number_format($revenueSummary['total_yearly_revenue'], 0) }} EGP</strong>
+                            @if($revenueSummary['total_yearly_revenue'] == 0)
+                                <br><small class="text-warning">No budget set</small>
+                            @endif
                         </div>
                         <div class="col-md-3">
                             <small class="text-muted d-block">Monthly Revenue</small>
@@ -61,7 +72,15 @@
                             <strong class="text-success">{{ number_format($revenueSummary['monthly_net_income'], 0) }} EGP</strong>
                         </div>
                         <div class="col-md-3">
-                            <small class="text-muted d-block">Months Elapsed ({{ date('Y') }})</small>
+                            <small class="text-muted d-block">
+                                @if($revenueSummary['is_current_year'])
+                                    Months Elapsed ({{ $currentYear }})
+                                @elseif($revenueSummary['is_future_year'])
+                                    Full Year Projection
+                                @else
+                                    Full Year ({{ $currentYear }})
+                                @endif
+                            </small>
                             <strong>{{ $revenueSummary['months_elapsed'] }} / 12</strong>
                         </div>
                     </div>

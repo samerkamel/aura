@@ -391,14 +391,15 @@ class ExpenseController extends Controller
     /**
      * Display expense categories management.
      */
-    public function categories(): View
+    public function categories(Request $request): View
     {
         // Check authorization
         if (!auth()->user()->can('manage-expense-categories')) {
             abort(403, 'Unauthorized to manage expense categories.');
         }
 
-        $currentYear = (int) date('Y');
+        $currentYear = (int) $request->get('year', date('Y'));
+        $availableYears = range(date('Y') - 2, date('Y') + 2);
 
         // Get total projected revenue from all products for current year
         $totalYearlyRevenue = \App\Models\Budget::where('budget_year', $currentYear)
@@ -424,14 +425,20 @@ class ExpenseController extends Controller
             ->get();
 
         // Calculate YTD values for each category
-        $yearStart = now()->startOfYear();
-        $monthsElapsed = now()->diffInMonths($yearStart) + 1;
+        $yearStart = now()->setYear($currentYear)->startOfYear();
+        $isCurrentYear = $currentYear == (int) date('Y');
+        $isFutureYear = $currentYear > (int) date('Y');
+
+        // For current year: months elapsed so far
+        // For past years: full 12 months
+        // For future years: full 12 months (projection)
+        $monthsElapsed = $isCurrentYear ? (now()->diffInMonths($yearStart) + 1) : 12;
 
         // Flatten the hierarchy for the table display
         $categories = collect();
         foreach ($mainCategories as $mainCategory) {
             // Calculate YTD and average values for main category
-            $mainCategory->ytd_total = $this->calculateYtdTotal($mainCategory);
+            $mainCategory->ytd_total = $this->calculateYtdTotal($mainCategory, $currentYear);
             $mainCategory->ytd_average_per_month = $monthsElapsed > 0 ? $mainCategory->ytd_total / $monthsElapsed : 0;
             $mainCategory->average_scheduled_per_month = $mainCategory->monthly_amount;
 
@@ -460,7 +467,7 @@ class ExpenseController extends Controller
                 $subcategory->load('parent');
 
                 // Calculate YTD and average values for subcategory
-                $subcategory->ytd_total = $this->calculateYtdTotal($subcategory);
+                $subcategory->ytd_total = $this->calculateYtdTotal($subcategory, $currentYear);
                 $subcategory->ytd_average_per_month = $monthsElapsed > 0 ? $subcategory->ytd_total / $monthsElapsed : 0;
                 $subcategory->average_scheduled_per_month = $subcategory->monthly_amount;
 
@@ -491,9 +498,11 @@ class ExpenseController extends Controller
             'monthly_net_income' => $monthlyNetIncome,
             'tier1_percentage' => $tier1Percentage,
             'months_elapsed' => $monthsElapsed,
+            'is_current_year' => $isCurrentYear,
+            'is_future_year' => $isFutureYear,
         ];
 
-        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary'));
+        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary', 'currentYear', 'availableYears'));
     }
 
     /**
@@ -1261,15 +1270,20 @@ class ExpenseController extends Controller
     /**
      * Calculate year-to-date total for a category.
      */
-    private function calculateYtdTotal(ExpenseCategory $category): float
+    private function calculateYtdTotal(ExpenseCategory $category, ?int $year = null): float
     {
-        $yearStart = now()->startOfYear();
-        $yearEnd = now()->endOfYear();
+        $year = $year ?? (int) date('Y');
+        $yearStart = now()->setYear($year)->startOfYear();
+        $isCurrentYear = $year == (int) date('Y');
+
+        // For current year: up to now
+        // For past/future years: full year
+        $endDate = $isCurrentYear ? now() : now()->setYear($year)->endOfYear();
 
         return $category->expenseSchedules()
             ->where('payment_status', 'paid')
             ->where('paid_date', '>=', $yearStart)
-            ->where('paid_date', '<=', now())
+            ->where('paid_date', '<=', $endDate)
             ->sum('paid_amount');
     }
 }
