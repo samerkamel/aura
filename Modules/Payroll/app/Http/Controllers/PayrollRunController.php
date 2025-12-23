@@ -199,11 +199,25 @@ class PayrollRunController extends Controller
         // Calculate and create preliminary runs
         $employeeSummaries = $this->payrollCalculationService->calculatePayrollSummary($periodStart, $periodEnd);
 
+        Log::info('Creating preliminary payroll runs', [
+            'period_start' => $periodStart->toDateString(),
+            'period_end' => $periodEnd->toDateString(),
+            'employee_count' => count($employeeSummaries),
+        ]);
+
         DB::transaction(function () use ($employeeSummaries, $periodStart, $periodEnd) {
             foreach ($employeeSummaries as $summary) {
                 $employee = $summary['employee'];
                 $baseSalary = $employee->base_salary ?? 0;
                 $calculatedSalary = $baseSalary * ($summary['final_performance_percentage'] / 100);
+
+                Log::debug('Creating payroll run', [
+                    'employee_id' => $employee->id,
+                    'employee_name' => $employee->name,
+                    'base_salary' => $baseSalary,
+                    'performance' => $summary['final_performance_percentage'],
+                    'calculated_salary' => $calculatedSalary,
+                ]);
 
                 PayrollRun::create([
                     'employee_id' => $employee->id,
@@ -390,12 +404,19 @@ class PayrollRunController extends Controller
         $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
 
         // Delete existing runs for this period (only if not finalized)
-        PayrollRun::forPeriod($periodStart->toDateString(), $periodEnd->toDateString())
+        $deletedCount = PayrollRun::forPeriod($periodStart->toDateString(), $periodEnd->toDateString())
             ->where('status', '!=', 'finalized')
             ->delete();
 
+        Log::info('Payroll recalculation completed', [
+            'period' => $selectedPeriod,
+            'period_start' => $periodStart->toDateString(),
+            'period_end' => $periodEnd->toDateString(),
+            'deleted_runs' => $deletedCount,
+        ]);
+
         return redirect()
             ->route('payroll.run.adjustments', ['period' => $selectedPeriod])
-            ->with('success', 'Payroll recalculated successfully.');
+            ->with('success', "Payroll recalculated successfully. {$deletedCount} runs deleted.");
     }
 }
