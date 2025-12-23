@@ -73,6 +73,57 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {{-- Income / Products Section --}}
+                        <tr class="table-success">
+                            <td colspan="7" class="fw-bold">
+                                <i class="ti ti-arrow-down-right me-1"></i> INCOME (Products Revenue)
+                            </td>
+                        </tr>
+                        @foreach($products as $product)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded me-2" style="width: 10px; height: 10px; background-color: #28a745;"></div>
+                                        <span>{{ $product->name }}</span>
+                                        @if($product->code)
+                                            <span class="badge bg-label-success ms-2">{{ $product->code }}</span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if($revenueSummary['total_yearly_revenue'] > 0)
+                                        <span class="badge bg-label-success">{{ number_format(($product->yearly_budget / $revenueSummary['total_yearly_revenue']) * 100, 1) }}%</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-end text-success">{{ number_format($product->monthly_budget, 0) }}</td>
+                                <td class="text-end text-success">{{ number_format($product->monthly_budget * $revenueSummary['months_elapsed'], 0) }}</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">-</td>
+                            </tr>
+                        @endforeach
+                        <tr class="table-success fw-bold">
+                            <td>Total Revenue</td>
+                            <td class="text-center"><span class="badge bg-success">100%</span></td>
+                            <td class="text-end">{{ number_format($revenueSummary['total_monthly_revenue'], 0) }}</td>
+                            <td class="text-end">{{ number_format($revenueSummary['total_monthly_revenue'] * $revenueSummary['months_elapsed'], 0) }}</td>
+                            <td class="text-end">-</td>
+                            <td class="text-end">-</td>
+                            <td class="text-end">-</td>
+                        </tr>
+
+                        {{-- Separator --}}
+                        <tr><td colspan="7" class="py-2"></td></tr>
+
+                        {{-- Expenses Section Header --}}
+                        <tr class="table-danger">
+                            <td colspan="7" class="fw-bold">
+                                <i class="ti ti-arrow-up-right me-1"></i> EXPENSES
+                            </td>
+                        </tr>
+
                         @php $currentTier = null; @endphp
                         @foreach($categories as $category)
                             @if(!$category->parent_id && $category->tier != $currentTier)

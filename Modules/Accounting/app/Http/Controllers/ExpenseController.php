@@ -1309,6 +1309,18 @@ class ExpenseController extends Controller
         $currentYear = (int) $request->get('year', date('Y'));
         $availableYears = range(date('Y') - 2, date('Y') + 2);
 
+        // Get products with their budgets for the year
+        $products = \App\Models\Product::with(['budgets' => function ($query) use ($currentYear) {
+            $query->where('budget_year', $currentYear);
+        }])->where('is_active', true)->orderBy('name')->get();
+
+        // Calculate product data
+        foreach ($products as $product) {
+            $budget = $product->budgets->first();
+            $product->yearly_budget = $budget ? (float) $budget->projected_revenue : 0;
+            $product->monthly_budget = $product->yearly_budget / 12;
+        }
+
         // Get total projected revenue from all products for current year
         $totalYearlyRevenue = \App\Models\Budget::where('budget_year', $currentYear)
             ->sum('projected_revenue');
@@ -1432,6 +1444,7 @@ class ExpenseController extends Controller
 
         return view('accounting::reports.income-expenses', compact(
             'categories',
+            'products',
             'revenueSummary',
             'currentYear',
             'availableYears',
