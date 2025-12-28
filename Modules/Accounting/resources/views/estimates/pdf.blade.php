@@ -334,6 +334,11 @@
             </div>
         </div>
 
+        <!-- Amount in Arabic Words -->
+        <div style="text-align: right; direction: rtl; font-size: 12px; color: #333; margin-bottom: 30px; padding: 10px; background: #f9fafb; border-radius: 6px;">
+            <strong>المبلغ بالحروف:</strong> {{ \App\Helpers\ArabicNumberHelper::toArabicWords($estimate->total, $companySettings->currency ?? 'EGP') }}
+        </div>
+
         <!-- Notes -->
         @if($estimate->notes)
             <div class="notes-section">
