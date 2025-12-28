@@ -57,7 +57,7 @@
                                 <p class="mb-1"><strong>Title:</strong> {{ $estimate->title }}</p>
                                 @if($estimate->project)
                                     <p class="mb-1"><strong>Project:</strong>
-                                        <a href="{{ route('project.projects.show', $estimate->project) }}">
+                                        <a href="{{ route('projects.show', $estimate->project) }}">
                                             {{ $estimate->project->name }}
                                         </a>
                                     </p>
