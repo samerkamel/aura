@@ -233,12 +233,12 @@
                 @if($companySettings->logo_base64)
                     <img src="{{ $companySettings->logo_base64 }}" alt="Company Logo" class="logo">
                 @endif
-                <div class="company-name">{{ $companySettings->company_name }}</div>
+                <div class="company-name">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($companySettings->company_name) }}</div>
                 @if($companySettings->company_name_ar)
-                    <div class="company-name" style="font-size: 14px; text-align: left;">{{ \App\Helpers\ArabicNumberHelper::prepareForPdf($companySettings->company_name_ar) }}</div>
+                    <div class="company-name" style="font-size: 14px; text-align: left;">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($companySettings->company_name_ar) }}</div>
                 @endif
                 <div class="company-info">
-                    @if($companySettings->address){{ $companySettings->address }}<br>@endif
+                    @if($companySettings->address){{ \App\Helpers\ArabicNumberHelper::fixForPdf($companySettings->address) }}<br>@endif
                     @if($companySettings->phone)Tel: {{ $companySettings->phone }}<br>@endif
                     @if($companySettings->email)Email: {{ $companySettings->email }}<br>@endif
                     @if($companySettings->website){{ $companySettings->website }}<br>@endif
@@ -256,12 +256,12 @@
         <div class="info-section">
             <div class="info-box">
                 <h3>Bill To</h3>
-                <p class="client-name">{{ $estimate->client_name }}</p>
+                <p class="client-name">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->client_name) }}</p>
                 @if($estimate->client_email)
                     <p>{{ $estimate->client_email }}</p>
                 @endif
                 @if($estimate->client_address)
-                    <p>{{ $estimate->client_address }}</p>
+                    <p>{{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->client_address) }}</p>
                 @endif
             </div>
             <div class="info-box">
@@ -271,7 +271,7 @@
                     <p><strong>Valid Until:</strong> {{ $estimate->valid_until->format('F d, Y') }}</p>
                 @endif
                 @if($estimate->project)
-                    <p><strong>Project:</strong> {{ $estimate->project->name }}</p>
+                    <p><strong>Project:</strong> {{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->project->name) }}</p>
                 @endif
             </div>
         </div>
@@ -279,9 +279,9 @@
         <!-- Title & Description -->
         @if($estimate->title || $estimate->description)
             <div style="margin-bottom: 20px;">
-                <h2 style="font-size: 16px; color: #333; margin-bottom: 8px;">{{ $estimate->title }}</h2>
+                <h2 style="font-size: 16px; color: #333; margin-bottom: 8px;">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->title) }}</h2>
                 @if($estimate->description)
-                    <p style="font-size: 11px; color: #666;">{{ $estimate->description }}</p>
+                    <p style="font-size: 11px; color: #666;">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->description) }}</p>
                 @endif
             </div>
         @endif
@@ -301,9 +301,9 @@
                 @foreach($estimate->items as $item)
                     <tr>
                         <td>
-                            <div class="item-description">{{ $item->description }}</div>
+                            <div class="item-description">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($item->description) }}</div>
                             @if($item->details)
-                                <div class="item-details">{{ $item->details }}</div>
+                                <div class="item-details">{{ \App\Helpers\ArabicNumberHelper::fixForPdf($item->details) }}</div>
                             @endif
                         </td>
                         <td class="text-center">{{ number_format($item->quantity, 2) }}</td>
@@ -347,7 +347,7 @@
         @if($estimate->notes)
             <div class="notes-section">
                 <h3>Notes & Terms</h3>
-                <p>{{ $estimate->notes }}</p>
+                <p>{{ \App\Helpers\ArabicNumberHelper::fixForPdf($estimate->notes) }}</p>
             </div>
         @endif
 
@@ -357,13 +357,13 @@
                 <div class="bank-details">
                     <h3>Bank Details</h3>
                     @foreach(explode("\n", $companySettings->formatted_bank_details) as $line)
-                        <p>{{ $line }}</p>
+                        <p>{{ \App\Helpers\ArabicNumberHelper::fixForPdf($line) }}</p>
                     @endforeach
                 </div>
             @endif
 
             <div class="footer-info">
-                <p>{{ $companySettings->company_name }}</p>
+                <p>{{ \App\Helpers\ArabicNumberHelper::fixForPdf($companySettings->company_name) }}</p>
                 @if($companySettings->commercial_register)
                     <p>Commercial Register: {{ $companySettings->commercial_register }}</p>
                 @endif

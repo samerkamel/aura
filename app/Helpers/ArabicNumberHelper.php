@@ -20,6 +20,14 @@ class ArabicNumberHelper
     }
 
     /**
+     * Check if text contains Arabic characters
+     */
+    public static function containsArabic(string $text): bool
+    {
+        return preg_match('/[\x{0600}-\x{06FF}\x{0750}-\x{077F}\x{08A0}-\x{08FF}\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]/u', $text) === 1;
+    }
+
+    /**
      * Prepare any Arabic text for PDF display using ar-php library
      * Uses utf8Glyphs() for proper Arabic shaping and RTL support
      */
@@ -29,6 +37,24 @@ class ArabicNumberHelper
 
         // utf8Glyphs handles both shaping (letter forms) and RTL reversal
         return $arabic->utf8Glyphs($text);
+    }
+
+    /**
+     * Auto-detect and fix Arabic text for PDF display
+     * If text contains Arabic, apply the fix; otherwise return as-is
+     */
+    public static function fixForPdf(?string $text): string
+    {
+        if ($text === null || $text === '') {
+            return '';
+        }
+
+        // If text contains Arabic characters, apply the fix
+        if (self::containsArabic($text)) {
+            return self::prepareForPdf($text);
+        }
+
+        return $text;
     }
 
     /**
