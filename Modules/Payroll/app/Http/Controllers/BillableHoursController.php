@@ -481,19 +481,42 @@ class BillableHoursController extends Controller
         $issuesCount = 0;
         $apiError = null;
         $apiResponse = null;
+        $simpleTestResult = null;
         try {
+            // First, test with a simple query to see if API works at all
+            $simpleResponse = \Illuminate\Support\Facades\Http::withBasicAuth($settings->email, $settings->api_token)
+                ->post("{$settings->base_url}/rest/api/3/search/jql", [
+                    'jql' => 'updated >= -30d ORDER BY updated DESC',
+                    'fields' => ['summary'],
+                    'maxResults' => 3,
+                ]);
+
+            if ($simpleResponse->successful()) {
+                $simpleData = $simpleResponse->json();
+                $simpleTestResult = [
+                    'success' => true,
+                    'issues_found' => count($simpleData['issues'] ?? []),
+                    'sample_issues' => array_map(fn($i) => $i['key'] ?? 'unknown', $simpleData['issues'] ?? []),
+                ];
+            } else {
+                $simpleTestResult = [
+                    'success' => false,
+                    'error' => $simpleResponse->body(),
+                ];
+            }
+
+            // Now test with worklogDate query
             $response = \Illuminate\Support\Facades\Http::withBasicAuth($settings->email, $settings->api_token)
                 ->post("{$settings->base_url}/rest/api/3/search/jql", [
                     'jql' => $jql,
                     'fields' => ['summary', 'worklog'],
-                    'maxResults' => 5, // Just get a few to see if it works
+                    'maxResults' => 5,
                 ]);
 
             $apiResponse = $response->json();
 
             if ($response->successful()) {
                 $issuesCount = count($apiResponse['issues'] ?? []);
-                // Check if there are more issues
                 if (isset($apiResponse['total'])) {
                     $issuesCount = $apiResponse['total'];
                 }
@@ -527,10 +550,11 @@ class BillableHoursController extends Controller
                 'start' => $startDate->format('Y-m-d'),
                 'end' => $endDate->format('Y-m-d'),
             ],
+            'simple_api_test' => $simpleTestResult, // Test if API works with simple query
             'jql_query' => $jql,
-            'issues_found' => $issuesCount,
+            'issues_found_with_worklogDate' => $issuesCount,
             'api_error' => $apiError,
-            'api_response_sample' => $apiResponse, // Show raw API response
+            'api_response_sample' => $apiResponse,
             'mapped_employees' => $employees->map(fn($e) => [
                 'id' => $e->id,
                 'name' => $e->name,
