@@ -443,6 +443,96 @@ class BillableHoursController extends Controller
     }
 
     /**
+     * Debug Jira sync - test the connection and JQL query
+     */
+    public function debugJiraSync(Request $request, JiraBillableHoursService $jiraService)
+    {
+        if (!$jiraService->isConfigured()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jira is not configured',
+            ], 400);
+        }
+
+        $period = $request->input('period', 'this-month');
+        [$startDate, $endDate] = $this->getDateRangeForPeriod($period);
+
+        // Get Jira settings
+        $settings = \Modules\Payroll\Models\JiraSetting::getInstance();
+
+        // Get mapped employees
+        $employees = Employee::whereNotNull('jira_account_id')
+            ->where('status', 'active')
+            ->get(['id', 'name', 'jira_account_id']);
+
+        // Build JQL query (same as sync)
+        $jql = "worklogDate >= '{$startDate->format('Y-m-d')}' AND worklogDate <= '{$endDate->format('Y-m-d')}'";
+
+        $billableProjects = $settings->billable_projects_array;
+        if (!empty($billableProjects)) {
+            $projectsString = implode("','", $billableProjects);
+            $jql .= " AND project in ('{$projectsString}')";
+        }
+
+        // Test API connection
+        $testConnection = $jiraService->testConnection();
+
+        // Try to fetch issues count
+        $issuesCount = 0;
+        $apiError = null;
+        try {
+            $response = \Illuminate\Support\Facades\Http::withBasicAuth($settings->email, $settings->api_token)
+                ->get("{$settings->base_url}/rest/api/3/search", [
+                    'jql' => $jql,
+                    'maxResults' => 0,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $issuesCount = $data['total'] ?? 0;
+            } else {
+                $apiError = $response->body();
+            }
+        } catch (\Exception $e) {
+            $apiError = $e->getMessage();
+        }
+
+        // Get recent logs
+        $recentLogs = [];
+        $logFile = storage_path('logs/laravel.log');
+        if (file_exists($logFile)) {
+            $logs = file($logFile);
+            $logs = array_slice($logs, -100);
+            foreach ($logs as $line) {
+                if (strpos($line, 'Jira sync') !== false || strpos($line, 'Jira API') !== false) {
+                    $recentLogs[] = trim($line);
+                }
+            }
+            $recentLogs = array_slice($recentLogs, -20);
+        }
+
+        return response()->json([
+            'connection_test' => $testConnection,
+            'base_url' => $settings->base_url,
+            'email' => $settings->email,
+            'billable_projects' => $billableProjects,
+            'date_range' => [
+                'start' => $startDate->format('Y-m-d'),
+                'end' => $endDate->format('Y-m-d'),
+            ],
+            'jql_query' => $jql,
+            'issues_found' => $issuesCount,
+            'api_error' => $apiError,
+            'mapped_employees' => $employees->map(fn($e) => [
+                'id' => $e->id,
+                'name' => $e->name,
+                'jira_account_id' => $e->jira_account_id,
+            ]),
+            'recent_logs' => $recentLogs,
+        ]);
+    }
+
+    /**
      * Display the Jira worklogs list.
      */
     public function jiraWorklogs(Request $request): View

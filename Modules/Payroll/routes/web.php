@@ -27,6 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Manual Jira Sync
         Route::post('billable-hours/manual-jira-sync', [BillableHoursController::class, 'manualJiraSync'])->name('billable-hours.manual-jira-sync');
 
+        // Debug Jira Sync
+        Route::get('billable-hours/debug-jira-sync', [BillableHoursController::class, 'debugJiraSync'])->name('billable-hours.debug-jira-sync');
+
         // Payroll Settings Routes
         Route::get('settings', [PayrollSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [PayrollSettingController::class, 'store'])->name('settings.store');
