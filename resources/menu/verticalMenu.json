@@ -267,6 +267,11 @@
           "slug": "accounting-income-index"
         },
         {
+          "url": "accounting/estimates",
+          "name": "Estimates",
+          "slug": "accounting-estimates-index"
+        },
+        {
           "url": "accounting/income-sheet",
           "name": "Income Sheet",
           "slug": "accounting-income-sheet-index"
@@ -395,6 +400,19 @@
       "slug": "administration-customers-index",
       "url": "administration/customers",
       "roles": ["super-admin", "finance-manager"]
+    },
+    {
+      "name": "Settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
+      "slug": "settings",
+      "roles": ["super-admin"],
+      "submenu": [
+        {
+          "url": "settings/company",
+          "name": "Company Settings",
+          "slug": "settings-company"
+        }
+      ]
     }
   ]
 }

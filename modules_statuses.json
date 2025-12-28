@@ -8,5 +8,6 @@
     "Accounting": true,
     "Invoicing": true,
     "SelfService": true,
-    "Project": true
+    "Project": true,
+    "Settings": true
 }

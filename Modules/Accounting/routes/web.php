@@ -7,6 +7,7 @@ use Modules\Accounting\Http\Controllers\ExpenseTypeController;
 use Modules\Accounting\Http\Controllers\IncomeController;
 use Modules\Accounting\Http\Controllers\IncomeSheetController;
 use Modules\Accounting\Http\Controllers\AccountController;
+use Modules\Accounting\Http\Controllers\EstimateController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -120,6 +121,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/import/sample', [IncomeController::class, 'downloadSample'])->name('import.sample');
 
             });
+        });
+
+        // Estimates Management Routes
+        Route::prefix('estimates')->name('estimates.')->group(function () {
+            Route::get('/', [EstimateController::class, 'index'])->name('index');
+            Route::get('/create', [EstimateController::class, 'create'])->name('create');
+            Route::post('/', [EstimateController::class, 'store'])->name('store');
+            Route::get('/{estimate}', [EstimateController::class, 'show'])->name('show');
+            Route::get('/{estimate}/edit', [EstimateController::class, 'edit'])->name('edit');
+            Route::put('/{estimate}', [EstimateController::class, 'update'])->name('update');
+            Route::delete('/{estimate}', [EstimateController::class, 'destroy'])->name('destroy');
+            Route::post('/{estimate}/duplicate', [EstimateController::class, 'duplicate'])->name('duplicate');
+            Route::post('/{estimate}/send', [EstimateController::class, 'markAsSent'])->name('send');
+            Route::post('/{estimate}/approve', [EstimateController::class, 'markAsApproved'])->name('approve');
+            Route::post('/{estimate}/reject', [EstimateController::class, 'markAsRejected'])->name('reject');
+            Route::post('/{estimate}/convert', [EstimateController::class, 'convertToContract'])->name('convert');
+            Route::get('/{estimate}/pdf', [EstimateController::class, 'exportPdf'])->name('pdf');
         });
     });
 });

@@ -56,6 +56,9 @@
         <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
           <i class="ti ti-users me-1"></i>Manage Team
         </a>
+        <a href="{{ route('accounting.estimates.create', ['project_id' => $project->id]) }}" class="btn btn-light btn-sm">
+          <i class="ti ti-file-invoice me-1"></i>Create Estimate
+        </a>
         @can('view-financial-reports')
         <a href="{{ route('projects.edit', $project) }}" class="btn btn-light btn-sm">
           <i class="ti ti-pencil me-1"></i>Edit
