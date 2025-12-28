@@ -411,10 +411,28 @@ class BillableHoursController extends Controller
                 $message .= ", {$results['failed']} failed";
             }
 
+            // Add extra debug info if nothing was synced
+            if ($results['imported'] === 0 && $results['skipped'] === 0 && $results['failed'] === 0) {
+                $totalWorklogs = $results['total_worklogs_found'] ?? 0;
+                $unmappedCount = count($results['unmapped_authors'] ?? []);
+
+                if ($totalWorklogs === 0) {
+                    $message .= ". No worklogs found in Jira for the selected date range.";
+                } elseif ($unmappedCount > 0) {
+                    $message .= ". Found {$totalWorklogs} worklogs, but all {$unmappedCount} Jira users are not mapped to employees. Go to Jira User Mapping to link them.";
+                } else {
+                    $message .= ". Check logs for details.";
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => $message,
                 'data' => $results,
+                'date_range' => [
+                    'start' => $startDate->format('Y-m-d'),
+                    'end' => $endDate->format('Y-m-d'),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -110,11 +110,19 @@ class JiraBillableHoursService
         $syncLog = JiraSyncLog::where('status', 'in_progress')->latest()->first();
         $syncLogId = $syncLog?->id;
 
+        // Track unmapped authors for debugging
+        $unmappedAuthors = [];
+
         foreach ($allWorklogs as $worklogData) {
             $authorAccountId = $worklogData['author']['accountId'] ?? null;
+            $authorName = $worklogData['author']['displayName'] ?? 'Unknown';
 
             // Skip if author is not a mapped employee
             if (!$authorAccountId || !isset($employeeMap[$authorAccountId])) {
+                // Track unmapped authors for debugging
+                if ($authorAccountId && !isset($unmappedAuthors[$authorAccountId])) {
+                    $unmappedAuthors[$authorAccountId] = $authorName;
+                }
                 continue;
             }
 
@@ -159,11 +167,18 @@ class JiraBillableHoursService
 
         Log::info("Jira sync complete: {$importedCount} imported, {$skippedCount} skipped, {$failedCount} failed");
 
+        // Log unmapped authors if any
+        if (!empty($unmappedAuthors)) {
+            Log::warning("Jira sync: Found " . count($unmappedAuthors) . " unmapped Jira authors", $unmappedAuthors);
+        }
+
         return [
             'imported' => $importedCount,
             'skipped' => $skippedCount,
             'failed' => $failedCount,
             'total_mapped' => $employees->count(),
+            'total_worklogs_found' => count($allWorklogs),
+            'unmapped_authors' => array_values($unmappedAuthors),
             'errors' => $errors,
         ];
     }
@@ -185,6 +200,13 @@ class JiraBillableHoursService
             $jql .= " AND project in ('{$projectsString}')";
         }
 
+        Log::info("Jira sync: Executing JQL query", [
+            'jql' => $jql,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'billable_projects' => $this->billableProjects,
+        ]);
+
         do {
             $requestBody = [
                 'jql' => $jql,
@@ -200,6 +222,11 @@ class JiraBillableHoursService
                 ->post("{$this->baseUrl}/rest/api/3/search/jql", $requestBody);
 
             if (!$response->successful()) {
+                Log::error("Jira API error", [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'jql' => $jql,
+                ]);
                 throw new \Exception("Jira API error: " . $response->body());
             }
 
