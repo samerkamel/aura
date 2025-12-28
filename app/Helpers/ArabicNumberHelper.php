@@ -4,6 +4,29 @@ namespace App\Helpers;
 
 class ArabicNumberHelper
 {
+    /**
+     * Reverse Arabic text for proper RTL display in DomPDF
+     * DomPDF has issues with RTL text, so we need to reverse the characters
+     */
+    public static function reverseArabicText(string $text): string
+    {
+        // Split into characters (multibyte safe)
+        $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+        // Reverse the array
+        $reversed = array_reverse($chars);
+        // Join back together
+        return implode('', $reversed);
+    }
+
+    /**
+     * Get Arabic words formatted for PDF (reversed for DomPDF RTL support)
+     */
+    public static function toArabicWordsForPdf(float $number, string $currency = 'EGP'): string
+    {
+        $text = self::toArabicWords($number, $currency);
+        return self::reverseArabicText($text);
+    }
+
     private static $ones = [
         0 => '',
         1 => 'واحد',
