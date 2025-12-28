@@ -48,7 +48,11 @@
       "Bash(Modules/Accounting/database/migrations/2025_12_22_120000_add_calculation_base_to_expense_category_budgets_table.php )",
       "Bash(Modules/Accounting/database/seeders/ExpenseCategorySeeder.php)",
       "Bash(Modules/Accounting/routes/web.php)",
-      "Bash(Modules/Accounting/resources/views/expenses/categories.blade.php)"
+      "Bash(Modules/Accounting/resources/views/expenses/categories.blade.php)",
+      "Bash(ssh root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")",
+      "Bash(ssh-keygen:*)",
+      "Bash(ssh -o StrictHostKeyChecking=accept-new root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")"
     ],
     "deny": []
   }

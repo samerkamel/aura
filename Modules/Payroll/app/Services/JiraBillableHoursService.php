@@ -232,6 +232,12 @@ class JiraBillableHoursService
 
             $data = $response->json();
 
+            Log::info("Jira sync: API response page", [
+                'issues_count' => count($data['issues'] ?? []),
+                'has_next_page' => isset($data['nextPageToken']),
+                'response_keys' => array_keys($data),
+            ]);
+
             // Process issues and extract worklogs
             foreach ($data['issues'] ?? [] as $issue) {
                 $issueKey = $issue['key'];

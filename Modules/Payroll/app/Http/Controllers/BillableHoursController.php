@@ -477,19 +477,26 @@ class BillableHoursController extends Controller
         // Test API connection
         $testConnection = $jiraService->testConnection();
 
-        // Try to fetch issues count
+        // Try to fetch issues count using the NEW /search/jql POST API
         $issuesCount = 0;
         $apiError = null;
+        $apiResponse = null;
         try {
             $response = \Illuminate\Support\Facades\Http::withBasicAuth($settings->email, $settings->api_token)
-                ->get("{$settings->base_url}/rest/api/3/search", [
+                ->post("{$settings->base_url}/rest/api/3/search/jql", [
                     'jql' => $jql,
-                    'maxResults' => 0,
+                    'fields' => ['summary', 'worklog'],
+                    'maxResults' => 5, // Just get a few to see if it works
                 ]);
 
+            $apiResponse = $response->json();
+
             if ($response->successful()) {
-                $data = $response->json();
-                $issuesCount = $data['total'] ?? 0;
+                $issuesCount = count($apiResponse['issues'] ?? []);
+                // Check if there are more issues
+                if (isset($apiResponse['total'])) {
+                    $issuesCount = $apiResponse['total'];
+                }
             } else {
                 $apiError = $response->body();
             }
@@ -523,6 +530,7 @@ class BillableHoursController extends Controller
             'jql_query' => $jql,
             'issues_found' => $issuesCount,
             'api_error' => $apiError,
+            'api_response_sample' => $apiResponse, // Show raw API response
             'mapped_employees' => $employees->map(fn($e) => [
                 'id' => $e->id,
                 'name' => $e->name,
