@@ -477,6 +477,29 @@ class BillableHoursController extends Controller
         // Test API connection
         $testConnection = $jiraService->testConnection();
 
+        // Test what projects the user can access
+        $projectsTest = null;
+        try {
+            $projectsResponse = \Illuminate\Support\Facades\Http::withBasicAuth($settings->email, $settings->api_token)
+                ->get("{$settings->base_url}/rest/api/3/project");
+
+            if ($projectsResponse->successful()) {
+                $projects = $projectsResponse->json();
+                $projectsTest = [
+                    'success' => true,
+                    'count' => count($projects),
+                    'projects' => array_map(fn($p) => ['key' => $p['key'], 'name' => $p['name']], array_slice($projects, 0, 10)),
+                ];
+            } else {
+                $projectsTest = [
+                    'success' => false,
+                    'error' => $projectsResponse->body(),
+                ];
+            }
+        } catch (\Exception $e) {
+            $projectsTest = ['success' => false, 'error' => $e->getMessage()];
+        }
+
         // Try to fetch issues count using the NEW /search/jql POST API
         $issuesCount = 0;
         $apiError = null;
@@ -550,6 +573,7 @@ class BillableHoursController extends Controller
                 'start' => $startDate->format('Y-m-d'),
                 'end' => $endDate->format('Y-m-d'),
             ],
+            'available_projects' => $projectsTest, // What projects can we access?
             'simple_api_test' => $simpleTestResult, // Test if API works with simple query
             'jql_query' => $jql,
             'issues_found_with_worklogDate' => $issuesCount,
