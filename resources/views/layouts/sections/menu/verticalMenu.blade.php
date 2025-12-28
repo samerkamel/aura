@@ -1,6 +1,8 @@
 @php
 use Illuminate\Support\Facades\Route;
+use Modules\Settings\Models\CompanySetting;
 $configData = Helper::appClasses();
+$companySettings = CompanySetting::getSettings();
 @endphp
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -9,8 +11,14 @@ $configData = Helper::appClasses();
   @if(!isset($navbarFull))
     <div class="app-brand demo">
       <a href="{{url('/')}}" class="app-brand-link">
-        <span class="app-brand-logo demo">@include('_partials.macros',["height"=>20])</span>
-        <span class="app-brand-text demo menu-text fw-bold">{{config('variables.templateName')}}</span>
+        <span class="app-brand-logo demo">
+          @if($companySettings->logo_path)
+            <img src="{{ $companySettings->logo_url }}" alt="{{ $companySettings->company_name }}" style="height: 28px; width: auto; max-width: 150px; object-fit: contain;">
+          @else
+            @include('_partials.macros',["height"=>20])
+          @endif
+        </span>
+        <span class="app-brand-text demo menu-text fw-bold">{{ $companySettings->company_name ?? config('variables.templateName') }}</span>
       </a>
 
       <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
