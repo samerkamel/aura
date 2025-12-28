@@ -5,26 +5,141 @@ namespace App\Helpers;
 class ArabicNumberHelper
 {
     /**
+     * Arabic letter forms mapping
+     * Each Arabic letter has 4 forms: isolated, initial, medial, final
+     * Format: 'isolated' => ['isolated', 'final', 'initial', 'medial']
+     */
+    private static $arabicForms = [
+        // Alef forms
+        'ا' => ['ا', 'ﺎ', 'ا', 'ﺎ'],
+        'أ' => ['أ', 'ﺄ', 'أ', 'ﺄ'],
+        'إ' => ['إ', 'ﺈ', 'إ', 'ﺈ'],
+        'آ' => ['آ', 'ﺂ', 'آ', 'ﺂ'],
+        'ء' => ['ء', 'ء', 'ء', 'ء'],
+        'ؤ' => ['ؤ', 'ﺆ', 'ؤ', 'ﺆ'],
+        'ئ' => ['ئ', 'ﺊ', 'ﺋ', 'ﺌ'],
+        // Ba forms
+        'ب' => ['ب', 'ﺐ', 'ﺑ', 'ﺒ'],
+        'ت' => ['ت', 'ﺖ', 'ﺗ', 'ﺘ'],
+        'ث' => ['ث', 'ﺚ', 'ﺛ', 'ﺜ'],
+        'ج' => ['ج', 'ﺞ', 'ﺟ', 'ﺠ'],
+        'ح' => ['ح', 'ﺢ', 'ﺣ', 'ﺤ'],
+        'خ' => ['خ', 'ﺦ', 'ﺧ', 'ﺨ'],
+        'د' => ['د', 'ﺪ', 'د', 'ﺪ'],
+        'ذ' => ['ذ', 'ﺬ', 'ذ', 'ﺬ'],
+        'ر' => ['ر', 'ﺮ', 'ر', 'ﺮ'],
+        'ز' => ['ز', 'ﺰ', 'ز', 'ﺰ'],
+        'س' => ['س', 'ﺲ', 'ﺳ', 'ﺴ'],
+        'ش' => ['ش', 'ﺶ', 'ﺷ', 'ﺸ'],
+        'ص' => ['ص', 'ﺺ', 'ﺻ', 'ﺼ'],
+        'ض' => ['ض', 'ﺾ', 'ﺿ', 'ﻀ'],
+        'ط' => ['ط', 'ﻂ', 'ﻃ', 'ﻄ'],
+        'ظ' => ['ظ', 'ﻆ', 'ﻇ', 'ﻈ'],
+        'ع' => ['ع', 'ﻊ', 'ﻋ', 'ﻌ'],
+        'غ' => ['غ', 'ﻎ', 'ﻏ', 'ﻐ'],
+        'ف' => ['ف', 'ﻒ', 'ﻓ', 'ﻔ'],
+        'ق' => ['ق', 'ﻖ', 'ﻗ', 'ﻘ'],
+        'ك' => ['ك', 'ﻚ', 'ﻛ', 'ﻜ'],
+        'ل' => ['ل', 'ﻞ', 'ﻟ', 'ﻠ'],
+        'م' => ['م', 'ﻢ', 'ﻣ', 'ﻤ'],
+        'ن' => ['ن', 'ﻦ', 'ﻧ', 'ﻨ'],
+        'ه' => ['ه', 'ﻪ', 'ﻫ', 'ﻬ'],
+        'و' => ['و', 'ﻮ', 'و', 'ﻮ'],
+        'ي' => ['ي', 'ﻲ', 'ﻳ', 'ﻴ'],
+        'ى' => ['ى', 'ﻰ', 'ﻯ', 'ﻰ'],
+        'ة' => ['ة', 'ﺔ', 'ة', 'ﺔ'],
+        'ﻻ' => ['ﻻ', 'ﻼ', 'ﻻ', 'ﻼ'],
+    ];
+
+    /**
+     * Letters that don't connect to the next letter (only connect from right)
+     */
+    private static $nonConnectingLetters = ['ا', 'أ', 'إ', 'آ', 'د', 'ذ', 'ر', 'ز', 'و', 'ؤ', 'ة', 'ء'];
+
+    /**
+     * Check if a character is an Arabic letter
+     */
+    private static function isArabicLetter(string $char): bool
+    {
+        return isset(self::$arabicForms[$char]);
+    }
+
+    /**
+     * Check if a letter connects to the next letter
+     */
+    private static function connectsToNext(string $char): bool
+    {
+        return self::isArabicLetter($char) && !in_array($char, self::$nonConnectingLetters);
+    }
+
+    /**
+     * Shape Arabic text for proper display in DomPDF
+     * Converts each letter to its appropriate positional form
+     */
+    public static function shapeArabicText(string $text): string
+    {
+        // Handle Lam-Alef ligatures first
+        $text = str_replace(['لا', 'لأ', 'لإ', 'لآ'], ['ﻻ', 'ﻷ', 'ﻹ', 'ﻵ'], $text);
+
+        $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $result = [];
+        $len = count($chars);
+
+        for ($i = 0; $i < $len; $i++) {
+            $char = $chars[$i];
+
+            if (!self::isArabicLetter($char)) {
+                $result[] = $char;
+                continue;
+            }
+
+            $prevChar = $i > 0 ? $chars[$i - 1] : null;
+            $nextChar = $i < $len - 1 ? $chars[$i + 1] : null;
+
+            $prevConnects = $prevChar && self::connectsToNext($prevChar);
+            $nextIsArabic = $nextChar && self::isArabicLetter($nextChar);
+
+            // Determine the form: 0=isolated, 1=final, 2=initial, 3=medial
+            if ($prevConnects && $nextIsArabic && self::connectsToNext($char)) {
+                // Medial form
+                $form = 3;
+            } elseif ($prevConnects && (!$nextIsArabic || !self::connectsToNext($char))) {
+                // Final form
+                $form = 1;
+            } elseif (!$prevConnects && $nextIsArabic && self::connectsToNext($char)) {
+                // Initial form
+                $form = 2;
+            } else {
+                // Isolated form
+                $form = 0;
+            }
+
+            $result[] = self::$arabicForms[$char][$form] ?? $char;
+        }
+
+        return implode('', $result);
+    }
+
+    /**
      * Reverse Arabic text for proper RTL display in DomPDF
-     * DomPDF has issues with RTL text, so we need to reverse the characters
      */
     public static function reverseArabicText(string $text): string
     {
-        // Split into characters (multibyte safe)
         $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
-        // Reverse the array
         $reversed = array_reverse($chars);
-        // Join back together
         return implode('', $reversed);
     }
 
     /**
-     * Get Arabic words formatted for PDF (reversed for DomPDF RTL support)
+     * Get Arabic words formatted for PDF (shaped and reversed for DomPDF RTL support)
      */
     public static function toArabicWordsForPdf(float $number, string $currency = 'EGP'): string
     {
         $text = self::toArabicWords($number, $currency);
-        return self::reverseArabicText($text);
+        // First shape the text (apply proper letter forms)
+        $shaped = self::shapeArabicText($text);
+        // Then reverse for RTL display
+        return self::reverseArabicText($shaped);
     }
 
     private static $ones = [
