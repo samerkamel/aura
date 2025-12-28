@@ -32,11 +32,11 @@
                                         <option value="">Select Customer (Optional)</option>
                                         @foreach($customers as $customer)
                                             <option value="{{ $customer->id }}"
-                                                    data-name="{{ $customer->name }}"
+                                                    data-name="{{ $customer->display_name }}"
                                                     data-email="{{ $customer->email }}"
                                                     data-address="{{ $customer->address }}"
                                                 {{ old('customer_id', $estimate->customer_id) == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->name }}
+                                                {{ $customer->display_name }}
                                             </option>
                                         @endforeach
                                     </select>

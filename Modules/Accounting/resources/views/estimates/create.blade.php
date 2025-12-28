@@ -31,11 +31,11 @@
                                         <option value="">Select Customer (Optional)</option>
                                         @foreach($customers as $customer)
                                             <option value="{{ $customer->id }}"
-                                                    data-name="{{ $customer->name }}"
+                                                    data-name="{{ $customer->display_name }}"
                                                     data-email="{{ $customer->email }}"
                                                     data-address="{{ $customer->address }}"
                                                 {{ old('customer_id', $selectedProject->customer_id ?? '') == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->name }}
+                                                {{ $customer->display_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -65,8 +65,8 @@
                                     <label for="client_name" class="form-label">Client Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('client_name') is-invalid @enderror"
                                            id="client_name" name="client_name"
-                                           value="{{ old('client_name', $selectedProject->customer->name ?? '') }}"
-                                           placeholder="Enter client name" required>
+                                           value="{{ old('client_name', $selectedProject->customer->display_name ?? '') }}"
+                                           placeholder="Enter client/company name" required>
                                     @error('client_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
