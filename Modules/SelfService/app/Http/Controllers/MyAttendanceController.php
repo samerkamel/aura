@@ -263,9 +263,21 @@ class MyAttendanceController extends Controller
         $totalWorkMinutes = array_sum(array_column($dailyRecords, 'total_minutes'));
         $totalLatePenaltyMinutes = array_sum(array_column($dailyRecords, 'late_penalty'));
 
+        // Count WFH days (only work days, excluding weekends and holidays)
+        $wfhDays = 0;
+        foreach ($wfhRecords as $dateStr => $wfh) {
+            $wfhDate = Carbon::parse($dateStr);
+            $isWeekend = in_array($wfhDate->dayOfWeek, $weekendDayNumbers);
+            $isHoliday = isset($publicHolidays[$dateStr]);
+            if (!$isWeekend && !$isHoliday) {
+                $wfhDays++;
+            }
+        }
+
         $expectedWorkHours = $workDays * $workHoursPerDay;
         $vacationHours = $vacationDays * $workHoursPerDay;
-        $totalWorkHours = ($totalWorkMinutes / 60) - ($totalLatePenaltyMinutes / 60) + $vacationHours;
+        $wfhHours = $wfhDays * $workHoursPerDay;
+        $totalWorkHours = ($totalWorkMinutes / 60) - ($totalLatePenaltyMinutes / 60) + $vacationHours + $wfhHours;
         $percentage = $expectedWorkHours > 0 ? ($totalWorkHours / $expectedWorkHours) * 100 : 0;
 
         $employeeSummary = [
@@ -273,6 +285,8 @@ class MyAttendanceController extends Controller
             'expected_work_hours' => $expectedWorkHours,
             'vacation_days' => $vacationDays,
             'vacation_hours' => $vacationHours,
+            'wfh_days' => $wfhDays,
+            'wfh_hours' => $wfhHours,
             'total_work_minutes' => $totalWorkMinutes,
             'total_late_penalty_minutes' => $totalLatePenaltyMinutes,
             'total_work_hours' => $totalWorkHours,

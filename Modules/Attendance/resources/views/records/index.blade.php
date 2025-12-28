@@ -570,6 +570,17 @@
             </div>
           </div>
 
+          <!-- WFH Hours -->
+          <div class="col-md-3">
+            <div class="border rounded p-3 text-center">
+              <div class="text-muted small mb-1">WFH Hours</div>
+              <h4 class="mb-0 text-primary">
+                {{ number_format($employeeSummary['wfh_hours'] ?? 0, 1) }}h
+              </h4>
+              <small class="text-muted">{{ $employeeSummary['wfh_days'] ?? 0 }} WFH days × {{ $employeeSummary['work_hours_per_day'] }}h</small>
+            </div>
+          </div>
+
           <!-- Total Work Hours -->
           <div class="col-md-3">
             <div class="border rounded p-3 text-center">
@@ -581,6 +592,7 @@
                 {{ floor($employeeSummary['total_work_minutes'] / 60) }}h {{ $employeeSummary['total_work_minutes'] % 60 }}m worked
                 - {{ floor($employeeSummary['total_late_penalty_minutes'] / 60) }}h {{ $employeeSummary['total_late_penalty_minutes'] % 60 }}m penalties
                 + {{ number_format($employeeSummary['vacation_hours'], 1) }}h vacation
+                + {{ number_format($employeeSummary['wfh_hours'] ?? 0, 1) }}h WFH
               </small>
             </div>
           </div>
@@ -630,6 +642,14 @@
                 <tr>
                   <td class="text-muted">Vacation Hours (Leave × {{ $employeeSummary['work_hours_per_day'] }}h)</td>
                   <td><strong>{{ number_format($employeeSummary['vacation_hours'], 1) }} hours</strong></td>
+                </tr>
+                <tr>
+                  <td class="text-muted">WFH Days</td>
+                  <td><strong>{{ $employeeSummary['wfh_days'] ?? 0 }} days</strong></td>
+                </tr>
+                <tr>
+                  <td class="text-muted">WFH Hours (WFH × {{ $employeeSummary['work_hours_per_day'] }}h)</td>
+                  <td><strong>{{ number_format($employeeSummary['wfh_hours'] ?? 0, 1) }} hours</strong></td>
                 </tr>
                 <tr>
                   <td class="text-muted">Actual Worked Time (from attendance)</td>

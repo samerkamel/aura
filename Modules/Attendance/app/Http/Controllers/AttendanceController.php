@@ -485,10 +485,22 @@ class AttendanceController extends Controller
             $totalWorkMinutes = array_sum(array_column($dailyRecords, 'total_minutes'));
             $totalLatePenaltyMinutes = array_sum(array_column($dailyRecords, 'late_penalty'));
 
+            // Count WFH days (only work days, excluding weekends and holidays)
+            $wfhDays = 0;
+            foreach ($wfhRecordsByDate as $dateStr => $wfh) {
+                $wfhDate = Carbon::parse($dateStr);
+                $isWeekend = in_array($wfhDate->dayOfWeek, $weekendDayNumbers);
+                $isHoliday = in_array($dateStr, array_keys($publicHolidays->toArray()));
+                if (!$isWeekend && !$isHoliday) {
+                    $wfhDays++;
+                }
+            }
+
             // Calculate summary values
             $expectedWorkHours = $workDays * $workHoursPerDay;
             $vacationHours = $vacationDays * $workHoursPerDay;
-            $totalWorkHours = ($totalWorkMinutes / 60) - ($totalLatePenaltyMinutes / 60) + $vacationHours;
+            $wfhHours = $wfhDays * $workHoursPerDay;
+            $totalWorkHours = ($totalWorkMinutes / 60) - ($totalLatePenaltyMinutes / 60) + $vacationHours + $wfhHours;
             $percentage = $expectedWorkHours > 0 ? ($totalWorkHours / $expectedWorkHours) * 100 : 0;
 
             $employeeSummary = [
@@ -496,6 +508,8 @@ class AttendanceController extends Controller
                 'expected_work_hours' => $expectedWorkHours,
                 'vacation_days' => $vacationDays,
                 'vacation_hours' => $vacationHours,
+                'wfh_days' => $wfhDays,
+                'wfh_hours' => $wfhHours,
                 'total_work_minutes' => $totalWorkMinutes,
                 'total_late_penalty_minutes' => $totalLatePenaltyMinutes,
                 'total_work_hours' => $totalWorkHours,
@@ -620,6 +634,9 @@ class AttendanceController extends Controller
             };
         }, $weekendDays);
         $weekendDayNumbers = array_filter($weekendDayNumbers, fn($d) => $d !== null);
+
+        // Get work hours per day setting
+        $workHoursPerDay = (float) Setting::get('work_hours_per_day', 8);
 
         // Get flexible hours rule for late penalty calculation
         $flexibleHoursRule = AttendanceRule::getFlexibleHoursRule();
@@ -811,13 +828,17 @@ class AttendanceController extends Controller
                 // Calculate absent days (work days - attended days - vacation days - WFH days)
                 $absentDays = max(0, $workDays - $attendedDays - $vacationDays - $wfhDays);
 
+                // Calculate WFH hours (WFH counts as full work day)
+                $wfhHours = $wfhDays * $workHoursPerDay;
+
                 $employeeData['months'][$month] = [
-                    'attendance_hours' => round($totalMinutes / 60, 1),
+                    'attendance_hours' => round(($totalMinutes / 60) + $wfhHours, 1),
                     'late_penalty_hours' => round($totalLatePenaltyMinutes / 60, 1),
                     'absent_days' => $absentDays,
                     'vacation_days' => $vacationDays,
                     'permissions' => $permissionsUsed,
                     'wfh_days' => $wfhDays,
+                    'wfh_hours' => round($wfhHours, 1),
                     'work_days' => $workDays,
                     'attended_days' => $attendedDays,
                 ];
@@ -833,7 +854,7 @@ class AttendanceController extends Controller
         ];
 
         // Calculate yearly statistics for the selected/all employees
-        $workHoursPerDay = (float) Setting::get('work_hours_per_day', 8);
+        // Note: $workHoursPerDay is already defined earlier
 
         // Calculate total working days in the year (26/12 previous year to 25/12 this year)
         $yearStart = Carbon::create($year - 1, 12, 26)->startOfDay();

@@ -390,6 +390,14 @@
                 <td><strong>{{ number_format($employeeSummary['vacation_hours'], 1) }} hours</strong></td>
               </tr>
               <tr>
+                <td class="text-muted">WFH Days</td>
+                <td><strong>{{ $employeeSummary['wfh_days'] ?? 0 }} days</strong></td>
+              </tr>
+              <tr>
+                <td class="text-muted">WFH Hours (WFH × {{ $employeeSummary['work_hours_per_day'] }}h)</td>
+                <td><strong>{{ number_format($employeeSummary['wfh_hours'] ?? 0, 1) }} hours</strong></td>
+              </tr>
+              <tr>
                 <td class="text-muted">Actual Worked Time (from attendance)</td>
                 <td><strong>{{ floor($employeeSummary['total_work_minutes'] / 60) }}h {{ $employeeSummary['total_work_minutes'] % 60 }}m</strong></td>
               </tr>
