@@ -235,7 +235,7 @@
                 @endif
                 <div class="company-name">{{ $companySettings->company_name }}</div>
                 @if($companySettings->company_name_ar)
-                    <div class="company-name" style="font-size: 14px;">{{ $companySettings->company_name_ar }}</div>
+                    <div class="company-name" style="font-size: 14px; text-align: left;">{{ \App\Helpers\ArabicNumberHelper::prepareForPdf($companySettings->company_name_ar) }}</div>
                 @endif
                 <div class="company-info">
                     @if($companySettings->address){{ $companySettings->address }}<br>@endif
@@ -338,7 +338,7 @@
         <table style="width: 100%; margin-bottom: 30px;">
             <tr>
                 <td style="text-align: right; font-size: 12px; color: #333; padding: 10px; background: #f9fafb; border-radius: 6px;">
-                    {{ \App\Helpers\ArabicNumberHelper::toArabicWordsForPdf($estimate->total, $companySettings->currency ?? 'EGP') }} <strong>{{ \App\Helpers\ArabicNumberHelper::reverseArabicText('المبلغ بالحروف:') }}</strong>
+                    {{ \App\Helpers\ArabicNumberHelper::toArabicWordsForPdf($estimate->total, $companySettings->currency ?? 'EGP') }} <strong>{{ \App\Helpers\ArabicNumberHelper::prepareForPdf('المبلغ بالحروف:') }}</strong>
                 </td>
             </tr>
         </table>

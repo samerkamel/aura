@@ -136,6 +136,14 @@ class ArabicNumberHelper
     public static function toArabicWordsForPdf(float $number, string $currency = 'EGP'): string
     {
         $text = self::toArabicWords($number, $currency);
+        return self::prepareForPdf($text);
+    }
+
+    /**
+     * Prepare any Arabic text for PDF display (shape and reverse)
+     */
+    public static function prepareForPdf(string $text): string
+    {
         // First shape the text (apply proper letter forms)
         $shaped = self::shapeArabicText($text);
         // Then reverse for RTL display
