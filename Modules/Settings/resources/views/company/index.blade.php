@@ -241,18 +241,62 @@
 
                 <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <!-- Company Logo -->
+                    <!-- Dashboard Logo -->
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-photo me-2"></i>Company Logo
+                                <i class="ti ti-layout-dashboard me-2"></i>Dashboard Logo
                             </h5>
+                            <small class="text-muted">Displayed in sidebar and navbar</small>
+                        </div>
+                        <div class="card-body text-center">
+                            @if($settings->dashboard_logo_path)
+                                <div class="mb-3">
+                                    <img src="{{ $settings->dashboard_logo_url }}" alt="Dashboard Logo"
+                                         class="img-fluid rounded" style="max-height: 100px;">
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="remove_dashboard_logo" name="remove_dashboard_logo" value="1">
+                                    <label class="form-check-label text-danger" for="remove_dashboard_logo">
+                                        Remove current logo
+                                    </label>
+                                </div>
+                            @else
+                                <div class="mb-3">
+                                    <div class="border rounded p-3 bg-light">
+                                        <i class="ti ti-photo-off text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mb-0 mt-2 small">No logo uploaded</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="mb-0">
+                                <label for="dashboard_logo" class="form-label">Upload Dashboard Logo</label>
+                                <input type="file" class="form-control form-control-sm @error('dashboard_logo') is-invalid @enderror"
+                                       id="dashboard_logo" name="dashboard_logo" accept="image/jpeg,image/png,image/gif,image/svg+xml">
+                                @error('dashboard_logo')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted d-block mt-1">
+                                    Recommended: 150x40px
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Logo -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="ti ti-file-invoice me-2"></i>Document Logo
+                            </h5>
+                            <small class="text-muted">Used in estimates, invoices & PDFs</small>
                         </div>
                         <div class="card-body text-center">
                             @if($settings->logo_path)
                                 <div class="mb-3">
-                                    <img src="{{ $settings->logo_url }}" alt="Company Logo"
-                                         class="img-fluid rounded" style="max-height: 150px;">
+                                    <img src="{{ $settings->logo_url }}" alt="Document Logo"
+                                         class="img-fluid rounded" style="max-height: 120px;">
                                 </div>
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="remove_logo" name="remove_logo" value="1">
@@ -262,34 +306,24 @@
                                 </div>
                             @else
                                 <div class="mb-3">
-                                    <div class="border rounded p-4 bg-light">
-                                        <i class="ti ti-photo-off text-muted" style="font-size: 3rem;"></i>
-                                        <p class="text-muted mb-0 mt-2">No logo uploaded</p>
+                                    <div class="border rounded p-3 bg-light">
+                                        <i class="ti ti-photo-off text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mb-0 mt-2 small">No logo uploaded</p>
                                     </div>
                                 </div>
                             @endif
 
                             <div class="mb-0">
-                                <label for="logo" class="form-label">Upload New Logo</label>
-                                <input type="file" class="form-control @error('logo') is-invalid @enderror"
+                                <label for="logo" class="form-label">Upload Document Logo</label>
+                                <input type="file" class="form-control form-control-sm @error('logo') is-invalid @enderror"
                                        id="logo" name="logo" accept="image/jpeg,image/png,image/gif,image/svg+xml">
                                 @error('logo')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <small class="text-muted d-block mt-1">
-                                    Max 2MB. Supported: JPEG, PNG, GIF, SVG
+                                    Max 2MB. Use transparent PNG for best results
                                 </small>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Logo Preview -->
-                    <div class="card mb-4" id="logoPreviewCard" style="display: none;">
-                        <div class="card-header">
-                            <h6 class="card-title mb-0">Preview</h6>
-                        </div>
-                        <div class="card-body text-center">
-                            <img id="logoPreview" src="" alt="Logo Preview" class="img-fluid rounded" style="max-height: 150px;">
                         </div>
                     </div>
 
@@ -302,8 +336,8 @@
                         </div>
                         <div class="card-body">
                             <ul class="mb-0 ps-3">
-                                <li class="mb-2">Use a transparent PNG logo for best results on documents</li>
-                                <li class="mb-2">The logo will appear on estimates and invoices</li>
+                                <li class="mb-2"><strong>Dashboard logo:</strong> Appears in the sidebar navigation</li>
+                                <li class="mb-2"><strong>Document logo:</strong> Used on estimates, invoices, and PDFs</li>
                                 <li class="mb-2">VAT rate is used as default for new estimates</li>
                                 <li class="mb-0">Bank details appear on document footers</li>
                             </ul>
@@ -328,24 +362,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const logoInput = document.getElementById('logo');
-    const logoPreview = document.getElementById('logoPreview');
-    const logoPreviewCard = document.getElementById('logoPreviewCard');
-
-    logoInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoPreview.src = e.target.result;
-                logoPreviewCard.style.display = 'block';
-            };
-            reader.readAsDataURL(this.files[0]);
-        } else {
-            logoPreviewCard.style.display = 'none';
-        }
-    });
-});
-</script>
 @endsection

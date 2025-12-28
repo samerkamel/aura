@@ -12,6 +12,7 @@ class CompanySetting extends Model
         'company_name',
         'company_name_ar',
         'logo_path',
+        'dashboard_logo_path',
         'address',
         'address_ar',
         'phone',
@@ -83,6 +84,18 @@ class CompanySetting extends Model
         $mimeType = Storage::disk('public')->mimeType($this->logo_path);
 
         return 'data:' . $mimeType . ';base64,' . base64_encode($content);
+    }
+
+    /**
+     * Get the full URL for the dashboard logo.
+     */
+    public function getDashboardLogoUrlAttribute(): ?string
+    {
+        if (!$this->dashboard_logo_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->dashboard_logo_path);
     }
 
     /**

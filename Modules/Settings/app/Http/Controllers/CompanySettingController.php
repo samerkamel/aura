@@ -30,6 +30,7 @@ class CompanySettingController extends Controller
             'company_name' => 'required|string|max:255',
             'company_name_ar' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,gif,svg|max:2048',
+            'dashboard_logo' => 'nullable|image|mimes:jpeg,png,gif,svg|max:2048',
             'address' => 'nullable|string|max:1000',
             'address_ar' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:50',
@@ -64,6 +65,24 @@ class CompanySettingController extends Controller
         if ($request->boolean('remove_logo') && $settings->logo_path) {
             Storage::disk('public')->delete($settings->logo_path);
             $settings->logo_path = null;
+        }
+
+        // Handle dashboard logo upload
+        if ($request->hasFile('dashboard_logo')) {
+            // Delete old dashboard logo if exists
+            if ($settings->dashboard_logo_path) {
+                Storage::disk('public')->delete($settings->dashboard_logo_path);
+            }
+
+            // Store new dashboard logo
+            $path = $request->file('dashboard_logo')->store('company', 'public');
+            $settings->dashboard_logo_path = $path;
+        }
+
+        // Handle dashboard logo removal
+        if ($request->boolean('remove_dashboard_logo') && $settings->dashboard_logo_path) {
+            Storage::disk('public')->delete($settings->dashboard_logo_path);
+            $settings->dashboard_logo_path = null;
         }
 
         // Update settings

@@ -12,8 +12,8 @@ $companySettings = CompanySetting::getSettings();
     <div class="app-brand demo">
       <a href="{{url('/')}}" class="app-brand-link">
         <span class="app-brand-logo demo">
-          @if($companySettings->logo_path)
-            <img src="{{ $companySettings->logo_url }}" alt="{{ $companySettings->company_name }}" style="height: 28px; width: auto; max-width: 150px; object-fit: contain;">
+          @if($companySettings->dashboard_logo_path)
+            <img src="{{ $companySettings->dashboard_logo_url }}" alt="{{ $companySettings->company_name }}" style="height: 28px; width: auto; max-width: 150px; object-fit: contain;">
           @else
             @include('_partials.macros',["height"=>20])
           @endif
