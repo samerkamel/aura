@@ -68,7 +68,14 @@ class CompanySetting extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->logo_path);
+        $url = Storage::disk('public')->url($this->logo_path);
+
+        // Force HTTPS in production
+        if (app()->environment('production') || request()->secure()) {
+            $url = str_replace('http://', 'https://', $url);
+        }
+
+        return $url;
     }
 
     /**
@@ -95,7 +102,14 @@ class CompanySetting extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->dashboard_logo_path);
+        $url = Storage::disk('public')->url($this->dashboard_logo_path);
+
+        // Force HTTPS in production
+        if (app()->environment('production') || request()->secure()) {
+            $url = str_replace('http://', 'https://', $url);
+        }
+
+        return $url;
     }
 
     /**

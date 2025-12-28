@@ -289,9 +289,94 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    let itemIndex = 0;
+// Define global variables and functions BEFORE DOMContentLoaded
+let itemIndex = 0;
 
+function addItem() {
+    addItemWithData({});
+}
+
+function addItemWithData(data) {
+    const tbody = document.getElementById('itemsBody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>
+            <input type="text" class="form-control form-control-sm" name="items[${itemIndex}][description]"
+                   value="${data.description || ''}" placeholder="Item description" required>
+        </td>
+        <td>
+            <input type="text" class="form-control form-control-sm" name="items[${itemIndex}][details]"
+                   value="${data.details || ''}" placeholder="Details">
+        </td>
+        <td>
+            <input type="number" class="form-control form-control-sm item-qty" name="items[${itemIndex}][quantity]"
+                   value="${data.quantity || 1}" step="0.01" min="0.01" required onchange="calculateTotals()">
+        </td>
+        <td>
+            <select class="form-select form-select-sm" name="items[${itemIndex}][unit]">
+                <option value="unit" ${data.unit === 'unit' ? 'selected' : ''}>Unit</option>
+                <option value="hour" ${data.unit === 'hour' ? 'selected' : ''}>Hour</option>
+                <option value="day" ${data.unit === 'day' ? 'selected' : ''}>Day</option>
+                <option value="month" ${data.unit === 'month' ? 'selected' : ''}>Month</option>
+                <option value="piece" ${data.unit === 'piece' ? 'selected' : ''}>Piece</option>
+                <option value="service" ${data.unit === 'service' ? 'selected' : ''}>Service</option>
+            </select>
+        </td>
+        <td>
+            <input type="number" class="form-control form-control-sm item-price" name="items[${itemIndex}][unit_price]"
+                   value="${data.unit_price || 0}" step="0.01" min="0" required onchange="calculateTotals()">
+        </td>
+        <td class="item-amount">EGP 0.00</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="removeItem(this)">
+                <i class="ti ti-trash"></i>
+            </button>
+        </td>
+    `;
+    tbody.appendChild(row);
+    itemIndex++;
+    calculateTotals();
+}
+
+function removeItem(btn) {
+    const tbody = document.getElementById('itemsBody');
+    if (tbody.children.length > 1) {
+        btn.closest('tr').remove();
+        calculateTotals();
+    }
+}
+
+function calculateTotals() {
+    const rows = document.querySelectorAll('#itemsBody tr');
+    let subtotal = 0;
+    let itemCount = 0;
+
+    rows.forEach(row => {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const amount = qty * price;
+        row.querySelector('.item-amount').textContent = 'EGP ' + amount.toFixed(2);
+        subtotal += amount;
+        itemCount++;
+    });
+
+    const vatRate = parseFloat(document.getElementById('vat_rate').value) || 0;
+    const vat = subtotal * (vatRate / 100);
+    const total = subtotal + vat;
+
+    // Update displays
+    document.getElementById('subtotalDisplay').textContent = 'EGP ' + subtotal.toFixed(2);
+    document.getElementById('vatDisplay').textContent = 'EGP ' + vat.toFixed(2);
+    document.getElementById('totalDisplay').textContent = 'EGP ' + total.toFixed(2);
+
+    // Update sidebar
+    document.getElementById('itemCountDisplay').textContent = itemCount;
+    document.getElementById('sidebarSubtotal').textContent = 'EGP ' + subtotal.toFixed(2);
+    document.getElementById('sidebarVat').textContent = 'EGP ' + vat.toFixed(2);
+    document.getElementById('sidebarTotal').textContent = 'EGP ' + total.toFixed(2);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
     // Existing items data
     const existingItems = @json($estimate->items);
 
@@ -320,91 +405,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (existingItems.length === 0) {
         addItem();
     }
-
-    // Make addItem and removeItem global
-    window.addItem = function() {
-        addItemWithData({});
-    };
-
-    function addItemWithData(data) {
-        const tbody = document.getElementById('itemsBody');
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>
-                <input type="text" class="form-control form-control-sm" name="items[${itemIndex}][description]"
-                       value="${data.description || ''}" placeholder="Item description" required>
-            </td>
-            <td>
-                <input type="text" class="form-control form-control-sm" name="items[${itemIndex}][details]"
-                       value="${data.details || ''}" placeholder="Details">
-            </td>
-            <td>
-                <input type="number" class="form-control form-control-sm item-qty" name="items[${itemIndex}][quantity]"
-                       value="${data.quantity || 1}" step="0.01" min="0.01" required onchange="calculateTotals()">
-            </td>
-            <td>
-                <select class="form-select form-select-sm" name="items[${itemIndex}][unit]">
-                    <option value="unit" ${data.unit === 'unit' ? 'selected' : ''}>Unit</option>
-                    <option value="hour" ${data.unit === 'hour' ? 'selected' : ''}>Hour</option>
-                    <option value="day" ${data.unit === 'day' ? 'selected' : ''}>Day</option>
-                    <option value="month" ${data.unit === 'month' ? 'selected' : ''}>Month</option>
-                    <option value="piece" ${data.unit === 'piece' ? 'selected' : ''}>Piece</option>
-                    <option value="service" ${data.unit === 'service' ? 'selected' : ''}>Service</option>
-                </select>
-            </td>
-            <td>
-                <input type="number" class="form-control form-control-sm item-price" name="items[${itemIndex}][unit_price]"
-                       value="${data.unit_price || 0}" step="0.01" min="0" required onchange="calculateTotals()">
-            </td>
-            <td class="item-amount">EGP 0.00</td>
-            <td>
-                <button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="removeItem(this)">
-                    <i class="ti ti-trash"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(row);
-        itemIndex++;
-        calculateTotals();
-    }
-
-    window.removeItem = function(btn) {
-        const tbody = document.getElementById('itemsBody');
-        if (tbody.children.length > 1) {
-            btn.closest('tr').remove();
-            calculateTotals();
-        }
-    };
-
-    window.calculateTotals = function() {
-        const rows = document.querySelectorAll('#itemsBody tr');
-        let subtotal = 0;
-        let itemCount = 0;
-
-        rows.forEach(row => {
-            const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-            const price = parseFloat(row.querySelector('.item-price').value) || 0;
-            const amount = qty * price;
-            row.querySelector('.item-amount').textContent = 'EGP ' + amount.toFixed(2);
-            subtotal += amount;
-            itemCount++;
-        });
-
-        const vatRate = parseFloat(document.getElementById('vat_rate').value) || 0;
-        const vat = subtotal * (vatRate / 100);
-        const total = subtotal + vat;
-
-        // Update displays
-        document.getElementById('subtotalDisplay').textContent = 'EGP ' + subtotal.toFixed(2);
-        document.getElementById('vatDisplay').textContent = 'EGP ' + vat.toFixed(2);
-        document.getElementById('totalDisplay').textContent = 'EGP ' + total.toFixed(2);
-
-        // Update sidebar
-        document.getElementById('itemCountDisplay').textContent = itemCount;
-        document.getElementById('sidebarSubtotal').textContent = 'EGP ' + subtotal.toFixed(2);
-        document.getElementById('sidebarVat').textContent = 'EGP ' + vat.toFixed(2);
-        document.getElementById('sidebarTotal').textContent = 'EGP ' + total.toFixed(2);
-    };
 });
 </script>
 @endsection
