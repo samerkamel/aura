@@ -231,7 +231,9 @@ class IncompleteAttendanceController extends Controller
             $months[$m] = Carbon::create(null, $m, 1)->format('F');
         }
 
-        $years = range(now()->year - 2, now()->year);
+        // Include next year if we're past the 26th (for payroll cycle)
+        $endYear = now()->day >= 26 ? now()->year + 1 : now()->year;
+        $years = range(now()->year - 2, $endYear);
 
         // Format the date range for display
         $dateRangeDisplay = $startDate->format('M d, Y') . ' - ' . min($endDate, $today)->format('M d, Y');

@@ -399,10 +399,12 @@ class AttendanceController extends Controller
         }
         $summary['unique_employees'] = count($uniqueEmployeeIds);
 
-        // Get years for dropdown (from earliest record to current year)
+        // Get years for dropdown (from earliest record to current/next year based on payroll cycle)
         $earliestRecord = AttendanceLog::orderBy('timestamp', 'asc')->first();
         $startYear = $earliestRecord ? $earliestRecord->timestamp->year : Carbon::now()->year;
-        $years = range($startYear, Carbon::now()->year);
+        // If we're past the 26th, include next year (for next month's payroll cycle)
+        $endYear = Carbon::now()->day >= 26 ? Carbon::now()->year + 1 : Carbon::now()->year;
+        $years = range($startYear, $endYear);
 
         // Get late penalty rules for display in tooltip
         $latePenaltyRules = AttendanceRule::getLatePenaltyRules();

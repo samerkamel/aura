@@ -281,12 +281,13 @@ class MyAttendanceController extends Controller
             'total_worklog_hours' => $totalWorklogHours,
         ];
 
-        // Get years for dropdown
+        // Get years for dropdown (include next year if past 26th for payroll cycle)
         $earliestRecord = AttendanceLog::where('employee_id', $employeeId)
             ->orderBy('timestamp', 'asc')
             ->first();
         $startYear = $earliestRecord ? $earliestRecord->timestamp->year : Carbon::now()->year;
-        $years = range($startYear, Carbon::now()->year);
+        $endYear = Carbon::now()->day >= 26 ? Carbon::now()->year + 1 : Carbon::now()->year;
+        $years = range($startYear, $endYear);
 
         // Get late penalty rules for tooltip
         $latePenaltyRules = AttendanceRule::getLatePenaltyRules();
