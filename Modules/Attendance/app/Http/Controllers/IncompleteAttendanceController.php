@@ -13,6 +13,7 @@ use Modules\Attendance\Models\Setting;
 use Modules\HR\Models\Employee;
 use Modules\Leave\Models\LeaveRecord;
 use Modules\Leave\Models\LeavePolicy;
+use Modules\Payroll\Models\JiraWorklog;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -32,14 +33,33 @@ class IncompleteAttendanceController extends Controller
      */
     public function index(Request $request): View
     {
-        // Get month/year filter (default to current month)
-        $month = $request->get('month', now()->month);
-        $year = $request->get('year', now()->year);
+        // Get month/year filter (default to current month, 0 = all months)
+        $month = (int) $request->get('month', now()->month);
+        $year = (int) $request->get('year', now()->year);
         $selectedEmployeeIds = $request->get('employees', []);
+        $usePayrollCycle = $request->boolean('payroll_cycle', true);
 
-        // Build date range for the selected month
-        $startDate = Carbon::create($year, $month, 1)->startOfDay();
-        $endDate = $startDate->copy()->endOfMonth();
+        // Build date range based on payroll cycle or calendar month
+        if ($month === 0) {
+            // All months in the year - use full year payroll cycle (Jan 26 prev year to Dec 25)
+            if ($usePayrollCycle) {
+                $startDate = Carbon::create($year - 1, 12, 26)->startOfDay();
+                $endDate = Carbon::create($year, 12, 25)->endOfDay();
+            } else {
+                $startDate = Carbon::create($year, 1, 1)->startOfDay();
+                $endDate = Carbon::create($year, 12, 31)->endOfDay();
+            }
+        } else {
+            if ($usePayrollCycle) {
+                // Payroll cycle: 26th of previous month to 25th of current month
+                $startDate = Carbon::create($year, $month, 1)->subMonth()->setDay(26)->startOfDay();
+                $endDate = Carbon::create($year, $month, 25)->endOfDay();
+            } else {
+                // Calendar month
+                $startDate = Carbon::create($year, $month, 1)->startOfDay();
+                $endDate = $startDate->copy()->endOfMonth();
+            }
+        }
         $today = Carbon::today();
 
         // Don't go beyond today
@@ -122,6 +142,13 @@ class IncompleteAttendanceController extends Controller
                 ->map(fn($d) => $d->format('Y-m-d'))
                 ->toArray();
 
+            // Get billable hours (Jira worklogs) for this employee, grouped by date
+            $billableHoursByDate = JiraWorklog::where('employee_id', $employee->id)
+                ->whereBetween('worklog_started', [$employeeStartDate, $employeeEndDate->endOfDay()])
+                ->get()
+                ->groupBy(fn($log) => $log->worklog_started->format('Y-m-d'))
+                ->map(fn($logs) => round($logs->sum('time_spent_hours'), 2));
+
             // Get approved leave records for this employee
             $leaveRecords = LeaveRecord::where('employee_id', $employee->id)
                 ->approved()
@@ -171,6 +198,7 @@ class IncompleteAttendanceController extends Controller
                 }
 
                 if ($issue) {
+                    $billableHours = $billableHoursByDate->get($dateStr, 0);
                     $incompleteRecords[] = [
                         'employee' => $employee,
                         'date' => $currentDate->copy(),
@@ -180,6 +208,7 @@ class IncompleteAttendanceController extends Controller
                         'issue_label' => $this->getIssueLabel($issue),
                         'check_in' => $hasCheckIn ? $dayLogs->where('type', 'sign_in')->first()->timestamp->format('H:i') : null,
                         'check_out' => $hasCheckOut ? $dayLogs->where('type', 'sign_out')->last()->timestamp->format('H:i') : null,
+                        'billable_hours' => $billableHours,
                     ];
                 }
 
@@ -197,12 +226,15 @@ class IncompleteAttendanceController extends Controller
         });
 
         // Generate month/year options for filters
-        $months = [];
+        $months = [0 => 'All Months'];
         for ($m = 1; $m <= 12; $m++) {
             $months[$m] = Carbon::create(null, $m, 1)->format('F');
         }
 
         $years = range(now()->year - 2, now()->year);
+
+        // Format the date range for display
+        $dateRangeDisplay = $startDate->format('M d, Y') . ' - ' . min($endDate, $today)->format('M d, Y');
 
         return view('attendance::incomplete-attendance.index', compact(
             'incompleteRecords',
@@ -213,7 +245,9 @@ class IncompleteAttendanceController extends Controller
             'weekendDays',
             'leavePolicies',
             'allEmployees',
-            'selectedEmployeeIds'
+            'selectedEmployeeIds',
+            'usePayrollCycle',
+            'dateRangeDisplay'
         ));
     }
 
@@ -352,7 +386,7 @@ class IncompleteAttendanceController extends Controller
     }
 
     /**
-     * Convert day names to Carbon day numbers
+     * Convert day names to Carbon day numbers (case-insensitive)
      *
      * @param array $days
      * @return array
@@ -360,16 +394,16 @@ class IncompleteAttendanceController extends Controller
     private function convertDaysToNumbers(array $days): array
     {
         $dayMap = [
-            'Sunday' => 0,
-            'Monday' => 1,
-            'Tuesday' => 2,
-            'Wednesday' => 3,
-            'Thursday' => 4,
-            'Friday' => 5,
-            'Saturday' => 6,
+            'sunday' => 0,
+            'monday' => 1,
+            'tuesday' => 2,
+            'wednesday' => 3,
+            'thursday' => 4,
+            'friday' => 5,
+            'saturday' => 6,
         ];
 
-        return array_map(fn($day) => $dayMap[$day] ?? null, $days);
+        return array_filter(array_map(fn($day) => $dayMap[strtolower(trim($day))] ?? null, $days), fn($v) => $v !== null);
     }
 
     /**

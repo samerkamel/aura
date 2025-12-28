@@ -44,6 +44,12 @@
                     @endforeach
                 </select>
 
+                <!-- Payroll Cycle Toggle -->
+                <div class="form-check form-switch ms-2">
+                    <input class="form-check-input" type="checkbox" id="payroll-cycle" {{ $usePayrollCycle ? 'checked' : '' }}>
+                    <label class="form-check-label" for="payroll-cycle" title="26th to 25th">Payroll Cycle</label>
+                </div>
+
                 <button type="button" class="btn btn-primary" onclick="applyFilters()">
                     <i class="ti ti-filter me-1"></i>Filter
                 </button>
@@ -108,7 +114,10 @@
                 @else
                     No incomplete attendance found
                 @endif
-                <span class="badge bg-label-secondary ms-2">{{ $months[$month] }} {{ $year }}</span>
+                <span class="badge bg-label-secondary ms-2">{{ $dateRangeDisplay }}</span>
+                @if($usePayrollCycle)
+                    <span class="badge bg-label-primary ms-2" title="26th to 25th">Payroll Cycle</span>
+                @endif
                 @if(!empty($selectedEmployeeIds))
                     <span class="badge bg-label-info ms-2">{{ count($selectedEmployeeIds) }} employee(s) filtered</span>
                 @endif
@@ -133,6 +142,7 @@
                                 <th>Issue</th>
                                 <th>Check-In</th>
                                 <th>Check-Out</th>
+                                <th class="text-center">Billable Hours</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -179,6 +189,15 @@
                                     <td>
                                         @if($record['check_out'])
                                             <span class="text-success">{{ $record['check_out'] }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($record['billable_hours'] > 0)
+                                            <span class="badge bg-success" title="Has billable hours - likely WFH">
+                                                {{ number_format($record['billable_hours'], 1) }}h
+                                            </span>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
@@ -377,9 +396,10 @@
     function applyFilters() {
         const month = document.getElementById('month-filter').value;
         const year = document.getElementById('year-filter').value;
+        const payrollCycle = document.getElementById('payroll-cycle').checked ? '1' : '0';
         const employees = $('#employee-filter').val() || [];
 
-        let url = `{{ route('attendance.incomplete-attendance.index') }}?month=${month}&year=${year}`;
+        let url = `{{ route('attendance.incomplete-attendance.index') }}?month=${month}&year=${year}&payroll_cycle=${payrollCycle}`;
 
         if (employees.length > 0) {
             employees.forEach(empId => {
@@ -393,7 +413,8 @@
     function clearEmployeeFilter() {
         const month = document.getElementById('month-filter').value;
         const year = document.getElementById('year-filter').value;
-        window.location.href = `{{ route('attendance.incomplete-attendance.index') }}?month=${month}&year=${year}`;
+        const payrollCycle = document.getElementById('payroll-cycle').checked ? '1' : '0';
+        window.location.href = `{{ route('attendance.incomplete-attendance.index') }}?month=${month}&year=${year}&payroll_cycle=${payrollCycle}`;
     }
 
     function addLeave(employeeId, date, policyId, policyName, employeeName, dateFormatted) {
