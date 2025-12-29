@@ -237,37 +237,49 @@ class ExpenseImportController extends Controller
     }
 
     /**
+     * Sanitize string by removing null bytes and control characters.
+     */
+    private function sanitizeString(?string $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+        // Remove null bytes and control characters except newline/tab
+        return trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value));
+    }
+
+    /**
      * Parse a data row using column mapping.
      */
     private function parseDataRow(array $row, array $mapping, array $accounts, array $expenseTypes, array $expenseTypesByCode, array $categories, array $customers, array $customersByName): ?array
     {
-        // Get basic fields
-        $dateStr = $row[$mapping['date'] ?? 1] ?? null;
-        $item = trim($row[$mapping['item'] ?? 4] ?? '');
-        $typeRaw = trim($row[$mapping['type'] ?? 5] ?? '');
-        $categoryRaw = trim($row[$mapping['category'] ?? 6] ?? '');
-        $subcategoryRaw = trim($row[$mapping['subcategory'] ?? 7] ?? '');
-        $customerRaw = trim($row[$mapping['customer'] ?? 8] ?? '');
-        $department = trim($row[$mapping['department'] ?? 9] ?? '');
-        $totalStr = $row[$mapping['total'] ?? 18] ?? '0';
-        $absoluteTotalStr = $row[$mapping['absolute_total'] ?? 19] ?? '0';
-        $comment = trim($row[$mapping['comment'] ?? 20] ?? '');
+        // Get basic fields (sanitize all strings to remove null bytes)
+        $dateStr = $this->sanitizeString($row[$mapping['date'] ?? 1] ?? null);
+        $item = $this->sanitizeString($row[$mapping['item'] ?? 4] ?? '');
+        $typeRaw = $this->sanitizeString($row[$mapping['type'] ?? 5] ?? '');
+        $categoryRaw = $this->sanitizeString($row[$mapping['category'] ?? 6] ?? '');
+        $subcategoryRaw = $this->sanitizeString($row[$mapping['subcategory'] ?? 7] ?? '');
+        $customerRaw = $this->sanitizeString($row[$mapping['customer'] ?? 8] ?? '');
+        $department = $this->sanitizeString($row[$mapping['department'] ?? 9] ?? '');
+        $totalStr = $this->sanitizeString($row[$mapping['total'] ?? 18] ?? '0');
+        $absoluteTotalStr = $this->sanitizeString($row[$mapping['absolute_total'] ?? 19] ?? '0');
+        $comment = $this->sanitizeString($row[$mapping['comment'] ?? 20] ?? '');
 
         // Skip if no item description
         if (empty($item)) {
             return null;
         }
 
-        // Parse date
+        // Parse date (already sanitized above)
         $expenseDate = null;
-        if ($dateStr) {
+        if (!empty($dateStr)) {
             try {
                 // Try DD/MM/YYYY format first
-                $expenseDate = Carbon::createFromFormat('d/m/Y', trim($dateStr));
+                $expenseDate = Carbon::createFromFormat('d/m/Y', $dateStr);
             } catch (\Exception $e) {
                 try {
                     // Try other formats
-                    $expenseDate = Carbon::parse(trim($dateStr));
+                    $expenseDate = Carbon::parse($dateStr);
                 } catch (\Exception $e) {
                     $expenseDate = null;
                 }
