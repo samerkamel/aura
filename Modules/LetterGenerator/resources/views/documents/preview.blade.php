@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-eye me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-eye me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Document Preview</h5>
             <small class="text-muted">{{ $template->name }} - {{ $employee->name }}</small>
@@ -20,11 +20,11 @@
             @csrf
             <input type="hidden" name="template_id" value="{{ $template->id }}">
             <button type="submit" class="btn btn-success">
-              <i class="ti tabler-download me-1"></i>Download PDF
+              <i class="ti ti-download me-1"></i>Download PDF
             </button>
           </form>
           <a href="{{ route('documents.select-template', $employee) }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Templates
+            <i class="ti ti-arrow-left me-1"></i>Back to Templates
           </a>
         </div>
       </div>
@@ -36,7 +36,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti tabler-info-circle me-2"></i>Document Information
+              <i class="ti ti-info-circle me-2"></i>Document Information
             </h6>
           </div>
           <div class="card-body">
@@ -73,7 +73,7 @@
         <div class="card mt-4">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti tabler-bolt me-2"></i>Quick Actions
+              <i class="ti ti-bolt me-2"></i>Quick Actions
             </h6>
           </div>
           <div class="card-body">
@@ -81,16 +81,16 @@
               @csrf
               <input type="hidden" name="template_id" value="{{ $template->id }}">
               <button type="submit" class="btn btn-success w-100">
-                <i class="ti tabler-download me-1"></i>Download PDF
+                <i class="ti ti-download me-1"></i>Download PDF
               </button>
             </form>
 
             <a href="{{ route('documents.select-template', $employee) }}" class="btn btn-outline-primary w-100 mb-2">
-              <i class="ti tabler-template me-1"></i>Choose Different Template
+              <i class="ti ti-template me-1"></i>Choose Different Template
             </a>
 
             <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-outline-secondary w-100">
-              <i class="ti tabler-user me-1"></i>Back to Employee Profile
+              <i class="ti ti-user me-1"></i>Back to Employee Profile
             </a>
           </div>
         </div>
@@ -101,10 +101,10 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">
-              <i class="ti tabler-file-text me-2"></i>Document Preview
+              <i class="ti ti-file-text me-2"></i>Document Preview
             </h6>
             <small class="text-muted">
-              <i class="ti tabler-info-circle me-1"></i>
+              <i class="ti ti-info-circle me-1"></i>
               This is how your document will appear in the PDF
             </small>
           </div>

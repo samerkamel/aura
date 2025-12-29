@@ -131,9 +131,9 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center gap-50">' +
-              `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${full['id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti tabler-edit"></i></button>` +
-              `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${full['id']}"><i class="ti tabler-trash"></i></button>` +
-              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>' +
+              `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${full['id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti ti-edit"></i></button>` +
+              `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${full['id']}"><i class="ti ti-trash"></i></button>` +
+              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="' +
               userView +
@@ -162,8 +162,8 @@ $(function () {
         searchPlaceholder: 'Search User',
         info: 'Displaying _START_ to _END_ of _TOTAL_ entries',
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
@@ -171,12 +171,12 @@ $(function () {
         {
           extend: 'collection',
           className: 'btn btn-label-secondary dropdown-toggle mx-4 waves-effect waves-light',
-          text: '<i class="ti tabler-upload me-2 ti-xs"></i>Export',
+          text: '<i class="ti ti-upload me-2 ti-xs"></i>Export',
           buttons: [
             {
               extend: 'print',
               title: 'Users',
-              text: '<i class="ti tabler-printer me-2" ></i>Print',
+              text: '<i class="ti ti-printer me-2" ></i>Print',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -214,7 +214,7 @@ $(function () {
             {
               extend: 'csv',
               title: 'Users',
-              text: '<i class="ti tabler-file-text me-2" ></i>Csv',
+              text: '<i class="ti ti-file-text me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -239,7 +239,7 @@ $(function () {
             {
               extend: 'excel',
               title: 'Users',
-              text: '<i class="ti tabler-file-spreadsheet me-2"></i>Excel',
+              text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -264,7 +264,7 @@ $(function () {
             {
               extend: 'pdf',
               title: 'Users',
-              text: '<i class="ti tabler-file-code-2 me-2"></i>Pdf',
+              text: '<i class="ti ti-file-code-2 me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -289,7 +289,7 @@ $(function () {
             {
               extend: 'copy',
               title: 'Users',
-              text: '<i class="ti tabler-copy me-2" ></i>Copy',
+              text: '<i class="ti ti-copy me-2" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -314,7 +314,7 @@ $(function () {
           ]
         },
         {
-          text: '<i class="ti tabler-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span>',
+          text: '<i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add New User</span>',
           className: 'add-new btn btn-primary waves-effect waves-light',
           attr: {
             'data-bs-toggle': 'offcanvas',

@@ -178,24 +178,24 @@
             <label for="select2Icons" class="form-label">Icons</label>
             <select id="select2Icons" class="select2-icons form-select">
               <optgroup label="Services">
-                <option value="Bootstrap5" data-icon="ti tabler-brand-bootstrap" selected>Bootstrap 5</option>
-                <option value="codepen" data-icon="ti tabler-brand-codepen">Codepen</option>
-                <option value="php" data-icon="ti tabler-brand-php">PHP</option>
-                <option value="pinterest2" data-icon="ti tabler-brand-css3">CSS3</option>
-                <option value="html5" data-icon="ti tabler-brand-html5">HTML5</option>
+                <option value="Bootstrap5" data-icon="ti ti-brand-bootstrap" selected>Bootstrap 5</option>
+                <option value="codepen" data-icon="ti ti-brand-codepen">Codepen</option>
+                <option value="php" data-icon="ti ti-brand-php">PHP</option>
+                <option value="pinterest2" data-icon="ti ti-brand-css3">CSS3</option>
+                <option value="html5" data-icon="ti ti-brand-html5">HTML5</option>
               </optgroup>
               <optgroup label="File types">
-                <option value="pdf" data-icon="ti tabler-file-description">PDF</option>
-                <option value="word" data-icon="ti tabler-file-description">Word</option>
-                <option value="js" data-icon="ti tabler-brand-javascript">JavaScript</option>
-                <option value="facebook" data-icon="ti tabler-brand-facebook">Facebook</option>
+                <option value="pdf" data-icon="ti ti-file-description">PDF</option>
+                <option value="word" data-icon="ti ti-file-description">Word</option>
+                <option value="js" data-icon="ti ti-brand-javascript">JavaScript</option>
+                <option value="facebook" data-icon="ti ti-brand-facebook">Facebook</option>
               </optgroup>
               <optgroup label="Browsers">
-                <option value="chrome" data-icon="ti tabler-brand-chrome">Chrome</option>
-                <option value="firefox" data-icon="ti tabler-brand-firefox">Firefox</option>
-                <option value="safari" data-icon="ti tabler-brand-edge">Edge</option>
-                <option value="opera" data-icon="ti tabler-brand-opera">Opera</option>
-                <option value="Ubuntu" data-icon="ti tabler-brand-ubuntu">Ubuntu</option>
+                <option value="chrome" data-icon="ti ti-brand-chrome">Chrome</option>
+                <option value="firefox" data-icon="ti ti-brand-firefox">Firefox</option>
+                <option value="safari" data-icon="ti ti-brand-edge">Edge</option>
+                <option value="opera" data-icon="ti ti-brand-opera">Opera</option>
+                <option value="Ubuntu" data-icon="ti ti-brand-ubuntu">Ubuntu</option>
               </optgroup>
             </select>
           </div>
@@ -313,7 +313,7 @@
           <div class="col-md-6 mb-6">
             <label for="TagifyEmailList" class="form-label d-block">Email List</label>
             <input id="TagifyEmailList" class="tagify-email-list" value="some56.name@website.com">
-            <button type="button" class="btn btn-sm rounded-pill btn-icon btn-outline-primary mb-1"> <span class="tf-icons ti tabler-plus"></span> </button>
+            <button type="button" class="btn btn-sm rounded-pill btn-icon btn-outline-primary mb-1"> <span class="tf-icons ti ti-plus"></span> </button>
           </div>
         </div>
       </div>
@@ -416,9 +416,9 @@
           <div class="col-md-6 mb-6">
             <label for="selectpickerIcons" class="form-label">Icons</label>
             <select class="selectpicker w-100 show-tick" id="selectpickerIcons" data-icon-base="ti" data-tick-icon="ti-check" data-style="btn-default">
-              <option data-icon="ti tabler-brand-instagram">Instagram</option>
-              <option data-icon="ti tabler-brand-pinterest">Pinterest</option>
-              <option data-icon="ti tabler-brand-twitch">Twitch</option>
+              <option data-icon="ti ti-brand-instagram">Instagram</option>
+              <option data-icon="ti ti-brand-pinterest">Pinterest</option>
+              <option data-icon="ti ti-brand-twitch">Twitch</option>
             </select>
           </div>
           <!-- Subtext -->

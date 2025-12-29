@@ -49,7 +49,7 @@
             </nav>
         </div>
         <a href="{{ route('administration.roles.index') }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-arrow-left me-2"></i>Back to Roles
+            <i class="ti ti-arrow-left me-2"></i>Back to Roles
         </a>
     </div>
 
@@ -127,7 +127,7 @@
                                 <div class="category-header">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0">
-                                            <i class="ti tabler-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
+                                            <i class="ti ti-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
                                         </h6>
                                         <div>
                                             <button type="button" class="btn btn-xs btn-outline-primary category-select-all" data-category="{{ $category }}">
@@ -162,7 +162,7 @@
                             @endforeach
                         @else
                             <div class="text-center py-4">
-                                <i class="ti tabler-key-off ti-3x text-muted mb-3"></i>
+                                <i class="ti ti-key-off ti-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">No Permissions Available</h5>
                                 <p class="text-muted mb-0">No permissions have been created yet.</p>
                             </div>
@@ -179,7 +179,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="ti tabler-info-circle me-2"></i>Information
+                            <i class="ti ti-info-circle me-2"></i>Information
                         </h5>
                     </div>
                     <div class="card-body">
@@ -200,10 +200,10 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti tabler-device-floppy me-2"></i>Create Role
+                                <i class="ti ti-device-floppy me-2"></i>Create Role
                             </button>
                             <a href="{{ route('administration.roles.index') }}" class="btn btn-outline-secondary">
-                                <i class="ti tabler-x me-2"></i>Cancel
+                                <i class="ti ti-x me-2"></i>Cancel
                             </a>
                         </div>
                     </div>

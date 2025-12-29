@@ -9,14 +9,14 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-device-laptop me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-device-laptop me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Asset Management</h5>
             <small class="text-muted">Manage company assets and track assignments</small>
           </div>
         </div>
         <a href="{{ route('assetmanager.assets.create') }}" class="btn btn-primary">
-          <i class="ti tabler-plus me-1"></i>Add Asset
+          <i class="ti ti-plus me-1"></i>Add Asset
         </a>
       </div>
     </div>
@@ -24,7 +24,7 @@
     <!-- Success/Error Messages -->
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="ti tabler-check me-1"></i>
+        <i class="ti ti-check me-1"></i>
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -32,7 +32,7 @@
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="ti tabler-x me-1"></i>
+        <i class="ti ti-x me-1"></i>
         {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -70,10 +70,10 @@
           </div>
           <div class="col-md-3 d-flex align-items-end">
             <button type="submit" class="btn btn-primary me-2">
-              <i class="ti tabler-search me-1"></i>Filter
+              <i class="ti ti-search me-1"></i>Filter
             </button>
             <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-              <i class="ti tabler-refresh me-1"></i>Clear
+              <i class="ti ti-refresh me-1"></i>Clear
             </a>
           </div>
         </form>
@@ -84,7 +84,7 @@
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti tabler-list me-2"></i>Assets List
+          <i class="ti ti-list me-2"></i>Assets List
           <span class="badge bg-label-primary ms-2">{{ $assets->total() }} total</span>
         </h6>
       </div>
@@ -141,7 +141,7 @@
                       @if($asset->status === 'assigned' && $asset->currentEmployee->isNotEmpty())
                         @php $currentEmployee = $asset->currentEmployee->first(); @endphp
                         <div class="d-flex align-items-center">
-                          <i class="ti tabler-user me-2 text-primary"></i>
+                          <i class="ti ti-user me-2 text-primary"></i>
                           <span>{{ $currentEmployee->name }}</span>
                         </div>
                       @else
@@ -157,12 +157,12 @@
                         <ul class="dropdown-menu">
                           <li>
                             <a class="dropdown-item" href="{{ route('assetmanager.assets.show', $asset) }}">
-                              <i class="ti tabler-eye me-1"></i>View Details
+                              <i class="ti ti-eye me-1"></i>View Details
                             </a>
                           </li>
                           <li>
                             <a class="dropdown-item" href="{{ route('assetmanager.assets.edit', $asset) }}">
-                              <i class="ti tabler-edit me-1"></i>Edit Asset
+                              <i class="ti ti-edit me-1"></i>Edit Asset
                             </a>
                           </li>
                           @if($asset->status === 'available')
@@ -170,7 +170,7 @@
                               <a class="dropdown-item" href="#" data-bs-toggle="modal"
                                  data-bs-target="#assignModal" data-asset-id="{{ $asset->id }}"
                                  data-asset-name="{{ $asset->name }}">
-                                <i class="ti tabler-user-plus me-1"></i>Assign to Employee
+                                <i class="ti ti-user-plus me-1"></i>Assign to Employee
                               </a>
                             </li>
                           @elseif($asset->status === 'assigned' && $asset->currentEmployee->isNotEmpty())
@@ -180,7 +180,7 @@
                                  data-asset-name="{{ $asset->name }}"
                                  data-employee-id="{{ $asset->currentEmployee->first()->id }}"
                                  data-employee-name="{{ $asset->currentEmployee->first()->name }}">
-                                <i class="ti tabler-user-minus me-1"></i>Unassign Asset
+                                <i class="ti ti-user-minus me-1"></i>Unassign Asset
                               </a>
                             </li>
                           @endif
@@ -189,7 +189,7 @@
                             <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
                                data-bs-target="#deleteModal" data-asset-id="{{ $asset->id }}"
                                data-asset-name="{{ $asset->name }}">
-                              <i class="ti tabler-trash me-1"></i>Delete Asset
+                              <i class="ti ti-trash me-1"></i>Delete Asset
                             </a>
                           </li>
                         </ul>
@@ -215,11 +215,11 @@
         @else
           <div class="text-center py-4">
             <div class="mb-3">
-              <i class="ti tabler-device-laptop text-muted" style="font-size: 2rem;"></i>
+              <i class="ti ti-device-laptop text-muted" style="font-size: 2rem;"></i>
             </div>
             <p class="text-muted mb-3">No assets found.</p>
             <a href="{{ route('assetmanager.assets.create') }}" class="btn btn-primary btn-sm">
-              <i class="ti tabler-plus me-1"></i>Add First Asset
+              <i class="ti ti-plus me-1"></i>Add First Asset
             </a>
           </div>
         @endif
@@ -332,7 +332,7 @@
       </div>
       <div class="modal-body">
         <div class="text-center">
-          <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
+          <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
           <h6 class="mt-3 mb-2">Are you sure?</h6>
           <p class="text-muted mb-3">
             You are about to delete the asset "<span id="delete_asset_name" class="fw-bold"></span>".

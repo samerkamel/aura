@@ -12,7 +12,7 @@
                     <small class="text-muted">Create a new customer invoice</small>
                 </div>
                 <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti tabler-arrow-left me-1"></i>Back to Invoices
+                    <i class="ti ti-arrow-left me-1"></i>Back to Invoices
                 </a>
             </div>
 
@@ -111,7 +111,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="mb-0">Invoice Items</h6>
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="addInvoiceItem()">
-                                <i class="ti tabler-plus me-1"></i>Add Item
+                                <i class="ti ti-plus me-1"></i>Add Item
                             </button>
                         </div>
 
@@ -156,7 +156,7 @@
                                             <input type="text" class="form-control item-total" readonly value="0.00">
                                             <span class="input-group-text">EGP</span>
                                             <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
-                                                <i class="ti tabler-trash"></i>
+                                                <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -202,14 +202,14 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-x me-1"></i>Cancel
+                        <i class="ti ti-x me-1"></i>Cancel
                     </a>
                     <div>
                         <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
-                            <i class="ti tabler-device-floppy me-1"></i>Save as Draft
+                            <i class="ti ti-device-floppy me-1"></i>Save as Draft
                         </button>
                         <button type="submit" name="action" value="send" class="btn btn-primary">
-                            <i class="ti tabler-send me-1"></i>Save & Send
+                            <i class="ti ti-send me-1"></i>Save & Send
                         </button>
                     </div>
                 </div>
@@ -254,7 +254,7 @@ function addInvoiceItem() {
                     <input type="text" class="form-control item-total" readonly value="0.00">
                     <span class="input-group-text">EGP</span>
                     <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
-                        <i class="ti tabler-trash"></i>
+                        <i class="ti ti-trash"></i>
                     </button>
                 </div>
             </div>

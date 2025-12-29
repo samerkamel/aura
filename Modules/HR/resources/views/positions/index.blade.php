@@ -7,7 +7,7 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Position Management</h5>
     <a href="{{ route('hr.positions.create') }}" class="btn btn-primary">
-      <i class="ti tabler-plus me-1"></i>Create Position
+      <i class="ti ti-plus me-1"></i>Create Position
     </a>
   </div>
 
@@ -65,10 +65,10 @@
       </div>
       <div class="col-md-3 d-flex align-items-end gap-2">
         <button type="submit" class="btn btn-primary">
-          <i class="ti tabler-search me-1"></i>Filter
+          <i class="ti ti-search me-1"></i>Filter
         </button>
         <a href="{{ route('hr.positions.index') }}" class="btn btn-outline-secondary">
-          <i class="ti tabler-refresh me-1"></i>Reset
+          <i class="ti ti-refresh me-1"></i>Reset
         </a>
       </div>
     </form>
@@ -94,7 +94,7 @@
         <tr>
           <td>
             <a href="{{ route('hr.positions.show', $position) }}" class="text-body">
-              <i class="ti tabler-briefcase me-2"></i>
+              <i class="ti ti-briefcase me-2"></i>
               <strong>{{ $position->title }}</strong>
               @if($position->title_ar)
                 <span class="text-muted ms-1">({{ $position->title_ar }})</span>
@@ -131,22 +131,22 @@
           <td>
             <div class="dropdown">
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="ti tabler-dots-vertical"></i>
+                <i class="ti ti-dots-vertical"></i>
               </button>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ route('hr.positions.show', $position) }}">
-                  <i class="ti tabler-eye me-2"></i>View
+                  <i class="ti ti-eye me-2"></i>View
                 </a>
                 <a class="dropdown-item" href="{{ route('hr.positions.edit', $position) }}">
-                  <i class="ti tabler-edit me-2"></i>Edit
+                  <i class="ti ti-edit me-2"></i>Edit
                 </a>
                 <form action="{{ route('hr.positions.toggle-status', $position) }}" method="POST" class="d-inline">
                   @csrf
                   <button type="submit" class="dropdown-item">
                     @if($position->is_active)
-                      <i class="ti tabler-ban me-2"></i>Deactivate
+                      <i class="ti ti-ban me-2"></i>Deactivate
                     @else
-                      <i class="ti tabler-check me-2"></i>Activate
+                      <i class="ti ti-check me-2"></i>Activate
                     @endif
                   </button>
                 </form>
@@ -156,7 +156,7 @@
                   @method('DELETE')
                   <button type="submit" class="dropdown-item text-danger"
                           onclick="return confirm('Are you sure you want to delete this position?')">
-                    <i class="ti tabler-trash me-2"></i>Delete
+                    <i class="ti ti-trash me-2"></i>Delete
                   </button>
                 </form>
               </div>
@@ -167,11 +167,11 @@
         <tr>
           <td colspan="{{ $canViewSalary ? 7 : 6 }}" class="text-center py-4">
             <div class="d-flex flex-column align-items-center">
-              <i class="ti tabler-briefcase text-muted" style="font-size: 3rem;"></i>
+              <i class="ti ti-briefcase text-muted" style="font-size: 3rem;"></i>
               <h6 class="mt-2">No positions found</h6>
               <p class="text-muted">Start by creating your first position</p>
               <a href="{{ route('hr.positions.create') }}" class="btn btn-primary">
-                <i class="ti tabler-plus me-1"></i>Create Position
+                <i class="ti ti-plus me-1"></i>Create Position
               </a>
             </div>
           </td>

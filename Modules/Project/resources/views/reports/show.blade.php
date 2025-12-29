@@ -10,7 +10,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <div>
             <h5 class="mb-0">
-              <i class="ti tabler-report me-2"></i>{{ $report->name }}
+              <i class="ti ti-report me-2"></i>{{ $report->name }}
             </h5>
             <small class="text-muted">
               {{ $report->start_date->format('M d, Y') }} - {{ $report->end_date->format('M d, Y') }}
@@ -18,16 +18,16 @@
           </div>
           <div class="d-flex gap-2">
             <a href="{{ route('projects.reports.edit', $report) }}" class="btn btn-primary btn-sm">
-              <i class="ti tabler-refresh me-1"></i>Edit / Refresh Hours
+              <i class="ti ti-refresh me-1"></i>Edit / Refresh Hours
             </a>
             <a href="{{ route('projects.reports.export-pdf', $report) }}" class="btn btn-outline-danger btn-sm" target="_blank">
-              <i class="ti tabler-file-type-pdf me-1"></i>PDF
+              <i class="ti ti-file-type-pdf me-1"></i>PDF
             </a>
             <a href="{{ route('projects.reports.export-excel', $report) }}" class="btn btn-outline-success btn-sm">
-              <i class="ti tabler-file-spreadsheet me-1"></i>Excel
+              <i class="ti ti-file-spreadsheet me-1"></i>Excel
             </a>
             <a href="{{ route('projects.reports.index') }}" class="btn btn-outline-secondary btn-sm">
-              <i class="ti tabler-arrow-left me-1"></i>Back to Reports
+              <i class="ti ti-arrow-left me-1"></i>Back to Reports
             </a>
           </div>
         </div>
@@ -141,7 +141,7 @@
             @endforeach
           @else
             <div class="alert alert-warning">
-              <i class="ti tabler-alert-triangle me-2"></i>No project data available for this report.
+              <i class="ti ti-alert-triangle me-2"></i>No project data available for this report.
             </div>
           @endif
 
@@ -168,7 +168,7 @@
           @endphp
           <div class="card mb-4 border border-info">
             <div class="card-header bg-info text-white">
-              <h6 class="mb-0"><i class="ti tabler-users-group me-2"></i>Summary by Team</h6>
+              <h6 class="mb-0"><i class="ti ti-users-group me-2"></i>Summary by Team</h6>
             </div>
             <div class="card-body p-0">
               <table class="table table-bordered mb-0">
@@ -232,15 +232,15 @@
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline-danger">
-                  <i class="ti tabler-trash me-1"></i>Delete Report
+                  <i class="ti ti-trash me-1"></i>Delete Report
                 </button>
               </form>
               <a href="{{ route('projects.reports.edit', $report) }}" class="btn btn-primary">
-                <i class="ti tabler-refresh me-1"></i>Edit / Refresh Hours
+                <i class="ti ti-refresh me-1"></i>Edit / Refresh Hours
               </a>
             </div>
             <a href="{{ route('projects.reports.index') }}" class="btn btn-outline-secondary">
-              <i class="ti tabler-arrow-left me-1"></i>Back to Reports
+              <i class="ti ti-arrow-left me-1"></i>Back to Reports
             </a>
           </div>
         </div>

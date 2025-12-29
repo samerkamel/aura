@@ -4,11 +4,11 @@
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true">
-                    <span class="page-link"><i class="ti tabler-chevron-left ti-xs"></i></span>
+                    <span class="page-link"><i class="ti ti-chevron-left ti-xs"></i></span>
                 </li>
             @else
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev"><i class="ti tabler-chevron-left ti-xs"></i></a>
+                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev"><i class="ti ti-chevron-left ti-xs"></i></a>
                 </li>
             @endif
 
@@ -34,11 +34,11 @@
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next"><i class="ti tabler-chevron-right ti-xs"></i></a>
+                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next"><i class="ti ti-chevron-right ti-xs"></i></a>
                 </li>
             @else
                 <li class="page-item disabled" aria-disabled="true">
-                    <span class="page-link"><i class="ti tabler-chevron-right ti-xs"></i></span>
+                    <span class="page-link"><i class="ti ti-chevron-right ti-xs"></i></span>
                 </li>
             @endif
         </ul>

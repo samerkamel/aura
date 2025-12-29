@@ -105,11 +105,11 @@ $(function () {
           render: function (data, type, full, meta) {
             var $role = full['role'];
             var roleBadgeObj = {
-              Subscriber: '<i class="ti tabler-crown ti-md text-primary me-2"></i>',
-              Author: '<i class="ti tabler-edit ti-md text-warning me-2"></i>',
-              Maintainer: '<i class="ti tabler-user ti-md text-success me-2"></i>',
-              Editor: '<i class="ti tabler-chart-pie ti-md text-info me-2"></i>',
-              Admin: '<i class="ti tabler-device-desktop ti-md text-danger me-2"></i>'
+              Subscriber: '<i class="ti ti-crown ti-md text-primary me-2"></i>',
+              Author: '<i class="ti ti-edit ti-md text-warning me-2"></i>',
+              Maintainer: '<i class="ti ti-user ti-md text-success me-2"></i>',
+              Editor: '<i class="ti ti-chart-pie ti-md text-info me-2"></i>',
+              Admin: '<i class="ti ti-device-desktop ti-md text-danger me-2"></i>'
             };
             return (
               "<span class='text-truncate d-flex align-items-center text-heading'>" +
@@ -152,11 +152,11 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center">' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record"><i class="ti tabler-trash ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record"><i class="ti ti-trash ti-md"></i></a>' +
               '<a href="' +
               userView +
-              '" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ti tabler-eye ti-md"></i></a>' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical ti-md"></i></a>' +
+              '" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ti ti-eye ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="javascript:;"" class="dropdown-item">Edit</a>' +
               '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
@@ -181,8 +181,8 @@ $(function () {
         search: '',
         searchPlaceholder: 'Search User',
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       buttons: [
@@ -190,11 +190,11 @@ $(function () {
           extend: 'collection',
           className:
             'btn btn-label-secondary dropdown-toggle me-4 waves-effect waves-light border-left-0 border-right-0 rounded',
-          text: '<i class="ti tabler-upload ti-xs me-sm-1 align-text-bottom"></i> <span class="d-none d-sm-inline-block">Export</span>',
+          text: '<i class="ti ti-upload ti-xs me-sm-1 align-text-bottom"></i> <span class="d-none d-sm-inline-block">Export</span>',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ti tabler-printer me-1" ></i>Print',
+              text: '<i class="ti ti-printer me-1" ></i>Print',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [3, 4, 5, 6, 7],
@@ -231,7 +231,7 @@ $(function () {
             },
             {
               extend: 'csv',
-              text: '<i class="ti tabler-file-text me-1" ></i>Csv',
+              text: '<i class="ti ti-file-text me-1" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [3, 4, 5, 6, 7],
@@ -255,7 +255,7 @@ $(function () {
             },
             {
               extend: 'excel',
-              text: '<i class="ti tabler-file-spreadsheet me-1"></i>Excel',
+              text: '<i class="ti ti-file-spreadsheet me-1"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [3, 4, 5, 6, 7],
@@ -279,7 +279,7 @@ $(function () {
             },
             {
               extend: 'pdf',
-              text: '<i class="ti tabler-file-description me-1"></i>Pdf',
+              text: '<i class="ti ti-file-description me-1"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [3, 4, 5, 6, 7],
@@ -303,7 +303,7 @@ $(function () {
             },
             {
               extend: 'copy',
-              text: '<i class="ti tabler-copy me-1" ></i>Copy',
+              text: '<i class="ti ti-copy me-1" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [3, 4, 5, 6, 7],
@@ -328,7 +328,7 @@ $(function () {
           ]
         },
         {
-          text: '<i class="ti tabler-plus ti-xs me-md-2"></i><span class="d-md-inline-block d-none">Add new role</span>',
+          text: '<i class="ti ti-plus ti-xs me-md-2"></i><span class="d-md-inline-block d-none">Add new role</span>',
           className: 'btn btn-primary waves-effect waves-light rounded border-left-0 border-right-0',
           attr: {
             'data-bs-toggle': 'modal',

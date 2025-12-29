@@ -45,40 +45,40 @@
         <ul class="email-filter-folders list-unstyled">
           <li class="active d-flex justify-content-between align-items-center mb-1" data-target="inbox">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-mail"></i>
+              <i class="ti ti-mail"></i>
               <span class="align-middle ms-2">Inbox</span>
             </a>
             <div class="badge bg-label-primary rounded-pill">21</div>
           </li>
           <li class="d-flex mb-1" data-target="sent">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-send"></i>
+              <i class="ti ti-send"></i>
               <span class="align-middle ms-2">Sent</span>
             </a>
           </li>
           <li class="d-flex justify-content-between align-items-center mb-1" data-target="draft">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-edit"></i>
+              <i class="ti ti-edit"></i>
               <span class="align-middle ms-2">Draft</span>
             </a>
             <div class="badge bg-label-warning rounded-pill">2</div>
           </li>
           <li class="d-flex justify-content-between mb-1" data-target="starred">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-star"></i>
+              <i class="ti ti-star"></i>
               <span class="align-middle ms-2">Starred</span>
             </a>
           </li>
           <li class="d-flex justify-content-between align-items-center mb-1" data-target="spam">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-alert-octagon"></i>
+              <i class="ti ti-alert-octagon"></i>
               <span class="align-middle ms-2">Spam</span>
             </a>
             <div class="badge bg-label-danger rounded-pill">4</div>
           </li>
           <li class="d-flex align-items-center mb-1" data-target="trash">
             <a href="javascript:void(0);" class="d-flex flex-wrap align-items-center">
-              <i class="ti tabler-trash"></i>
+              <i class="ti ti-trash"></i>
               <span class="align-middle ms-2">Trash</span>
             </a>
           </li>
@@ -125,11 +125,11 @@
           <!-- Email List: Search -->
           <div class="d-flex justify-content-between align-items-center px-3 mt-2">
             <div class="d-flex align-items-center w-100">
-              <i class="ti tabler-menu-2 ti-lg cursor-pointer d-block d-lg-none me-4 mb-4" data-bs-toggle="sidebar" data-target="#app-email-sidebar" data-overlay></i>
+              <i class="ti ti-menu-2 ti-lg cursor-pointer d-block d-lg-none me-4 mb-4" data-bs-toggle="sidebar" data-target="#app-email-sidebar" data-overlay></i>
               <div class="mb-4 w-100">
                 <div class="input-group input-group-merge shadow-none">
                   <span class="input-group-text border-0 ps-0 py-0" id="email-search">
-                    <i class="ti tabler-search ti-lg"></i>
+                    <i class="ti ti-search ti-lg"></i>
                   </span>
                   <input type="text" class="form-control email-search-input border-0 py-0" placeholder="Search mail" aria-label="Search mail" aria-describedby="email-search">
                 </div>
@@ -144,30 +144,30 @@
                 <input class="form-check-input" type="checkbox" id="email-select-all">
                 <label class="form-check-label" for="email-select-all"></label>
               </div>
-              <div class="btn btn-text-secondary btn-icon rounded-pill me-1"><i class="ti tabler-trash ti-md email-list-delete cursor-pointer"></i></div>
-              <div class="btn btn-text-secondary btn-icon rounded-pill me-1"><i class="ti tabler-mail-opened ti-md email-list-read cursor-pointer"></i></div>
+              <div class="btn btn-text-secondary btn-icon rounded-pill me-1"><i class="ti ti-trash ti-md email-list-delete cursor-pointer"></i></div>
+              <div class="btn btn-text-secondary btn-icon rounded-pill me-1"><i class="ti ti-mail-opened ti-md email-list-read cursor-pointer"></i></div>
               <div class="dropdown me-1">
                 <button class="btn btn-icon btn-text-secondary rounded-pill p-0" type="button" id="dropdownMenuFolderOne" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="ti tabler-folder ti-md"></i>
+                  <i class="ti ti-folder ti-md"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuFolderOne">
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-info-circle ti-sm me-1"></i>
+                    <i class="ti ti-info-circle ti-sm me-1"></i>
                     <span class="align-middle">Spam</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-file ti-sm me-1"></i>
+                    <i class="ti ti-file ti-sm me-1"></i>
                     <span class="align-middle">Draft</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-trash ti-sm me-1"></i>
+                    <i class="ti ti-trash ti-sm me-1"></i>
                     <span class="align-middle">Trash</span>
                   </a>
                 </div>
               </div>
               <div class="dropdown mx-1">
                 <button class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="true" id="dropdownLabelOne">
-                  <i class="ti tabler-tag ti-md"></i>
+                  <i class="ti ti-tag ti-md"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLabelOne">
                   <a class="dropdown-item" href="javascript:void(0)">
@@ -191,11 +191,11 @@
             </div>
             <div class="d-flex align-items-center">
               <span class="btn btn-icon btn-text-secondary rounded-pill me-1">
-                <i class="ti tabler-refresh ti-md scaleX-n1-rtl cursor-pointer email-refresh"></i>
+                <i class="ti ti-refresh ti-md scaleX-n1-rtl cursor-pointer email-refresh"></i>
               </span>
               <div class="dropdown">
                 <button class="btn btn-icon btn-text-secondary rounded-pill p-0" type="button" id="emailsActions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="ti tabler-dots-vertical ti-md"></i>
+                  <i class="ti ti-dots-vertical ti-md"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="emailsActions">
                   <a class="dropdown-item" href="javascript:void(0)">Mark as read</a>
@@ -217,7 +217,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-1">
                   <label class="form-check-label" for="email-1"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer"></i></span>
                 <img src="{{ asset('assets/img/avatars/1.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 text-heading">Chandler Bing</span>
@@ -227,9 +227,9 @@
                   <span class="email-list-item-label badge badge-dot bg-danger d-none d-md-inline-block me-2" data-label="private"></span>
                   <small class="email-list-item-time text-muted">08:40 AM</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -240,7 +240,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-2">
                   <label class="form-check-label" for="email-2"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/2.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Ross Geller</span>
@@ -251,9 +251,9 @@
                   <span class="email-list-item-label badge badge-dot bg-danger d-none d-md-inline-block me-2" data-label="private"></span>
                   <small class="email-list-item-time text-muted">10:12 AM</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -264,7 +264,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-3">
                   <label class="form-check-label" for="email-3"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <div class="avatar avatar-sm d-block flex-shrink-0 me-sm-4 me-0">
                   <span class="avatar-initial rounded-circle bg-label-success">BS</span>
                 </div>
@@ -273,13 +273,13 @@
                   <small class="email-list-item-subject d-xl-inline-block d-block"> Hey Katy, Soufflé apple pie caramels soufflé tiramisu bear claw.</small>
                 </div>
                 <div class="email-list-item-meta ms-auto d-flex align-items-center">
-                  <span class="email-list-item-attachment ti tabler-paperclip ti-md cursor-pointer me-2 float-end float-sm-none"></span>
+                  <span class="email-list-item-attachment ti ti-paperclip ti-md cursor-pointer me-2 float-end float-sm-none"></span>
                   <span class="email-list-item-label badge badge-dot bg-primary d-none d-md-inline-block me-2" data-label="company"></span>
                   <small class="email-list-item-time text-muted">12:44 AM</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -290,7 +290,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-4">
                   <label class="form-check-label" for="email-4"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/3.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Pheobe Buffay</span>
@@ -300,9 +300,9 @@
                   <span class="email-list-item-label badge badge-dot bg-success d-none d-md-inline-block me-2" data-label="work"></span>
                   <small class="email-list-item-time text-muted">Yesterday</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -313,7 +313,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-5">
                   <label class="form-check-label" for="email-5"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/4.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Ted Mosby</span>
@@ -323,9 +323,9 @@
                   <span class="email-list-item-label ribadge badge-dot bg-danger d-none d-md-inline-block me-2" data-label="company"></span>
                   <small class="email-list-item-time text-muted">Yesterday</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -336,7 +336,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-6">
                   <label class="form-check-label" for="email-6"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <div class="avatar avatar-sm d-block flex-shrink-0 me-sm-4 me-0">
                   <span class="avatar-initial rounded-circle bg-label-info">Sk</span>
                 </div>
@@ -348,9 +348,9 @@
                   <span class="email-list-item-label badge badge-dot bg-primary d-none d-md-inline-block me-2" data-label="work"></span>
                   <small class="email-list-item-time text-muted">5 May</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-read btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -361,7 +361,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-7">
                   <label class="form-check-label" for="email-7"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/5.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Rachel Green</span>
@@ -371,9 +371,9 @@
                   <span class="email-list-item-label badge badge-dot bg-warning d-none d-md-inline-block me-2" data-label="company"></span>
                   <small class="email-list-item-time text-muted">15 May</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -384,20 +384,20 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-8">
                   <label class="form-check-label" for="email-8"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/6.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Grace Shelby</span>
                   <small class="email-list-item-subject d-xl-inline-block d-block"> Hey Katy, Icing gummi bears ice cream croissant dessert wafer.</small>
                 </div>
                 <div class="email-list-item-meta ms-auto d-flex align-items-center">
-                  <span class="email-list-item-attachment ti tabler-paperclip ti-md cursor-pointer me-2 float-end float-sm-none"></span>
+                  <span class="email-list-item-attachment ti ti-paperclip ti-md cursor-pointer me-2 float-end float-sm-none"></span>
                   <span class="email-list-item-label badge badge-dot bg-danger d-none d-md-inline-block me-2" data-label="private"></span>
                   <small class="email-list-item-time text-muted">20 Apr</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -408,7 +408,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-9">
                   <label class="form-check-label" for="email-9"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <div class="avatar avatar-sm d-block flex-shrink-0 me-sm-4 me-0">
                   <span class="avatar-initial rounded-circle bg-label-danger">JF</span>
                 </div>
@@ -420,9 +420,9 @@
                   <span class="email-list-item-label badge badge-dot bg-primary d-none d-md-inline-block me-2" data-label="important"></span>
                   <small class="email-list-item-time text-muted">25 Mar</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -433,7 +433,7 @@
                   <input class="email-list-item-input form-check-input" type="checkbox" id="email-10">
                   <label class="form-check-label" for="email-10"></label>
                 </div>
-                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer ms-1"></i></span>
+                <span class="ms-sm-3 me-4 d-sm-inline-block d-none"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer ms-1"></i></span>
                 <img src="{{ asset('assets/img/avatars/9.png') }}" alt="user-avatar" class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0" height="32" width="32" />
                 <div class="email-list-item-content ms-2 ms-sm-0 me-2">
                   <span class="email-list-item-username me-2 h6">Alistair Crowley </span>
@@ -443,9 +443,9 @@
                   <span class="email-list-item-label badge badge-dot bg-success d-none d-md-inline-block me-2" data-label="company"></span>
                   <small class="email-list-item-time text-muted">25 Feb</small>
                   <ul class="list-inline email-list-item-actions">
-                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-mail ti-md'></i></li>
-                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-trash ti-md'></i></li>
-                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-info-circle ti-md'></i></li>
+                    <li class="list-inline-item email-unread btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-mail ti-md'></i></li>
+                    <li class="list-inline-item email-delete btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-trash ti-md'></i></li>
+                    <li class="list-inline-item btn btn-icon btn-text-secondary rounded-pill"><i class='ti ti-info-circle ti-md'></i></li>
                   </ul>
                 </div>
               </div>
@@ -466,47 +466,47 @@
         <!-- Email View : Title  bar-->
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center overflow-hidden">
-            <span class="ms-sm-2 me-4"><i class="ti tabler-chevron-left ti-md cursor-pointer" data-bs-toggle="sidebar" data-target="#app-email-view"></i></span>
+            <span class="ms-sm-2 me-4"><i class="ti ti-chevron-left ti-md cursor-pointer" data-bs-toggle="sidebar" data-target="#app-email-view"></i></span>
             <h6 class="text-truncate mb-0 me-2 fw-normal">Focused impactful open issues</h6>
             <span class="badge bg-label-warning rounded-pill">Important</span>
           </div>
           <!-- Email View : Action bar-->
           <div class="d-flex align-items-center">
             <span class="btn btn-icon p-0 me-2 text-muted">
-              <i class='ti tabler-chevron-left ti-md'></i>
+              <i class='ti ti-chevron-left ti-md'></i>
             </span>
             <span class="btn btn-icon p-0">
-              <i class="ti tabler-chevron-right ti-md"></i>
+              <i class="ti ti-chevron-right ti-md"></i>
             </span>
           </div>
         </div>
         <hr class="app-email-view-hr mx-n5 mb-2">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
-            <span class="btn btn-icon btn-text-secondary rounded-pill me-1"><i class='ti tabler-trash ti-md cursor-pointer'></i></span>
-            <span class="btn btn-icon btn-text-secondary rounded-pill me-1"><i class='ti tabler-mail ti-md cursor-pointer' data-bs-toggle="sidebar" data-target="#app-email-view"></i></span>
+            <span class="btn btn-icon btn-text-secondary rounded-pill me-1"><i class='ti ti-trash ti-md cursor-pointer'></i></span>
+            <span class="btn btn-icon btn-text-secondary rounded-pill me-1"><i class='ti ti-mail ti-md cursor-pointer' data-bs-toggle="sidebar" data-target="#app-email-view"></i></span>
             <div class="dropdown">
               <button class="btn btn-icon btn-text-secondary rounded-pill p-0 me-1" type="button" id="dropdownMenuFolderTwo" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ti tabler-folder ti-md"></i>
+                <i class="ti ti-folder ti-md"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuFolderTwo">
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-alert-octagon me-1"></i>
+                  <i class="ti ti-alert-octagon me-1"></i>
                   <span class="align-middle">Spam</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-edit me-1"></i>
+                  <i class="ti ti-edit me-1"></i>
                   <span class="align-middle">Draft</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-trash me-1"></i>
+                  <i class="ti ti-trash me-1"></i>
                   <span class="align-middle">Trash</span>
                 </a>
               </div>
             </div>
             <div class="dropdown">
               <button class="btn btn-icon btn-text-secondary rounded-pill p-0" type="button" id="dropdownLabelTwo" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ti tabler-tag ti-md"></i>
+                <i class="ti ti-tag ti-md"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLabelTwo">
                 <a class="dropdown-item" href="javascript:void(0)">
@@ -526,35 +526,35 @@
           </div>
           <div class="d-flex align-items-center">
             <span class="btn btn-icon btn-text-secondary rounded-pill p-0">
-              <i class='ti tabler-star ti-md'></i>
+              <i class='ti ti-star ti-md'></i>
             </span>
             <div class="dropdown ms-1">
               <button class="btn btn-icon btn-text-secondary rounded-pill p-0" type="button" id="dropdownMoreOptions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ti tabler-dots-vertical ti-md"></i>
+                <i class="ti ti-dots-vertical ti-md"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMoreOptions">
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-mail me-1"></i>
+                  <i class="ti ti-mail me-1"></i>
                   <span class="align-middle">Mark as unread</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-mail-opened me-1"></i>
+                  <i class="ti ti-mail-opened me-1"></i>
                   <span class="align-middle">Mark as read</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-star ti-sm me-1"></i>
+                  <i class="ti ti-star ti-sm me-1"></i>
                   <span class="align-middle">Add star</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-calendar me-1"></i>
+                  <i class="ti ti-calendar me-1"></i>
                   <span class="align-middle">Create Event</span>
                 </a>
                 <a class="dropdown-item" href="javascript:void(0)">
-                  <i class="ti tabler-volume-off me-1"></i>
+                  <i class="ti ti-volume-off me-1"></i>
                   <span class="align-middle">Mute</span>
                 </a>
                 <a class="dropdown-item d-sm-none d-block" href="javascript:void(0)">
-                  <i class="ti tabler-printer me-1"></i>
+                  <i class="ti ti-printer me-1"></i>
                   <span class="align-middle">Print</span>
                 </a>
               </div>
@@ -578,23 +578,23 @@
             </div>
             <div class="d-flex align-items-center">
               <p class="mb-0 me-4 text-muted">June 20th 2020, 08:30 AM</p>
-              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="ti tabler-paperclip ti-md cursor-pointer"></i></span>
-              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer"></i></span>
+              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="ti ti-paperclip ti-md cursor-pointer"></i></span>
+              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer"></i></span>
               <div class="dropdown">
                 <button class="btn btn-icon btn-text-secondary rounded-pill p-0" type="button" id="dropdownEmailOne" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="ti tabler-dots-vertical ti-md"></i>
+                  <i class="ti ti-dots-vertical ti-md"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownEmailOne">
                   <a class="dropdown-item scroll-to-reply" href="javascript:void(0)">
-                    <i class="ti tabler-corner-up-left me-1"></i>
+                    <i class="ti ti-corner-up-left me-1"></i>
                     <span class="align-middle">Reply</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-corner-up-right me-1"></i>
+                    <i class="ti ti-corner-up-right me-1"></i>
                     <span class="align-middle">Forward</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-alert-octagon me-1"></i>
+                    <i class="ti ti-alert-octagon me-1"></i>
                     <span class="align-middle">Report</span>
                   </a>
                 </div>
@@ -623,7 +623,7 @@
             <hr>
             <p class="text-muted mb-2">Attachments</p>
             <div class="cursor-pointer">
-              <i class="ti tabler-file"></i>
+              <i class="ti ti-file"></i>
               <span class="align-middle ms-1">report.xlsx</span>
             </div>
           </div>
@@ -640,23 +640,23 @@
             </div>
             <div class="d-flex align-items-center">
               <p class="mb-0 me-4 text-muted">June 20th 2020, 08:10 AM</p>
-              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="ti tabler-paperclip ti-md cursor-pointer"></i></span>
-              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="email-list-item-bookmark ti tabler-star ti-md cursor-pointer"></i></span>
+              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="ti ti-paperclip ti-md cursor-pointer"></i></span>
+              <span class="btn btn-icon btn-text-secondary rounded-pill"><i class="email-list-item-bookmark ti ti-star ti-md cursor-pointer"></i></span>
               <div class="dropdown">
                 <button class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow" id="dropdownEmailTwo" data-bs-toggle="dropdown" aria-expanded="true">
-                  <i class="ti tabler-dots-vertical ti-md"></i>
+                  <i class="ti ti-dots-vertical ti-md"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownEmailTwo">
                   <a class="dropdown-item scroll-to-reply" href="javascript:void(0)">
-                    <i class="ti tabler-corner-up-left me-1"></i>
+                    <i class="ti ti-corner-up-left me-1"></i>
                     <span class="align-middle">Reply</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-corner-up-right me-1"></i>
+                    <i class="ti ti-corner-up-right me-1"></i>
                     <span class="align-middle">Forward</span>
                   </a>
                   <a class="dropdown-item" href="javascript:void(0)">
-                    <i class="ti tabler-alert-octagon me-1"></i>
+                    <i class="ti ti-alert-octagon me-1"></i>
                     <span class="align-middle">Report</span>
                   </a>
                 </div>
@@ -685,7 +685,7 @@
             <hr>
             <p class="text-muted mb-2">Attachments</p>
             <div class="cursor-pointer">
-              <i class="ti tabler-file"></i>
+              <i class="ti ti-file"></i>
               <span class="align-middle ms-1">report.xlsx</span>
             </div>
           </div>
@@ -710,12 +710,12 @@
             <div class="email-reply-editor"></div>
             <div class="d-flex justify-content-end align-items-center mt-4">
               <div class="cursor-pointer btn btn-text-secondary text-secondary me-4">
-                <i class="ti tabler-paperclip ti-16px text-heading me-2"></i>
+                <i class="ti ti-paperclip ti-16px text-heading me-2"></i>
                 <span class="align-middle">Attachments</span>
               </div>
               <button class="btn btn-primary">
                 <span class="align-middle">Send</span>
-                <i class="ti tabler-send ti-16px ms-2 scaleX-n1-rtl"></i>
+                <i class="ti ti-send ti-16px ms-2 scaleX-n1-rtl"></i>
               </button>
             </div>
           </div>
@@ -732,8 +732,8 @@
         <div class="modal-header py-3 justify-content-between">
           <h5 class="modal-title text-body fs-5">Compose Mail</h5>
           <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill"><i class='ti tabler-minus'></i></button>
-            <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill" data-bs-dismiss="modal" aria-label="Close"><i class='ti tabler-x'></i></button>
+            <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill"><i class='ti ti-minus'></i></button>
+            <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill" data-bs-dismiss="modal" aria-label="Close"><i class='ti ti-x'></i></button>
           </div>
         </div>
         <div class="modal-body flex-grow-1 pb-sm-0 p-5 py-2">
@@ -797,19 +797,19 @@
             <div class="email-compose-actions d-flex justify-content-between align-items-center my-4">
               <div class="d-flex align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-primary dropdown-toggle email-send-btn" data-bs-toggle="dropdown" aria-expanded="false">Send <i class="ti tabler-send ti-xs scaleX-n1-rtl ms-2"></i></button>
+                  <button type="button" class="btn btn-primary dropdown-toggle email-send-btn" data-bs-toggle="dropdown" aria-expanded="false">Send <i class="ti ti-send ti-xs scaleX-n1-rtl ms-2"></i></button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="javascript:void(0);">Schedule send</a></li>
                     <li><a class="dropdown-item" href="javascript:void(0);">Save draft</a></li>
                   </ul>
                 </div>
-                <label for="attach-file" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ms-4"><i class="ti tabler-paperclip cursor-pointer"></i></label>
+                <label for="attach-file" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ms-4"><i class="ti ti-paperclip cursor-pointer"></i></label>
                 <input type="file" name="file-input" class="d-none" id="attach-file">
               </div>
               <div class="d-flex align-items-center gap-2">
                 <div class="dropdown">
                   <button class="btn btn-sm btn-icon btn-text-secondary rounded-pill p-0" type="button" id="dropdownMoreActions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="ti tabler-dots-vertical"></i>
+                    <i class="ti ti-dots-vertical"></i>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMoreActions">
                     <li><button type="button" class="dropdown-item">Add Label</button></li>
@@ -821,7 +821,7 @@
                     <li><button type="button" class="dropdown-item">Check Spelling</button></li>
                   </ul>
                 </div>
-                <button type="reset" class="btn btn-sm btn-icon btn-text-secondary rounded-pill" data-bs-dismiss="modal" aria-label="Close"><i class="ti tabler-trash"></i></button>
+                <button type="reset" class="btn btn-sm btn-icon btn-text-secondary rounded-pill" data-bs-dismiss="modal" aria-label="Close"><i class="ti ti-trash"></i></button>
               </div>
             </div>
           </form>

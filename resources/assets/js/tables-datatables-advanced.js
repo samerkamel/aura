@@ -101,8 +101,8 @@ $(function () {
       dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>><"table-responsive"t><"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       language: {
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       }
     });
@@ -147,8 +147,8 @@ $(function () {
       dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>><"table-responsive"t><"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       language: {
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       }
     });
@@ -184,8 +184,8 @@ $(function () {
       ],
       language: {
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       orderCellsTop: true,
@@ -283,8 +283,8 @@ $(function () {
       dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       language: {
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       responsive: {

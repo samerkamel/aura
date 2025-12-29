@@ -12,7 +12,7 @@
                     <small class="text-muted">Import expenses from CSV/Excel files</small>
                 </div>
                 <a href="{{ route('accounting.expense-imports.create') }}" class="btn btn-primary">
-                    <i class="ti tabler-upload me-1"></i>New Import
+                    <i class="ti ti-upload me-1"></i>New Import
                 </a>
             </div>
 
@@ -77,11 +77,11 @@
                                             </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{ route('accounting.expense-imports.show', $import) }}">
-                                                    <i class="ti tabler-eye me-2"></i>View/Edit
+                                                    <i class="ti ti-eye me-2"></i>View/Edit
                                                 </a>
                                                 @if(in_array($import->status, ['reviewing', 'previewing']))
                                                     <a class="dropdown-item" href="{{ route('accounting.expense-imports.preview', $import) }}">
-                                                        <i class="ti tabler-list-check me-2"></i>Preview
+                                                        <i class="ti ti-list-check me-2"></i>Preview
                                                     </a>
                                                 @endif
                                                 @if($import->status !== 'completed')
@@ -90,7 +90,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Delete this import?')">
-                                                            <i class="ti tabler-trash me-2"></i>Delete
+                                                            <i class="ti ti-trash me-2"></i>Delete
                                                         </button>
                                                     </form>
                                                 @endif
@@ -108,11 +108,11 @@
                     </div>
                 @else
                     <div class="text-center py-5">
-                        <i class="ti tabler-file-import display-4 text-muted"></i>
+                        <i class="ti ti-file-import display-4 text-muted"></i>
                         <h5 class="mt-3">No imports yet</h5>
                         <p class="text-muted">Upload a CSV or Excel file to import expenses</p>
                         <a href="{{ route('accounting.expense-imports.create') }}" class="btn btn-primary">
-                            <i class="ti tabler-upload me-1"></i>Upload File
+                            <i class="ti ti-upload me-1"></i>Upload File
                         </a>
                     </div>
                 @endif

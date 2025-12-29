@@ -44,7 +44,7 @@
         </p>
         <div class="d-flex align-items-center justify-content-between app-academy-md-80">
           <input type="search" placeholder="Find your course" class="form-control me-4" />
-          <button type="submit" class="btn btn-primary btn-icon"><i class="ti tabler-search ti-md"></i></button>
+          <button type="submit" class="btn btn-primary btn-icon"><i class="ti ti-search ti-md"></i></button>
         </div>
       </div>
       <div class="app-academy-md-25 d-flex align-items-end justify-content-end">
@@ -86,21 +86,21 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <span class="badge bg-label-primary">Web</span>
                 <p class="d-flex align-items-center justify-content-center fw-medium gap-1 mb-0">
-                  4.4 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal">(1.23k)</span>
+                  4.4 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal">(1.23k)</span>
                 </p>
               </div>
               <a href="{{url('app/academy/course-details')}}" class="h5">Basics of Angular</a>
               <p class="mt-1">Introductory course for Angular and framework basics in web development.</p>
-              <p class="d-flex align-items-center mb-1"><i class="ti tabler-clock me-1"></i>30 minutes</p>
+              <p class="d-flex align-items-center mb-1"><i class="ti ti-clock me-1"></i>30 minutes</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-75" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="d-flex flex-column flex-md-row gap-4 text-nowrap flex-wrap flex-md-nowrap  flex-lg-wrap flex-xxl-nowrap">
                 <a class="w-100 btn btn-label-secondary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <i class="ti tabler-rotate-clockwise-2 ti-xs align-middle scaleX-n1-rtl me-2"></i><span>Start Over</span>
+                  <i class="ti ti-rotate-clockwise-2 ti-xs align-middle scaleX-n1-rtl me-2"></i><span>Start Over</span>
                 </a>
                 <a class="w-100 btn btn-label-primary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <span class="me-2">Continue</span><i class="ti tabler-chevron-right ti-xs scaleX-n1-rtl"></i>
+                  <span class="me-2">Continue</span><i class="ti ti-chevron-right ti-xs scaleX-n1-rtl"></i>
                 </a>
               </div>
             </div>
@@ -115,21 +115,21 @@
               <div class="d-flex justify-content-between align-items-center mb-4 pe-xl-4 pe-xxl-0">
                 <span class="badge bg-label-danger">UI/UX</span>
                 <p class="d-flex align-items-center justify-content-center fw-medium gap-1 mb-0">
-                  4.2 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (424)</span>
+                  4.2 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (424)</span>
                 </p>
               </div>
               <a class="h5" href="{{url('app/academy/course-details')}}">Figma & More</a>
               <p class="mt-1">Introductory course for design and framework basics in web development.</p>
-              <p class="d-flex align-items-center mb-1"><i class="ti tabler-clock me-1"></i>16 hours</p>
+              <p class="d-flex align-items-center mb-1"><i class="ti ti-clock me-1"></i>16 hours</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="d-flex flex-column flex-md-row gap-4 text-nowrap flex-wrap flex-md-nowrap  flex-lg-wrap flex-xxl-nowrap">
                 <a class="w-100 btn btn-label-secondary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <i class="ti tabler-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
+                  <i class="ti ti-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
                 </a>
                 <a class="w-100 btn btn-label-primary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <span class="me-2">Continue</span><i class="ti tabler-chevron-right ti-xs scaleX-n1-rtl"></i>
+                  <span class="me-2">Continue</span><i class="ti ti-chevron-right ti-xs scaleX-n1-rtl"></i>
                 </a>
               </div>
             </div>
@@ -144,21 +144,21 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <span class="badge bg-label-success">SEO</span>
                 <p class="d-flex align-items-center justify-content-center fw-medium gap-1 mb-0">
-                  5 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (12)</span>
+                  5 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (12)</span>
                 </p>
               </div>
               <a class="h5" href="{{url('app/academy/course-details')}}">Keyword Research</a>
               <p class="mt-1">Keyword suggestion tool provides comprehensive details & keyword suggestions.</p>
-              <p class="d-flex align-items-center mb-1"><i class="ti tabler-clock me-1"></i>7 hours</p>
+              <p class="d-flex align-items-center mb-1"><i class="ti ti-clock me-1"></i>7 hours</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-50" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="d-flex flex-column flex-md-row gap-4 text-nowrap flex-wrap flex-md-nowrap  flex-lg-wrap flex-xxl-nowrap">
                 <a class="w-100 btn btn-label-secondary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <i class="ti tabler-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
+                  <i class="ti ti-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
                 </a>
                 <a class="w-100 btn btn-label-primary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <span class="me-2">Continue</span><i class="ti tabler-chevron-right ti-xs scaleX-n1-rtl"></i>
+                  <span class="me-2">Continue</span><i class="ti ti-chevron-right ti-xs scaleX-n1-rtl"></i>
                 </a>
               </div>
             </div>
@@ -173,21 +173,21 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <span class="badge bg-label-info">Music</span>
                 <p class="d-flex align-items-center justify-content-center gap-1 mb-0">
-                  3.8 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (634)</span>
+                  3.8 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (634)</span>
                 </p>
               </div>
               <a class="h5" href="{{url('app/academy/course-details')}}">Basics to Advanced</a>
               <p class="mt-1">20 more lessons like this about music production, writing, mixing, mastering</p>
-              <p class="d-flex align-items-center mb-1"><i class="ti tabler-clock me-1"></i>30 minutes</p>
+              <p class="d-flex align-items-center mb-1"><i class="ti ti-clock me-1"></i>30 minutes</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-75" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="d-flex flex-column flex-md-row gap-4 text-nowrap flex-wrap flex-md-nowrap  flex-lg-wrap flex-xxl-nowrap">
                 <a class="w-100 btn btn-label-secondary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <i class="ti tabler-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
+                  <i class="ti ti-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
                 </a>
                 <a class="w-100 btn btn-label-primary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <span class="me-2">Continue</span><i class="ti tabler-chevron-right ti-xs scaleX-n1-rtl"></i>
+                  <span class="me-2">Continue</span><i class="ti ti-chevron-right ti-xs scaleX-n1-rtl"></i>
                 </a>
               </div>
             </div>
@@ -202,16 +202,16 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <span class="badge bg-label-warning">Painting</span>
                 <p class="d-flex align-items-center justify-content-center gap-1 mb-0">
-                  4.7 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (34)</span>
+                  4.7 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (34)</span>
                 </p>
               </div>
               <a class="h5" href="{{url('app/academy/course-details')}}">Art & Drawing</a>
               <p class="mt-1">Easy-to-follow video & guides show you how to draw animals, people & more.</p>
-              <p class="d-flex align-items-center text-success mb-1"><i class="ti tabler-check me-1"></i>Completed</p>
+              <p class="d-flex align-items-center text-success mb-1"><i class="ti ti-check me-1"></i>Completed</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-100" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
-              <a class="w-100 btn btn-label-primary" href="{{url('app/academy/course-details')}}"><i class="ti tabler-rotate-clockwise-2 ti-xs me-1_5"></i>Start Over</a>
+              <a class="w-100 btn btn-label-primary" href="{{url('app/academy/course-details')}}"><i class="ti ti-rotate-clockwise-2 ti-xs me-1_5"></i>Start Over</a>
             </div>
           </div>
         </div>
@@ -224,21 +224,21 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <span class="badge bg-label-danger">UI/UX</span>
                 <p class="d-flex align-items-center justify-content-center gap-1 mb-0">
-                  3.6 <span class="text-warning"><i class="ti tabler-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (2.5k)</span>
+                  3.6 <span class="text-warning"><i class="ti ti-star-filled ti-lg me-1"></i></span><span class="fw-normal"> (2.5k)</span>
                 </p>
               </div>
               <a class="h5" href="{{url('app/academy/course-details')}}">Basics Fundamentals</a>
               <p class="mt-1">This guide will help you develop a systematic approach user interface.</p>
-              <p class="d-flex align-items-center mb-1"><i class="ti tabler-clock me-1"></i>16 hours</p>
+              <p class="d-flex align-items-center mb-1"><i class="ti ti-clock me-1"></i>16 hours</p>
               <div class="progress rounded-pill mb-4" style="height: 8px">
                 <div class="progress-bar w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               <div class="d-flex flex-column flex-md-row gap-4 text-nowrap flex-wrap flex-md-nowrap  flex-lg-wrap flex-xxl-nowrap">
                 <a class="w-100 btn btn-label-secondary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <i class="ti tabler-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
+                  <i class="ti ti-rotate-clockwise-2 ti-xs align-middle me-2"></i><span>Start Over</span>
                 </a>
                 <a class="w-100 btn btn-label-primary d-flex align-items-center" href="{{url('app/academy/course-details')}}">
-                  <span class="me-2">Continue</span><i class="ti tabler-chevron-right ti-xs scaleX-n1-rtl"></i>
+                  <span class="me-2">Continue</span><i class="ti ti-chevron-right ti-xs scaleX-n1-rtl"></i>
                 </a>
               </div>
             </div>
@@ -248,10 +248,10 @@
       <nav aria-label="Page navigation" class="d-flex align-items-center justify-content-center">
         <ul class="pagination mb-0 pagination-rounded">
           <li class="page-item first">
-            <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-md scaleX-n1-rtl"></i></a>
+            <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-md scaleX-n1-rtl"></i></a>
           </li>
           <li class="page-item prev">
-            <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-md scaleX-n1-rtl"></i></a>
+            <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-md scaleX-n1-rtl"></i></a>
           </li>
           <li class="page-item">
             <a class="page-link" href="javascript:void(0);">1</a>
@@ -272,10 +272,10 @@
             <a class="page-link" href="javascript:void(0);">6</a>
           </li>
           <li class="page-item next">
-            <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-md scaleX-n1-rtl"></i></a>
+            <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-md scaleX-n1-rtl"></i></a>
           </li>
           <li class="page-item last">
-            <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-md scaleX-n1-rtl"></i></a>
+            <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-md scaleX-n1-rtl"></i></a>
           </li>
         </ul>
       </nav>
@@ -326,7 +326,7 @@
       <div class="col-sm-12 col-lg-4 text-center pt-md-12 px-4">
         <div class="d-flex justify-content-center">
           <div class="avatar avatar-lg mb-4">
-            <span class="avatar-initial rounded bg-label-primary h-px-52 w-px-52"><i class="ti tabler-gift ti-36px"></i></span>
+            <span class="avatar-initial rounded bg-label-primary h-px-52 w-px-52"><i class="ti ti-gift ti-36px"></i></span>
           </div>
         </div>
         <h4 class="card-title mb-4">Today's Free Courses</h4>

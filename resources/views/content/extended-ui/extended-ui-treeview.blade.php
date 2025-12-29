@@ -28,28 +28,28 @@
       <div class="card-body">
         <div id="jstree-basic">
           <ul>
-            <li data-jstree='{"icon" : "ti tabler-folder"}'>css
+            <li data-jstree='{"icon" : "ti ti-folder"}'>css
               <ul>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>app.css</li>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>style.css</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>app.css</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>style.css</li>
               </ul>
             </li>
-            <li class="jstree-open" data-jstree='{"icon" : "ti tabler-folder"}'>img
-              <ul data-jstree='{"icon" : "ti tabler-folder"}'>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>bg.jpg</li>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>logo.png</li>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>avatar.png</li>
+            <li class="jstree-open" data-jstree='{"icon" : "ti ti-folder"}'>img
+              <ul data-jstree='{"icon" : "ti ti-folder"}'>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>bg.jpg</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>logo.png</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>avatar.png</li>
               </ul>
             </li>
-            <li class="jstree-open" data-jstree='{"icon" : "ti tabler-folder"}'>js
+            <li class="jstree-open" data-jstree='{"icon" : "ti ti-folder"}'>js
               <ul>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>jquery.js</li>
-                <li data-jstree='{"icon" : "ti tabler-folder"}'>app.js</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>jquery.js</li>
+                <li data-jstree='{"icon" : "ti ti-folder"}'>app.js</li>
               </ul>
             </li>
-            <li data-jstree='{"icon" : "ti tabler-file-text"}'>index.html</li>
-            <li data-jstree='{"icon" : "ti tabler-file-text"}'>page-one.html</li>
-            <li data-jstree='{"icon" : "ti tabler-file-text"}'>page-two.html</li>
+            <li data-jstree='{"icon" : "ti ti-file-text"}'>index.html</li>
+            <li data-jstree='{"icon" : "ti ti-file-text"}'>page-one.html</li>
+            <li data-jstree='{"icon" : "ti ti-file-text"}'>page-two.html</li>
           </ul>
         </div>
       </div>

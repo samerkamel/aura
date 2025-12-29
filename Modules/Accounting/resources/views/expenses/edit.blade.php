@@ -12,7 +12,7 @@
                     <small class="text-muted">Update {{ $expenseSchedule->name }}</small>
                 </div>
                 <a href="{{ route('accounting.expenses.show', $expenseSchedule) }}" class="btn btn-outline-secondary">
-                    <i class="ti tabler-arrow-left me-1"></i>Back to Details
+                    <i class="ti ti-arrow-left me-1"></i>Back to Details
                 </a>
             </div>
 
@@ -202,10 +202,10 @@
                             <div class="card">
                                 <div class="card-footer d-flex justify-content-between">
                                     <a href="{{ route('accounting.expenses.show', $expenseSchedule) }}" class="btn btn-outline-secondary">
-                                        <i class="ti tabler-x me-1"></i>Cancel
+                                        <i class="ti ti-x me-1"></i>Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="ti tabler-device-floppy me-1"></i>Save Changes
+                                        <i class="ti ti-device-floppy me-1"></i>Save Changes
                                     </button>
                                 </div>
                             </div>

@@ -9,13 +9,13 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti tabler-edit me-2"></i>Edit Report
+            <i class="ti ti-edit me-2"></i>Edit Report
             <small class="text-muted ms-2">
               {{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}
             </small>
           </h5>
           <a href="{{ route('projects.reports.show', $report) }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Report
+            <i class="ti ti-arrow-left me-1"></i>Back to Report
           </a>
         </div>
         <div class="card-body">
@@ -33,7 +33,7 @@
             <input type="hidden" name="end_date" value="{{ $endDate->format('Y-m-d') }}">
 
             <div class="alert alert-success mb-4">
-              <i class="ti tabler-refresh me-2"></i>
+              <i class="ti ti-refresh me-2"></i>
               <strong>Hours refreshed from Jira!</strong> - The work hours have been updated with the latest data.
               Your saved rates are preserved. Review the changes and click "Update Report" to save.
             </div>
@@ -136,7 +136,7 @@
               @endforeach
             @else
               <div class="alert alert-warning mb-4">
-                <i class="ti tabler-alert-triangle me-2"></i>
+                <i class="ti ti-alert-triangle me-2"></i>
                 No worklog data found for the selected date range. You can still add custom projects below.
               </div>
             @endif
@@ -146,10 +146,10 @@
               <div class="card mb-4 border border-success">
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">
-                    <i class="ti tabler-plus me-2"></i>Add Custom Project
+                    <i class="ti ti-plus me-2"></i>Add Custom Project
                   </h6>
                   <button type="button" class="btn btn-light btn-sm" id="addProjectBtn">
-                    <i class="ti tabler-plus me-1"></i>Add Project
+                    <i class="ti ti-plus me-1"></i>Add Project
                   </button>
                 </div>
                 <div class="card-body" id="customProjectsContainer">
@@ -164,7 +164,7 @@
                             <input type="hidden" name="custom_projects[{{ $cpIndex }}][project_id]" value="{{ $customProject['project_id'] ?? '' }}">
                           </div>
                           <button type="button" class="btn btn-outline-danger btn-sm remove-project-btn">
-                            <i class="ti tabler-trash"></i>
+                            <i class="ti ti-trash"></i>
                           </button>
                         </div>
                         <div class="card-body p-0">
@@ -214,7 +214,7 @@
                                     </td>
                                     <td class="text-center">
                                       <button type="button" class="btn btn-outline-danger btn-sm remove-employee-btn">
-                                        <i class="ti tabler-x"></i>
+                                        <i class="ti ti-x"></i>
                                       </button>
                                     </td>
                                   </tr>
@@ -254,7 +254,7 @@
             <!-- Team Summary -->
             <div class="card mb-4 border border-info">
               <div class="card-header bg-info text-white">
-                <h6 class="mb-0"><i class="ti tabler-users-group me-2"></i>Summary by Team</h6>
+                <h6 class="mb-0"><i class="ti ti-users-group me-2"></i>Summary by Team</h6>
               </div>
               <div class="card-body p-0">
                 <table class="table table-bordered mb-0">
@@ -316,10 +316,10 @@
 
             <div class="d-flex justify-content-between">
               <a href="{{ route('projects.reports.show', $report) }}" class="btn btn-outline-secondary">
-                <i class="ti tabler-arrow-left me-1"></i>Cancel
+                <i class="ti ti-arrow-left me-1"></i>Cancel
               </a>
               <button type="submit" class="btn btn-primary">
-                <i class="ti tabler-device-floppy me-1"></i>Update Report
+                <i class="ti ti-device-floppy me-1"></i>Update Report
               </button>
             </div>
           </form>
@@ -352,7 +352,7 @@
         </div>
       </div>
       <button type="button" class="btn btn-outline-danger btn-sm remove-project-btn">
-        <i class="ti tabler-trash"></i>
+        <i class="ti ti-trash"></i>
       </button>
     </div>
     <div class="card-body p-0">
@@ -375,7 +375,7 @@
             <tr>
               <td colspan="6">
                 <button type="button" class="btn btn-outline-success btn-sm add-employee-btn">
-                  <i class="ti tabler-plus me-1"></i>Add Employee
+                  <i class="ti ti-plus me-1"></i>Add Employee
                 </button>
               </td>
             </tr>
@@ -447,7 +447,7 @@
     </td>
     <td class="text-center">
       <button type="button" class="btn btn-outline-danger btn-sm remove-employee-btn">
-        <i class="ti tabler-x"></i>
+        <i class="ti ti-x"></i>
       </button>
     </td>
   </tr>

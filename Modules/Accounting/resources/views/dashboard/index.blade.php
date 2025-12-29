@@ -44,22 +44,22 @@
             <div class="d-flex gap-2">
                 @can('view-cash-flow-reports')
                     <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#projectionModal">
-                        <i class="ti tabler-chart-line me-2"></i>View Projections
+                        <i class="ti ti-chart-line me-2"></i>View Projections
                     </button>
                 @endcan
 
                 @can('manage-expense-schedules')
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="ti tabler-plus me-1"></i>Quick Add
+                            <i class="ti ti-plus me-1"></i>Quick Add
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('accounting.expenses.create') }}">
-                                <i class="ti tabler-coin-off me-2"></i>New Expense Schedule
+                                <i class="ti ti-coin-off me-2"></i>New Expense Schedule
                             </a></li>
                             @can('manage-income-schedules')
                                 <li><a class="dropdown-item" href="{{ route('accounting.income.contracts.create') }}">
-                                    <i class="ti tabler-file-text me-2"></i>New Contract
+                                    <i class="ti ti-file-text me-2"></i>New Contract
                                 </a></li>
                             @endcan
                         </ul>
@@ -68,7 +68,7 @@
 
                 @cannot('manage-expense-schedules')
                     <span class="badge bg-info">
-                        <i class="ti tabler-eye me-1"></i>Read-Only Access
+                        <i class="ti ti-eye me-1"></i>Read-Only Access
                     </span>
                 @endcannot
             </div>
@@ -96,7 +96,7 @@
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-success rounded">
-                            <i class="ti tabler-trending-up"></i>
+                            <i class="ti ti-trending-up"></i>
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-danger rounded">
-                            <i class="ti tabler-trending-down"></i>
+                            <i class="ti ti-trending-down"></i>
                         </div>
                     </div>
                 </div>
@@ -166,7 +166,7 @@
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-info rounded">
-                            <i class="ti tabler-file-text"></i>
+                            <i class="ti ti-file-text"></i>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="ti tabler-calendar me-1"></i>{{ ucfirst($selectedPeriod ?? 'monthly') }}
+                        <i class="ti ti-calendar me-1"></i>{{ ucfirst($selectedPeriod ?? 'monthly') }}
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="?period=weekly">Weekly</a></li>
@@ -200,7 +200,7 @@
                 <div id="cashFlowChart"></div>
                 @if(!empty($deficitPeriods))
                     <div class="alert alert-warning mt-3">
-                        <i class="ti tabler-alert-triangle me-2"></i>
+                        <i class="ti ti-alert-triangle me-2"></i>
                         <strong>Cash Flow Alert:</strong> Potential deficits detected in {{ count($deficitPeriods) }} upcoming periods.
                         <a href="#" data-bs-toggle="modal" data-bs-target="#deficitModal">View Details</a>
                     </div>
@@ -239,7 +239,7 @@
                         </div>
                     @empty
                         <div class="col-12 text-center py-3">
-                            <i class="ti tabler-calendar-off text-muted mb-2" style="font-size: 2rem;"></i>
+                            <i class="ti ti-calendar-off text-muted mb-2" style="font-size: 2rem;"></i>
                             <p class="text-muted">No upcoming payments</p>
                         </div>
                     @endforelse
@@ -264,7 +264,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Expense Categories</h5>
                 <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="ti tabler-settings me-1"></i>Manage
+                    <i class="ti ti-settings me-1"></i>Manage
                 </a>
             </div>
             <div class="card-body">
@@ -279,7 +279,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Contract Status</h5>
                 <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="ti tabler-file-text me-1"></i>View All
+                    <i class="ti ti-file-text me-1"></i>View All
                 </a>
             </div>
             <div class="card-body">
@@ -298,7 +298,7 @@
                     </div>
                 @empty
                     <div class="text-center py-3">
-                        <i class="ti tabler-file-plus text-muted mb-2" style="font-size: 2rem;"></i>
+                        <i class="ti ti-file-plus text-muted mb-2" style="font-size: 2rem;"></i>
                         <p class="text-muted">No contracts found</p>
                         <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary btn-sm">
                             Create First Contract

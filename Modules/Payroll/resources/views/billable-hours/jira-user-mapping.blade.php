@@ -12,21 +12,21 @@
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
               <a href="{{ route('payroll.billable-hours.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-                <i class="ti tabler-arrow-left"></i>
+                <i class="ti ti-arrow-left"></i>
               </a>
               <div>
                 <h5 class="mb-0">
-                  <i class="ti tabler-link me-2"></i>Jira User Mapping
+                  <i class="ti ti-link me-2"></i>Jira User Mapping
                 </h5>
                 <small class="text-muted">Link Jira users to employees for automatic worklog sync</small>
               </div>
             </div>
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#manualSyncModal">
-                <i class="ti tabler-refresh me-1"></i>Manual Sync
+                <i class="ti ti-refresh me-1"></i>Manual Sync
               </button>
               <a href="{{ route('payroll.settings.index') }}#jira-settings" class="btn btn-outline-secondary">
-                <i class="ti tabler-settings me-1"></i>Jira Settings
+                <i class="ti ti-settings me-1"></i>Jira Settings
               </a>
             </div>
           </div>
@@ -50,7 +50,7 @@
       <!-- Period Filter -->
       <div class="card mb-4">
         <div class="card-header">
-          <h6 class="mb-0"><i class="ti tabler-calendar me-2"></i>Period to Scan</h6>
+          <h6 class="mb-0"><i class="ti ti-calendar me-2"></i>Period to Scan</h6>
         </div>
         <div class="card-body">
           <form action="{{ route('payroll.billable-hours.jira-user-mapping') }}" method="GET" class="row align-items-end">
@@ -65,7 +65,7 @@
             </div>
             <div class="col-md-8">
               <div class="alert alert-info mb-0 py-2">
-                <i class="ti tabler-info-circle me-1"></i>
+                <i class="ti ti-info-circle me-1"></i>
                 Showing Jira users who logged worklogs in the selected period. Link them to employees to track their billable hours.
               </div>
             </div>
@@ -82,7 +82,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-lg me-3 bg-label-primary">
                     <span class="avatar-initial rounded">
-                      <i class="ti tabler-users"></i>
+                      <i class="ti ti-users"></i>
                     </span>
                   </div>
                   <div>
@@ -99,7 +99,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-lg me-3 bg-label-success">
                     <span class="avatar-initial rounded">
-                      <i class="ti tabler-link"></i>
+                      <i class="ti ti-link"></i>
                     </span>
                   </div>
                   <div>
@@ -116,7 +116,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-lg me-3 bg-label-warning">
                     <span class="avatar-initial rounded">
-                      <i class="ti tabler-unlink"></i>
+                      <i class="ti ti-unlink"></i>
                     </span>
                   </div>
                   <div>
@@ -132,17 +132,17 @@
         <!-- Mapping Table -->
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="ti tabler-list me-2"></i>User Mappings</h6>
+            <h6 class="mb-0"><i class="ti ti-list me-2"></i>User Mappings</h6>
             @if(count($jiraUsers) > 0)
               <button type="submit" form="mappingForm" class="btn btn-primary">
-                <i class="ti tabler-device-floppy me-1"></i>Save All Mappings
+                <i class="ti ti-device-floppy me-1"></i>Save All Mappings
               </button>
             @endif
           </div>
           <div class="card-body">
             @if(count($jiraUsers) === 0)
               <div class="text-center py-5 text-muted">
-                <i class="ti tabler-user-off" style="font-size: 3rem;"></i>
+                <i class="ti ti-user-off" style="font-size: 3rem;"></i>
                 <p class="mt-3">No Jira users found with worklogs in the selected period.</p>
                 <p class="small">Try selecting a different period or check your Jira settings.</p>
               </div>
@@ -189,11 +189,11 @@
                           <td>
                             @if($user['isMapped'])
                               <span class="badge bg-label-success">
-                                <i class="ti tabler-check me-1"></i>Mapped
+                                <i class="ti ti-check me-1"></i>Mapped
                               </span>
                             @else
                               <span class="badge bg-label-warning">
-                                <i class="ti tabler-alert-triangle me-1"></i>Not Mapped
+                                <i class="ti ti-alert-triangle me-1"></i>Not Mapped
                               </span>
                             @endif
                           </td>
@@ -219,7 +219,7 @@
                 </div>
                 <div class="mt-4 d-flex justify-content-end">
                   <button type="submit" class="btn btn-primary">
-                    <i class="ti tabler-device-floppy me-1"></i>Save All Mappings
+                    <i class="ti ti-device-floppy me-1"></i>Save All Mappings
                   </button>
                 </div>
               </form>
@@ -237,7 +237,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="manualSyncModalLabel">
-          <i class="ti tabler-refresh me-2"></i>Manual Jira Sync
+          <i class="ti ti-refresh me-2"></i>Manual Jira Sync
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -275,7 +275,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="startSyncBtn" onclick="startManualSync()">
-          <i class="ti tabler-refresh me-1"></i>Start Sync
+          <i class="ti ti-refresh me-1"></i>Start Sync
         </button>
       </div>
     </div>
@@ -307,7 +307,7 @@
     if (period === 'custom' && (!startDate || !endDate)) {
       resultDiv.classList.remove('d-none');
       alertDiv.className = 'alert alert-danger mb-0';
-      alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>Please select both start and end dates.';
+      alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>Please select both start and end dates.';
       return;
     }
 
@@ -337,20 +337,20 @@
       resultDiv.classList.remove('d-none');
       if (data.success) {
         alertDiv.className = 'alert alert-success mb-0';
-        alertDiv.innerHTML = '<i class="ti tabler-check me-1"></i>' + data.message;
+        alertDiv.innerHTML = '<i class="ti ti-check me-1"></i>' + data.message;
       } else {
         alertDiv.className = 'alert alert-danger mb-0';
-        alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>' + data.message;
+        alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>' + data.message;
       }
     })
     .catch(error => {
       resultDiv.classList.remove('d-none');
       alertDiv.className = 'alert alert-danger mb-0';
-      alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>Network error: ' + error.message;
+      alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>Network error: ' + error.message;
     })
     .finally(() => {
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-refresh me-1"></i>Start Sync';
+      btn.innerHTML = '<i class="ti ti-refresh me-1"></i>Start Sync';
     });
   }
 </script>

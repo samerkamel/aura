@@ -16,14 +16,14 @@
                 <div class="d-flex gap-2">
                     @if($expenseSchedule->expense_type === 'recurring')
                         <a href="{{ route('accounting.expenses.edit', $expenseSchedule) }}" class="btn btn-primary">
-                            <i class="ti tabler-edit me-1"></i>Edit Schedule
+                            <i class="ti ti-edit me-1"></i>Edit Schedule
                         </a>
                     @endif
                     <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Expenses
+                        <i class="ti ti-arrow-left me-1"></i>Back to Expenses
                     </a>
                     <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-info">
-                        <i class="ti tabler-receipt me-1"></i>All Paid Expenses
+                        <i class="ti ti-receipt me-1"></i>All Paid Expenses
                     </a>
                 </div>
             </div>
@@ -128,12 +128,12 @@
                                                 <div class="d-flex gap-2">
                                                     @if($expenseSchedule->skip_weekends)
                                                         <span class="badge bg-info">
-                                                            <i class="ti tabler-calendar-off me-1"></i>Skip Weekends
+                                                            <i class="ti ti-calendar-off me-1"></i>Skip Weekends
                                                         </span>
                                                     @endif
                                                     @if($expenseSchedule->excluded_dates && count($expenseSchedule->excluded_dates) > 0)
                                                         <span class="badge bg-warning">
-                                                            <i class="ti tabler-calendar-x me-1"></i>{{ count($expenseSchedule->excluded_dates) }} Excluded Dates
+                                                            <i class="ti ti-calendar-x me-1"></i>{{ count($expenseSchedule->excluded_dates) }} Excluded Dates
                                                         </span>
                                                     @endif
                                                 </div>
@@ -162,7 +162,7 @@
                                                 </span>
                                                 @if($expenseSchedule->payment_status !== 'paid' && auth()->user()->can('manage-expenses'))
                                                     <button type="button" class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#markAsPaidModal">
-                                                        <i class="ti tabler-check me-1"></i>Mark as Paid
+                                                        <i class="ti ti-check me-1"></i>Mark as Paid
                                                     </button>
                                                 @endif
                                             </div>
@@ -198,7 +198,7 @@
                                                     <label class="form-label text-muted">Payment Attachment</label>
                                                     <div>
                                                         <a href="{{ $expenseSchedule->payment_attachment_url }}" class="btn btn-sm btn-outline-primary" title="Download {{ $expenseSchedule->payment_attachment_original_name }}">
-                                                            <i class="ti tabler-paperclip me-1"></i>{{ $expenseSchedule->payment_attachment_original_name }}
+                                                            <i class="ti ti-paperclip me-1"></i>{{ $expenseSchedule->payment_attachment_original_name }}
                                                         </a>
                                                     </div>
                                                 </div>
@@ -273,13 +273,13 @@
                                 <div class="d-grid gap-2">
                                     @if($expenseSchedule->expense_type === 'recurring')
                                         <a href="{{ route('accounting.expenses.edit', $expenseSchedule) }}" class="btn btn-primary">
-                                            <i class="ti tabler-edit me-2"></i>Edit Schedule
+                                            <i class="ti ti-edit me-2"></i>Edit Schedule
                                         </a>
                                         <form action="{{ route('accounting.expenses.toggle-status', $expenseSchedule) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="btn btn-{{ $expenseSchedule->is_active ? 'warning' : 'success' }} w-100">
-                                                <i class="ti tabler-{{ $expenseSchedule->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                <i class="ti ti-{{ $expenseSchedule->is_active ? 'pause' : 'play' }} me-2"></i>
                                                 {{ $expenseSchedule->is_active ? 'Deactivate' : 'Activate' }} Schedule
                                             </button>
                                         </form>
@@ -289,7 +289,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger w-100">
-                                            <i class="ti tabler-trash me-2"></i>Delete {{ $expenseSchedule->expense_type === 'one_time' ? 'Expense' : 'Schedule' }}
+                                            <i class="ti ti-trash me-2"></i>Delete {{ $expenseSchedule->expense_type === 'one_time' ? 'Expense' : 'Schedule' }}
                                         </button>
                                     </form>
                                 </div>

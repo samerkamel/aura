@@ -32,7 +32,7 @@
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-{{ $estimate->status_color }} fs-6">{{ $estimate->status_label }}</span>
                             <a href="{{ route('accounting.estimates.index') }}" class="btn btn-outline-secondary">
-                                <i class="ti tabler-arrow-left me-1"></i>Back
+                                <i class="ti ti-arrow-left me-1"></i>Back
                             </a>
                         </div>
                     </div>
@@ -46,10 +46,10 @@
                                 <h6 class="text-muted mb-2">Client Information</h6>
                                 <h5 class="mb-1">{{ $estimate->client_name }}</h5>
                                 @if($estimate->client_email)
-                                    <p class="mb-1"><i class="ti tabler-mail me-1"></i>{{ $estimate->client_email }}</p>
+                                    <p class="mb-1"><i class="ti ti-mail me-1"></i>{{ $estimate->client_email }}</p>
                                 @endif
                                 @if($estimate->client_address)
-                                    <p class="mb-0"><i class="ti tabler-map-pin me-1"></i>{{ $estimate->client_address }}</p>
+                                    <p class="mb-0"><i class="ti ti-map-pin me-1"></i>{{ $estimate->client_address }}</p>
                                 @endif
                             </div>
                             <div class="col-md-6">
@@ -144,7 +144,7 @@
 
                             @if($estimate->internal_notes)
                                 @if($estimate->notes)<hr>@endif
-                                <h6 class="text-muted mb-2"><i class="ti tabler-lock me-1"></i>Internal Notes</h6>
+                                <h6 class="text-muted mb-2"><i class="ti ti-lock me-1"></i>Internal Notes</h6>
                                 <p class="mb-0 text-muted">{!! nl2br(e($estimate->internal_notes)) !!}</p>
                             @endif
                         </div>
@@ -155,9 +155,9 @@
                 @if($estimate->contract)
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h6 class="text-muted mb-2"><i class="ti tabler-link me-1"></i>Converted to Contract</h6>
+                            <h6 class="text-muted mb-2"><i class="ti ti-link me-1"></i>Converted to Contract</h6>
                             <a href="{{ route('accounting.income.contracts.show', $estimate->contract) }}" class="btn btn-outline-primary">
-                                <i class="ti tabler-file-text me-1"></i>View Contract: {{ $estimate->contract->contract_number }}
+                                <i class="ti ti-file-text me-1"></i>View Contract: {{ $estimate->contract->contract_number }}
                             </a>
                         </div>
                     </div>
@@ -174,19 +174,19 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <a href="{{ route('accounting.estimates.pdf', $estimate) }}" class="btn btn-primary">
-                                <i class="ti tabler-file-download me-1"></i>Download PDF
+                                <i class="ti ti-file-download me-1"></i>Download PDF
                             </a>
 
                             @if($estimate->canBeEdited())
                                 <a href="{{ route('accounting.estimates.edit', $estimate) }}" class="btn btn-outline-primary">
-                                    <i class="ti tabler-pencil me-1"></i>Edit Estimate
+                                    <i class="ti ti-pencil me-1"></i>Edit Estimate
                                 </a>
                             @endif
 
                             <form action="{{ route('accounting.estimates.duplicate', $estimate) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-secondary w-100">
-                                    <i class="ti tabler-copy me-1"></i>Duplicate
+                                    <i class="ti ti-copy me-1"></i>Duplicate
                                 </button>
                             </form>
                         </div>
@@ -204,7 +204,7 @@
                                 <form action="{{ route('accounting.estimates.send', $estimate) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-info w-100">
-                                        <i class="ti tabler-send me-1"></i>Mark as Sent
+                                        <i class="ti ti-send me-1"></i>Mark as Sent
                                     </button>
                                 </form>
                             @endif
@@ -213,13 +213,13 @@
                                 <form action="{{ route('accounting.estimates.approve', $estimate) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-success w-100">
-                                        <i class="ti tabler-check me-1"></i>Approve
+                                        <i class="ti ti-check me-1"></i>Approve
                                     </button>
                                 </form>
                                 <form action="{{ route('accounting.estimates.reject', $estimate) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-danger w-100">
-                                        <i class="ti tabler-x me-1"></i>Reject
+                                        <i class="ti ti-x me-1"></i>Reject
                                     </button>
                                 </form>
                             @endif
@@ -228,7 +228,7 @@
                                 <form action="{{ route('accounting.estimates.convert', $estimate) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-primary w-100">
-                                        <i class="ti tabler-transform me-1"></i>Convert to Contract
+                                        <i class="ti ti-transform me-1"></i>Convert to Contract
                                     </button>
                                 </form>
                             @endif
@@ -239,7 +239,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger w-100">
-                                        <i class="ti tabler-trash me-1"></i>Delete
+                                        <i class="ti ti-trash me-1"></i>Delete
                                     </button>
                                 </form>
                             @endif
@@ -282,7 +282,7 @@
                         <ul class="timeline mb-0">
                             <li class="timeline-item">
                                 <span class="timeline-indicator timeline-indicator-primary">
-                                    <i class="ti tabler-plus"></i>
+                                    <i class="ti ti-plus"></i>
                                 </span>
                                 <div class="timeline-event">
                                     <div class="timeline-header">Created</div>
@@ -292,7 +292,7 @@
                             @if($estimate->sent_at)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-info">
-                                        <i class="ti tabler-send"></i>
+                                        <i class="ti ti-send"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Sent</div>
@@ -303,7 +303,7 @@
                             @if($estimate->approved_at)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-success">
-                                        <i class="ti tabler-check"></i>
+                                        <i class="ti ti-check"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Approved</div>
@@ -314,7 +314,7 @@
                             @if($estimate->rejected_at)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-danger">
-                                        <i class="ti tabler-x"></i>
+                                        <i class="ti ti-x"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Rejected</div>
@@ -325,7 +325,7 @@
                             @if($estimate->converted_to_contract_id)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-primary">
-                                        <i class="ti tabler-transform"></i>
+                                        <i class="ti ti-transform"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Converted to Contract</div>

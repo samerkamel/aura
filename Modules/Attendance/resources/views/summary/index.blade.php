@@ -113,13 +113,13 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0">
-            <i class="ti tabler-chart-bar me-2"></i>Attendance Summary
+            <i class="ti ti-chart-bar me-2"></i>Attendance Summary
           </h5>
           <small class="text-muted">Yearly attendance overview for all employees</small>
         </div>
         <div class="d-flex gap-2 align-items-center">
           <a href="{{ route('attendance.records') }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-list me-1"></i>Daily Records
+            <i class="ti ti-list me-1"></i>Daily Records
           </a>
         </div>
       </div>
@@ -149,13 +149,13 @@
           </div>
           <div>
             <button type="submit" class="btn btn-primary">
-              <i class="ti tabler-filter me-1"></i>Apply Filter
+              <i class="ti ti-filter me-1"></i>Apply Filter
             </button>
           </div>
           @if(!empty($selectedEmployeeIds))
           <div>
             <a href="{{ route('attendance.summary', ['year' => $year]) }}" class="btn btn-outline-secondary">
-              <i class="ti tabler-x me-1"></i>Clear
+              <i class="ti ti-x me-1"></i>Clear
             </a>
           </div>
           @endif
@@ -167,10 +167,10 @@
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti tabler-calendar-stats me-2"></i>{{ $year }} Attendance Summary
+          <i class="ti ti-calendar-stats me-2"></i>{{ $year }} Attendance Summary
           <span class="badge bg-primary ms-2">{{ count($summaryData) }} employee{{ count($summaryData) !== 1 ? 's' : '' }}</span>
           @if(!empty($selectedEmployeeIds))
-            <span class="badge bg-label-info ms-1"><i class="ti tabler-filter me-1"></i>Filtered</span>
+            <span class="badge bg-label-info ms-1"><i class="ti ti-filter me-1"></i>Filtered</span>
           @endif
         </h6>
       </div>
@@ -222,7 +222,7 @@
                     @endif
                   </td>
                   <td class="metric-label">
-                    <i class="ti tabler-calendar-check text-primary me-1"></i>Attended
+                    <i class="ti ti-calendar-check text-primary me-1"></i>Attended
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['attended_days']; @endphp
@@ -236,7 +236,7 @@
                 <!-- Attendance Hours Row -->
                 <tr class="metric-row-hours">
                   <td class="metric-label">
-                    <i class="ti tabler-clock text-primary me-1"></i>Hours
+                    <i class="ti ti-clock text-primary me-1"></i>Hours
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['attendance_hours']; @endphp
@@ -250,7 +250,7 @@
                 <!-- Late Penalty Row -->
                 <tr class="metric-row-penalty">
                   <td class="metric-label">
-                    <i class="ti tabler-clock-exclamation text-danger me-1"></i>Late Penalty
+                    <i class="ti ti-clock-exclamation text-danger me-1"></i>Late Penalty
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['late_penalty_hours']; @endphp
@@ -266,7 +266,7 @@
                 <!-- Absent Days Row -->
                 <tr class="metric-row-absent">
                   <td class="metric-label">
-                    <i class="ti tabler-calendar-x text-warning me-1"></i>Absent Days
+                    <i class="ti ti-calendar-x text-warning me-1"></i>Absent Days
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['absent_days']; @endphp
@@ -282,7 +282,7 @@
                 <!-- Vacation Days Row -->
                 <tr class="metric-row-vacation">
                   <td class="metric-label">
-                    <i class="ti tabler-beach text-info me-1"></i>Vacation Days
+                    <i class="ti ti-beach text-info me-1"></i>Vacation Days
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['vacation_days']; @endphp
@@ -298,7 +298,7 @@
                 <!-- Permissions Row -->
                 <tr class="metric-row-permission">
                   <td class="metric-label">
-                    <i class="ti tabler-clock-pause text-success me-1"></i>Permissions
+                    <i class="ti ti-clock-pause text-success me-1"></i>Permissions
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['permissions']; @endphp
@@ -314,7 +314,7 @@
                 <!-- WFH Days Row -->
                 <tr class="metric-row-wfh">
                   <td class="metric-label">
-                    <i class="ti tabler-home text-secondary me-1"></i>WFH Days
+                    <i class="ti ti-home text-secondary me-1"></i>WFH Days
                   </td>
                   @foreach($monthNames as $monthNum => $monthName)
                     @php $val = $months[$monthNum]['wfh_days']; @endphp
@@ -330,7 +330,7 @@
                 <tr>
                   <td colspan="15" class="text-center py-5">
                     <div class="d-flex flex-column align-items-center">
-                      <i class="ti tabler-users-minus text-muted" style="font-size: 3rem;"></i>
+                      <i class="ti ti-users-minus text-muted" style="font-size: 3rem;"></i>
                       <h6 class="mt-2">No employees found</h6>
                       <p class="text-muted">Add employees to see attendance summary</p>
                     </div>
@@ -347,7 +347,7 @@
     <div class="card mt-4">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti tabler-chart-pie me-2"></i>Yearly Statistics
+          <i class="ti ti-chart-pie me-2"></i>Yearly Statistics
           <span class="badge bg-label-secondary ms-2">{{ $year }}</span>
           @if(!empty($selectedEmployeeIds))
             <span class="badge bg-label-info ms-1">{{ $yearlyStats['employee_count'] }} employee{{ $yearlyStats['employee_count'] !== 1 ? 's' : '' }} selected</span>
@@ -363,7 +363,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-primary">
-                  <i class="ti tabler-calendar-check ti-md"></i>
+                  <i class="ti ti-calendar-check ti-md"></i>
                 </span>
               </div>
               <div>
@@ -388,7 +388,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-primary">
-                  <i class="ti tabler-clock ti-md"></i>
+                  <i class="ti ti-clock ti-md"></i>
                 </span>
               </div>
               <div>
@@ -413,7 +413,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-danger">
-                  <i class="ti tabler-clock-exclamation ti-md"></i>
+                  <i class="ti ti-clock-exclamation ti-md"></i>
                 </span>
               </div>
               <div>
@@ -424,7 +424,7 @@
                 </div>
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-muted">
-                    <i class="ti tabler-trending-down me-1"></i>
+                    <i class="ti ti-trending-down me-1"></i>
                     ~{{ number_format($yearlyStats['avg_penalty_per_month'], 1) }}h/month avg
                   </small>
                 </div>
@@ -437,7 +437,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-warning">
-                  <i class="ti tabler-calendar-x ti-md"></i>
+                  <i class="ti ti-calendar-x ti-md"></i>
                 </span>
               </div>
               <div>
@@ -448,7 +448,7 @@
                 </div>
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-muted">
-                    <i class="ti tabler-calendar me-1"></i>
+                    <i class="ti ti-calendar me-1"></i>
                     ~{{ number_format($yearlyStats['avg_absent_per_month'], 1) }} days/month avg
                   </small>
                 </div>
@@ -461,7 +461,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-info">
-                  <i class="ti tabler-beach ti-md"></i>
+                  <i class="ti ti-beach ti-md"></i>
                 </span>
               </div>
               <div>
@@ -472,7 +472,7 @@
                 </div>
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-muted">
-                    <i class="ti tabler-calendar me-1"></i>
+                    <i class="ti ti-calendar me-1"></i>
                     ~{{ number_format($yearlyStats['avg_vacation_per_month'], 1) }} days/month avg
                   </small>
                 </div>
@@ -485,7 +485,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-success">
-                  <i class="ti tabler-clock-pause ti-md"></i>
+                  <i class="ti ti-clock-pause ti-md"></i>
                 </span>
               </div>
               <div>
@@ -496,7 +496,7 @@
                 </div>
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-muted">
-                    <i class="ti tabler-clock me-1"></i>
+                    <i class="ti ti-clock me-1"></i>
                     ~{{ number_format($yearlyStats['avg_permissions_per_month'], 1) }}/month avg
                   </small>
                 </div>
@@ -509,7 +509,7 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-secondary">
-                  <i class="ti tabler-home ti-md"></i>
+                  <i class="ti ti-home ti-md"></i>
                 </span>
               </div>
               <div>
@@ -520,7 +520,7 @@
                 </div>
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-muted">
-                    <i class="ti tabler-calendar me-1"></i>
+                    <i class="ti ti-calendar me-1"></i>
                     ~{{ number_format($yearlyStats['avg_wfh_per_month'], 1) }} days/month avg
                   </small>
                 </div>
@@ -533,18 +533,18 @@
             <div class="d-flex align-items-start">
               <div class="avatar avatar-sm me-3">
                 <span class="avatar-initial rounded bg-label-dark">
-                  <i class="ti tabler-info-circle ti-md"></i>
+                  <i class="ti ti-info-circle ti-md"></i>
                 </span>
               </div>
               <div>
                 <h6 class="mb-0">Period Info</h6>
                 <div class="mt-1">
                   <small class="text-muted d-block">
-                    <i class="ti tabler-calendar-event me-1"></i>
+                    <i class="ti ti-calendar-event me-1"></i>
                     26 Dec {{ $year - 1 }} - 25 Dec {{ $year }}
                   </small>
                   <small class="text-muted d-block mt-1">
-                    <i class="ti tabler-users me-1"></i>
+                    <i class="ti ti-users me-1"></i>
                     Values shown as average per employee
                   </small>
                 </div>

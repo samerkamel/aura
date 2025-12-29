@@ -21,7 +21,7 @@
             <div class="d-flex align-items-center">
               <div class="avatar avatar-lg me-4">
                 <span class="avatar-initial rounded-circle bg-label-primary">
-                  <i class="ti tabler-folder ti-lg"></i>
+                  <i class="ti ti-folder ti-lg"></i>
                 </span>
               </div>
               <div>
@@ -33,7 +33,7 @@
               </div>
             </div>
             <a href="{{ route('projects.show', $project) }}" class="btn btn-outline-secondary">
-              <i class="ti tabler-arrow-left me-1"></i>Back to Project
+              <i class="ti ti-arrow-left me-1"></i>Back to Project
             </a>
           </div>
         </div>
@@ -62,7 +62,7 @@
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title mb-0">
-            <i class="ti tabler-user-plus me-2"></i>Assign Employee
+            <i class="ti ti-user-plus me-2"></i>Assign Employee
           </h5>
         </div>
         <div class="card-body">
@@ -93,7 +93,7 @@
               @enderror
             </div>
             <button type="submit" class="btn btn-primary w-100">
-              <i class="ti tabler-plus me-1"></i>Assign Employee
+              <i class="ti ti-plus me-1"></i>Assign Employee
             </button>
           </form>
         </div>
@@ -103,7 +103,7 @@
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title mb-0">
-            <i class="ti tabler-refresh me-2"></i>Auto-Assign from Worklogs
+            <i class="ti ti-refresh me-2"></i>Auto-Assign from Worklogs
           </h5>
         </div>
         <div class="card-body">
@@ -124,13 +124,13 @@
             </div>
           @else
             <div class="alert alert-success mb-3">
-              <i class="ti tabler-check me-1"></i>All employees with worklogs are already assigned.
+              <i class="ti ti-check me-1"></i>All employees with worklogs are already assigned.
             </div>
           @endif
           <form method="POST" action="{{ route('projects.sync-employees-worklogs', $project) }}">
             @csrf
             <button type="submit" class="btn btn-outline-primary w-100" {{ $unassignedWorklogEmployees->count() === 0 ? 'disabled' : '' }}>
-              <i class="ti tabler-refresh me-1"></i>Sync Employees from Worklogs
+              <i class="ti ti-refresh me-1"></i>Sync Employees from Worklogs
             </button>
           </form>
         </div>
@@ -142,7 +142,7 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title mb-0">
-            <i class="ti tabler-users me-2"></i>Team Members ({{ $project->employees->count() }})
+            <i class="ti ti-users me-2"></i>Team Members ({{ $project->employees->count() }})
           </h5>
         </div>
         <div class="card-body">
@@ -182,11 +182,11 @@
                       <td>
                         @if($employee->pivot->auto_assigned)
                           <span class="badge bg-label-info" title="Auto-assigned from worklogs">
-                            <i class="ti tabler-robot me-1"></i>Auto
+                            <i class="ti ti-robot me-1"></i>Auto
                           </span>
                         @else
                           <span class="badge bg-label-secondary">
-                            <i class="ti tabler-user me-1"></i>Manual
+                            <i class="ti ti-user me-1"></i>Manual
                           </span>
                         @endif
                       </td>
@@ -196,7 +196,7 @@
                       <td>
                         <div class="dropdown">
                           <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti tabler-dots-vertical"></i>
+                            <i class="ti ti-dots-vertical"></i>
                           </button>
                           <div class="dropdown-menu">
                             @if($employee->pivot->role === 'member')
@@ -206,7 +206,7 @@
                                 <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                                 <input type="hidden" name="role" value="lead">
                                 <button type="submit" class="dropdown-item">
-                                  <i class="ti tabler-arrow-up me-2"></i>Promote to Lead
+                                  <i class="ti ti-arrow-up me-2"></i>Promote to Lead
                                 </button>
                               </form>
                             @else
@@ -216,7 +216,7 @@
                                 <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                                 <input type="hidden" name="role" value="member">
                                 <button type="submit" class="dropdown-item">
-                                  <i class="ti tabler-arrow-down me-2"></i>Change to Member
+                                  <i class="ti ti-arrow-down me-2"></i>Change to Member
                                 </button>
                               </form>
                             @endif
@@ -226,7 +226,7 @@
                               @method('DELETE')
                               <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                               <button type="submit" class="dropdown-item text-danger">
-                                <i class="ti tabler-user-minus me-2"></i>Remove from Project
+                                <i class="ti ti-user-minus me-2"></i>Remove from Project
                               </button>
                             </form>
                           </div>
@@ -239,7 +239,7 @@
             </div>
           @else
             <div class="text-center py-5">
-              <i class="ti tabler-users-group ti-lg text-muted mb-3" style="font-size: 3rem;"></i>
+              <i class="ti ti-users-group ti-lg text-muted mb-3" style="font-size: 3rem;"></i>
               <h5 class="text-muted">No Team Members</h5>
               <p class="text-muted mb-4">This project doesn't have any assigned employees yet.</p>
               <p class="text-muted">Use the form on the left to assign employees or sync from worklogs.</p>

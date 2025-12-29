@@ -100,19 +100,19 @@ $(function () {
       plugins: ['types'],
       types: {
         default: {
-          icon: 'ti tabler-folder'
+          icon: 'ti ti-folder'
         },
         html: {
-          icon: 'ti tabler-brand-html5 text-danger'
+          icon: 'ti ti-brand-html5 text-danger'
         },
         css: {
-          icon: 'ti tabler-brand-css3 text-info'
+          icon: 'ti ti-brand-css3 text-info'
         },
         img: {
-          icon: 'ti tabler-photo text-success'
+          icon: 'ti ti-photo text-success'
         },
         js: {
-          icon: 'ti tabler-brand-javascript text-warning'
+          icon: 'ti ti-brand-javascript text-warning'
         }
       }
     });
@@ -194,19 +194,19 @@ $(function () {
       plugins: ['types', 'contextmenu'],
       types: {
         default: {
-          icon: 'ti tabler-folder'
+          icon: 'ti ti-folder'
         },
         html: {
-          icon: 'ti tabler-brand-html5 text-danger'
+          icon: 'ti ti-brand-html5 text-danger'
         },
         css: {
-          icon: 'ti tabler-brand-css3 text-info'
+          icon: 'ti ti-brand-css3 text-info'
         },
         img: {
-          icon: 'ti tabler-photo text-success'
+          icon: 'ti ti-photo text-success'
         },
         js: {
-          icon: 'ti tabler-brand-javascript text-warning'
+          icon: 'ti ti-brand-javascript text-warning'
         }
       }
     });
@@ -288,19 +288,19 @@ $(function () {
       plugins: ['types', 'dnd'],
       types: {
         default: {
-          icon: 'ti tabler-folder'
+          icon: 'ti ti-folder'
         },
         html: {
-          icon: 'ti tabler-brand-html5 text-danger'
+          icon: 'ti ti-brand-html5 text-danger'
         },
         css: {
-          icon: 'ti tabler-brand-css3 text-info'
+          icon: 'ti ti-brand-css3 text-info'
         },
         img: {
-          icon: 'ti tabler-photo text-success'
+          icon: 'ti ti-photo text-success'
         },
         js: {
-          icon: 'ti tabler-brand-javascript text-warning'
+          icon: 'ti ti-brand-javascript text-warning'
         }
       }
     });
@@ -381,19 +381,19 @@ $(function () {
       plugins: ['types', 'checkbox', 'wholerow'],
       types: {
         default: {
-          icon: 'ti tabler-folder'
+          icon: 'ti ti-folder'
         },
         html: {
-          icon: 'ti tabler-brand-html5 text-danger'
+          icon: 'ti ti-brand-html5 text-danger'
         },
         css: {
-          icon: 'ti tabler-brand-css3 text-info'
+          icon: 'ti ti-brand-css3 text-info'
         },
         img: {
-          icon: 'ti tabler-photo text-success'
+          icon: 'ti ti-photo text-success'
         },
         js: {
-          icon: 'ti tabler-brand-javascript text-warning'
+          icon: 'ti ti-brand-javascript text-warning'
         }
       }
     });
@@ -420,19 +420,19 @@ $(function () {
       plugins: ['types', 'state'],
       types: {
         default: {
-          icon: 'ti tabler-folder'
+          icon: 'ti ti-folder'
         },
         html: {
-          icon: 'ti tabler-brand-html5 text-danger'
+          icon: 'ti ti-brand-html5 text-danger'
         },
         css: {
-          icon: 'ti tabler-brand-css3 text-info'
+          icon: 'ti ti-brand-css3 text-info'
         },
         img: {
-          icon: 'ti tabler-photo text-success'
+          icon: 'ti ti-photo text-success'
         },
         js: {
-          icon: 'ti tabler-brand-javascript text-warning'
+          icon: 'ti ti-brand-javascript text-warning'
         }
       }
     });

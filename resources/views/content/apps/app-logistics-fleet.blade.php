@@ -35,7 +35,7 @@
 
     <!-- Map Menu Button when screen is < md -->
     <div class="flex-shrink-0 position-fixed m-6 d-md-none w-auto z-1">
-      <button class="btn btn-white btn-white-dark-variant z-2 p-2" data-bs-toggle="sidebar" data-overlay="" data-target="#app-logistics-fleet-sidebar"><i class="ti tabler-menu-2 ti-md"></i></button>
+      <button class="btn btn-white btn-white-dark-variant z-2 p-2" data-bs-toggle="sidebar" data-overlay="" data-target="#app-logistics-fleet-sidebar"><i class="ti ti-menu-2 ti-md"></i></button>
     </div>
 
     <!-- Map Menu -->
@@ -43,7 +43,7 @@
       <div class="card-header border-0 pt-6 pb-1 d-flex justify-content-between">
         <h5 class="mb-0 card-title">Fleet</h5>
         <!-- Sidebar close button -->
-        <i class="ti tabler-x ti-xs cursor-pointer close-sidebar d-md-none btn btn-sm btn-icon btn-text-secondary rounded-pill p-0" data-bs-toggle="sidebar" data-overlay data-target="#app-logistics-fleet-sidebar"></i>
+        <i class="ti ti-x ti-xs cursor-pointer close-sidebar d-md-none btn btn-sm btn-icon btn-text-secondary rounded-pill p-0" data-bs-toggle="sidebar" data-overlay data-target="#app-logistics-fleet-sidebar"></i>
       </div>
       <!-- Sidebar when screen < md -->
       <div class="card-body p-0 logistics-fleet-sidebar-body">
@@ -56,7 +56,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar-wrapper">
                     <div class="avatar me-4">
-                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti tabler-car ti-lg"></i></span>
+                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti ti-car ti-lg"></i></span>
                     </div>
                   </div>
                   <span class="d-flex flex-column gap-1">
@@ -78,7 +78,7 @@
                 <ul class="timeline ps-4 mt-6">
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -90,7 +90,7 @@
                   </li>
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -102,7 +102,7 @@
                   </li>
                   <li class="timeline-item ps-6 border-transparent">
                     <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                      <i class='ti tabler-map-pin mt-1'></i>
+                      <i class='ti ti-map-pin mt-1'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -124,7 +124,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar-wrapper">
                     <div class="avatar me-4">
-                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti tabler-truck ti-sm"></i></span>
+                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti ti-truck ti-sm"></i></span>
                     </div>
                   </div>
                   <span class="d-flex flex-column gap-1">
@@ -146,7 +146,7 @@
                 <ul class="timeline ps-4 mt-6">
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -158,7 +158,7 @@
                   </li>
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -170,7 +170,7 @@
                   </li>
                   <li class="timeline-item ps-6 border-transparent">
                     <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                      <i class='ti tabler-map-pin mt-1'></i>
+                      <i class='ti ti-map-pin mt-1'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -192,7 +192,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar-wrapper">
                     <div class="avatar me-4">
-                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti tabler-truck ti-sm"></i></span>
+                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti ti-truck ti-sm"></i></span>
                     </div>
                   </div>
                   <span class="d-flex flex-column gap-1">
@@ -214,7 +214,7 @@
                 <ul class="timeline ps-4 mt-6">
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -226,7 +226,7 @@
                   </li>
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -238,7 +238,7 @@
                   </li>
                   <li class="timeline-item ps-6 border-transparent">
                     <span class="timeline-indicator-advanced timeline-indicator-secondary border-0 shadow-none">
-                      <i class='ti tabler-map-pin mt-1'></i>
+                      <i class='ti ti-map-pin mt-1'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -260,7 +260,7 @@
                 <div class="d-flex align-items-center">
                   <div class="avatar-wrapper">
                     <div class="avatar me-4">
-                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti tabler-truck ti-sm"></i></span>
+                      <span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti ti-truck ti-sm"></i></span>
                     </div>
                   </div>
                   <span class="d-flex flex-column gap-1">
@@ -282,7 +282,7 @@
                 <ul class="timeline ps-4 mt-6">
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -294,7 +294,7 @@
                   </li>
                   <li class="timeline-item ps-6 pb-3 border-left-dashed">
                     <span class="timeline-indicator-advanced timeline-indicator-secondary border-0 shadow-none">
-                      <i class='ti tabler-circle-check'></i>
+                      <i class='ti ti-circle-check'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">
@@ -306,7 +306,7 @@
                   </li>
                   <li class="timeline-item ps-6 border-transparent">
                     <span class="timeline-indicator-advanced timeline-indicator-secondary border-0 shadow-none">
-                      <i class='ti tabler-map-pin mt-1'></i>
+                      <i class='ti ti-map-pin mt-1'></i>
                     </span>
                     <div class="timeline-event ps-0 pb-0">
                       <div class="timeline-header">

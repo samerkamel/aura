@@ -21,10 +21,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.products.show', $product) }}" class="btn btn-outline-info">
-                <i class="ti tabler-eye me-2"></i>View Details
+                <i class="ti ti-eye me-2"></i>View Details
             </a>
             <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
-                <i class="ti tabler-arrow-left me-2"></i>Back to Products
+                <i class="ti ti-arrow-left me-2"></i>Back to Products
             </a>
         </div>
     </div>
@@ -145,10 +145,10 @@
                         <div class="pt-4 border-top mt-4">
                             <div class="d-flex justify-content-end gap-3">
                                 <a href="{{ route('administration.products.show', $product) }}" class="btn btn-outline-secondary">
-                                    <i class="ti tabler-x me-1"></i>Cancel
+                                    <i class="ti ti-x me-1"></i>Cancel
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="ti tabler-device-floppy me-1"></i>Update Product
+                                    <i class="ti ti-device-floppy me-1"></i>Update Product
                                 </button>
                             </div>
                         </div>
@@ -160,11 +160,11 @@
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti tabler-calendar-dollar me-2"></i>Annual Budget History
+                        <i class="ti ti-calendar-dollar me-2"></i>Annual Budget History
                     </h5>
                     @if(count($availableYears) > 0)
                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
-                        <i class="ti tabler-plus me-1"></i>Add Budget Year
+                        <i class="ti ti-plus me-1"></i>Add Budget Year
                     </button>
                     @endif
                 </div>
@@ -201,7 +201,7 @@
                                             <button type="button" class="btn btn-sm btn-icon btn-outline-primary"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#editBudgetModal{{ $budget->id }}">
-                                                <i class="ti tabler-edit"></i>
+                                                <i class="ti ti-edit"></i>
                                             </button>
                                             <form action="{{ route('administration.products.budgets.destroy', [$product, $budget]) }}"
                                                   method="POST" class="d-inline">
@@ -209,7 +209,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-icon btn-outline-danger"
                                                         onclick="return confirm('Are you sure you want to delete the {{ $budget->budget_year }} budget?')">
-                                                    <i class="ti tabler-trash"></i>
+                                                    <i class="ti ti-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
@@ -257,7 +257,7 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <i class="ti tabler-calendar-off display-6 text-muted mb-3 d-block"></i>
+                            <i class="ti ti-calendar-off display-6 text-muted mb-3 d-block"></i>
                             <p class="text-muted mb-0">No budget history found. Add a budget for a specific year.</p>
                         </div>
                     @endif
@@ -270,7 +270,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-building me-2"></i>Product Preview
+                        <i class="ti ti-building me-2"></i>Product Preview
                     </h5>
                 </div>
                 <div class="card-body text-center">
@@ -292,7 +292,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-file-text me-2"></i>Assigned Contracts
+                        <i class="ti ti-file-text me-2"></i>Assigned Contracts
                     </h5>
                 </div>
                 <div class="card-body">
@@ -300,7 +300,7 @@
                     <div class="d-flex align-items-center mb-2">
                         <div class="avatar avatar-xs flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti tabler-file-text ti-xs"></i>
+                                <i class="ti ti-file-text ti-xs"></i>
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -326,7 +326,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-info-circle me-2"></i>Information
+                        <i class="ti ti-info-circle me-2"></i>Information
                     </h5>
                 </div>
                 <div class="card-body">

@@ -105,7 +105,7 @@
   <div class="col-12">
     @if(session('success'))
     <div class="alert alert-success alert-dismissible mb-4" role="alert">
-      <i class="ti tabler-check me-2"></i>{{ session('success') }}
+      <i class="ti ti-check me-2"></i>{{ session('success') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
@@ -125,42 +125,42 @@
             <div class="d-flex gap-2 flex-wrap justify-content-center justify-content-md-start">
               @if($employee->positionRelation)
               <span class="badge bg-white text-primary">
-                <i class="ti tabler-briefcase me-1"></i>{{ $employee->positionRelation->full_title }}
+                <i class="ti ti-briefcase me-1"></i>{{ $employee->positionRelation->full_title }}
               </span>
               @elseif($employee->position)
               <span class="badge bg-white text-secondary">
-                <i class="ti tabler-briefcase me-1"></i>{{ $employee->position }}
+                <i class="ti ti-briefcase me-1"></i>{{ $employee->position }}
               </span>
               @endif
               @if($employee->positionRelation && $employee->positionRelation->department)
               <span class="badge bg-white text-info">
-                <i class="ti tabler-building me-1"></i>{{ $employee->positionRelation->department }}
+                <i class="ti ti-building me-1"></i>{{ $employee->positionRelation->department }}
               </span>
               @endif
               @if($employee->status === 'active')
-                <span class="badge bg-success"><i class="ti tabler-check me-1"></i>Active</span>
+                <span class="badge bg-success"><i class="ti ti-check me-1"></i>Active</span>
               @elseif($employee->status === 'terminated')
-                <span class="badge bg-danger"><i class="ti tabler-x me-1"></i>Terminated</span>
+                <span class="badge bg-danger"><i class="ti ti-x me-1"></i>Terminated</span>
               @else
-                <span class="badge bg-warning"><i class="ti tabler-door-exit me-1"></i>Resigned</span>
+                <span class="badge bg-warning"><i class="ti ti-door-exit me-1"></i>Resigned</span>
               @endif
             </div>
           </div>
           <!-- Action Buttons -->
           <div class="d-flex gap-2 flex-wrap justify-content-center">
             <a href="{{ route('documents.select-template', $employee) }}" class="btn btn-light btn-sm" title="Generate Document">
-              <i class="ti tabler-file-text me-1"></i><span class="d-none d-lg-inline">Generate Doc</span>
+              <i class="ti ti-file-text me-1"></i><span class="d-none d-lg-inline">Generate Doc</span>
             </a>
             <a href="{{ route('hr.employees.edit', $employee) }}" class="btn btn-light btn-sm" title="Edit">
-              <i class="ti tabler-edit me-1"></i><span class="d-none d-lg-inline">Edit</span>
+              <i class="ti ti-edit me-1"></i><span class="d-none d-lg-inline">Edit</span>
             </a>
             @if($employee->status === 'active')
             <a href="{{ route('hr.employees.offboarding.show', $employee) }}" class="btn btn-warning btn-sm" title="Off-boarding">
-              <i class="ti tabler-user-off me-1"></i><span class="d-none d-lg-inline">Off-board</span>
+              <i class="ti ti-user-off me-1"></i><span class="d-none d-lg-inline">Off-board</span>
             </a>
             @endif
             <a href="{{ route('hr.employees.index') }}" class="btn btn-outline-light btn-sm" title="Back">
-              <i class="ti tabler-arrow-left"></i>
+              <i class="ti ti-arrow-left"></i>
             </a>
           </div>
         </div>
@@ -221,33 +221,33 @@
           @can('manage-leave-records')
           <div class="col-auto">
             <button type="button" class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#logLeaveModal">
-              <i class="ti tabler-calendar-plus text-info"></i>
+              <i class="ti ti-calendar-plus text-info"></i>
               <small>Log Leave</small>
             </button>
           </div>
           <div class="col-auto">
             <button type="button" class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#logWfhModal">
-              <i class="ti tabler-home text-primary"></i>
+              <i class="ti ti-home text-primary"></i>
               <small>Log WFH</small>
             </button>
           </div>
           @endcan
           <div class="col-auto">
             <button type="button" class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#assignAssetModal">
-              <i class="ti tabler-device-laptop text-success"></i>
+              <i class="ti ti-device-laptop text-success"></i>
               <small>Assign Asset</small>
             </button>
           </div>
           <div class="col-auto">
             <button type="button" class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-              <i class="ti tabler-upload text-warning"></i>
+              <i class="ti ti-upload text-warning"></i>
               <small>Upload Doc</small>
             </button>
           </div>
           @can('manage-permission-overrides')
           <div class="col-auto">
             <button type="button" class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#addExtraPermissionModal">
-              <i class="ti tabler-clock-plus text-danger"></i>
+              <i class="ti ti-clock-plus text-danger"></i>
               <small>Extra Permission</small>
             </button>
           </div>
@@ -261,7 +261,7 @@
       <div class="col-lg-6 mb-4">
         <div class="card info-card h-100">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti tabler-id me-2 text-primary"></i>Personal Information</h6>
+            <h6 class="mb-0"><i class="ti ti-id me-2 text-primary"></i>Personal Information</h6>
           </div>
           <div class="card-body">
             <div class="info-item d-flex justify-content-between">
@@ -310,7 +310,7 @@
       <div class="col-lg-6 mb-4">
         <div class="card info-card h-100">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti tabler-briefcase me-2 text-success"></i>Employment Details</h6>
+            <h6 class="mb-0"><i class="ti ti-briefcase me-2 text-success"></i>Employment Details</h6>
           </div>
           <div class="card-body">
             <div class="info-item d-flex justify-content-between">
@@ -374,7 +374,7 @@
       <div class="col-lg-6 mb-4">
         <div class="card info-card h-100">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti tabler-phone me-2 text-info"></i>Contact Information</h6>
+            <h6 class="mb-0"><i class="ti ti-phone me-2 text-info"></i>Contact Information</h6>
           </div>
           <div class="card-body">
             @if(isset($employee->contact_info['mobile_number']) && $employee->contact_info['mobile_number'])
@@ -411,7 +411,7 @@
       <div class="col-lg-6 mb-4">
         <div class="card info-card h-100">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti tabler-building-bank me-2 text-warning"></i>Bank Information</h6>
+            <h6 class="mb-0"><i class="ti ti-building-bank me-2 text-warning"></i>Bank Information</h6>
           </div>
           <div class="card-body">
             @if(isset($employee->bank_info['bank_name']) && $employee->bank_info['bank_name'])
@@ -442,7 +442,7 @@
       <div class="col-lg-6 mb-4">
         <div class="card info-card h-100">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti tabler-urgent me-2 text-danger"></i>Emergency Contact</h6>
+            <h6 class="mb-0"><i class="ti ti-urgent me-2 text-danger"></i>Emergency Contact</h6>
           </div>
           <div class="card-body">
             @if(isset($employee->emergency_contact['name']) && $employee->emergency_contact['name'])
@@ -473,7 +473,7 @@
     <!-- Leave & WFH Section -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti tabler-calendar-event me-2 text-info"></i>Leave & Work From Home</h6>
+        <h6 class="mb-0"><i class="ti ti-calendar-event me-2 text-info"></i>Leave & Work From Home</h6>
       </div>
       <div class="card-body">
         <!-- Leave Balance Summary -->
@@ -508,7 +508,7 @@
         </div>
         @else
         <div class="alert alert-info mb-4">
-          <i class="ti tabler-info-circle me-2"></i>No leave policies configured for this employee.
+          <i class="ti ti-info-circle me-2"></i>No leave policies configured for this employee.
         </div>
         @endif
 
@@ -547,7 +547,7 @@
                 </td>
                 <td>
                   <button class="btn btn-sm btn-icon btn-text-danger" onclick="deleteLeaveRecord({{ $record->id }})">
-                    <i class="ti tabler-trash"></i>
+                    <i class="ti ti-trash"></i>
                   </button>
                 </td>
               </tr>
@@ -572,7 +572,7 @@
           <span class="badge bg-light text-dark border">
             {{ $record->date->format('M d, Y') }}
             <button class="btn btn-sm btn-link p-0 ms-1 text-danger" onclick="deleteWfhRecord({{ $record->id }})">
-              <i class="ti tabler-x" style="font-size: 0.75rem;"></i>
+              <i class="ti ti-x" style="font-size: 0.75rem;"></i>
             </button>
           </span>
           @endforeach
@@ -585,9 +585,9 @@
     <!-- Assigned Assets Section -->
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="ti tabler-device-laptop me-2 text-success"></i>Assigned Assets</h6>
+        <h6 class="mb-0"><i class="ti ti-device-laptop me-2 text-success"></i>Assigned Assets</h6>
         <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-sm btn-outline-secondary">
-          <i class="ti tabler-external-link me-1"></i>Manage Assets
+          <i class="ti ti-external-link me-1"></i>Manage Assets
         </a>
       </div>
       <div class="card-body">
@@ -627,10 +627,10 @@
                 </div>
                 <div class="mt-3 d-flex gap-2">
                   <a href="{{ route('assetmanager.assets.show', $asset) }}" class="btn btn-sm btn-outline-info">
-                    <i class="ti tabler-eye"></i>
+                    <i class="ti ti-eye"></i>
                   </a>
                   <button type="button" class="btn btn-sm btn-outline-danger" onclick="unassignAsset({{ $asset->id }}, '{{ $asset->name }}')">
-                    <i class="ti tabler-user-minus"></i>
+                    <i class="ti ti-user-minus"></i>
                   </button>
                 </div>
               </div>
@@ -640,11 +640,11 @@
         </div>
         @else
         <div class="text-center py-4">
-          <i class="ti tabler-device-laptop-off text-muted" style="font-size: 3rem;"></i>
+          <i class="ti ti-device-laptop-off text-muted" style="font-size: 3rem;"></i>
           <h6 class="mt-2">No assets assigned</h6>
           <p class="text-muted mb-3">This employee doesn't have any assets assigned currently.</p>
           <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#assignAssetModal">
-            <i class="ti tabler-plus me-1"></i>Assign Asset
+            <i class="ti ti-plus me-1"></i>Assign Asset
           </button>
         </div>
         @endif
@@ -654,7 +654,7 @@
     <!-- Documents Section -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti tabler-file-text me-2 text-warning"></i>Documents</h6>
+        <h6 class="mb-0"><i class="ti ti-file-text me-2 text-warning"></i>Documents</h6>
       </div>
       <div class="card-body">
         @if($employee->documents->count() > 0)
@@ -673,7 +673,7 @@
               @foreach($employee->documents->sortBy('document_type') as $document)
               <tr>
                 <td>
-                  <i class="ti tabler-file me-2 text-primary"></i>{{ $document->document_type }}
+                  <i class="ti ti-file me-2 text-primary"></i>{{ $document->document_type }}
                 </td>
                 <td>{{ $document->issue_date ? $document->issue_date->format('M d, Y') : '-' }}</td>
                 <td>
@@ -693,13 +693,13 @@
                 <td>
                   <div class="d-flex gap-1">
                     <a href="{{ route('hr.employees.documents.download', [$employee, $document]) }}" class="btn btn-sm btn-icon btn-text-primary">
-                      <i class="ti tabler-download"></i>
+                      <i class="ti ti-download"></i>
                     </a>
                     <form action="{{ route('hr.employees.documents.destroy', [$employee, $document]) }}" method="POST" class="d-inline">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm btn-icon btn-text-danger" onclick="return confirm('Delete this document?')">
-                        <i class="ti tabler-trash"></i>
+                        <i class="ti ti-trash"></i>
                       </button>
                     </form>
                   </div>
@@ -711,11 +711,11 @@
         </div>
         @else
         <div class="text-center py-4">
-          <i class="ti tabler-file-plus text-muted" style="font-size: 3rem;"></i>
+          <i class="ti ti-file-plus text-muted" style="font-size: 3rem;"></i>
           <h6 class="mt-2">No documents uploaded</h6>
           <p class="text-muted mb-3">Upload documents like passport, contract, etc.</p>
           <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-            <i class="ti tabler-upload me-1"></i>Upload Document
+            <i class="ti ti-upload me-1"></i>Upload Document
           </button>
         </div>
         @endif
@@ -726,7 +726,7 @@
     <!-- Salary History Section -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti tabler-chart-line me-2 text-success"></i>Salary History</h6>
+        <h6 class="mb-0"><i class="ti ti-chart-line me-2 text-success"></i>Salary History</h6>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -748,9 +748,9 @@
                 <td class="fw-bold text-success">EGP {{ $history->formatted_new_salary }}</td>
                 <td>
                   @if($history->salary_change >= 0)
-                    <span class="badge bg-success"><i class="ti tabler-arrow-up me-1"></i>{{ $history->formatted_salary_change }}</span>
+                    <span class="badge bg-success"><i class="ti ti-arrow-up me-1"></i>{{ $history->formatted_salary_change }}</span>
                   @else
-                    <span class="badge bg-danger"><i class="ti tabler-arrow-down me-1"></i>{{ $history->formatted_salary_change }}</span>
+                    <span class="badge bg-danger"><i class="ti ti-arrow-down me-1"></i>{{ $history->formatted_salary_change }}</span>
                   @endif
                 </td>
                 <td><small>{{ \Illuminate\Support\Str::limit($history->reason ?: 'No reason', 30) }}</small></td>
@@ -772,7 +772,7 @@
       <form action="{{ route('hr.employees.documents.store', $employee) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ti tabler-upload me-2"></i>Upload Document</h5>
+          <h5 class="modal-title"><i class="ti ti-upload me-2"></i>Upload Document</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -812,7 +812,7 @@
       <form id="assignAssetForm">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ti tabler-device-laptop me-2"></i>Assign Asset</h5>
+          <h5 class="modal-title"><i class="ti ti-device-laptop me-2"></i>Assign Asset</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -852,7 +852,7 @@
       <form id="logLeaveForm">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ti tabler-calendar-plus me-2"></i>Log Leave</h5>
+          <h5 class="modal-title"><i class="ti ti-calendar-plus me-2"></i>Log Leave</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -896,7 +896,7 @@
       <form id="logWfhForm">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ti tabler-home me-2"></i>Log WFH Days</h5>
+          <h5 class="modal-title"><i class="ti ti-home me-2"></i>Log WFH Days</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -906,7 +906,7 @@
               <div class="input-group mb-2">
                 <input type="date" class="form-control" name="dates[]" required>
                 <button type="button" class="btn btn-outline-secondary" onclick="addWfhDateInput()">
-                  <i class="ti tabler-plus"></i>
+                  <i class="ti ti-plus"></i>
                 </button>
               </div>
             </div>
@@ -935,7 +935,7 @@
         @csrf
         <input type="hidden" name="employee_id" value="{{ $employee->id }}">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="ti tabler-clock-plus me-2"></i>Grant Extra Permissions</h5>
+          <h5 class="modal-title"><i class="ti ti-clock-plus me-2"></i>Grant Extra Permissions</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -970,7 +970,7 @@ function addWfhDateInput() {
   div.className = 'input-group mb-2';
   div.innerHTML = `
     <input type="date" class="form-control" name="dates[]" required>
-    <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()"><i class="ti tabler-minus"></i></button>
+    <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()"><i class="ti ti-minus"></i></button>
   `;
   container.appendChild(div);
 }
@@ -980,7 +980,7 @@ document.getElementById('logLeaveForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  btn.innerHTML = '<i class="ti tabler-loader me-1"></i>Saving...';
+  btn.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
 
   fetch(`/api/v1/employees/{{ $employee->id }}/leave-records`, {
     method: 'POST',
@@ -997,7 +997,7 @@ document.getElementById('logWfhForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  btn.innerHTML = '<i class="ti tabler-loader me-1"></i>Saving...';
+  btn.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
 
   fetch(`/api/v1/employees/{{ $employee->id }}/wfh-records`, {
     method: 'POST',
@@ -1033,7 +1033,7 @@ document.getElementById('assignAssetForm').addEventListener('submit', function(e
   e.preventDefault();
   const btn = this.querySelector('button[type="submit"]');
   btn.disabled = true;
-  btn.innerHTML = '<i class="ti tabler-loader me-1"></i>Assigning...';
+  btn.innerHTML = '<i class="ti ti-loader me-1"></i>Assigning...';
 
   fetch(`{{ route('assetmanager.employee-assets.assign', $employee) }}`, {
     method: 'POST',

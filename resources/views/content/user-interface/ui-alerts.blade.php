@@ -136,43 +136,43 @@
       <div class="card-body">
         <div class="alert alert-solid-primary d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-user"></i>
+            <i class="ti ti-user"></i>
           </span>
           This is a primary solid alert — check it out!
         </div>
         <div class="alert alert-solid-secondary d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-bookmark"></i>
+            <i class="ti ti-bookmark"></i>
           </span>
           This is a secondary solid alert — check it out!
         </div>
         <div class="alert alert-solid-success d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-check"></i>
+            <i class="ti ti-check"></i>
           </span>
           This is a success solid alert — check it out!
         </div>
         <div class="alert alert-solid-danger d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-ban"></i>
+            <i class="ti ti-ban"></i>
           </span>
           This is a danger solid alert — check it out!
         </div>
         <div class="alert alert-solid-warning d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-bell"></i>
+            <i class="ti ti-bell"></i>
           </span>
           This is a warning solid alert — check it out!
         </div>
         <div class="alert alert-solid-info d-flex align-items-center" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-info-circle"></i>
+            <i class="ti ti-info-circle"></i>
           </span>
           This is an info solid alert — check it out!
         </div>
         <div class="alert alert-solid-dark d-flex align-items-center mb-0" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-at"></i>
+            <i class="ti ti-at"></i>
           </span>
           This is a dark solid alert — check it out!
         </div>
@@ -216,7 +216,7 @@
       <div class="card-body">
         <div class="alert alert-primary alert-dismissible d-flex" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-user"></i>
+            <i class="ti ti-user"></i>
           </span>
           <div class="d-flex flex-column ps-1">
             <h5 class="alert-heading mb-2">This is a primary alert — check it out!</h5>
@@ -227,7 +227,7 @@
         </div>
         <div class="alert alert-secondary alert-dismissible d-flex" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-bookmark"></i>
+            <i class="ti ti-bookmark"></i>
           </span>
           <div class="d-flex flex-column ps-1">
             <h5 class="alert-heading mb-2">This is a secondary alert — check it out!</h5>
@@ -238,7 +238,7 @@
         </div>
         <div class="alert alert-success alert-dismissible d-flex" role="alert">
           <span class="alert-icon rounded">
-            <i class="ti tabler-check"></i>
+            <i class="ti ti-check"></i>
           </span>
           <div class="d-flex flex-column ps-1">
             <h5 class="alert-heading mb-2">This is a success alert — check it out!</h5>

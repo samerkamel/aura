@@ -27,7 +27,7 @@
         <div class="row gy-3">
           <div class="col-md-3 col-6">
             <div class="d-flex align-items-center">
-              <div class="badge rounded bg-label-primary me-4 p-2"><i class="ti tabler-chart-pie-2 ti-lg"></i></div>
+              <div class="badge rounded bg-label-primary me-4 p-2"><i class="ti ti-chart-pie-2 ti-lg"></i></div>
               <div class="card-info">
                 <h5 class="mb-0">230k</h5>
                 <small>Sales</small>
@@ -36,7 +36,7 @@
           </div>
           <div class="col-md-3 col-6">
             <div class="d-flex align-items-center">
-              <div class="badge rounded bg-label-info me-4 p-2"><i class="ti tabler-users ti-lg"></i></div>
+              <div class="badge rounded bg-label-info me-4 p-2"><i class="ti ti-users ti-lg"></i></div>
               <div class="card-info">
                 <h5 class="mb-0">8.549k</h5>
                 <small>Customers</small>
@@ -45,7 +45,7 @@
           </div>
           <div class="col-md-3 col-6">
             <div class="d-flex align-items-center">
-              <div class="badge rounded bg-label-danger me-4 p-2"><i class="ti tabler-shopping-cart ti-lg"></i></div>
+              <div class="badge rounded bg-label-danger me-4 p-2"><i class="ti ti-shopping-cart ti-lg"></i></div>
               <div class="card-info">
                 <h5 class="mb-0">1.423k</h5>
                 <small>Products</small>
@@ -54,7 +54,7 @@
           </div>
           <div class="col-md-3 col-6">
             <div class="d-flex align-items-center">
-              <div class="badge rounded bg-label-success me-4 p-2"><i class="ti tabler-currency-dollar ti-lg"></i></div>
+              <div class="badge rounded bg-label-success me-4 p-2"><i class="ti ti-currency-dollar ti-lg"></i></div>
               <div class="card-info">
                 <h5 class="mb-0">$9745</h5>
                 <small>Revenue</small>
@@ -70,7 +70,7 @@
   <div class="col-lg-2 col-6">
     <div class="card h-100">
       <div class="card-body text-center">
-        <div class="badge rounded p-2 bg-label-danger mb-2"><i class="ti tabler-briefcase ti-lg"></i></div>
+        <div class="badge rounded p-2 bg-label-danger mb-2"><i class="ti ti-briefcase ti-lg"></i></div>
         <h5 class="card-title mb-1">97.8k</h5>
         <p class="mb-0">Orders</p>
       </div>
@@ -81,7 +81,7 @@
   <div class="col-lg-2 col-6">
     <div class="card h-100">
       <div class="card-body text-center">
-        <div class="badge rounded p-2 bg-label-success mb-2"><i class="ti tabler-message-dots ti-lg"></i></div>
+        <div class="badge rounded p-2 bg-label-success mb-2"><i class="ti ti-message-dots ti-lg"></i></div>
         <h5 class="card-title mb-1">3.4k</h5>
         <p class="mb-0">Review</p>
       </div>
@@ -196,7 +196,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-primary"><i class='ti tabler-truck ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-truck ti-28px'></i></span>
           </div>
           <h4 class="mb-0">42</h4>
         </div>
@@ -213,7 +213,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-warning"><i class='ti tabler-alert-triangle ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-warning"><i class='ti ti-alert-triangle ti-28px'></i></span>
           </div>
           <h4 class="mb-0">8</h4>
         </div>
@@ -230,7 +230,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-danger"><i class='ti tabler-git-fork ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-danger"><i class='ti ti-git-fork ti-28px'></i></span>
           </div>
           <h4 class="mb-0">27</h4>
         </div>
@@ -247,7 +247,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-info"><i class='ti tabler-clock ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-28px'></i></span>
           </div>
           <h4 class="mb-0">13</h4>
         </div>
@@ -270,7 +270,7 @@
         </div>
         <div class="card-icon">
           <span class="badge bg-label-primary rounded p-2">
-            <i class='ti tabler-cpu ti-26px'></i>
+            <i class='ti ti-cpu ti-26px'></i>
           </span>
         </div>
       </div>
@@ -285,7 +285,7 @@
         </div>
         <div class="card-icon">
           <span class="badge bg-label-success rounded p-2">
-            <i class='ti tabler-server ti-26px'></i>
+            <i class='ti ti-server ti-26px'></i>
           </span>
         </div>
       </div>
@@ -300,7 +300,7 @@
         </div>
         <div class="card-icon">
           <span class="badge bg-label-danger rounded p-2">
-            <i class='ti tabler-chart-pie-2 ti-26px'></i>
+            <i class='ti ti-chart-pie-2 ti-26px'></i>
           </span>
         </div>
       </div>
@@ -315,7 +315,7 @@
         </div>
         <div class="card-icon">
           <span class="badge bg-label-warning rounded p-2">
-            <i class='ti tabler-alert-octagon ti-26px'></i>
+            <i class='ti ti-alert-octagon ti-26px'></i>
           </span>
         </div>
       </div>
@@ -330,7 +330,7 @@
       <div class="card-body pb-0">
         <div class="card-icon">
           <span class="badge bg-label-primary rounded p-2">
-            <i class='ti tabler-users ti-26px'></i>
+            <i class='ti ti-users ti-26px'></i>
           </span>
         </div>
         <h5 class="card-title mb-0 mt-2">92.6k</h5>
@@ -346,7 +346,7 @@
       <div class="card-body pb-0">
         <div class="card-icon">
           <span class="badge bg-label-danger rounded p-2">
-            <i class='ti tabler-shopping-cart ti-26px'></i>
+            <i class='ti ti-shopping-cart ti-26px'></i>
           </span>
         </div>
         <h5 class="card-title mb-0 mt-2">36.5%</h5>
@@ -362,7 +362,7 @@
       <div class="card-body pb-0">
         <div class="card-icon">
           <span class="badge bg-label-warning rounded p-2">
-            <i class='ti tabler-package ti-26px'></i>
+            <i class='ti ti-package ti-26px'></i>
           </span>
         </div>
         <h5 class="card-title mb-0 mt-2">97.5k</h5>
@@ -378,7 +378,7 @@
       <div class="card-body pb-0">
         <div class="card-icon">
           <span class="badge bg-label-success rounded p-2">
-            <i class='ti tabler-credit-card ti-26px'></i>
+            <i class='ti ti-credit-card ti-26px'></i>
           </span>
         </div>
         <h5 class="card-title mb-0 mt-2">97.5k</h5>
@@ -416,7 +416,7 @@
         <div class="row mt-4">
           <div class="col-4">
             <div class="d-flex gap-2 align-items-center mb-2">
-              <span class="badge bg-label-info p-1 rounded"><i class="ti tabler-shopping-cart ti-sm"></i></span>
+              <span class="badge bg-label-info p-1 rounded"><i class="ti ti-shopping-cart ti-sm"></i></span>
               <p class="mb-0">Order</p>
             </div>
             <h5 class="mb-0 pt-1">62.2%</h5>
@@ -432,7 +432,7 @@
           <div class="col-4 text-end">
             <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
               <p class="mb-0">Visits</p>
-              <span class="badge bg-label-primary p-1 rounded"><i class="ti tabler-link ti-sm"></i></span>
+              <span class="badge bg-label-primary p-1 rounded"><i class="ti ti-link ti-sm"></i></span>
             </div>
             <h5 class="mb-0 pt-1">25.5%</h5>
             <small class="text-muted">12,749</small>
@@ -471,7 +471,7 @@
         <h5 class="card-title mb-0">Statistics</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="progressStat" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="progressStat">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -514,7 +514,7 @@
   <div class="col-lg-2 col-6 mb-lg-0">
     <div class="card h-100">
       <div class="card-body">
-        <div class="badge p-2 bg-label-danger mb-3 rounded"><i class="ti tabler-credit-card ti-28px"></i></div>
+        <div class="badge p-2 bg-label-danger mb-3 rounded"><i class="ti ti-credit-card ti-28px"></i></div>
         <h5 class="card-title mb-1">Total Profit</h5>
         <p class="card-subtitle ">Last week</p>
         <p class="text-heading mb-3 mt-1">1.28k</p>
@@ -529,7 +529,7 @@
   <div class="col-lg-2 col-6 mb-lg-0">
     <div class="card h-100">
       <div class="card-body">
-        <div class="badge p-2 bg-label-success mb-3 rounded"><i class="ti tabler-credit-card ti-28px"></i></div>
+        <div class="badge p-2 bg-label-success mb-3 rounded"><i class="ti ti-credit-card ti-28px"></i></div>
         <h5 class="card-title mb-1">Total Sales</h5>
         <p class="card-subtitle ">Last week</p>
         <p class="text-heading mb-3 mt-1">$4,673</p>
@@ -570,7 +570,7 @@
           </div>
           <div class="chart-statistics">
             <h3 class="card-title mb-0">4,350</h3>
-            <p class="text-success text-nowrap mb-0"><i class='ti tabler-chevron-up me-1'></i> 15.8%</p>
+            <p class="text-success text-nowrap mb-0"><i class='ti ti-chevron-up me-1'></i> 15.8%</p>
           </div>
         </div>
         <div id="generatedLeadsChart"></div>

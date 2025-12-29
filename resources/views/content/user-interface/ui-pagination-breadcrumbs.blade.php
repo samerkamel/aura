@@ -15,10 +15,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -36,10 +36,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -48,10 +48,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-rounded">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -69,10 +69,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -86,10 +86,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-primary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -107,10 +107,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -119,10 +119,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-rounded pagination-outline-primary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -140,10 +140,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -165,7 +165,7 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti tabler-chevrons-left ti-xs"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti ti-chevrons-left ti-xs"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -183,14 +183,14 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti tabler-chevrons-right ti-xs"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti ti-chevrons-right ti-xs"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -208,14 +208,14 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-lg">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti tabler-chevrons-left ti-lg"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti ti-chevrons-left ti-lg"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -233,7 +233,7 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti tabler-chevrons-right ti-lg"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="tf-icon ti ti-chevrons-right ti-lg"></i></a>
               </li>
             </ul>
           </nav>
@@ -245,7 +245,7 @@
           <nav aria-label="Page navigation">
             <ul class="pagination">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -263,14 +263,14 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -288,14 +288,14 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination justify-content-end">
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -313,7 +313,7 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -335,10 +335,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-primary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -356,20 +356,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-secondary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -387,20 +387,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-success">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -418,20 +418,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-danger">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -449,20 +449,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-warning">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -480,20 +480,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-info">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -511,10 +511,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
@@ -526,10 +526,10 @@
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-primary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -547,20 +547,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-secondary">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -578,20 +578,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-success">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -609,20 +609,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-danger">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -640,20 +640,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-warning">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -671,20 +671,20 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>
           <nav aria-label="Page navigation">
             <ul class="pagination pagination-outline-info">
               <li class="page-item first">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-left ti-sm"></i></a>
               </li>
               <li class="page-item prev">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-left ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-left ti-sm"></i></a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="javascript:void(0);">1</a>
@@ -702,10 +702,10 @@
                 <a class="page-link" href="javascript:void(0);">5</a>
               </li>
               <li class="page-item next">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevron-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevron-right ti-sm"></i></a>
               </li>
               <li class="page-item last">
-                <a class="page-link" href="javascript:void(0);"><i class="ti tabler-chevrons-right ti-sm"></i></a>
+                <a class="page-link" href="javascript:void(0);"><i class="ti ti-chevrons-right ti-sm"></i></a>
               </li>
             </ul>
           </nav>

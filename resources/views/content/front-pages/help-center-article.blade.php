@@ -33,7 +33,7 @@
       </div>
       <div class="col-lg-4">
         <div class="input-group input-group-merge mb-6 mt-6 mt-lg-0">
-          <span class="input-group-text" id="article-search"><i class="ti tabler-search"></i></span>
+          <span class="input-group-text" id="article-search"><i class="ti ti-search"></i></span>
           <input type="text" class="form-control" placeholder="Search..." aria-label="Search..." aria-describedby="article-search" />
         </div>
         <div class="bg-lighter py-2 px-4 rounded">
@@ -45,7 +45,7 @@
               <span class="text-truncate me-2">
                 Template Kits
               </span>
-              <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+              <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
             </a>
           </li>
           <li class="mb-4">
@@ -53,7 +53,7 @@
               <span class="text-truncate me-2">
                 Envato Elements Template Kits - Importing Issues
               </span>
-              <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+              <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
             </a>
           </li>
           <li class="mb-4">
@@ -61,7 +61,7 @@
               <span class="text-truncate me-2">
                 Envato Elements Template Kits - Troubleshooting
               </span>
-              <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+              <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
             </a>
           </li>
           <li class="mb-4">
@@ -69,7 +69,7 @@
               <span class="text-truncate me-2">
                 How to use the template in WordPress
               </span>
-              <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+              <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
             </a>
           </li>
           <li>
@@ -77,7 +77,7 @@
               <span class="text-truncate me-2">
                 How to use the Template Kit Import plugin
               </span>
-              <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+              <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
             </a>
           </li>
         </ul>

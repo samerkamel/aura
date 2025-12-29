@@ -28,7 +28,7 @@
             <label class="form-label" for="modalEditCvv">CVV Code</label>
             <div class="input-group input-group-merge">
               <input type="text" id="modalEditCvv" class="form-control cvv-code-mask-edit" maxlength="3" placeholder="654" value="XXX" />
-              <span class="input-group-text cursor-pointer" id="modalEditCvv2"><i class="ti tabler-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+              <span class="input-group-text cursor-pointer" id="modalEditCvv2"><i class="ti ti-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
             </div>
           </div>
           <div class="col-12">

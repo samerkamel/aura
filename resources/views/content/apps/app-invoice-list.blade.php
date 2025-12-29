@@ -36,7 +36,7 @@
             </div>
             <div class="avatar me-sm-6">
               <span class="avatar-initial rounded bg-label-secondary text-heading">
-                <i class="ti tabler-user ti-26px"></i>
+                <i class="ti ti-user ti-26px"></i>
               </span>
             </div>
           </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="avatar me-lg-6">
               <span class="avatar-initial rounded bg-label-secondary text-heading">
-                <i class="ti tabler-file-invoice ti-26px"></i>
+                <i class="ti ti-file-invoice ti-26px"></i>
               </span>
             </div>
           </div>
@@ -64,7 +64,7 @@
             </div>
             <div class="avatar me-sm-6">
               <span class="avatar-initial rounded bg-label-secondary text-heading">
-                <i class="ti tabler-checks ti-26px"></i>
+                <i class="ti ti-checks ti-26px"></i>
               </span>
             </div>
           </div>
@@ -77,7 +77,7 @@
             </div>
             <div class="avatar">
               <span class="avatar-initial rounded bg-label-secondary text-heading">
-                <i class="ti tabler-circle-off ti-26px"></i>
+                <i class="ti ti-circle-off ti-26px"></i>
               </span>
             </div>
           </div>

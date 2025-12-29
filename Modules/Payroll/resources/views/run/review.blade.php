@@ -10,7 +10,7 @@
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti tabler-calculator me-2"></i>Run & Review Payroll
+            <i class="ti ti-calculator me-2"></i>Run & Review Payroll
           </h5>
           <small class="text-muted">
             Review payroll calculations for {{ $periodStart->format('F Y') }}
@@ -32,7 +32,7 @@
               </div>
               <div class="col-md-8">
                 <div class="alert alert-info mb-0">
-                  <i class="ti tabler-info-circle me-2"></i>
+                  <i class="ti ti-info-circle me-2"></i>
                   <strong>Period:</strong> {{ $periodStart->format('M j, Y') }} - {{ $periodEnd->format('M j, Y') }}
                   <span class="ms-3"><strong>Employees:</strong> {{ $employeeSummaries->count() }}</span>
                   @if($employeeSummaries->count() > 0)
@@ -105,7 +105,7 @@
                         @if(isset($summary['jira_worklog_hours']) && $summary['jira_worklog_hours'] > 0)
                           <br>
                           <small class="text-muted">
-                            <i class="ti tabler-brand-jira"></i> {{ $summary['jira_worklog_hours'] }}h
+                            <i class="ti ti-brand-jira"></i> {{ $summary['jira_worklog_hours'] }}h
                             @if(isset($summary['manual_billable_hours']) && $summary['manual_billable_hours'] > 0)
                               + {{ $summary['manual_billable_hours'] }}h
                             @endif
@@ -137,17 +137,17 @@
                       <div class="additional-info">
                         @if($summary['pto_days'] > 0)
                           <span class="badge bg-label-primary me-1" title="PTO Days">
-                            <i class="ti tabler-calendar-off"></i> {{ $summary['pto_days'] }}
+                            <i class="ti ti-calendar-off"></i> {{ $summary['pto_days'] }}
                           </span>
                         @endif
                         @if($summary['wfh_days'] > 0)
                           <span class="badge bg-label-info me-1" title="WFH Days">
-                            <i class="ti tabler-home"></i> {{ $summary['wfh_days'] }}
+                            <i class="ti ti-home"></i> {{ $summary['wfh_days'] }}
                           </span>
                         @endif
                         @if($summary['penalty_minutes'] > 0)
                           <span class="badge bg-label-danger" title="Penalty Minutes">
-                            <i class="ti tabler-clock-minus"></i> {{ $summary['penalty_minutes'] }}m
+                            <i class="ti ti-clock-minus"></i> {{ $summary['penalty_minutes'] }}m
                           </span>
                         @endif
                         @if($summary['pto_days'] == 0 && $summary['wfh_days'] == 0 && $summary['penalty_minutes'] == 0)
@@ -160,7 +160,7 @@
                   <tr>
                     <td colspan="7" class="text-center py-4">
                       <div class="empty-state">
-                        <i class="ti tabler-users-off display-4 text-muted"></i>
+                        <i class="ti ti-users-off display-4 text-muted"></i>
                         <h5 class="mt-3">No Active Employees</h5>
                         <p class="text-muted">No active employees found for the selected period.</p>
                       </div>
@@ -187,28 +187,28 @@
             <div class="row text-center">
               <div class="col-md-3">
                 <div class="border rounded p-3">
-                  <i class="ti tabler-users display-6 text-primary"></i>
+                  <i class="ti ti-users display-6 text-primary"></i>
                   <h4 class="mt-2">{{ $employeeSummaries->count() }}</h4>
                   <small class="text-muted">Total Employees</small>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="border rounded p-3">
-                  <i class="ti tabler-percentage display-6 text-success"></i>
+                  <i class="ti ti-percentage display-6 text-success"></i>
                   <h4 class="mt-2">{{ round($employeeSummaries->avg('final_performance_percentage'), 1) }}%</h4>
                   <small class="text-muted">Avg Performance</small>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="border rounded p-3">
-                  <i class="ti tabler-clock display-6 text-info"></i>
+                  <i class="ti ti-clock display-6 text-info"></i>
                   <h4 class="mt-2">{{ round($employeeSummaries->avg('net_attended_hours'), 1) }}</h4>
                   <small class="text-muted">Avg Attended Hours</small>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="border rounded p-3">
-                  <i class="ti tabler-briefcase display-6 text-warning"></i>
+                  <i class="ti ti-briefcase display-6 text-warning"></i>
                   <h4 class="mt-2">{{ round($employeeSummaries->avg('billable_hours'), 1) }}</h4>
                   <small class="text-muted">Avg Billable Hours</small>
                 </div>
@@ -226,34 +226,34 @@
       <div class="card">
         <div class="card-body text-center py-4">
           <p class="text-muted mb-3">
-            <i class="ti tabler-info-circle me-2"></i>
+            <i class="ti ti-info-circle me-2"></i>
             Review the calculations above. Click "Proceed to Adjustments" to make salary adjustments before finalizing.
           </p>
 
           @if($employeeSummaries->count() > 0)
             <div class="btn-group">
               <a href="{{ route('payroll.settings.index') }}" class="btn btn-label-secondary">
-                <i class="ti tabler-settings me-2"></i>Adjust Weights
+                <i class="ti ti-settings me-2"></i>Adjust Weights
               </a>
 
               <a href="{{ route('payroll.run.adjustments', ['period' => $periodEnd->format('Y-m')]) }}" class="btn btn-primary">
-                <i class="ti tabler-adjustments me-2"></i>Proceed to Adjustments
+                <i class="ti ti-adjustments me-2"></i>Proceed to Adjustments
               </a>
             </div>
 
             @if ($errors->has('finalization'))
               <div class="alert alert-danger mt-3">
-                <i class="ti tabler-alert-circle me-2"></i>
+                <i class="ti ti-alert-circle me-2"></i>
                 {{ $errors->first('finalization') }}
               </div>
             @endif
           @else
             <div class="btn-group">
               <a href="{{ route('payroll.settings.index') }}" class="btn btn-label-secondary">
-                <i class="ti tabler-settings me-2"></i>Adjust Weights
+                <i class="ti ti-settings me-2"></i>Adjust Weights
               </a>
               <button type="button" class="btn btn-primary" disabled>
-                <i class="ti tabler-alert-triangle me-2"></i>No Employees to Finalize
+                <i class="ti ti-alert-triangle me-2"></i>No Employees to Finalize
               </button>
             </div>
           @endif

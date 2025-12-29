@@ -13,13 +13,13 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-success" onclick="window.print()">
-                        <i class="ti tabler-printer me-1"></i>Print
+                        <i class="ti ti-printer me-1"></i>Print
                     </button>
                     <a href="{{ route('accounting.income-sheet.export') }}" class="btn btn-outline-info">
-                        <i class="ti tabler-download me-1"></i>Export
+                        <i class="ti ti-download me-1"></i>Export
                     </a>
                     <a href="{{ route('accounting.dashboard') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Dashboard
+                        <i class="ti ti-arrow-left me-1"></i>Back to Dashboard
                     </a>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="avatar avatar-sm mb-2">
                                             <span class="avatar-initial rounded-circle bg-label-primary">
-                                                <i class="ti tabler-package ti-sm"></i>
+                                                <i class="ti ti-package ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-center">
@@ -59,7 +59,7 @@
                                 </td>
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-wallet text-danger me-2"></i>
+                                        <i class="ti ti-wallet text-danger me-2"></i>
                                         <span style="font-size: 0.875rem;">Balance</span>
                                     </div>
                                 </td>
@@ -81,7 +81,7 @@
                             <tr class="contract-row">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-file-check text-primary me-2"></i>
+                                        <i class="ti ti-file-check text-primary me-2"></i>
                                         <span style="font-size: 0.875rem;">Contracts</span>
                                     </div>
                                 </td>
@@ -103,7 +103,7 @@
                             <tr class="expected-contract-row">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-file-clock text-warning me-2"></i>
+                                        <i class="ti ti-file-clock text-warning me-2"></i>
                                         <span style="font-size: 0.875rem;">Ex. Contracts</span>
                                     </div>
                                 </td>
@@ -125,7 +125,7 @@
                             <tr class="income-row">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-currency-dollar text-success me-2"></i>
+                                        <i class="ti ti-currency-dollar text-success me-2"></i>
                                         <span style="font-size: 0.875rem;">Income</span>
                                     </div>
                                 </td>
@@ -147,7 +147,7 @@
                             <tr class="product-end expected-income-row">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-hourglass me-2" style="color: #6f42c1;"></i>
+                                        <i class="ti ti-hourglass me-2" style="color: #6f42c1;"></i>
                                         <span style="font-size: 0.875rem;">Ex. Income</span>
                                     </div>
                                 </td>
@@ -168,7 +168,7 @@
                             <tr>
                                 <td colspan="15" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti tabler-package text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti ti-package text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No Products Found</h5>
                                         <p class="text-muted">Create products and contracts to view the income sheet</p>
                                     </div>
@@ -183,7 +183,7 @@
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="avatar avatar-md mb-2">
                                             <span class="avatar-initial rounded-circle bg-primary">
-                                                <i class="ti tabler-sum ti-md text-white"></i>
+                                                <i class="ti ti-sum ti-md text-white"></i>
                                             </span>
                                         </div>
                                         <div class="text-center">
@@ -194,7 +194,7 @@
                                 </td>
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-wallet text-danger me-2"></i>
+                                        <i class="ti ti-wallet text-danger me-2"></i>
                                         <span style="font-size: 0.875rem;">Balance</span>
                                     </div>
                                 </td>
@@ -215,7 +215,7 @@
                             <tr class="contract-row totals-section">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-file-check text-primary me-2"></i>
+                                        <i class="ti ti-file-check text-primary me-2"></i>
                                         <span style="font-size: 0.875rem;">Contracts</span>
                                     </div>
                                 </td>
@@ -236,7 +236,7 @@
                             <tr class="expected-contract-row totals-section">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-file-clock text-warning me-2"></i>
+                                        <i class="ti ti-file-clock text-warning me-2"></i>
                                         <span style="font-size: 0.875rem;">Ex. Contracts</span>
                                     </div>
                                 </td>
@@ -257,7 +257,7 @@
                             <tr class="income-row totals-section">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-currency-dollar text-success me-2"></i>
+                                        <i class="ti ti-currency-dollar text-success me-2"></i>
                                         <span style="font-size: 0.875rem;">Income</span>
                                     </div>
                                 </td>
@@ -278,7 +278,7 @@
                             <tr class="expected-income-row totals-section">
                                 <td class="fw-medium">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-hourglass me-2" style="color: #6f42c1;"></i>
+                                        <i class="ti ti-hourglass me-2" style="color: #6f42c1;"></i>
                                         <span style="font-size: 0.875rem;">Ex. Income</span>
                                     </div>
                                 </td>
@@ -305,7 +305,7 @@
             <div class="card-body">
                 <div class="alert alert-info">
                     <div class="d-flex">
-                        <i class="ti tabler-info-circle me-2 mt-1"></i>
+                        <i class="ti ti-info-circle me-2 mt-1"></i>
                         <div>
                             <h6 class="mb-1">Income Sheet Legend</h6>
                             <div class="row">

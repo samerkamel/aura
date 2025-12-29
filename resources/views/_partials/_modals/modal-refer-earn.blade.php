@@ -74,9 +74,9 @@
           </div>
           <div class="col-lg-3 d-flex align-items-end">
             <div class="btn-social d-flex justify-content-between w-100">
-              <button type="button" class="btn btn-icon btn-facebook"><i class="ti tabler-brand-facebook ti-md"></i></button>
-              <button type="button" class="btn btn-icon btn-twitter"><i class="ti tabler-brand-twitter ti-md"></i></button>
-              <button type="button" class="btn btn-icon btn-linkedin"><i class="ti tabler-brand-linkedin ti-md"></i></button>
+              <button type="button" class="btn btn-icon btn-facebook"><i class="ti ti-brand-facebook ti-md"></i></button>
+              <button type="button" class="btn btn-icon btn-twitter"><i class="ti ti-brand-twitter ti-md"></i></button>
+              <button type="button" class="btn btn-icon btn-linkedin"><i class="ti ti-brand-linkedin ti-md"></i></button>
             </div>
           </div>
         </form>

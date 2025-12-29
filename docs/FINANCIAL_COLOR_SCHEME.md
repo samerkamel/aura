@@ -71,11 +71,11 @@ This document defines the standardized color scheme for financial data throughou
 
 ### Icons
 
-- **Balance**: `ti tabler-wallet`
-- **Contracts**: `ti tabler-file-check`
-- **Expected Contracts**: `ti tabler-file-clock`
-- **Income**: `ti tabler-currency-dollar`
-- **Expected Income**: `ti tabler-hourglass`
+- **Balance**: `ti ti-wallet`
+- **Contracts**: `ti ti-file-check`
+- **Expected Contracts**: `ti ti-file-clock`
+- **Income**: `ti ti-currency-dollar`
+- **Expected Income**: `ti ti-hourglass`
 
 ## Usage Examples
 

@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-clipboard-check me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-clipboard-check me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Attendance Import Results</h5>
             <small class="text-muted">File: {{ $filename }}</small>
@@ -17,10 +17,10 @@
         </div>
         <div>
           <a href="{{ route('attendance.import.create') }}" class="btn btn-primary me-2">
-            <i class="ti tabler-upload me-1"></i>Import Another File
+            <i class="ti ti-upload me-1"></i>Import Another File
           </a>
           <a href="{{ route('attendance.index') }}" class="btn btn-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Attendance
+            <i class="ti ti-arrow-left me-1"></i>Back to Attendance
           </a>
         </div>
       </div>
@@ -33,7 +33,7 @@
           <div class="card-body">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-label-info">
-                <i class="ti tabler-file-text ti-md"></i>
+                <i class="ti ti-file-text ti-md"></i>
               </span>
             </div>
             <span class="h4 d-block mb-1">{{ number_format($results['total_rows']) }}</span>
@@ -46,7 +46,7 @@
           <div class="card-body">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-label-success">
-                <i class="ti tabler-check ti-md"></i>
+                <i class="ti ti-check ti-md"></i>
               </span>
             </div>
             <span class="h4 d-block mb-1 text-success">{{ number_format($results['successful_imports']) }}</span>
@@ -59,7 +59,7 @@
           <div class="card-body">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-label-danger">
-                <i class="ti tabler-x ti-md"></i>
+                <i class="ti ti-x ti-md"></i>
               </span>
             </div>
             <span class="h4 d-block mb-1 text-danger">{{ number_format(count($results['failed_rows'])) }}</span>
@@ -72,7 +72,7 @@
           <div class="card-body">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-label-warning">
-                <i class="ti tabler-percentage ti-md"></i>
+                <i class="ti ti-percentage ti-md"></i>
               </span>
             </div>
             @php
@@ -92,7 +92,7 @@
           <div class="card">
             <div class="card-header">
               <h6 class="mb-0 text-danger">
-                <i class="ti tabler-alert-circle me-2"></i>Import Errors
+                <i class="ti ti-alert-circle me-2"></i>Import Errors
               </h6>
             </div>
             <div class="card-body">
@@ -114,7 +114,7 @@
       <div class="row mb-4">
         <div class="col-12">
           <div class="alert alert-success">
-            <h6><i class="ti tabler-check-circle me-2"></i>Import Completed Successfully!</h6>
+            <h6><i class="ti ti-check-circle me-2"></i>Import Completed Successfully!</h6>
             <p class="mb-0">
               {{ number_format($results['successful_imports']) }} attendance records have been successfully imported into the system.
             </p>
@@ -130,7 +130,7 @@
           <div class="card">
             <div class="card-header">
               <h6 class="mb-0 text-danger">
-                <i class="ti tabler-alert-triangle me-2"></i>Failed Rows Details
+                <i class="ti ti-alert-triangle me-2"></i>Failed Rows Details
               </h6>
             </div>
             <div class="card-body">
@@ -170,7 +170,7 @@
               @if(count($results['failed_rows']) > 10)
                 <div class="alert alert-info mt-3">
                   <small>
-                    <i class="ti tabler-info-circle me-1"></i>
+                    <i class="ti ti-info-circle me-1"></i>
                     Showing first {{ count($results['failed_rows']) }} failed rows.
                     Consider fixing the most common errors and re-importing the corrected data.
                   </small>

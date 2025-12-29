@@ -21,7 +21,7 @@
     <ul class="timeline timeline-center mt-12">
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-primary" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-brush"></i>
+          <i class="ti ti-brush"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-right">
           <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
@@ -61,7 +61,7 @@
       </li>
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-success" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-question-mark"></i>
+          <i class="ti ti-question-mark"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-left">
           <h6 class="card-header">Survey Report</h6>
@@ -150,7 +150,7 @@
       </li>
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-danger" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-chart-line"></i>
+          <i class="ti ti-chart-line"></i>
         </span>
 
         <div class="timeline-event card p-0" data-aos="fade-right">
@@ -166,24 +166,24 @@
               <ul class="list-group list-group-flush mt-4">
                 <li class="list-group-item d-flex justify-content-between flex-wrap">
                   <span>Last Years's Profit : <span class="fw-medium">$20000</span></span>
-                  <i class="ti tabler-share cursor-pointer"></i>
+                  <i class="ti ti-share cursor-pointer"></i>
                 </li>
                 <li class="list-group-item d-flex justify-content-between flex-wrap">
                   <span> This Years's Profit : <span class="fw-medium">$25000</span></span>
-                  <i class="ti tabler-share cursor-pointer"></i>
+                  <i class="ti ti-share cursor-pointer"></i>
                 </li>
                 <li class="list-group-item d-flex justify-content-between flex-wrap">
                   <span> Last Years's Commission : <span class="fw-medium">$5000</span></span>
-                  <i class="ti tabler-share cursor-pointer"></i>
+                  <i class="ti ti-share cursor-pointer"></i>
                 </li>
                 <li class="list-group-item d-flex justify-content-between flex-wrap">
                   <span> This Years's Commission : <span class="fw-medium">$7000</span></span>
-                  <i class="ti tabler-share cursor-pointer"></i>
+                  <i class="ti ti-share cursor-pointer"></i>
                 </li>
                 <li class="list-group-item d-flex justify-content-between flex-wrap">
                   <span>
                     This Years's Total Balance : <span class="fw-medium">$70000</span></span>
-                  <i class="ti tabler-share cursor-pointer"></i>
+                  <i class="ti ti-share cursor-pointer"></i>
                 </li>
               </ul>
             </div>
@@ -193,7 +193,7 @@
       </li>
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-warning" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-chart-donut-2"></i>
+          <i class="ti ti-chart-donut-2"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-left">
           <h6 class="card-header">Snacks</h6>
@@ -211,11 +211,11 @@
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
-                    <i class="ti tabler-star-filled text-warning"></i>
-                    <i class="ti tabler-star-filled text-warning"></i>
-                    <i class="ti tabler-star-filled text-warning"></i>
-                    <i class="ti tabler-star-filled text-warning"></i>
-                    <i class="ti tabler-star-filled"></i>
+                    <i class="ti ti-star-filled text-warning"></i>
+                    <i class="ti ti-star-filled text-warning"></i>
+                    <i class="ti ti-star-filled text-warning"></i>
+                    <i class="ti ti-star-filled text-warning"></i>
+                    <i class="ti ti-star-filled"></i>
                   </div>
                   <div>
                     <span class="fw-medium">$5.00</span>
@@ -229,12 +229,12 @@
       </li>
       <li class="timeline-item timeline-item-right">
         <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-map-pin"></i>
+          <i class="ti ti-map-pin"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-left">
           <div class="card-header border-0 d-flex justify-content-between">
             <h6 class="card-title mb-0">
-              <i class="ti tabler-map-pin"></i>
+              <i class="ti ti-map-pin"></i>
               <span class="align-middle">Location</span>
             </h6>
             <span class="badge rounded-pill bg-label-danger">High</span>
@@ -250,12 +250,12 @@
           </div>
           <div class="card-footer d-flex justify-content-between">
             <div class="d-flex align-items-center flex-wrap cursor-pointer gap-4">
-              <i class="ti tabler-link"></i>
+              <i class="ti ti-link"></i>
               <div class="position-relative">
-                <i class="ti tabler-brand-hipchat"></i>
+                <i class="ti ti-brand-hipchat"></i>
                 <span class="badge rounded-pill bg-info badge-dot badge-notifications"></span>
               </div>
-              <i class="ti tabler-user"></i>
+              <i class="ti ti-user"></i>
             </div>
             <p class="mb-0">
               <span class="text-muted">Due Date:</span>
@@ -267,7 +267,7 @@
       </li>
       <li class="timeline-item timeline-item-left">
         <span class="timeline-indicator timeline-indicator-primary" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-barbell"></i>
+          <i class="ti ti-barbell"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-right">
           <div class="card-header border-0 d-flex justify-content-between">
@@ -276,13 +276,13 @@
           </div>
           <div class="card-body pb-4 pt-0">
             <div class="hours mb-2">
-              <i class="ti tabler-clock"></i>
+              <i class="ti ti-clock"></i>
               <span>1.1 Hours</span>
-              <i class="ti tabler-arrows-right-left mx-2"></i>
+              <i class="ti ti-arrows-right-left mx-2"></i>
               <span>Weekly</span>
             </div>
             <div class="location">
-              <i class="ti tabler-map-pin"></i>
+              <i class="ti ti-map-pin"></i>
               <span class="align-middle">Rock's Gym</span>
             </div>
           </div>
@@ -292,7 +292,7 @@
               <span class="badge rounded-pill bg-label-info">Power</span>
             </div>
             <div>
-              <i class="ti tabler-dots-vertical text-muted cursor-pointer"></i>
+              <i class="ti ti-dots-vertical text-muted cursor-pointer"></i>
             </div>
           </div>
           <div class="timeline-event-time">15th January</div>
@@ -300,28 +300,28 @@
       </li>
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-success" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-currency-dollar"></i>
+          <i class="ti ti-currency-dollar"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-right">
           <h6 class="card-header">General Reserve</h6>
           <div class="card-body">
             <ul class="list-unstyled">
               <li class="d-flex justify-content-start align-items-center text-success mb-4">
-                <i class="ti tabler-currency-dollar ti-lg me-4"></i>
+                <i class="ti ti-currency-dollar ti-lg me-4"></i>
                 <div class="ps-4 border-start">
                   <small class="text-muted mb-1">Cash</small>
                   <h5 class="mb-0">$500</h5>
                 </div>
               </li>
               <li class="d-flex justify-content-start align-items-center text-info mb-4">
-                <i class="ti tabler-credit-card ti-lg me-4"></i>
+                <i class="ti ti-credit-card ti-lg me-4"></i>
                 <div class="ps-4 border-start">
                   <small class="text-muted mb-1">Credit Card</small>
                   <h5 class="mb-0">$5000</h5>
                 </div>
               </li>
               <li class="d-flex justify-content-start align-items-center text-primary">
-                <i class="ti tabler-chart-line ti-lg me-4"></i>
+                <i class="ti ti-chart-line ti-lg me-4"></i>
                 <div class="ps-4 border-start">
                   <small class="text-muted mb-1">Investments</small>
                   <h5 class="mb-0">$300</h5>
@@ -334,7 +334,7 @@
       </li>
       <li class="timeline-item">
         <span class="timeline-indicator timeline-indicator-danger" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-server"></i>
+          <i class="ti ti-server"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-left">
           <div class="card-header border-0 d-flex justify-content-between">
@@ -347,7 +347,7 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
                 <div>
-                  <i class="ti tabler-world"></i>
+                  <i class="ti ti-world"></i>
                   <span>IP Address</span>
                 </div>
                 <div>
@@ -356,7 +356,7 @@
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
                 <div>
-                  <i class="ti tabler-cpu"></i>
+                  <i class="ti ti-cpu"></i>
                   <span>CPU</span>
                 </div>
                 <div>
@@ -365,7 +365,7 @@
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
                 <div>
-                  <i class="ti tabler-server"></i>
+                  <i class="ti ti-server"></i>
                   <span>Ram</span>
                 </div>
                 <div>
@@ -376,8 +376,8 @@
           </div>
           <div class="card-footer d-flex justify-content-between">
             <div class="server-icons">
-              <i class="ti tabler-share me-2"></i>
-              <i class="ti tabler-refresh"></i>
+              <i class="ti ti-share me-2"></i>
+              <i class="ti ti-refresh"></i>
             </div>
           </div>
           <div class="timeline-event-time">20th January</div>
@@ -385,12 +385,12 @@
       </li>
       <li class="timeline-item border-0 pb-4">
         <span class="timeline-indicator timeline-indicator-info" data-aos="zoom-in" data-aos-delay="200">
-          <i class="ti tabler-building-store"></i>
+          <i class="ti ti-building-store"></i>
         </span>
         <div class="timeline-event card p-0" data-aos="fade-right">
           <div class="card-header border-0 d-flex justify-content-between">
             <h6 class="card-title mb-0"><span class="align-middle">Online Store</span></h6>
-            <i class="ti tabler-dots-vertical text-muted cursor-pointer"></i>
+            <i class="ti ti-dots-vertical text-muted cursor-pointer"></i>
           </div>
           <div class="card-body pt-0">
             <p>

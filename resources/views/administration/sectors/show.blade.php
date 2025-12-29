@@ -22,7 +22,7 @@ $configData = Helper::appClasses();
     <div class="card mb-4">
       <div class="card-header border-bottom d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-world me-2"></i>{{ $sector->name }}
+          <i class="ti ti-world me-2"></i>{{ $sector->name }}
         </h5>
         <div>
           <span class="badge bg-label-info me-2">{{ $sector->code }}</span>
@@ -87,10 +87,10 @@ $configData = Helper::appClasses();
 
       <div class="card-footer d-flex justify-content-between">
         <a href="{{ route('administration.sectors.index') }}" class="btn btn-secondary">
-          <i class="ti tabler-arrow-left me-1"></i>Back to Sectors
+          <i class="ti ti-arrow-left me-1"></i>Back to Sectors
         </a>
         <a href="{{ route('administration.sectors.edit', $sector) }}" class="btn btn-primary">
-          <i class="ti tabler-edit me-1"></i>Edit Sector
+          <i class="ti ti-edit me-1"></i>Edit Sector
         </a>
       </div>
     </div>
@@ -99,10 +99,10 @@ $configData = Helper::appClasses();
     <div class="card">
       <div class="card-header border-bottom d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-building me-2"></i>Business Units ({{ $sector->business_units_count }})
+          <i class="ti ti-building me-2"></i>Business Units ({{ $sector->business_units_count }})
         </h5>
         <a href="{{ route('administration.business-units.create') }}?sector_id={{ $sector->id }}" class="btn btn-primary btn-sm">
-          <i class="ti tabler-plus me-1"></i>Add Business Unit
+          <i class="ti ti-plus me-1"></i>Add Business Unit
         </a>
       </div>
 
@@ -127,7 +127,7 @@ $configData = Helper::appClasses();
                       <div class="d-flex align-items-center">
                         <div class="avatar avatar-sm me-2">
                           <span class="avatar-initial rounded-circle bg-label-primary">
-                            <i class="ti tabler-building ti-sm"></i>
+                            <i class="ti ti-building ti-sm"></i>
                           </span>
                         </div>
                         <div>
@@ -158,19 +158,19 @@ $configData = Helper::appClasses();
                         <ul class="dropdown-menu">
                           <li>
                             <a class="dropdown-item" href="{{ route('administration.business-units.show', $businessUnit) }}">
-                              <i class="ti tabler-eye me-1"></i>View Details
+                              <i class="ti ti-eye me-1"></i>View Details
                             </a>
                           </li>
                           <li>
                             <a class="dropdown-item" href="{{ route('administration.business-units.edit', $businessUnit) }}">
-                              <i class="ti tabler-edit me-1"></i>Edit
+                              <i class="ti ti-edit me-1"></i>Edit
                             </a>
                           </li>
                           @if($businessUnit->contracts_count == 0)
                             <li><hr class="dropdown-divider"></li>
                             <li>
                               <a class="dropdown-item text-warning" href="#" onclick="removeBU({{ $businessUnit->id }})">
-                                <i class="ti tabler-unlink me-1"></i>Remove from Sector
+                                <i class="ti ti-unlink me-1"></i>Remove from Sector
                               </a>
                             </li>
                           @endif
@@ -184,11 +184,11 @@ $configData = Helper::appClasses();
           </div>
         @else
           <div class="text-center py-5">
-            <i class="ti tabler-building text-muted mb-3" style="font-size: 4rem;"></i>
+            <i class="ti ti-building text-muted mb-3" style="font-size: 4rem;"></i>
             <h5>No Business Units</h5>
             <p class="text-muted">This sector doesn't have any business units yet</p>
             <a href="{{ route('administration.business-units.create') }}?sector_id={{ $sector->id }}" class="btn btn-primary">
-              <i class="ti tabler-plus me-1"></i>Add First Business Unit
+              <i class="ti ti-plus me-1"></i>Add First Business Unit
             </a>
           </div>
         @endif

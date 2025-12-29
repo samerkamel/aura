@@ -23,7 +23,7 @@
           <label class="form-label" for="basic-default-password12">Password</label>
           <div class="input-group">
             <input type="password" class="form-control" id="basic-default-password12" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password2" />
-            <span id="basic-default-password2" class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
+            <span id="basic-default-password2" class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
           </div>
         </div>
 
@@ -59,7 +59,7 @@
       <div class="card-body demo-vertical-spacing demo-only-element">
 
         <div class="input-group input-group-merge">
-          <span class="input-group-text" id="basic-addon-search31"><i class="ti tabler-search"></i></span>
+          <span class="input-group-text" id="basic-addon-search31"><i class="ti ti-search"></i></span>
           <input type="text" class="form-control" placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon-search31" />
         </div>
 
@@ -67,7 +67,7 @@
           <label class="form-label" for="basic-default-password32">Password</label>
           <div class="input-group input-group-merge">
             <input type="password" class="form-control" id="basic-default-password32" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password" />
-            <span class="input-group-text cursor-pointer" id="basic-default-password"><i class="ti tabler-eye-off"></i></span>
+            <span class="input-group-text cursor-pointer" id="basic-default-password"><i class="ti ti-eye-off"></i></span>
           </div>
         </div>
 
@@ -194,7 +194,7 @@
         <div class="input-group input-group-merge form-send-message">
           <input type="text" class="form-control message-input" placeholder="Say it" aria-describedby="text-to-speech-addon">
           <span class="message-actions input-group-text" id="text-to-speech-addon">
-            <i class="ti tabler-microphone cursor-pointer speech-to-text"></i>
+            <i class="ti ti-microphone cursor-pointer speech-to-text"></i>
           </span>
         </div>
 
@@ -203,7 +203,7 @@
         <div class="input-group input-group-merge form-send-message">
           <textarea class="form-control message-input" placeholder="Say it" rows="2"></textarea>
           <span class="message-actions input-group-text">
-            <i class='ti tabler-microphone cursor-pointer speech-to-text'></i>
+            <i class='ti ti-microphone cursor-pointer speech-to-text'></i>
           </span>
         </div>
 

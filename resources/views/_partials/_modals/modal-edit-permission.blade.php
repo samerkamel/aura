@@ -9,7 +9,7 @@
           <p>Edit permission as per your requirements.</p>
         </div>
         <div class="alert alert-warning d-flex align-items-start" role="alert">
-          <span class="alert-icon me-4 rounded-2"><i class="ti tabler-alert-triangle ti-md"></i></span>
+          <span class="alert-icon me-4 rounded-2"><i class="ti ti-alert-triangle ti-md"></i></span>
           <span>
             <span class="alert-heading mb-1 h5">Warning</span><br>
             <span class="mb-0 p">By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.</span>

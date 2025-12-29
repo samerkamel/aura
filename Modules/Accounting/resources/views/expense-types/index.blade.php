@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-info">
-                        <i class="ti tabler-category me-1"></i>Manage Categories
+                        <i class="ti ti-category me-1"></i>Manage Categories
                     </a>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseTypeModal">
-                        <i class="ti tabler-plus me-1"></i>New Expense Type
+                        <i class="ti ti-plus me-1"></i>New Expense Type
                     </button>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                             <tr class="{{ !$expenseType->is_active ? 'opacity-50' : '' }}" data-expense-type-id="{{ $expenseType->id }}">
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-grip-vertical text-muted me-2 cursor-pointer drag-handle"></i>
+                                        <i class="ti ti-grip-vertical text-muted me-2 cursor-pointer drag-handle"></i>
                                         <span class="badge bg-secondary">{{ $expenseType->sort_order }}</span>
                                     </div>
                                 </td>
@@ -101,7 +101,7 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti tabler-dots-vertical"></i>
+                                            <i class="ti ti-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="#" data-bs-toggle="modal"
@@ -112,14 +112,14 @@
                                                data-description="{{ $expenseType->description }}"
                                                data-color="{{ $expenseType->color }}"
                                                data-sort-order="{{ $expenseType->sort_order }}">
-                                                <i class="ti tabler-edit me-2"></i>Edit
+                                                <i class="ti ti-edit me-2"></i>Edit
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('accounting.expense-types.toggle-status', $expenseType) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti tabler-{{ $expenseType->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                    <i class="ti ti-{{ $expenseType->is_active ? 'pause' : 'play' }} me-2"></i>
                                                     {{ $expenseType->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
@@ -127,7 +127,7 @@
                                                 <div class="dropdown-divider"></div>
                                                 <button type="button" class="dropdown-item text-danger"
                                                         onclick="confirmDelete('{{ $expenseType->id }}', '{{ $expenseType->name }}')">
-                                                    <i class="ti tabler-trash me-2"></i>Delete
+                                                    <i class="ti ti-trash me-2"></i>Delete
                                                 </button>
                                             @endif
                                         </div>
@@ -138,11 +138,11 @@
                             <tr>
                                 <td colspan="8" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti tabler-category text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No expense types found</h5>
                                         <p class="text-muted">Create your first expense type to organize your expense categories</p>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseTypeModal">
-                                            <i class="ti tabler-plus me-1"></i>Create Expense Type
+                                            <i class="ti ti-plus me-1"></i>Create Expense Type
                                         </button>
                                     </div>
                                 </td>
@@ -268,14 +268,14 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-3">
-                    <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
+                    <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
                 </div>
                 <h6 class="text-center">Are you sure you want to delete this expense type?</h6>
                 <p class="text-center text-muted">
                     Expense Type: <strong id="deleteExpenseTypeName"></strong>
                 </p>
                 <div class="alert alert-warning">
-                    <i class="ti tabler-info-circle me-2"></i>
+                    <i class="ti ti-info-circle me-2"></i>
                     This action cannot be undone. Only expense types with no categories can be deleted.
                 </div>
             </div>
@@ -285,7 +285,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="ti tabler-trash me-1"></i>Delete Expense Type
+                        <i class="ti ti-trash me-1"></i>Delete Expense Type
                     </button>
                 </form>
             </div>

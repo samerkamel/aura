@@ -43,10 +43,10 @@
         <h4 class="fw-bold py-3 mb-0">Roles Management</h4>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.permissions.index') }}" class="btn btn-outline-info">
-                <i class="ti tabler-key me-2"></i>View Permissions
+                <i class="ti ti-key me-2"></i>View Permissions
             </a>
             <a href="{{ route('administration.roles.create') }}" class="btn btn-primary">
-                <i class="ti tabler-plus me-2"></i>Create Role
+                <i class="ti ti-plus me-2"></i>Create Role
             </a>
         </div>
     </div>
@@ -59,7 +59,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti tabler-shield ti-sm"></i>
+                                <i class="ti ti-shield ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -78,7 +78,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti tabler-shield-check ti-sm"></i>
+                                <i class="ti ti-shield-check ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -97,7 +97,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-danger">
-                                <i class="ti tabler-shield-x ti-sm"></i>
+                                <i class="ti ti-shield-x ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -116,7 +116,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti tabler-key ti-sm"></i>
+                                <i class="ti ti-key ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -210,12 +210,12 @@
                                 <a href="{{ route('administration.roles.show', $role) }}"
                                    class="btn btn-sm btn-icon btn-outline-primary"
                                    data-bs-toggle="tooltip" title="View Details">
-                                    <i class="ti tabler-eye"></i>
+                                    <i class="ti ti-eye"></i>
                                 </a>
                                 <a href="{{ route('administration.roles.edit', $role) }}"
                                    class="btn btn-sm btn-icon btn-outline-info"
                                    data-bs-toggle="tooltip" title="Edit Role">
-                                    <i class="ti tabler-edit"></i>
+                                    <i class="ti ti-edit"></i>
                                 </a>
                                 <form method="POST" action="{{ route('administration.roles.toggle-status', $role) }}" class="d-inline">
                                     @csrf
@@ -225,7 +225,7 @@
                                             data-bs-toggle="tooltip"
                                             title="{{ $role->is_active ? 'Deactivate' : 'Activate' }} Role"
                                             onclick="return confirm('Are you sure you want to {{ $role->is_active ? 'deactivate' : 'activate' }} this role?')">
-                                        <i class="ti tabler-{{ $role->is_active ? 'toggle-right' : 'toggle-left' }}"></i>
+                                        <i class="ti ti-{{ $role->is_active ? 'toggle-right' : 'toggle-left' }}"></i>
                                     </button>
                                 </form>
                                 @if($role->users->count() === 0)
@@ -236,7 +236,7 @@
                                             class="btn btn-sm btn-icon btn-outline-danger"
                                             data-bs-toggle="tooltip" title="Delete Role"
                                             onclick="return confirm('Are you sure you want to delete this role? This action cannot be undone.')">
-                                        <i class="ti tabler-trash"></i>
+                                        <i class="ti ti-trash"></i>
                                     </button>
                                 </form>
                                 @endif
@@ -247,7 +247,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-4">
                             <div class="text-muted">
-                                <i class="ti tabler-shield-off ti-3x mb-3 d-block"></i>
+                                <i class="ti ti-shield-off ti-3x mb-3 d-block"></i>
                                 <h5>No roles found</h5>
                                 <p class="mb-0">No roles match your current filters.</p>
                             </div>

@@ -20,7 +20,7 @@
                                 <small class="text-muted">Update the estimate details</small>
                             </div>
                             <a href="{{ route('accounting.estimates.show', $estimate) }}" class="btn btn-outline-secondary">
-                                <i class="ti tabler-arrow-left me-1"></i>Back to Estimate
+                                <i class="ti ti-arrow-left me-1"></i>Back to Estimate
                             </a>
                         </div>
                         <div class="card-body">
@@ -167,7 +167,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6 class="card-title mb-0">Line Items</h6>
                             <button type="button" class="btn btn-sm btn-primary" onclick="addItem()">
-                                <i class="ti tabler-plus me-1"></i>Add Item
+                                <i class="ti ti-plus me-1"></i>Add Item
                             </button>
                         </div>
                         <div class="card-body">
@@ -249,7 +249,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <button type="submit" class="btn btn-primary w-100 mb-2">
-                                <i class="ti tabler-device-floppy me-1"></i>Update Estimate
+                                <i class="ti ti-device-floppy me-1"></i>Update Estimate
                             </button>
                             <a href="{{ route('accounting.estimates.show', $estimate) }}" class="btn btn-outline-secondary w-100">
                                 Cancel
@@ -329,7 +329,7 @@ function addItemWithData(data) {
         <td class="item-amount">EGP 0.00</td>
         <td>
             <button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="removeItem(this)">
-                <i class="ti tabler-trash"></i>
+                <i class="ti ti-trash"></i>
             </button>
         </td>
     `;

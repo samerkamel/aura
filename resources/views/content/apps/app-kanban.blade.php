@@ -40,7 +40,7 @@
     <div class="col-12">
       <form class="kanban-add-new-board">
         <label class="kanban-add-board-btn" for="kanban-add-board-input">
-          <i class="ti tabler-plus"></i>
+          <i class="ti ti-plus"></i>
           <span class="align-middle">Add new</span>
         </label>
         <input type="text" class="form-control w-px-250 kanban-add-board-input mb-4 d-none" placeholder="Add Board Title" id="kanban-add-board-input" required />
@@ -66,13 +66,13 @@
         <ul class="nav nav-tabs mb-5 rounded-0">
           <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-update">
-              <i class="ti tabler-edit ti-18px me-1_5"></i>
+              <i class="ti ti-edit ti-18px me-1_5"></i>
               <span class="align-middle">Edit</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-activity">
-              <i class="ti tabler-chart-pie-2 ti-18px me-1_5"></i>
+              <i class="ti ti-chart-pie-2 ti-18px me-1_5"></i>
               <span class="align-middle">Activity</span>
             </button>
           </li>

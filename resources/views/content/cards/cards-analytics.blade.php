@@ -30,7 +30,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="earningReportsId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReportsId">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -55,7 +55,7 @@
           <div class="row gap-4 gap-sm-0">
             <div class="col-12 col-sm-4">
               <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-primary p-1"><i class="ti tabler-currency-dollar ti-sm"></i></div>
+                <div class="badge rounded bg-label-primary p-1"><i class="ti ti-currency-dollar ti-sm"></i></div>
                 <h6 class="mb-0 fw-normal">Earnings</h6>
               </div>
               <h4 class="my-2">$545.69</h4>
@@ -65,7 +65,7 @@
             </div>
             <div class="col-12 col-sm-4">
               <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-info p-1"><i class="ti tabler-chart-pie-2 ti-sm"></i></div>
+                <div class="badge rounded bg-label-info p-1"><i class="ti ti-chart-pie-2 ti-sm"></i></div>
                 <h6 class="mb-0 fw-normal">Profit</h6>
               </div>
               <h4 class="my-2">$256.34</h4>
@@ -75,7 +75,7 @@
             </div>
             <div class="col-12 col-sm-4">
               <div class="d-flex gap-2 align-items-center">
-                <div class="badge rounded bg-label-danger p-1"><i class="ti tabler-brand-paypal ti-sm"></i></div>
+                <div class="badge rounded bg-label-danger p-1"><i class="ti ti-brand-paypal ti-sm"></i></div>
                 <h6 class="mb-0 fw-normal">Expense</h6>
               </div>
               <h4 class="my-2">$74.19</h4>
@@ -99,7 +99,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="supportTrackerMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="supportTrackerMenu">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -115,21 +115,21 @@
           </div>
           <ul class="p-0 m-0">
             <li class="d-flex gap-4 align-items-center mb-lg-3 pb-1">
-              <div class="badge rounded bg-label-primary p-1_5"><i class="ti tabler-ticket ti-md"></i></div>
+              <div class="badge rounded bg-label-primary p-1_5"><i class="ti ti-ticket ti-md"></i></div>
               <div>
                 <h6 class="mb-0 text-nowrap">New Tickets</h6>
                 <small class="text-muted">142</small>
               </div>
             </li>
             <li class="d-flex gap-4 align-items-center mb-lg-3 pb-1">
-              <div class="badge rounded bg-label-info p-1_5"><i class="ti tabler-circle-check ti-md"></i></div>
+              <div class="badge rounded bg-label-info p-1_5"><i class="ti ti-circle-check ti-md"></i></div>
               <div>
                 <h6 class="mb-0 text-nowrap">Open Tickets</h6>
                 <small class="text-muted">28</small>
               </div>
             </li>
             <li class="d-flex gap-4 align-items-center pb-1">
-              <div class="badge rounded bg-label-warning p-1_5"><i class="ti tabler-clock ti-md"></i></div>
+              <div class="badge rounded bg-label-warning p-1_5"><i class="ti ti-clock ti-md"></i></div>
               <div>
                 <h6 class="mb-0 text-nowrap">Response Time</h6>
                 <small class="text-muted">1 Day</small>
@@ -154,7 +154,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="salesLastMonthMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="salesLastMonthMenu">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -231,7 +231,7 @@
         <h5 class="mb-0 card-title">Project Status</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="projectStatusId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="projectStatusId">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -241,7 +241,7 @@
       </div>
       <div class="card-body">
         <div class="d-flex align-items-start">
-          <div class="badge rounded bg-label-primary p-2 me-3 rounded"><i class="ti tabler-currency-dollar ti-lg"></i></div>
+          <div class="badge rounded bg-label-primary p-2 me-3 rounded"><i class="ti ti-currency-dollar ti-lg"></i></div>
           <div class="d-flex justify-content-between w-100 gap-2 align-items-center">
             <div class="me-2">
               <h6 class="mb-0">$4,3742</h6>
@@ -279,7 +279,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="earningReportsTabsId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReportsTabsId">
             <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -291,31 +291,31 @@
         <ul class="nav nav-tabs widget-nav-tabs pb-8 gap-4 mx-1 d-flex flex-nowrap" role="tablist">
           <li class="nav-item">
             <a href="javascript:void(0);" class="nav-link btn active d-flex flex-column align-items-center justify-content-center" role="tab" data-bs-toggle="tab" data-bs-target="#navs-orders-id" aria-controls="navs-orders-id" aria-selected="true">
-              <div class="badge bg-label-secondary rounded p-2"><i class="ti tabler-shopping-cart ti-md"></i></div>
+              <div class="badge bg-label-secondary rounded p-2"><i class="ti ti-shopping-cart ti-md"></i></div>
               <h6 class="tab-widget-title mb-0 mt-2">Orders</h6>
             </a>
           </li>
           <li class="nav-item">
             <a href="javascript:void(0);" class="nav-link btn d-flex flex-column align-items-center justify-content-center" role="tab" data-bs-toggle="tab" data-bs-target="#navs-sales-id" aria-controls="navs-sales-id" aria-selected="false">
-              <div class="badge bg-label-secondary rounded p-2"><i class="ti tabler-chart-bar ti-md"></i></div>
+              <div class="badge bg-label-secondary rounded p-2"><i class="ti ti-chart-bar ti-md"></i></div>
               <h6 class="tab-widget-title mb-0 mt-2"> Sales</h6>
             </a>
           </li>
           <li class="nav-item">
             <a href="javascript:void(0);" class="nav-link btn d-flex flex-column align-items-center justify-content-center" role="tab" data-bs-toggle="tab" data-bs-target="#navs-profit-id" aria-controls="navs-profit-id" aria-selected="false">
-              <div class="badge bg-label-secondary rounded p-2"><i class="ti tabler-currency-dollar ti-md"></i></div>
+              <div class="badge bg-label-secondary rounded p-2"><i class="ti ti-currency-dollar ti-md"></i></div>
               <h6 class="tab-widget-title mb-0 mt-2">Profit</h6>
             </a>
           </li>
           <li class="nav-item">
             <a href="javascript:void(0);" class="nav-link btn d-flex flex-column align-items-center justify-content-center" role="tab" data-bs-toggle="tab" data-bs-target="#navs-income-id" aria-controls="navs-income-id" aria-selected="false">
-              <div class="badge bg-label-secondary rounded p-2"><i class="ti tabler-chart-pie-2 ti-md"></i></div>
+              <div class="badge bg-label-secondary rounded p-2"><i class="ti ti-chart-pie-2 ti-md"></i></div>
               <h6 class="tab-widget-title mb-0 mt-2">Income</h6>
             </a>
           </li>
           <li class="nav-item">
             <a href="javascript:void(0);" class="nav-link btn d-flex align-items-center justify-content-center disabled" role="tab" data-bs-toggle="tab" aria-selected="false">
-              <div class="badge bg-label-secondary rounded p-2"><i class="ti tabler-plus ti-md"></i></div>
+              <div class="badge bg-label-secondary rounded p-2"><i class="ti ti-plus ti-md"></i></div>
             </a>
           </li>
         </ul>
@@ -345,7 +345,7 @@
           <h5 class="mb-0 card-title">Total Earning</h5>
           <div class="dropdown">
             <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="totalEarning" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+              <i class="ti ti-dots-vertical ti-md text-muted"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalEarning">
               <a class="dropdown-item" href="javascript:void(0);">View More</a>
@@ -355,14 +355,14 @@
         </div>
         <div class="d-flex align-items-center">
           <h2 class="mb-0 me-2">87%</h2>
-          <i class="ti tabler-chevron-up text-success me-1"></i>
+          <i class="ti ti-chevron-up text-success me-1"></i>
           <h6 class="text-success mb-0">25.8%</h6>
         </div>
       </div>
       <div class="card-body">
         <div id="totalEarningChart"></div>
         <div class="d-flex align-items-start my-4">
-          <div class="badge rounded bg-label-primary p-2 me-4 rounded"><i class="ti tabler-brand-paypal ti-md"></i></div>
+          <div class="badge rounded bg-label-primary p-2 me-4 rounded"><i class="ti ti-brand-paypal ti-md"></i></div>
           <div class="d-flex justify-content-between w-100 gap-2 align-items-center">
             <div class="me-2">
               <h6 class="mb-0">Total Revenue</h6>
@@ -372,7 +372,7 @@
           </div>
         </div>
         <div class="d-flex align-items-start">
-          <div class="badge rounded bg-label-secondary p-2 me-4 rounded"><i class="ti tabler-currency-dollar ti-md"></i></div>
+          <div class="badge rounded bg-label-secondary p-2 me-4 rounded"><i class="ti ti-currency-dollar ti-md"></i></div>
           <div class="d-flex justify-content-between w-100 gap-2 align-items-center">
             <div class="me-2">
               <h6 class="mb-0">Total Sales</h6>
@@ -392,7 +392,7 @@
         <h5 class="card-title m-0 me-2">Carrier Performance</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="performance" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="performance">
             <a class="dropdown-item" href="javascript:void(0);">Delivery rate</a>
@@ -416,7 +416,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="deliveryExceptions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryExceptions">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -440,7 +440,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="vehiclesOverview" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesOverview">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -469,7 +469,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti tabler-car ti-lg text-heading'></i>
+                      <i class='ti ti-car ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">On the way</h6>
                   </div>
@@ -485,7 +485,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti tabler-circle-arrow-down ti-lg text-heading'></i>
+                      <i class='ti ti-circle-arrow-down ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Unloading</h6>
                   </div>
@@ -501,7 +501,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti tabler-circle-arrow-up ti-lg text-heading'></i>
+                      <i class='ti ti-circle-arrow-up ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Loading</h6>
                   </div>
@@ -517,7 +517,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti tabler-clock ti-lg text-heading'></i>
+                      <i class='ti ti-clock ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Waiting</h6>
                   </div>
@@ -543,7 +543,7 @@
         <h5 class="card-title m-0 me-2">Topic you are interested in</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="topic" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topic">
             <a class="dropdown-item" href="javascript:void(0);">Highest Views</a>
@@ -558,21 +558,21 @@
         <div class="col-md-4 d-flex justify-content-around align-items-center">
           <div>
             <div class="d-flex align-items-baseline">
-              <span class="text-primary me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-primary me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">UI Design</p>
                 <h5>35%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline my-12">
-              <span class="text-success me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-success me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">Music</p>
                 <h5>14%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline">
-              <span class="text-danger me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-danger me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">React</p>
                 <h5>10%</h5>
@@ -582,21 +582,21 @@
 
           <div>
             <div class="d-flex align-items-baseline">
-              <span class="text-info me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-info me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">UX Design</p>
                 <h5>20%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline my-12">
-              <span class="text-secondary me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-secondary me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">Animation</p>
                 <h5>12%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline">
-              <span class="text-warning me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-warning me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">SEO</p>
                 <h5>9%</h5>

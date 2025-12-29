@@ -9,14 +9,14 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-file-text me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-file-text me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Generate Document</h5>
             <small class="text-muted">Select a template for {{ $employee->name }}</small>
           </div>
         </div>
         <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-outline-secondary">
-          <i class="ti tabler-arrow-left me-1"></i>Back to Employee
+          <i class="ti ti-arrow-left me-1"></i>Back to Employee
         </a>
       </div>
     </div>
@@ -27,7 +27,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti tabler-user me-2"></i>Employee Information
+              <i class="ti ti-user me-2"></i>Employee Information
             </h6>
           </div>
           <div class="card-body">
@@ -62,7 +62,7 @@
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti tabler-template me-2"></i>Available Templates
+          <i class="ti ti-template me-2"></i>Available Templates
         </h6>
       </div>
       <div class="card-body">
@@ -80,7 +80,7 @@
                              id="template_{{ $template->id }}" value="{{ $template->id }}" required>
                       <label class="form-check-label w-100" for="template_{{ $template->id }}">
                         <div class="d-flex align-items-start">
-                          <i class="ti tabler-file-text text-primary me-2" style="font-size: 1.2rem;"></i>
+                          <i class="ti ti-file-text text-primary me-2" style="font-size: 1.2rem;"></i>
                           <div class="flex-grow-1">
                             <h6 class="mb-1">{{ $template->name }}</h6>
                             <div class="mb-2">
@@ -108,20 +108,20 @@
 
             <div class="d-flex justify-content-between mt-3">
               <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-outline-secondary">
-                <i class="ti tabler-arrow-left me-1"></i>Cancel
+                <i class="ti ti-arrow-left me-1"></i>Cancel
               </a>
               <button type="submit" class="btn btn-primary">
-                <i class="ti tabler-eye me-1"></i>Preview Document
+                <i class="ti ti-eye me-1"></i>Preview Document
               </button>
             </div>
           </form>
         @else
           <div class="text-center py-4">
-            <i class="ti tabler-file-off text-muted" style="font-size: 3rem;"></i>
+            <i class="ti ti-file-off text-muted" style="font-size: 3rem;"></i>
             <h6 class="mt-2">No Templates Available</h6>
             <p class="text-muted">Please create letter templates first before generating documents.</p>
             <a href="{{ route('letter-templates.create') }}" class="btn btn-primary">
-              <i class="ti tabler-plus me-1"></i>Create Template
+              <i class="ti ti-plus me-1"></i>Create Template
             </a>
           </div>
         @endif

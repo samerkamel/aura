@@ -12,7 +12,7 @@ $configData = Helper::appClasses();
     <div class="card">
       <div class="card-header border-bottom">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-world me-2"></i>Edit Sector: {{ $sector->name }}
+          <i class="ti ti-world me-2"></i>Edit Sector: {{ $sector->name }}
         </h5>
       </div>
 
@@ -82,7 +82,7 @@ $configData = Helper::appClasses();
             @if($sector->business_units_count > 0)
               <div class="col-12 mb-3">
                 <div class="alert alert-info">
-                  <i class="ti tabler-info-circle me-2"></i>
+                  <i class="ti ti-info-circle me-2"></i>
                   <strong>Note:</strong> This sector has {{ $sector->business_units_count }} business unit(s) assigned to it.
                   Deactivating this sector may affect business unit operations.
                 </div>
@@ -93,14 +93,14 @@ $configData = Helper::appClasses();
 
         <div class="card-footer d-flex justify-content-between">
           <a href="{{ route('administration.sectors.index') }}" class="btn btn-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Sectors
+            <i class="ti ti-arrow-left me-1"></i>Back to Sectors
           </a>
           <div>
             <a href="{{ route('administration.sectors.show', $sector) }}" class="btn btn-info me-2">
-              <i class="ti tabler-eye me-1"></i>View Details
+              <i class="ti ti-eye me-1"></i>View Details
             </a>
             <button type="submit" class="btn btn-primary">
-              <i class="ti tabler-check me-1"></i>Update Sector
+              <i class="ti ti-check me-1"></i>Update Sector
             </button>
           </div>
         </div>

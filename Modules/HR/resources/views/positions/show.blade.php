@@ -12,7 +12,7 @@
           <div class="d-flex align-items-center">
             <div class="avatar avatar-lg me-3">
               <span class="avatar-initial rounded-circle bg-label-primary">
-                <i class="ti tabler-briefcase ti-md"></i>
+                <i class="ti ti-briefcase ti-md"></i>
               </span>
             </div>
             <div>
@@ -70,15 +70,15 @@
 
           <div class="d-flex justify-content-center gap-2">
             <a href="{{ route('hr.positions.edit', $position) }}" class="btn btn-primary">
-              <i class="ti tabler-edit me-1"></i>Edit
+              <i class="ti ti-edit me-1"></i>Edit
             </a>
             <form action="{{ route('hr.positions.toggle-status', $position) }}" method="POST" class="d-inline">
               @csrf
               <button type="submit" class="btn btn-outline-{{ $position->is_active ? 'warning' : 'success' }}">
                 @if($position->is_active)
-                  <i class="ti tabler-ban me-1"></i>Deactivate
+                  <i class="ti ti-ban me-1"></i>Deactivate
                 @else
-                  <i class="ti tabler-check me-1"></i>Activate
+                  <i class="ti ti-check me-1"></i>Activate
                 @endif
               </button>
             </form>
@@ -112,12 +112,12 @@
       </div>
       <div class="card-body">
         @if($position->description)
-        <h6 class="mb-2"><i class="ti tabler-file-description me-2"></i>Job Description</h6>
+        <h6 class="mb-2"><i class="ti ti-file-description me-2"></i>Job Description</h6>
         <p class="mb-4">{{ $position->description }}</p>
         @endif
 
         @if($position->requirements)
-        <h6 class="mb-2"><i class="ti tabler-checklist me-2"></i>Requirements</h6>
+        <h6 class="mb-2"><i class="ti ti-checklist me-2"></i>Requirements</h6>
         <p class="mb-0">{{ $position->requirements }}</p>
         @endif
       </div>
@@ -146,7 +146,7 @@
             <tr>
               <td>
                 <a href="{{ route('hr.employees.show', $employee) }}" class="text-body">
-                  <i class="ti tabler-user me-2"></i>
+                  <i class="ti ti-user me-2"></i>
                   <strong>{{ $employee->name }}</strong>
                 </a>
               </td>
@@ -163,10 +163,10 @@
               <td>{{ $employee->start_date ? $employee->start_date->format('M d, Y') : '-' }}</td>
               <td>
                 <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-sm btn-icon btn-text-primary">
-                  <i class="ti tabler-eye"></i>
+                  <i class="ti ti-eye"></i>
                 </a>
                 <a href="{{ route('hr.employees.edit', $employee) }}" class="btn btn-sm btn-icon btn-text-primary">
-                  <i class="ti tabler-edit"></i>
+                  <i class="ti ti-edit"></i>
                 </a>
               </td>
             </tr>
@@ -174,7 +174,7 @@
             <tr>
               <td colspan="5" class="text-center py-4">
                 <div class="d-flex flex-column align-items-center">
-                  <i class="ti tabler-users text-muted" style="font-size: 2rem;"></i>
+                  <i class="ti ti-users text-muted" style="font-size: 2rem;"></i>
                   <p class="mt-2 mb-0 text-muted">No employees assigned to this position</p>
                 </div>
               </td>

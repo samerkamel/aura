@@ -12,7 +12,7 @@
                     <small class="text-muted">Create a new transaction between business units</small>
                 </div>
                 <a href="{{ route('invoicing.internal-transactions.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti tabler-arrow-left me-1"></i>Back to Transactions
+                    <i class="ti ti-arrow-left me-1"></i>Back to Transactions
                 </a>
             </div>
 
@@ -138,7 +138,7 @@
                     <div class="row mt-4">
                         <div class="col-md-8">
                             <div class="alert alert-info">
-                                <h6 class="alert-heading"><i class="ti tabler-info-circle me-2"></i>Transaction Preview</h6>
+                                <h6 class="alert-heading"><i class="ti ti-info-circle me-2"></i>Transaction Preview</h6>
                                 <div id="transaction-preview">
                                     <p class="mb-1"><strong>From:</strong> <span id="preview-from">Not selected</span></p>
                                     <p class="mb-1"><strong>To:</strong> <span id="preview-to">Not selected</span></p>
@@ -172,14 +172,14 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('invoicing.internal-transactions.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-x me-1"></i>Cancel
+                        <i class="ti ti-x me-1"></i>Cancel
                     </a>
                     <div>
                         <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
-                            <i class="ti tabler-device-floppy me-1"></i>Save as Draft
+                            <i class="ti ti-device-floppy me-1"></i>Save as Draft
                         </button>
                         <button type="submit" name="action" value="submit" class="btn btn-primary">
-                            <i class="ti tabler-send me-1"></i>Save & Submit for Approval
+                            <i class="ti ti-send me-1"></i>Save & Submit for Approval
                         </button>
                     </div>
                 </div>

@@ -31,8 +31,8 @@
           </div>
           <div class="d-flex align-items-center">
             <span class="badge bg-label-danger">UI/UX</span>
-            <i class='ti tabler-share ti-lg mx-4'></i>
-            <i class='ti tabler-bookmarks ti-lg'></i>
+            <i class='ti ti-share ti-lg mx-4'></i>
+            <i class='ti ti-bookmarks ti-lg'></i>
           </div>
         </div>
         <div class="card academy-content shadow-none border">
@@ -50,14 +50,14 @@
             <h5>By the numbers</h5>
             <div class="d-flex flex-wrap row-gap-2">
               <div class="me-12">
-                <p class="text-nowrap mb-2"><i class='ti tabler-check me-2 align-bottom'></i>Skill level: All Levels</p>
-                <p class="text-nowrap mb-2"><i class='ti tabler-users me-2 align-top'></i>Students: 38,815</p>
-                <p class="text-nowrap mb-2"><i class='ti tabler-world me-2 align-bottom'></i>Languages: English</p>
-                <p class="text-nowrap mb-0"><i class='ti tabler-file me-2 align-bottom'></i>Captions: Yes</p>
+                <p class="text-nowrap mb-2"><i class='ti ti-check me-2 align-bottom'></i>Skill level: All Levels</p>
+                <p class="text-nowrap mb-2"><i class='ti ti-users me-2 align-top'></i>Students: 38,815</p>
+                <p class="text-nowrap mb-2"><i class='ti ti-world me-2 align-bottom'></i>Languages: English</p>
+                <p class="text-nowrap mb-0"><i class='ti ti-file me-2 align-bottom'></i>Captions: Yes</p>
               </div>
               <div>
-                <p class="text-nowrap mb-2"><i class='ti tabler-video me-2 align-top ms-50'></i>Lectures: 19</p>
-                <p class="text-nowrap mb-0"><i class='ti tabler-clock me-2 align-top'></i>Video: 1.5 total hours</p>
+                <p class="text-nowrap mb-2"><i class='ti ti-video me-2 align-top ms-50'></i>Lectures: 19</p>
+                <p class="text-nowrap mb-0"><i class='ti ti-clock me-2 align-top'></i>Video: 1.5 total hours</p>
               </div>
               <hr class="my-6">
             </div>

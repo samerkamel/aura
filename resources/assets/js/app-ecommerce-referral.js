@@ -166,8 +166,8 @@ $(function () {
       language: {
         sLengthMenu: '_MENU_',
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
@@ -175,11 +175,11 @@ $(function () {
         {
           extend: 'collection',
           className: 'btn btn-label-secondary dropdown-toggle waves-effect waves-light',
-          text: '<i class="ti tabler-upload ti-xs me-2"></i>Export',
+          text: '<i class="ti ti-upload ti-xs me-2"></i>Export',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ti tabler-printer me-2"></i>Print',
+              text: '<i class="ti ti-printer me-2"></i>Print',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -216,7 +216,7 @@ $(function () {
             },
             {
               extend: 'csv',
-              text: '<i class="ti tabler-file me-2" ></i>Csv',
+              text: '<i class="ti ti-file me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -240,7 +240,7 @@ $(function () {
             },
             {
               extend: 'excel',
-              text: '<i class="ti tabler-file-export me-2"></i>Excel',
+              text: '<i class="ti ti-file-export me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -264,7 +264,7 @@ $(function () {
             },
             {
               extend: 'pdf',
-              text: '<i class="ti tabler-file-text me-2"></i>Pdf',
+              text: '<i class="ti ti-file-text me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],
@@ -288,7 +288,7 @@ $(function () {
             },
             {
               extend: 'copy',
-              text: '<i class="ti tabler-copy me-2" ></i>Copy',
+              text: '<i class="ti ti-copy me-2" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5],

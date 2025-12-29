@@ -121,7 +121,7 @@
       <div class="card accordion-item active">
         <h2 class="accordion-header d-flex align-items-center">
           <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-1" aria-expanded="true">
-            <i class="ti tabler-star me-2"></i>
+            <i class="ti ti-star me-2"></i>
             Header Option 1
           </button>
         </h2>
@@ -138,7 +138,7 @@
       <div class="accordion-item card">
         <h2 class="accordion-header d-flex align-items-center">
           <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-2" aria-expanded="false">
-            <i class="me-2 ti tabler-sun"></i>
+            <i class="me-2 ti ti-sun"></i>
             Header Option 2
           </button>
         </h2>
@@ -156,7 +156,7 @@
       <div class="accordion-item card">
         <h2 class="accordion-header d-flex align-items-center">
           <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionWithIcon-3" aria-expanded="false">
-            <i class="me-2 ti tabler-moon"></i>
+            <i class="me-2 ti ti-moon"></i>
             Header Option 3
           </button>
         </h2>

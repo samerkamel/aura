@@ -13,13 +13,13 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-info">
-                        <i class="ti tabler-receipt me-1"></i>Paid Expenses
+                        <i class="ti ti-receipt me-1"></i>Paid Expenses
                     </a>
                     <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-category me-1"></i>Categories
+                        <i class="ti ti-category me-1"></i>Categories
                     </a>
                     <a href="{{ route('accounting.expenses.create') }}" class="btn btn-primary">
-                        <i class="ti tabler-plus me-1"></i>New Schedule
+                        <i class="ti ti-plus me-1"></i>New Schedule
                     </a>
                 </div>
             </div>
@@ -66,10 +66,10 @@
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary me-2">
-                            <i class="ti tabler-search me-1"></i>Filter
+                            <i class="ti ti-search me-1"></i>Filter
                         </button>
                         <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
-                            <i class="ti tabler-x me-1"></i>Clear
+                            <i class="ti ti-x me-1"></i>Clear
                         </a>
                     </div>
                 </form>
@@ -139,21 +139,21 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti tabler-dots-vertical"></i>
+                                            <i class="ti ti-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{{ route('accounting.expenses.show', $schedule) }}">
-                                                <i class="ti tabler-eye me-2"></i>View Details
+                                                <i class="ti ti-eye me-2"></i>View Details
                                             </a>
                                             <a class="dropdown-item" href="{{ route('accounting.expenses.edit', $schedule) }}">
-                                                <i class="ti tabler-edit me-2"></i>Edit
+                                                <i class="ti ti-edit me-2"></i>Edit
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('accounting.expenses.toggle-status', $schedule) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti tabler-{{ $schedule->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                    <i class="ti ti-{{ $schedule->is_active ? 'pause' : 'play' }} me-2"></i>
                                                     {{ $schedule->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
@@ -163,7 +163,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="dropdown-item text-danger"
                                                         onclick="return confirm('Are you sure you want to delete this expense schedule?')">
-                                                    <i class="ti tabler-trash me-2"></i>Delete
+                                                    <i class="ti ti-trash me-2"></i>Delete
                                                 </button>
                                             </form>
                                         </div>
@@ -174,11 +174,11 @@
                             <tr>
                                 <td colspan="9" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti tabler-coin-off text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti ti-coin-off text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No expense schedules found</h5>
                                         <p class="text-muted">Start by creating your first recurring expense schedule</p>
                                         <a href="{{ route('accounting.expenses.create') }}" class="btn btn-primary">
-                                            <i class="ti tabler-plus me-1"></i>Create Expense Schedule
+                                            <i class="ti ti-plus me-1"></i>Create Expense Schedule
                                         </a>
                                     </div>
                                 </td>
@@ -202,14 +202,14 @@
                                     <input type="hidden" name="schedules" id="selectedSchedules">
                                     <div class="d-flex gap-2">
                                         <button type="submit" name="action" value="activate" class="btn btn-sm btn-success">
-                                            <i class="ti tabler-play me-1"></i>Activate
+                                            <i class="ti ti-play me-1"></i>Activate
                                         </button>
                                         <button type="submit" name="action" value="deactivate" class="btn btn-sm btn-warning">
-                                            <i class="ti tabler-pause me-1"></i>Deactivate
+                                            <i class="ti ti-pause me-1"></i>Deactivate
                                         </button>
                                         <button type="submit" name="action" value="delete" class="btn btn-sm btn-danger"
                                                 onclick="return confirm('Are you sure you want to delete the selected schedules?')">
-                                            <i class="ti tabler-trash me-1"></i>Delete
+                                            <i class="ti ti-trash me-1"></i>Delete
                                         </button>
                                     </div>
                                 </form>

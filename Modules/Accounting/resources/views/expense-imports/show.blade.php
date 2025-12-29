@@ -28,11 +28,11 @@
                 <div class="d-flex gap-2">
                     @if(in_array($expenseImport->status, ['reviewing', 'previewing']))
                         <a href="{{ route('accounting.expense-imports.preview', $expenseImport) }}" class="btn btn-primary">
-                            <i class="ti tabler-eye-check me-1"></i>Preview & Execute
+                            <i class="ti ti-eye-check me-1"></i>Preview & Execute
                         </a>
                     @endif
                     <a href="{{ route('accounting.expense-imports.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back
+                        <i class="ti ti-arrow-left me-1"></i>Back
                     </a>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-sm me-3 bg-primary">
-                                <i class="ti tabler-list ti-md"></i>
+                                <i class="ti ti-list ti-md"></i>
                             </div>
                             <div>
                                 <h4 class="mb-0">{{ $expenseImport->total_rows }}</h4>
@@ -74,7 +74,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-sm me-3 bg-success">
-                                <i class="ti tabler-check ti-md"></i>
+                                <i class="ti ti-check ti-md"></i>
                             </div>
                             <div>
                                 <h4 class="mb-0">{{ $expenseImport->valid_rows }}</h4>
@@ -89,7 +89,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-sm me-3 bg-warning">
-                                <i class="ti tabler-alert-triangle ti-md"></i>
+                                <i class="ti ti-alert-triangle ti-md"></i>
                             </div>
                             <div>
                                 <h4 class="mb-0">{{ $expenseImport->warning_rows }}</h4>
@@ -104,7 +104,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-sm me-3 bg-danger">
-                                <i class="ti tabler-x ti-md"></i>
+                                <i class="ti ti-x ti-md"></i>
                             </div>
                             <div>
                                 <h4 class="mb-0">{{ $expenseImport->error_rows }}</h4>
@@ -120,7 +120,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h6 class="mb-0"><i class="ti tabler-link me-2"></i>Value Mapping</h6>
+                    <h6 class="mb-0"><i class="ti ti-link me-2"></i>Value Mapping</h6>
                     <small class="text-muted">Map imported values to existing entities. Changes apply to all matching rows.</small>
                 </div>
                 <div class="form-check form-switch">
@@ -131,7 +131,7 @@
             <div class="card-body">
                 @if($mappingCounts['types']['unmapped'] == 0 && $mappingCounts['categories']['unmapped'] == 0 && $mappingCounts['customers']['unmapped'] == 0)
                     <div class="alert alert-success mb-0" id="allMappedAlert">
-                        <i class="ti tabler-check me-2"></i>All values have been mapped! Toggle "Show All" to review or change mappings.
+                        <i class="ti ti-check me-2"></i>All values have been mapped! Toggle "Show All" to review or change mappings.
                     </div>
                 @endif
                 <div class="row" id="mappingSection">
@@ -257,14 +257,14 @@
                         <label class="form-label">Bulk Actions</label>
                         <div class="d-grid gap-2">
                             <button type="button" class="btn btn-sm btn-outline-primary" id="selectAllRows">
-                                <i class="ti tabler-checkbox me-1"></i>Select All Visible
+                                <i class="ti ti-checkbox me-1"></i>Select All Visible
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAllRows">
-                                <i class="ti tabler-square me-1"></i>Deselect All
+                                <i class="ti ti-square me-1"></i>Deselect All
                             </button>
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-warning dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" id="bulkActionBtn" disabled>
-                                    <i class="ti tabler-edit me-1"></i>Bulk Update Selected
+                                    <i class="ti ti-edit me-1"></i>Bulk Update Selected
                                 </button>
                                 <div class="dropdown-menu w-100">
                                     <h6 class="dropdown-header">Set Action</h6>
@@ -286,7 +286,7 @@
         <!-- Data Table -->
         <div class="card">
             <div class="card-header">
-                <h6 class="mb-0"><i class="ti tabler-table me-2"></i>Import Data</h6>
+                <h6 class="mb-0"><i class="ti ti-table me-2"></i>Import Data</h6>
                 <small class="text-muted">Click on a row to edit. Use checkboxes for bulk operations.</small>
             </div>
             <div class="card-body">
@@ -317,7 +317,7 @@
                                 <td>
                                     <span class="badge {{ $row->status_badge_class }}">{{ ucfirst($row->status) }}</span>
                                     @if($row->validation_messages)
-                                        <i class="ti tabler-info-circle text-muted ms-1" data-bs-toggle="tooltip" title="{{ collect($row->validation_messages)->pluck('message')->join(', ') }}"></i>
+                                        <i class="ti ti-info-circle text-muted ms-1" data-bs-toggle="tooltip" title="{{ collect($row->validation_messages)->pluck('message')->join(', ') }}"></i>
                                     @endif
                                 </td>
                                 <td>{{ $row->expense_date?->format('d/m/Y') ?? '-' }}</td>
@@ -369,7 +369,7 @@
                                             <span class="badge bg-secondary">No Invoice</span>
                                         @else
                                             <button type="button" class="btn btn-xs btn-outline-primary link-invoice-btn" data-row-id="{{ $row->id }}" data-customer-id="{{ $row->customer_id }}">
-                                                <i class="ti tabler-link"></i>
+                                                <i class="ti ti-link"></i>
                                             </button>
                                         @endif
                                     @else

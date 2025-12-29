@@ -21,11 +21,11 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-building me-2"></i>Business Units Management
+          <i class="ti ti-building me-2"></i>Business Units Management
         </h5>
         @can('manage-business-units')
           <a href="{{ route('administration.business-units.create') }}" class="btn btn-primary">
-            <i class="ti tabler-plus me-1"></i>Add Business Unit
+            <i class="ti ti-plus me-1"></i>Add Business Unit
           </a>
         @endcan
       </div>
@@ -38,7 +38,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-primary">
-                    <i class="ti tabler-building ti-lg"></i>
+                    <i class="ti ti-building ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Total BUs</span>
@@ -51,7 +51,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-success">
-                    <i class="ti tabler-check ti-lg"></i>
+                    <i class="ti ti-check ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Active BUs</span>
@@ -64,7 +64,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-info">
-                    <i class="ti tabler-building-skyscraper ti-lg"></i>
+                    <i class="ti ti-building-skyscraper ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Head Office</span>
@@ -77,7 +77,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-warning">
-                    <i class="ti tabler-packages ti-lg"></i>
+                    <i class="ti ti-packages ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Total Products</span>
@@ -98,7 +98,7 @@
         <div class="d-flex gap-2">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-              <i class="ti tabler-filter me-1"></i>Filter
+              <i class="ti ti-filter me-1"></i>Filter
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}">All Status</a></li>
@@ -166,19 +166,19 @@
                 <td>
                   <div class="dropdown">
                     <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                      <i class="ti tabler-dots-vertical"></i>
+                      <i class="ti ti-dots-vertical"></i>
                     </button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="{{ route('administration.business-units.show', $businessUnit) }}">
-                        <i class="ti tabler-eye me-2"></i>View Details
+                        <i class="ti ti-eye me-2"></i>View Details
                       </a>
                       @can('manage-business-units')
                         <a class="dropdown-item" href="{{ route('administration.business-units.edit', $businessUnit) }}">
-                          <i class="ti tabler-edit me-2"></i>Edit
+                          <i class="ti ti-edit me-2"></i>Edit
                         </a>
                         @can('assign-users-to-business-units')
                           <a class="dropdown-item" href="{{ route('administration.business-units.manage-users', $businessUnit) }}">
-                            <i class="ti tabler-users me-2"></i>Manage Users
+                            <i class="ti ti-users me-2"></i>Manage Users
                           </a>
                         @endcan
                         <div class="dropdown-divider"></div>
@@ -195,7 +195,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">
-                              <i class="ti tabler-trash me-2"></i>Delete
+                              <i class="ti ti-trash me-2"></i>Delete
                             </button>
                           </form>
                         @endif
@@ -215,7 +215,7 @@
 @if(session('success'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-success show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-check text-success me-2"></i>
+      <i class="ti ti-check text-success me-2"></i>
       <div class="me-auto fw-medium">Success!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -226,7 +226,7 @@
 @if(session('error'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

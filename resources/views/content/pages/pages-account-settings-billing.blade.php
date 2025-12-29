@@ -45,11 +45,11 @@
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti tabler-users me-1_5"></i> Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti tabler-lock me-1_5"></i> Security</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti tabler-bookmark me-1_5"></i> Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti tabler-bell me-1_5"></i> Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti tabler-link me-1_5"></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti ti-users me-1_5"></i> Account</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti ti-lock me-1_5"></i> Security</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti ti-bookmark me-1_5"></i> Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti ti-bell me-1_5"></i> Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti ti-link me-1_5"></i> Connections</a></li>
       </ul>
     </div>
     <div class="card mb-6">
@@ -74,7 +74,7 @@
           <div class="col-md-6">
             <div class="alert alert-warning mb-6" role="alert">
               <h5 class="alert-heading mb-1 d-flex align-items-center">
-                <span class="alert-icon rounded"><i class="ti tabler-alert-triangle ti-md"></i></span>
+                <span class="alert-icon rounded"><i class="ti ti-alert-triangle ti-md"></i></span>
                 <span>We need your attention!</span>
               </h5>
               <span class="ms-11 ps-1">Your plan requires update</span>
@@ -133,7 +133,7 @@
                 <label class="form-label" for="paymentCvv">CVV Code</label>
                 <div class="input-group input-group-merge">
                   <input type="text" id="paymentCvv" class="form-control cvv-code-mask" maxlength="3" placeholder="654" />
-                  <span class="input-group-text cursor-pointer" id="paymentCvv2"><i class="ti tabler-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                  <span class="input-group-text cursor-pointer" id="paymentCvv2"><i class="ti ti-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                 </div>
               </div>
               <div class="col-12">
@@ -264,7 +264,7 @@
               <th></th>
               <th></th>
               <th>#</th>
-              <th><i class='ti tabler-trending-up'></i></th>
+              <th><i class='ti ti-trending-up'></i></th>
               <th>Client</th>
               <th>Total</th>
               <th class="text-truncate">Issued Date</th>

@@ -144,16 +144,16 @@ $(function () {
             var $category = categoryObj[full['category']].title;
             var categoryBadgeObj = {
               Household:
-                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-warning me-4 p-3"><i class="ti tabler-home-2 ti-sm"></i></span>',
+                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-warning me-4 p-3"><i class="ti ti-home-2 ti-sm"></i></span>',
               Office:
-                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-info me-4 p-3"><i class="ti tabler-briefcase ti-sm"></i></span>',
+                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-info me-4 p-3"><i class="ti ti-briefcase ti-sm"></i></span>',
               Electronics:
-                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-danger me-4 p-3"><i class="ti tabler-device-mobile ti-sm"></i></span>',
+                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-danger me-4 p-3"><i class="ti ti-device-mobile ti-sm"></i></span>',
               Shoes:
-                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-success me-4"><i class="ti tabler-shoe ti-sm"></i></span>',
+                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-success me-4"><i class="ti ti-shoe ti-sm"></i></span>',
               Accessories:
-                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-secondary me-4"><i class="ti tabler-device-watch ti-sm"></i></span>',
-              Game: '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-primary me-4"><i class="ti tabler-device-gamepad-2 ti-sm"></i></span>'
+                '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-secondary me-4"><i class="ti ti-device-watch ti-sm"></i></span>',
+              Game: '<span class="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-primary me-4"><i class="ti ti-device-gamepad-2 ti-sm"></i></span>'
             };
             return (
               "<span class='text-truncate d-flex align-items-center text-heading'>" +
@@ -250,8 +250,8 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-inline-block text-nowrap">' +
-              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect waves-light"><i class="ti tabler-edit ti-md"></i></button>' +
-              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect waves-light dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical ti-md"></i></button>' +
+              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect waves-light"><i class="ti ti-edit ti-md"></i></button>' +
+              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect waves-light dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="javascript:0;" class="dropdown-item">View</a>' +
               '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
@@ -278,8 +278,8 @@ $(function () {
         searchPlaceholder: 'Search Product',
         info: 'Displaying _START_ to _END_ of _TOTAL_ entries',
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
@@ -287,11 +287,11 @@ $(function () {
         {
           extend: 'collection',
           className: 'btn btn-label-secondary dropdown-toggle me-4 waves-effect waves-light',
-          text: '<i class="ti tabler-upload me-1 ti-xs"></i>Export',
+          text: '<i class="ti ti-upload me-1 ti-xs"></i>Export',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ti tabler-printer me-2" ></i>Print',
+              text: '<i class="ti ti-printer me-2" ></i>Print',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7],
@@ -327,7 +327,7 @@ $(function () {
             },
             {
               extend: 'csv',
-              text: '<i class="ti tabler-file me-2" ></i>Csv',
+              text: '<i class="ti ti-file me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7],
@@ -350,7 +350,7 @@ $(function () {
             },
             {
               extend: 'excel',
-              text: '<i class="ti tabler-file-export me-2"></i>Excel',
+              text: '<i class="ti ti-file-export me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7],
@@ -373,7 +373,7 @@ $(function () {
             },
             {
               extend: 'pdf',
-              text: '<i class="ti tabler-file-text me-2"></i>Pdf',
+              text: '<i class="ti ti-file-text me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7],
@@ -396,7 +396,7 @@ $(function () {
             },
             {
               extend: 'copy',
-              text: '<i class="ti tabler-copy me-2"></i>Copy',
+              text: '<i class="ti ti-copy me-2"></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7],
@@ -420,7 +420,7 @@ $(function () {
           ]
         },
         {
-          text: '<i class="ti tabler-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add Product</span>',
+          text: '<i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add Product</span>',
           className: 'add-new btn btn-primary ms-2 ms-sm-0 waves-effect waves-light',
           action: function () {
             window.location.href = productAdd;

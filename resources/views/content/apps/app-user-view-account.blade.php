@@ -63,7 +63,7 @@
           <div class="d-flex align-items-center me-5 gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti tabler-checkbox ti-lg'></i>
+                <i class='ti ti-checkbox ti-lg'></i>
               </div>
             </div>
             <div>
@@ -74,7 +74,7 @@
           <div class="d-flex align-items-center gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti tabler-briefcase ti-lg'></i>
+                <i class='ti ti-briefcase ti-lg'></i>
               </div>
             </div>
             <div>
@@ -139,9 +139,9 @@
           </div>
         </div>
         <ul class="list-unstyled g-2 my-6">
-          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mb-1">
           <span class="h6 mb-0">Days</span>
@@ -166,11 +166,11 @@
     <!-- User Pills -->
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row flex-wrap mb-6 row-gap-2">
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti tabler-user-check ti-sm me-1_5"></i>Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/security')}}"><i class="ti tabler-lock ti-sm me-1_5"></i>Security</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/billing')}}"><i class="ti tabler-bookmark ti-sm me-1_5"></i>Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti tabler-bell ti-sm me-1_5"></i>Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti tabler-link ti-sm me-1_5"></i>Connections</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti ti-user-check ti-sm me-1_5"></i>Account</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/security')}}"><i class="ti ti-lock ti-sm me-1_5"></i>Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/billing')}}"><i class="ti ti-bookmark ti-sm me-1_5"></i>Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti ti-bell ti-sm me-1_5"></i>Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti ti-link ti-sm me-1_5"></i>Connections</a></li>
       </ul>
     </div>
     <!--/ User Pills -->

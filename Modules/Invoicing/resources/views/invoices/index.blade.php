@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('invoicing.internal-transactions.index') }}" class="btn btn-outline-info">
-                        <i class="ti tabler-building-bank me-1"></i>Internal Transactions
+                        <i class="ti ti-building-bank me-1"></i>Internal Transactions
                     </a>
                     <a href="{{ route('invoicing.invoices.create') }}" class="btn btn-primary">
-                        <i class="ti tabler-plus me-1"></i>New Invoice
+                        <i class="ti ti-plus me-1"></i>New Invoice
                     </a>
                 </div>
             </div>
@@ -77,11 +77,11 @@
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Invoice number..." value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti tabler-filter me-1"></i>Filter
+                                <i class="ti ti-filter me-1"></i>Filter
                             </button>
                             @if(request()->hasAny(['status', 'customer_id', 'date_from', 'date_to', 'search']))
                                 <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                                    <i class="ti tabler-x"></i>
+                                    <i class="ti ti-x"></i>
                                 </a>
                             @endif
                         </div>
@@ -106,11 +106,11 @@
 
                                     $getSortIcon = function($column) use ($currentSort, $currentOrder) {
                                         if ($currentSort !== $column) {
-                                            return '<i class="ti tabler-arrows-sort text-muted"></i>';
+                                            return '<i class="ti ti-arrows-sort text-muted"></i>';
                                         }
                                         return $currentOrder === 'asc'
-                                            ? '<i class="ti tabler-sort-ascending text-primary"></i>'
-                                            : '<i class="ti tabler-sort-descending text-primary"></i>';
+                                            ? '<i class="ti ti-sort-ascending text-primary"></i>'
+                                            : '<i class="ti ti-sort-descending text-primary"></i>';
                                     };
                                 @endphp
                                 <tr>
@@ -192,31 +192,31 @@
                                     <td>
                                         <div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="ti tabler-dots-vertical"></i>
+                                                <i class="ti ti-dots-vertical"></i>
                                             </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}">
-                                                    <i class="ti tabler-eye me-2"></i>View
+                                                    <i class="ti ti-eye me-2"></i>View
                                                 </a>
                                                 @if($invoice->status === 'draft')
                                                     <a class="dropdown-item" href="{{ route('invoicing.invoices.edit', $invoice) }}">
-                                                        <i class="ti tabler-edit me-2"></i>Edit
+                                                        <i class="ti ti-edit me-2"></i>Edit
                                                     </a>
                                                 @endif
                                                 @if(in_array($invoice->status, ['draft', 'sent']))
                                                     <button type="button" class="dropdown-item" onclick="markAsSent({{ $invoice->id }})">
-                                                        <i class="ti tabler-send me-2"></i>Mark as Sent
+                                                        <i class="ti ti-send me-2"></i>Mark as Sent
                                                     </button>
                                                 @endif
                                                 @if(in_array($invoice->status, ['sent', 'overdue']))
                                                     <button type="button" class="dropdown-item" onclick="markAsPaid({{ $invoice->id }})">
-                                                        <i class="ti tabler-check me-2"></i>Mark as Paid
+                                                        <i class="ti ti-check me-2"></i>Mark as Paid
                                                     </button>
                                                 @endif
                                                 <div class="dropdown-divider"></div>
                                                 @if($invoice->status === 'draft')
                                                     <button type="button" class="dropdown-item text-danger" onclick="cancelInvoice({{ $invoice->id }})">
-                                                        <i class="ti tabler-x me-2"></i>Cancel
+                                                        <i class="ti ti-x me-2"></i>Cancel
                                                     </button>
                                                 @endif
                                             </div>
@@ -238,12 +238,12 @@
                 @else
                     <div class="text-center py-5">
                         <div class="mb-3">
-                            <i class="ti tabler-file-invoice display-6 text-muted"></i>
+                            <i class="ti ti-file-invoice display-6 text-muted"></i>
                         </div>
                         <h5 class="mb-2">No invoices found</h5>
                         <p class="text-muted">No invoices match your current filters.</p>
                         <a href="{{ route('invoicing.invoices.create') }}" class="btn btn-primary">
-                            <i class="ti tabler-plus me-1"></i>Create First Invoice
+                            <i class="ti ti-plus me-1"></i>Create First Invoice
                         </a>
                     </div>
                 @endif
@@ -260,7 +260,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-primary p-2 me-2 rounded">
-                            <i class="ti tabler-file-invoice ti-sm"></i>
+                            <i class="ti ti-file-invoice ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -277,7 +277,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-warning p-2 me-2 rounded">
-                            <i class="ti tabler-clock ti-sm"></i>
+                            <i class="ti ti-clock ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -294,7 +294,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-success p-2 me-2 rounded">
-                            <i class="ti tabler-check ti-sm"></i>
+                            <i class="ti ti-check ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -311,7 +311,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-danger p-2 me-2 rounded">
-                            <i class="ti tabler-alert-circle ti-sm"></i>
+                            <i class="ti ti-alert-circle ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">

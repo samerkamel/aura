@@ -21,15 +21,15 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-users me-2"></i>Customer Management
+          <i class="ti ti-users me-2"></i>Customer Management
         </h5>
         @can('manage-customers')
           <div class="d-flex gap-2">
             <a href="{{ route('administration.customers.import') }}" class="btn btn-outline-info btn-sm" title="Import Customers from CSV">
-              <i class="ti tabler-upload"></i>
+              <i class="ti ti-upload"></i>
             </a>
             <a href="{{ route('administration.customers.create') }}" class="btn btn-primary">
-              <i class="ti tabler-plus me-1"></i>Add Customer
+              <i class="ti ti-plus me-1"></i>Add Customer
             </a>
           </div>
         @endcan
@@ -43,7 +43,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-primary">
-                    <i class="ti tabler-users ti-lg"></i>
+                    <i class="ti ti-users ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Total Customers</span>
@@ -56,7 +56,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-success">
-                    <i class="ti tabler-check ti-lg"></i>
+                    <i class="ti ti-check ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Active Customers</span>
@@ -69,7 +69,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-info">
-                    <i class="ti tabler-building ti-lg"></i>
+                    <i class="ti ti-building ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Companies</span>
@@ -82,7 +82,7 @@
               <div class="card-body text-center">
                 <div class="avatar mx-auto mb-2">
                   <span class="avatar-initial rounded-circle bg-warning">
-                    <i class="ti tabler-user ti-lg"></i>
+                    <i class="ti ti-user ti-lg"></i>
                   </span>
                 </div>
                 <span class="d-block text-nowrap">Individuals</span>
@@ -105,12 +105,12 @@
           <form method="GET" class="d-flex">
             <input type="search" name="search" value="{{ request('search') }}" class="form-control me-2" placeholder="Search customers..." style="width: 200px;">
             <button type="submit" class="btn btn-outline-primary">
-              <i class="ti tabler-search"></i>
+              <i class="ti ti-search"></i>
             </button>
           </form>
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-              <i class="ti tabler-filter me-1"></i>Filter
+              <i class="ti ti-filter me-1"></i>Filter
             </button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ request()->fullUrlWithQuery(['status' => '']) }}">All Status</a></li>
@@ -166,13 +166,13 @@
                 <td>
                   <div>
                     @if($customer->email)
-                      <div><i class="ti tabler-mail me-1"></i>{{ $customer->email }}</div>
+                      <div><i class="ti ti-mail me-1"></i>{{ $customer->email }}</div>
                     @endif
                     @if($customer->phone)
-                      <div><i class="ti tabler-phone me-1"></i>{{ $customer->phone }}</div>
+                      <div><i class="ti ti-phone me-1"></i>{{ $customer->phone }}</div>
                     @endif
                     @if($customer->website)
-                      <div><i class="ti tabler-world me-1"></i><a href="{{ $customer->website }}" target="_blank">{{ $customer->website }}</a></div>
+                      <div><i class="ti ti-world me-1"></i><a href="{{ $customer->website }}" target="_blank">{{ $customer->website }}</a></div>
                     @endif
                   </div>
                 </td>
@@ -187,15 +187,15 @@
                 <td>
                   <div class="dropdown">
                     <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                      <i class="ti tabler-dots-vertical"></i>
+                      <i class="ti ti-dots-vertical"></i>
                     </button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="{{ route('administration.customers.show', $customer) }}">
-                        <i class="ti tabler-eye me-2"></i>View Details
+                        <i class="ti ti-eye me-2"></i>View Details
                       </a>
                       @can('manage-customers')
                         <a class="dropdown-item" href="{{ route('administration.customers.edit', $customer) }}">
-                          <i class="ti tabler-edit me-2"></i>Edit
+                          <i class="ti ti-edit me-2"></i>Edit
                         </a>
                         @if($customer->contracts_count == 0)
                           <div class="dropdown-divider"></div>
@@ -203,7 +203,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">
-                              <i class="ti tabler-trash me-2"></i>Delete
+                              <i class="ti ti-trash me-2"></i>Delete
                             </button>
                           </form>
                         @endif
@@ -229,7 +229,7 @@
 @if(session('success'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-success show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-check text-success me-2"></i>
+      <i class="ti ti-check text-success me-2"></i>
       <div class="me-auto fw-medium">Success!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -240,7 +240,7 @@
 @if(session('error'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

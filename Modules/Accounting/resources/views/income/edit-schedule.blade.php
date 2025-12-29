@@ -12,7 +12,7 @@
                     <small class="text-muted">Update {{ $incomeSchedule->name }}</small>
                 </div>
                 <a href="{{ route('accounting.income.schedules.show', $incomeSchedule) }}" class="btn btn-outline-secondary">
-                    <i class="ti tabler-arrow-left me-1"></i>Back to Details
+                    <i class="ti ti-arrow-left me-1"></i>Back to Details
                 </a>
             </div>
 
@@ -180,7 +180,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeExcludedDate(this)">
-                                                    <i class="ti tabler-x"></i>
+                                                    <i class="ti ti-x"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -193,7 +193,7 @@
                                                     </div>
                                                     <div class="col-md-2">
                                                         <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeExcludedDate(this)">
-                                                            <i class="ti tabler-x"></i>
+                                                            <i class="ti ti-x"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -201,7 +201,7 @@
                                         @endif
                                     </div>
                                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addExcludedDate()">
-                                        <i class="ti tabler-plus me-1"></i>Add Excluded Date
+                                        <i class="ti ti-plus me-1"></i>Add Excluded Date
                                     </button>
                                     <small class="text-muted d-block mt-2">Add specific dates when payments should not occur (e.g., holidays)</small>
                                 </div>
@@ -267,7 +267,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="alert alert-info">
-                                        <i class="ti tabler-info-circle me-2"></i>
+                                        <i class="ti ti-info-circle me-2"></i>
                                         <strong>Important Notes</strong>
                                         <ul class="mb-0 mt-2">
                                             <li>Amount changes affect cash flow projections</li>
@@ -278,7 +278,7 @@
                                     </div>
 
                                     <div class="alert alert-warning">
-                                        <i class="ti tabler-alert-triangle me-2"></i>
+                                        <i class="ti ti-alert-triangle me-2"></i>
                                         <strong>Schedule Impact</strong>
                                         <p class="mb-0">This schedule is currently {{ $incomeSchedule->is_active ? 'active' : 'inactive' }} and contributes to cash flow calculations.</p>
                                     </div>
@@ -320,10 +320,10 @@
                             <div class="card">
                                 <div class="card-footer d-flex justify-content-between">
                                     <a href="{{ route('accounting.income.schedules.show', $incomeSchedule) }}" class="btn btn-outline-secondary">
-                                        <i class="ti tabler-x me-1"></i>Cancel
+                                        <i class="ti ti-x me-1"></i>Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="ti tabler-device-floppy me-1"></i>Save Changes
+                                        <i class="ti ti-device-floppy me-1"></i>Save Changes
                                     </button>
                                 </div>
                             </div>

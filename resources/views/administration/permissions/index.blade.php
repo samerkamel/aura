@@ -32,7 +32,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0">Permissions Management</h4>
         <a href="{{ route('administration.roles.index') }}" class="btn btn-outline-primary">
-            <i class="ti tabler-shield-check me-2"></i>Manage Roles
+            <i class="ti ti-shield-check me-2"></i>Manage Roles
         </a>
     </div>
 
@@ -44,7 +44,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti tabler-key ti-sm"></i>
+                                <i class="ti ti-key ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -63,7 +63,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti tabler-folder ti-sm"></i>
+                                <i class="ti ti-folder ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -82,7 +82,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti tabler-link ti-sm"></i>
+                                <i class="ti ti-link ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -101,7 +101,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-danger">
-                                <i class="ti tabler-unlink ti-sm"></i>
+                                <i class="ti ti-unlink ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -164,7 +164,7 @@
                 @foreach($groupedPermissions as $category => $categoryPermissions)
                     <div class="category-header">
                         <h6 class="mb-0">
-                            <i class="ti tabler-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
+                            <i class="ti ti-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
                             <span class="badge bg-label-primary ms-2">{{ $categoryPermissions->count() }}</span>
                         </h6>
                     </div>
@@ -216,7 +216,7 @@
             @else
                 <div class="text-center py-4">
                     <div class="text-muted">
-                        <i class="ti tabler-key-off ti-3x mb-3 d-block"></i>
+                        <i class="ti ti-key-off ti-3x mb-3 d-block"></i>
                         <h5>No permissions found</h5>
                         <p class="mb-0">No permissions match your current filters.</p>
                     </div>

@@ -20,7 +20,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h4 class="text-white mb-1">
-                <i class="ti tabler-list me-2"></i>Work Entries
+                <i class="ti ti-list me-2"></i>Work Entries
               </h4>
               <p class="mb-0 opacity-75">
                 <span class="badge bg-light text-primary me-2">{{ $project->code }}</span>
@@ -29,7 +29,7 @@
             </div>
             <div>
               <a href="{{ route('projects.show', $project) }}" class="btn btn-light">
-                <i class="ti tabler-arrow-left me-1"></i>Back to Project
+                <i class="ti ti-arrow-left me-1"></i>Back to Project
               </a>
             </div>
           </div>
@@ -69,7 +69,7 @@
   <!-- Filters -->
   <div class="card mb-4">
     <div class="card-header">
-      <h5 class="mb-0"><i class="ti tabler-filter me-2"></i>Filters</h5>
+      <h5 class="mb-0"><i class="ti ti-filter me-2"></i>Filters</h5>
     </div>
     <div class="card-body">
       <form action="{{ route('projects.worklogs', $project) }}" method="GET">
@@ -103,10 +103,10 @@
           </div>
           <div class="col-md-2 d-flex align-items-end">
             <button type="submit" class="btn btn-primary me-2">
-              <i class="ti tabler-filter me-1"></i>Filter
+              <i class="ti ti-filter me-1"></i>Filter
             </button>
             <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-outline-secondary">
-              <i class="ti tabler-x"></i>
+              <i class="ti ti-x"></i>
             </a>
           </div>
         </div>
@@ -118,7 +118,7 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">
-        <i class="ti tabler-clock me-2"></i>Work Entries
+        <i class="ti ti-clock me-2"></i>Work Entries
       </h5>
       <span class="badge bg-secondary">
         Showing {{ $worklogs->firstItem() ?? 0 }}-{{ $worklogs->lastItem() ?? 0 }} of {{ $worklogs->total() }}
@@ -168,7 +168,7 @@
                         <span class="fw-semibold">{{ $worklog->issue_summary }}</span>
                         @if($worklog->comment)
                           <span class="badge bg-label-info ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ e($worklog->comment) }}" style="cursor: help;">
-                            <i class="ti tabler-message-circle me-1"></i>Details
+                            <i class="ti ti-message-circle me-1"></i>Details
                           </span>
                         @endif
                       </div>
@@ -195,7 +195,7 @@
         </div>
       @else
         <div class="text-center py-5">
-          <i class="ti tabler-clock-off display-1 text-muted mb-3"></i>
+          <i class="ti ti-clock-off display-1 text-muted mb-3"></i>
           <h4 class="text-muted">No Work Entries Found</h4>
           <p class="text-muted">Try adjusting your filters or date range.</p>
         </div>
@@ -208,8 +208,8 @@
   <div class="card mt-4">
     <div class="card-header" data-bs-toggle="collapse" data-bs-target="#employeeSummary" style="cursor: pointer;">
       <h5 class="mb-0">
-        <i class="ti tabler-users me-2"></i>Summary by Employee
-        <i class="ti tabler-chevron-down float-end"></i>
+        <i class="ti ti-users me-2"></i>Summary by Employee
+        <i class="ti ti-chevron-down float-end"></i>
       </h5>
     </div>
     <div class="collapse" id="employeeSummary">

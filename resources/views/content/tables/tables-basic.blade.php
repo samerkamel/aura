@@ -19,7 +19,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -37,16 +37,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -64,16 +64,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-2"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-2"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-2"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -91,16 +91,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-2"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-2"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-2"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -118,10 +118,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-2"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-2"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-2"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-2"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -150,7 +150,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -168,16 +168,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -195,16 +195,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -222,16 +222,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td class="rounded-start-bottom"><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td class="rounded-start-bottom"><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -249,10 +249,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td class="rounded-end-bottom">
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -281,7 +281,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -299,16 +299,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -326,16 +326,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -353,16 +353,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -380,10 +380,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -412,7 +412,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -430,16 +430,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -457,16 +457,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -484,16 +484,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -511,10 +511,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -543,7 +543,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -561,16 +561,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -588,16 +588,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -615,16 +615,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -642,10 +642,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -684,7 +684,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -702,16 +702,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -729,16 +729,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -756,16 +756,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -783,10 +783,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -815,7 +815,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -833,16 +833,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -860,16 +860,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -887,16 +887,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -914,10 +914,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -947,7 +947,7 @@
         </thead>
         <tbody>
           <tr>
-            <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+            <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
             <td>Albert Cook</td>
             <td>
               <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -965,16 +965,16 @@
             <td><span class="badge bg-label-primary me-1">Active</span></td>
             <td>
               <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
                 </div>
               </div>
             </td>
           </tr>
           <tr>
-            <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+            <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
             <td>Barry Hunter</td>
             <td>
               <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -992,16 +992,16 @@
             <td><span class="badge bg-label-success me-1">Completed</span></td>
             <td>
               <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
                 </div>
               </div>
             </td>
           </tr>
           <tr>
-            <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+            <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
             <td>Trevor Baker</td>
             <td>
               <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1019,16 +1019,16 @@
             <td><span class="badge bg-label-info me-1">Scheduled</span></td>
             <td>
               <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
                 </div>
               </div>
             </td>
           </tr>
           <tr>
-            <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+            <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
             <td>Jerry Milton</td>
             <td>
               <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1046,10 +1046,10 @@
             <td><span class="badge bg-label-warning me-1">Pending</span></td>
             <td>
               <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
                 </div>
               </div>
             </td>
@@ -1079,7 +1079,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1097,16 +1097,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1124,16 +1124,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1151,16 +1151,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1178,10 +1178,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -1210,7 +1210,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1228,16 +1228,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1255,16 +1255,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1282,16 +1282,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1309,10 +1309,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -1342,7 +1342,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr>
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1360,16 +1360,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1387,16 +1387,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1414,16 +1414,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr>
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1441,10 +1441,10 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -1474,7 +1474,7 @@
       </thead>
       <tbody class="table-border-bottom-0">
         <tr class="table-default">
-          <td><i class="ti tabler-brand-sketch ti-md text-warning me-3"></i> <span class="fw-medium">Sketch Project</span></td>
+          <td><i class="ti ti-brand-sketch ti-md text-warning me-3"></i> <span class="fw-medium">Sketch Project</span></td>
           <td>Ronnie Shane</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1492,16 +1492,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-active">
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
           <td>Barry Hunter</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1519,16 +1519,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-primary">
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
           <td>Albert Cook</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1546,16 +1546,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-secondary">
-          <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+          <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
           <td>Trevor Baker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1573,16 +1573,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-success">
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1600,16 +1600,16 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-danger">
-          <td><i class="ti tabler-brand-sketch ti-md text-warning me-3"></i> <span class="fw-medium">Sketch Project</span></td>
+          <td><i class="ti ti-brand-sketch ti-md text-warning me-3"></i> <span class="fw-medium">Sketch Project</span></td>
           <td>Sarah Banks</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1627,16 +1627,16 @@
           <td><span class="badge bg-label-primary me-1">Active</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-warning">
-          <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Custom</span></td>
+          <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Custom</span></td>
           <td>Ted Richer</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1654,16 +1654,16 @@
           <td><span class="badge bg-label-info me-1">Scheduled</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-info">
-          <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Latest Bootstrap</span></td>
+          <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Latest Bootstrap</span></td>
           <td>Perry Parker</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1681,16 +1681,16 @@
           <td><span class="badge bg-label-warning me-1">Pending</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-light">
-          <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular UI</span></td>
+          <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular UI</span></td>
           <td>Ana Bell</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1708,16 +1708,16 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td>
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
         </tr>
         <tr class="table-dark">
-          <td class="rounded-start-bottom"><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">Bootstrap UI</span></td>
+          <td class="rounded-start-bottom"><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">Bootstrap UI</span></td>
           <td>Jerry Milton</td>
           <td>
             <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1735,10 +1735,10 @@
           <td><span class="badge bg-label-success me-1">Completed</span></td>
           <td class="rounded-end-bottom">
             <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-                <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+                <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
               </div>
             </div>
           </td>
@@ -1766,7 +1766,7 @@
     </thead>
     <tbody class="table-border-bottom-0">
       <tr>
-        <td><i class="ti tabler-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
+        <td><i class="ti ti-brand-angular ti-md text-danger me-4"></i> <span class="fw-medium">Angular Project</span></td>
         <td>Albert Cook</td>
         <td>
           <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1784,16 +1784,16 @@
         <td><span class="badge bg-label-primary me-1">Active</span></td>
         <td>
           <div class="dropdown">
-            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
             </div>
           </div>
         </td>
       </tr>
       <tr>
-        <td><i class="ti tabler-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
+        <td><i class="ti ti-brand-react-native ti-md text-info me-4"></i> <span class="fw-medium">React Project</span></td>
         <td>Barry Hunter</td>
         <td>
           <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1811,16 +1811,16 @@
         <td><span class="badge bg-label-success me-1">Completed</span></td>
         <td>
           <div class="dropdown">
-            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
             </div>
           </div>
         </td>
       </tr>
       <tr>
-        <td><i class="ti tabler-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
+        <td><i class="ti ti-brand-vue ti-md text-success me-4"></i> <span class="fw-medium">VueJs Project</span></td>
         <td>Trevor Baker</td>
         <td>
           <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1838,16 +1838,16 @@
         <td><span class="badge bg-label-info me-1">Scheduled</span></td>
         <td>
           <div class="dropdown">
-            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
             </div>
           </div>
         </td>
       </tr>
       <tr>
-        <td><i class="ti tabler-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
+        <td><i class="ti ti-brand-bootstrap ti-md text-primary me-4"></i> <span class="fw-medium">Bootstrap Project</span></td>
         <td>Jerry Milton</td>
         <td>
           <ul class="list-unstyled m-0 avatar-group d-flex align-items-center">
@@ -1865,10 +1865,10 @@
         <td><span class="badge bg-label-warning me-1">Pending</span></td>
         <td>
           <div class="dropdown">
-            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-pencil me-1"></i> Edit</a>
-              <a class="dropdown-item" href="javascript:void(0);"><i class="ti tabler-trash me-1"></i> Delete</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-pencil me-1"></i> Edit</a>
+              <a class="dropdown-item" href="javascript:void(0);"><i class="ti ti-trash me-1"></i> Delete</a>
             </div>
           </div>
         </td>

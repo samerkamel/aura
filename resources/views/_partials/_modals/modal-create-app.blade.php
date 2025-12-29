@@ -12,7 +12,7 @@
           <div class="bs-stepper-header border-0 p-1">
             <div class="step" data-target="#details">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti tabler-file-text"></i></span>
+                <span class="bs-stepper-circle"><i class="ti ti-file-text"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title text-uppercase">Details</span>
                   <span class="bs-stepper-subtitle">Enter Details</span>
@@ -22,7 +22,7 @@
             <div class="line"></div>
             <div class="step" data-target="#frameworks">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti tabler-box"></i></span>
+                <span class="bs-stepper-circle"><i class="ti ti-box"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title text-uppercase">Frameworks</span>
                   <span class="bs-stepper-subtitle">Select Framework</span>
@@ -32,7 +32,7 @@
             <div class="line"></div>
             <div class="step" data-target="#database">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti tabler-database"></i></span>
+                <span class="bs-stepper-circle"><i class="ti ti-database"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title text-uppercase">Database</span>
                   <span class="bs-stepper-subtitle">Select Database</span>
@@ -42,7 +42,7 @@
             <div class="line"></div>
             <div class="step" data-target="#billing">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti tabler-credit-card"></i></span>
+                <span class="bs-stepper-circle"><i class="ti ti-credit-card"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title text-uppercase">Billing</span>
                   <span class="bs-stepper-subtitle">Payment Details</span>
@@ -52,7 +52,7 @@
             <div class="line"></div>
             <div class="step" data-target="#submit">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti tabler-check"></i></span>
+                <span class="bs-stepper-circle"><i class="ti ti-check"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title text-uppercase">Submit</span>
                   <span class="bs-stepper-subtitle">Submit</span>
@@ -71,7 +71,7 @@
                 <h5>Category</h5>
                 <ul class="p-0 m-0">
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti tabler-file-text ti-30px"></i></div>
+                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti ti-file-text ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">CRM Application</h6>
@@ -85,7 +85,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-success p-2 me-3 rounded"><i class="ti tabler-shopping-cart ti-30px"></i></div>
+                    <div class="badge bg-label-success p-2 me-3 rounded"><i class="ti ti-shopping-cart ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">eCommerce Platforms</h6>
@@ -99,7 +99,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start">
-                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti tabler-device-laptop ti-30px"></i></div>
+                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti ti-device-laptop ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">Online Learning platform</h6>
@@ -114,10 +114,10 @@
                   </li>
                 </ul>
                 <div class="col-12 d-flex justify-content-between mt-6">
-                  <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
+                  <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
                     <span class="align-middle d-sm-inline-block d-none">Previous</span>
                   </button>
-                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
+                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
                 </div>
               </div>
 
@@ -126,7 +126,7 @@
                 <h5>Select Framework</h5>
                 <ul class="p-0 m-0">
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti tabler-brand-react-native ti-30px"></i></div>
+                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti ti-brand-react-native ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100">
                       <div class="me-2">
                         <h6 class="mb-1">React Native</h6>
@@ -140,7 +140,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti tabler-brand-angular ti-30px"></i></div>
+                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti ti-brand-angular ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">Angular</h6>
@@ -154,7 +154,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-warning p-2 me-3 rounded"><i class="ti tabler-brand-html5 ti-30px"></i></div>
+                    <div class="badge bg-label-warning p-2 me-3 rounded"><i class="ti ti-brand-html5 ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">HTML</h6>
@@ -168,7 +168,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start">
-                    <div class="badge bg-label-success p-2 me-3 rounded"><i class="ti tabler-brand-vue ti-30px"></i></div>
+                    <div class="badge bg-label-success p-2 me-3 rounded"><i class="ti ti-brand-vue ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">VueJs</h6>
@@ -184,8 +184,8 @@
                 </ul>
 
                 <div class="col-12 d-flex justify-content-between mt-6">
-                  <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
+                  <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
                 </div>
               </div>
 
@@ -198,7 +198,7 @@
                 <h5>Select Database Engine</h5>
                 <ul class="p-0 m-0">
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti tabler-brand-firebase ti-30px"></i></div>
+                    <div class="badge bg-label-danger p-2 me-3 rounded"><i class="ti ti-brand-firebase ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">Firebase</h6>
@@ -212,7 +212,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start mb-4">
-                    <div class="badge bg-label-warning p-2 me-3 rounded"><i class="ti tabler-brand-amazon ti-30px"></i></div>
+                    <div class="badge bg-label-warning p-2 me-3 rounded"><i class="ti ti-brand-amazon ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">AWS</h6>
@@ -226,7 +226,7 @@
                     </div>
                   </li>
                   <li class="d-flex align-items-start">
-                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti tabler-database ti-30px"></i></div>
+                    <div class="badge bg-label-info p-2 me-3 rounded"><i class="ti ti-database ti-30px"></i></div>
                     <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                       <div class="me-2">
                         <h6 class="mb-1">MySQL</h6>
@@ -241,8 +241,8 @@
                   </li>
                 </ul>
                 <div class="col-12 d-flex justify-content-between mt-6">
-                  <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
+                  <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
                 </div>
               </div>
 
@@ -269,7 +269,7 @@
                     <label for="modalAppAddCardCvv" class="form-label">CVV</label>
                     <div class="input-group input-group-merge">
                       <input type="text" id="modalAppAddCardCvv" class="form-control app-cvv-code-mask" maxlength="3" placeholder="654" />
-                      <span class="input-group-text cursor-pointer" id="modalAppAddCardCvv2"><i class="text-muted ti tabler-help" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                      <span class="input-group-text cursor-pointer" id="modalAppAddCardCvv2"><i class="text-muted ti ti-help" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                     </div>
                   </div>
                   <div class="col-12">
@@ -280,8 +280,8 @@
                   </div>
                 </div>
                 <div class="col-12 d-flex justify-content-between mt-6">
-                  <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
+                  <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+                  <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
                 </div>
               </div>
 
@@ -292,7 +292,7 @@
                 <!-- image -->
                 <img src="{{asset('assets/img/illustrations/girl-with-laptop.png') }}" class="img-fluid" alt="Create App img" width="175">
                 <div class="col-12 d-flex justify-content-between mt-6">
-                  <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+                  <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
                   <button class="btn btn-success btn-next btn-submit" data-bs-dismiss="modal" aria-label="Close"> <span class="align-middle">Submit</span></button>
                 </div>
               </div>

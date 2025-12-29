@@ -32,7 +32,7 @@
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-{{ $creditNote->status_color }} fs-6">{{ $creditNote->status_label }}</span>
                             <a href="{{ route('accounting.credit-notes.index') }}" class="btn btn-outline-secondary">
-                                <i class="ti tabler-arrow-left me-1"></i>Back
+                                <i class="ti ti-arrow-left me-1"></i>Back
                             </a>
                         </div>
                     </div>
@@ -49,10 +49,10 @@
                                     <p class="mb-1 text-muted">{{ $creditNote->customer->name }}</p>
                                 @endif
                                 @if($creditNote->client_email)
-                                    <p class="mb-1"><i class="ti tabler-mail me-1"></i>{{ $creditNote->client_email }}</p>
+                                    <p class="mb-1"><i class="ti ti-mail me-1"></i>{{ $creditNote->client_email }}</p>
                                 @endif
                                 @if($creditNote->client_address)
-                                    <p class="mb-0"><i class="ti tabler-map-pin me-1"></i>{{ $creditNote->client_address }}</p>
+                                    <p class="mb-0"><i class="ti ti-map-pin me-1"></i>{{ $creditNote->client_address }}</p>
                                 @endif
                             </div>
                             <div class="col-md-6">
@@ -127,7 +127,7 @@
                 @if($creditNote->applications->count() > 0)
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h6 class="card-title mb-0"><i class="ti tabler-check me-1"></i>Credit Applications</h6>
+                            <h6 class="card-title mb-0"><i class="ti ti-check me-1"></i>Credit Applications</h6>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered mb-0">
@@ -177,7 +177,7 @@
 
                             @if($creditNote->internal_notes)
                                 <hr>
-                                <h6 class="text-muted mb-2"><i class="ti tabler-lock me-1"></i>Internal Notes</h6>
+                                <h6 class="text-muted mb-2"><i class="ti ti-lock me-1"></i>Internal Notes</h6>
                                 <p class="mb-0 text-muted">{!! nl2br(e($creditNote->internal_notes)) !!}</p>
                             @endif
                         </div>
@@ -195,12 +195,12 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <a href="{{ route('accounting.credit-notes.pdf', $creditNote) }}" class="btn btn-primary">
-                                <i class="ti tabler-file-download me-1"></i>Download PDF
+                                <i class="ti ti-file-download me-1"></i>Download PDF
                             </a>
 
                             @if($creditNote->canBeEdited())
                                 <a href="{{ route('accounting.credit-notes.edit', $creditNote) }}" class="btn btn-outline-primary">
-                                    <i class="ti tabler-pencil me-1"></i>Edit Credit Note
+                                    <i class="ti ti-pencil me-1"></i>Edit Credit Note
                                 </a>
                             @endif
                         </div>
@@ -218,7 +218,7 @@
                                 <form action="{{ route('accounting.credit-notes.open', $creditNote) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-success w-100">
-                                        <i class="ti tabler-credit-card me-1"></i>Mark as Open
+                                        <i class="ti ti-credit-card me-1"></i>Mark as Open
                                     </button>
                                 </form>
                             @endif
@@ -228,7 +228,7 @@
                                       onsubmit="return confirm('Are you sure you want to void this credit note?')">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-danger w-100">
-                                        <i class="ti tabler-ban me-1"></i>Void Credit Note
+                                        <i class="ti ti-ban me-1"></i>Void Credit Note
                                     </button>
                                 </form>
                             @endif
@@ -239,7 +239,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger w-100">
-                                        <i class="ti tabler-trash me-1"></i>Delete
+                                        <i class="ti ti-trash me-1"></i>Delete
                                     </button>
                                 </form>
                             @endif
@@ -251,7 +251,7 @@
                 @if($creditNote->canBeApplied() && $availableInvoices->count() > 0)
                     <div class="card mb-4">
                         <div class="card-header bg-label-warning">
-                            <h6 class="card-title mb-0"><i class="ti tabler-credit-card me-1"></i>Apply Credit</h6>
+                            <h6 class="card-title mb-0"><i class="ti ti-credit-card me-1"></i>Apply Credit</h6>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('accounting.credit-notes.apply', $creditNote) }}" method="POST">
@@ -282,7 +282,7 @@
                                     <input type="text" class="form-control" name="notes" placeholder="Optional notes">
                                 </div>
                                 <button type="submit" class="btn btn-warning w-100">
-                                    <i class="ti tabler-check me-1"></i>Apply Credit
+                                    <i class="ti ti-check me-1"></i>Apply Credit
                                 </button>
                             </form>
                         </div>
@@ -343,7 +343,7 @@
                         <ul class="timeline mb-0">
                             <li class="timeline-item">
                                 <span class="timeline-indicator timeline-indicator-primary">
-                                    <i class="ti tabler-plus"></i>
+                                    <i class="ti ti-plus"></i>
                                 </span>
                                 <div class="timeline-event">
                                     <div class="timeline-header">Created</div>
@@ -353,7 +353,7 @@
                             @if($creditNote->sent_at)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-success">
-                                        <i class="ti tabler-credit-card"></i>
+                                        <i class="ti ti-credit-card"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Opened</div>
@@ -364,7 +364,7 @@
                             @foreach($creditNote->applications as $application)
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-warning">
-                                        <i class="ti tabler-check"></i>
+                                        <i class="ti ti-check"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Applied EGP {{ number_format($application->amount_applied, 2) }}</div>
@@ -375,7 +375,7 @@
                             @if($creditNote->status === 'closed')
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-info">
-                                        <i class="ti tabler-circle-check"></i>
+                                        <i class="ti ti-circle-check"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Fully Applied</div>
@@ -386,7 +386,7 @@
                             @if($creditNote->status === 'void')
                                 <li class="timeline-item">
                                     <span class="timeline-indicator timeline-indicator-danger">
-                                        <i class="ti tabler-ban"></i>
+                                        <i class="ti ti-ban"></i>
                                     </span>
                                     <div class="timeline-event">
                                         <div class="timeline-header">Voided</div>

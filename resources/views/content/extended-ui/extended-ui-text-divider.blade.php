@@ -77,27 +77,27 @@
       <div class="card-body">
         <div class="divider text-start">
           <div class="divider-text">
-            <i class="ti tabler-sun"></i>
+            <i class="ti ti-sun"></i>
           </div>
         </div>
         <div class="divider text-start-center">
           <div class="divider-text">
-            <i class="ti tabler-crown"></i>
+            <i class="ti ti-crown"></i>
           </div>
         </div>
         <div class="divider">
           <div class="divider-text">
-            <i class="ti tabler-star"></i>
+            <i class="ti ti-star"></i>
           </div>
         </div>
         <div class="divider text-end-center">
           <div class="divider-text">
-            <i class="ti tabler-cup"></i>
+            <i class="ti ti-cup"></i>
           </div>
         </div>
         <div class="divider text-end">
           <div class="divider-text">
-            <i class="ti tabler-cut rotate-n90"></i>
+            <i class="ti ti-cut rotate-n90"></i>
           </div>
         </div>
       </div>
@@ -174,7 +174,7 @@
           <div class="col-md-2 col-4">
             <div class="divider divider-vertical">
               <div class="divider-text">
-                <i class="ti tabler-crown"></i>
+                <i class="ti ti-crown"></i>
               </div>
             </div>
           </div>

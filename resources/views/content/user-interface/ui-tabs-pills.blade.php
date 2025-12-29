@@ -65,13 +65,13 @@
     <div class="nav-align-top nav-tabs-shadow mb-6">
       <ul class="nav nav-tabs nav-fill" role="tablist">
         <li class="nav-item">
-          <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-home ti-sm me-1_5"></i> Home <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1_5 pt-50">3</span></span><i class="ti tabler-home ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-home" aria-controls="navs-justified-home" aria-selected="true"><span class="d-none d-sm-block"><i class="tf-icons ti ti-home ti-sm me-1_5"></i> Home <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-label-danger ms-1_5 pt-50">3</span></span><i class="ti ti-home ti-sm d-sm-none"></i></button>
         </li>
         <li class="nav-item">
-          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-user ti-sm me-1_5"></i> Profile</span><i class="ti tabler-user ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-profile" aria-controls="navs-justified-profile" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti ti-user ti-sm me-1_5"></i> Profile</span><i class="ti ti-user ti-sm d-sm-none"></i></button>
         </li>
         <li class="nav-item">
-          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-messages" aria-controls="navs-justified-messages" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-message-dots ti-sm me-1_5"></i> Messages</span><i class="ti tabler-message-dots ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-justified-messages" aria-controls="navs-justified-messages" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti ti-message-dots ti-sm me-1_5"></i> Messages</span><i class="ti ti-message-dots ti-sm d-sm-none"></i></button>
         </li>
       </ul>
       <div class="tab-content">
@@ -267,13 +267,13 @@
     <div class="nav-align-top mb-6">
       <ul class="nav nav-pills mb-4 nav-fill" role="tablist">
         <li class="nav-item mb-1 mb-sm-0">
-          <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-home" aria-controls="navs-pills-justified-home" aria-selected="true"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-home ti-sm me-1_5 align-text-bottom"></i> Home <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-danger ms-1_5 pt-50">3</span></span><i class="ti tabler-home ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-home" aria-controls="navs-pills-justified-home" aria-selected="true"><span class="d-none d-sm-block"><i class="tf-icons ti ti-home ti-sm me-1_5 align-text-bottom"></i> Home <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-danger ms-1_5 pt-50">3</span></span><i class="ti ti-home ti-sm d-sm-none"></i></button>
         </li>
         <li class="nav-item mb-1 mb-sm-0">
-          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-profile" aria-controls="navs-pills-justified-profile" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-user ti-sm me-1_5 align-text-bottom"></i> Profile</span><i class="ti tabler-user ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-profile" aria-controls="navs-pills-justified-profile" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti ti-user ti-sm me-1_5 align-text-bottom"></i> Profile</span><i class="ti ti-user ti-sm d-sm-none"></i></button>
         </li>
         <li class="nav-item">
-          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-messages" aria-controls="navs-pills-justified-messages" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti tabler-message-dots ti-sm me-1_5 align-text-bottom"></i> Messages</span><i class="ti tabler-message-dots ti-sm d-sm-none"></i></button>
+          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-messages" aria-controls="navs-pills-justified-messages" aria-selected="false"><span class="d-none d-sm-block"><i class="tf-icons ti ti-message-dots ti-sm me-1_5 align-text-bottom"></i> Messages</span><i class="ti ti-message-dots ti-sm d-sm-none"></i></button>
         </li>
       </ul>
       <div class="tab-content">

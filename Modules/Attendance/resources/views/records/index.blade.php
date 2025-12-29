@@ -80,16 +80,16 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0">
-            <i class="ti tabler-calendar-stats me-2"></i>Attendance Records
+            <i class="ti ti-calendar-stats me-2"></i>Attendance Records
           </h5>
           <small class="text-muted">View and filter employee attendance data</small>
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-outline-primary">
-            <i class="ti tabler-fingerprint me-1"></i>Import ZKTeco
+            <i class="ti ti-fingerprint me-1"></i>Import ZKTeco
           </a>
           <a href="{{ route('attendance.import.create') }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-upload me-1"></i>Import CSV
+            <i class="ti ti-upload me-1"></i>Import CSV
           </a>
         </div>
       </div>
@@ -98,7 +98,7 @@
     <!-- Filter Card -->
     <div class="card filter-card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti tabler-filter me-2"></i>Filters</h6>
+        <h6 class="mb-0"><i class="ti ti-filter me-2"></i>Filters</h6>
       </div>
       <div class="card-body">
         <form method="GET" action="{{ route('attendance.records') }}" id="filterForm">
@@ -109,13 +109,13 @@
                 <input type="radio" class="btn-check" name="filter_type" id="filterMonth" value="month"
                        {{ $filterType === 'month' ? 'checked' : '' }} onchange="toggleFilterType()">
                 <label class="btn btn-outline-primary" for="filterMonth">
-                  <i class="ti tabler-calendar-month me-1"></i>By Month
+                  <i class="ti ti-calendar-month me-1"></i>By Month
                 </label>
 
                 <input type="radio" class="btn-check" name="filter_type" id="filterRange" value="range"
                        {{ $filterType === 'range' ? 'checked' : '' }} onchange="toggleFilterType()">
                 <label class="btn btn-outline-primary" for="filterRange">
-                  <i class="ti tabler-calendar-event me-1"></i>Date Range
+                  <i class="ti ti-calendar-event me-1"></i>Date Range
                 </label>
               </div>
             </div>
@@ -179,7 +179,7 @@
             <!-- Apply Button (for date range) -->
             <div class="col-md-2 d-flex align-items-end">
               <button type="submit" class="btn btn-primary w-100">
-                <i class="ti tabler-search me-1"></i>Apply
+                <i class="ti ti-search me-1"></i>Apply
               </button>
             </div>
           </div>
@@ -192,7 +192,7 @@
       <div class="col-md-4">
         <div class="card summary-card bg-label-primary">
           <div class="card-body text-center">
-            <i class="ti tabler-calendar-check mb-2" style="font-size: 2rem;"></i>
+            <i class="ti ti-calendar-check mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Total Days</h6>
             <h3 class="mb-0">{{ number_format($summary['total_days']) }}</h3>
           </div>
@@ -201,7 +201,7 @@
       <div class="col-md-4">
         <div class="card summary-card bg-label-success">
           <div class="card-body text-center">
-            <i class="ti tabler-clock-hour-4 mb-2" style="font-size: 2rem;"></i>
+            <i class="ti ti-clock-hour-4 mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Total Hours</h6>
             <h3 class="mb-0">{{ $summary['total_hours'] }}h {{ $summary['total_minutes'] }}m</h3>
           </div>
@@ -210,7 +210,7 @@
       <div class="col-md-4">
         <div class="card summary-card bg-label-info">
           <div class="card-body text-center">
-            <i class="ti tabler-users mb-2" style="font-size: 2rem;"></i>
+            <i class="ti ti-users mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Employees</h6>
             <h3 class="mb-0">{{ number_format($summary['unique_employees']) }}</h3>
           </div>
@@ -326,7 +326,7 @@
                   <span class="badge bg-{{ $isLateCheckIn ? 'danger' : 'success' }} clickable-time"
                         onclick="openPermissionModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}', '{{ $record['time_in']->format('h:i:s A') }}')"
                         title="Click to manage permission">
-                    <i class="ti tabler-login me-1"></i>{{ $record['time_in']->format('h:i:s A') }}
+                    <i class="ti ti-login me-1"></i>{{ $record['time_in']->format('h:i:s A') }}
                   </span>
                 @elseif($record['is_weekend'] ?? false)
                   <span class="text-muted">-</span>
@@ -355,7 +355,7 @@
                     $isEarlyCheckOut = $record['time_out']->lt($minimumCheckOut);
                   @endphp
                   <span class="badge bg-{{ $isEarlyCheckOut ? 'danger' : 'success' }}">
-                    <i class="ti tabler-logout me-1"></i>{{ $record['time_out']->format('h:i:s A') }}
+                    <i class="ti ti-logout me-1"></i>{{ $record['time_out']->format('h:i:s A') }}
                   </span>
                 @elseif($record['is_weekend'] ?? false)
                   <span class="text-muted">-</span>
@@ -393,7 +393,7 @@
               <td>
                 @if($record['has_permission'])
                   <span class="badge bg-info" title="{{ $record['permission_usage']->reason ?? 'Permission used' }}">
-                    <i class="ti tabler-clock-pause me-1"></i>{{ $record['permission_usage']->minutes_used }}m
+                    <i class="ti ti-clock-pause me-1"></i>{{ $record['permission_usage']->minutes_used }}m
                   </span>
                 @else
                   <span class="text-muted">-</span>
@@ -402,11 +402,11 @@
               <td>
                 @if($record['late_penalty'] > 0)
                   <span class="badge bg-warning text-dark" title="Late by {{ round($record['late_minutes']) }} minutes">
-                    <i class="ti tabler-clock-exclamation me-1"></i>{{ $record['late_penalty'] }}m
+                    <i class="ti ti-clock-exclamation me-1"></i>{{ $record['late_penalty'] }}m
                   </span>
                 @elseif($record['time_in'])
                   <span class="badge bg-label-success">
-                    <i class="ti tabler-check me-1"></i>On time
+                    <i class="ti ti-check me-1"></i>On time
                   </span>
                 @else
                   <span class="text-muted">-</span>
@@ -416,7 +416,7 @@
                 @if($record['is_billable_employee'] ?? false)
                   @if(($record['billable_hours'] ?? 0) > 0)
                     <span class="badge bg-label-primary" title="Jira worklog hours">
-                      <i class="ti tabler-brand-jira me-1"></i>{{ number_format($record['billable_hours'], 2) }}h
+                      <i class="ti ti-brand-jira me-1"></i>{{ number_format($record['billable_hours'], 2) }}h
                     </span>
                   @else
                     <span class="text-muted">0h</span>
@@ -429,21 +429,21 @@
               <td>
                 <div class="dropdown">
                   <button type="button" class="btn btn-sm btn-icon btn-outline-secondary dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                    <i class="ti tabler-dots-vertical"></i>
+                    <i class="ti ti-dots-vertical"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
                     @if($record['time_in'])
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openEditAttendanceModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}', 'time_in', '{{ $record['time_in']->format('H:i') }}')">
-                          <i class="ti tabler-edit me-2 text-info"></i>Edit Check-in
+                          <i class="ti ti-edit me-2 text-info"></i>Edit Check-in
                         </a>
                       </li>
                     @else
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openManualAttendanceModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}', 'time_in')">
-                          <i class="ti tabler-login me-2 text-success"></i>Add Check-in
+                          <i class="ti ti-login me-2 text-success"></i>Add Check-in
                         </a>
                       </li>
                     @endif
@@ -451,14 +451,14 @@
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openEditAttendanceModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}', 'time_out', '{{ $record['time_out']->format('H:i') }}')">
-                          <i class="ti tabler-edit me-2 text-info"></i>Edit Check-out
+                          <i class="ti ti-edit me-2 text-info"></i>Edit Check-out
                         </a>
                       </li>
                     @else
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openManualAttendanceModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}', 'time_out')">
-                          <i class="ti tabler-logout me-2 text-warning"></i>Add Check-out
+                          <i class="ti ti-logout me-2 text-warning"></i>Add Check-out
                         </a>
                       </li>
                     @endif
@@ -467,20 +467,20 @@
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openAddWfhModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}')">
-                          <i class="ti tabler-home me-2 text-primary"></i>Add WFH
+                          <i class="ti ti-home me-2 text-primary"></i>Add WFH
                         </a>
                       </li>
                       <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                            onclick="openAddLeaveModal({{ $record['employee']->id }}, '{{ $record['date'] }}', '{{ $record['employee']->name }}')">
-                          <i class="ti tabler-calendar-off me-2 text-info"></i>Add Leave
+                          <i class="ti ti-calendar-off me-2 text-info"></i>Add Leave
                         </a>
                       </li>
                     @else
                       <li>
                         <a class="dropdown-item text-danger" href="javascript:void(0);"
                            onclick="deleteLeave({{ $record['employee']->id }}, '{{ $record['date'] }}')">
-                          <i class="ti tabler-calendar-x me-2"></i>Remove Leave
+                          <i class="ti ti-calendar-x me-2"></i>Remove Leave
                         </a>
                       </li>
                     @endif
@@ -490,7 +490,7 @@
                       <li>
                         <a class="dropdown-item text-danger" href="javascript:void(0);"
                            onclick="deleteAttendance({{ $record['employee']->id }}, '{{ $record['date'] }}', 'time_in')">
-                          <i class="ti tabler-trash me-2"></i>Delete Check-in
+                          <i class="ti ti-trash me-2"></i>Delete Check-in
                         </a>
                       </li>
                     @endif
@@ -498,7 +498,7 @@
                       <li>
                         <a class="dropdown-item text-danger" href="javascript:void(0);"
                            onclick="deleteAttendance({{ $record['employee']->id }}, '{{ $record['date'] }}', 'time_out')">
-                          <i class="ti tabler-trash me-2"></i>Delete Check-out
+                          <i class="ti ti-trash me-2"></i>Delete Check-out
                         </a>
                       </li>
                     @endif
@@ -512,11 +512,11 @@
             <tr>
               <td colspan="{{ (auth()->user() && (auth()->user()->hasRole('super-admin') || auth()->user()->role === 'super_admin')) ? 9 : 8 }}" class="text-center py-5">
                 <div class="d-flex flex-column align-items-center">
-                  <i class="ti tabler-calendar-off text-muted" style="font-size: 3rem;"></i>
+                  <i class="ti ti-calendar-off text-muted" style="font-size: 3rem;"></i>
                   <h6 class="mt-2">No attendance records found</h6>
                   <p class="text-muted">Try adjusting your filters or import attendance data</p>
                   <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-primary">
-                    <i class="ti tabler-fingerprint me-1"></i>Import ZKTeco Data
+                    <i class="ti ti-fingerprint me-1"></i>Import ZKTeco Data
                   </a>
                 </div>
               </td>
@@ -543,7 +543,7 @@
     <div class="card mt-4">
       <div class="card-header bg-label-primary">
         <h6 class="mb-0">
-          <i class="ti tabler-chart-bar me-2"></i>Employee Summary
+          <i class="ti ti-chart-bar me-2"></i>Employee Summary
         </h6>
       </div>
       <div class="card-body">
@@ -619,7 +619,7 @@
 
         <!-- Detailed Breakdown -->
         <div class="mt-4 pt-3 border-top">
-          <h6 class="mb-3"><i class="ti tabler-list-details me-2"></i>Detailed Breakdown</h6>
+          <h6 class="mb-3"><i class="ti ti-list-details me-2"></i>Detailed Breakdown</h6>
           <div class="table-responsive">
             <table class="table table-sm mb-0">
               <tbody>
@@ -681,14 +681,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="permissionModalLabel">
-          <i class="ti tabler-clock-pause me-2"></i>Manage Permission
+          <i class="ti ti-clock-pause me-2"></i>Manage Permission
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Employee & Date Info -->
         <div class="alert alert-light d-flex align-items-center mb-3">
-          <i class="ti tabler-user me-2"></i>
+          <i class="ti ti-user me-2"></i>
           <div>
             <strong id="modal-employee-name"></strong>
             <br>
@@ -713,7 +713,7 @@
             <textarea class="form-control" id="permission-reason" rows="2" placeholder="e.g., Doctor's appointment, Personal errand..."></textarea>
           </div>
           <div class="alert alert-info small">
-            <i class="ti tabler-info-circle me-1"></i>
+            <i class="ti ti-info-circle me-1"></i>
             Adding a permission will extend the flexible hours deadline by <strong id="permission-minutes">120</strong> minutes for this date.
           </div>
         </div>
@@ -722,7 +722,7 @@
         <div id="existing-permission-info" class="d-none">
           <div class="card bg-label-info">
             <div class="card-body">
-              <h6 class="card-title"><i class="ti tabler-check me-2"></i>Permission Already Added</h6>
+              <h6 class="card-title"><i class="ti ti-check me-2"></i>Permission Already Added</h6>
               <p class="card-text mb-1"><strong>Duration:</strong> <span id="existing-minutes"></span> minutes</p>
               <p class="card-text mb-1"><strong>Reason:</strong> <span id="existing-reason"></span></p>
               <p class="card-text mb-0"><small class="text-muted">Granted by: <span id="existing-granted-by"></span></small></p>
@@ -733,10 +733,10 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-danger d-none" id="remove-permission-btn" onclick="removePermission()">
-          <i class="ti tabler-trash me-1"></i>Remove Permission
+          <i class="ti ti-trash me-1"></i>Remove Permission
         </button>
         <button type="button" class="btn btn-primary d-none" id="add-permission-btn" onclick="addPermission()">
-          <i class="ti tabler-plus me-1"></i>Add Permission
+          <i class="ti ti-plus me-1"></i>Add Permission
         </button>
       </div>
     </div>
@@ -750,14 +750,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="manualAttendanceModalLabel">
-          <i class="ti tabler-calendar-plus me-2"></i><span id="modal-title-text">Add Manual Attendance</span>
+          <i class="ti ti-calendar-plus me-2"></i><span id="modal-title-text">Add Manual Attendance</span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Employee & Date Info -->
         <div class="alert alert-light d-flex align-items-center mb-3">
-          <i class="ti tabler-user me-2"></i>
+          <i class="ti ti-user me-2"></i>
           <div>
             <strong id="manual-employee-name"></strong>
             <br>
@@ -776,14 +776,14 @@
         </div>
 
         <div class="alert alert-warning small">
-          <i class="ti tabler-alert-triangle me-1"></i>
+          <i class="ti ti-alert-triangle me-1"></i>
           <strong>Super Admin Action:</strong> This will create an attendance record in the database. Please ensure the time is accurate.
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="save-manual-attendance-btn" onclick="saveManualAttendance()">
-          <i class="ti tabler-device-floppy me-1"></i>Save Attendance
+          <i class="ti ti-device-floppy me-1"></i>Save Attendance
         </button>
       </div>
     </div>
@@ -796,14 +796,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addWfhModalLabel">
-          <i class="ti tabler-home me-2"></i>Add Work From Home
+          <i class="ti ti-home me-2"></i>Add Work From Home
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Employee & Date Info -->
         <div class="alert alert-light d-flex align-items-center mb-3">
-          <i class="ti tabler-user me-2"></i>
+          <i class="ti ti-user me-2"></i>
           <div>
             <strong id="wfh-employee-name"></strong>
             <br>
@@ -818,14 +818,14 @@
         </div>
 
         <div class="alert alert-info small">
-          <i class="ti tabler-info-circle me-1"></i>
+          <i class="ti ti-info-circle me-1"></i>
           This will mark the employee as working from home for this date. The day will count as a work day.
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="save-wfh-btn" onclick="saveWfh()">
-          <i class="ti tabler-home me-1"></i>Add WFH
+          <i class="ti ti-home me-1"></i>Add WFH
         </button>
       </div>
     </div>
@@ -838,14 +838,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addLeaveModalLabel">
-          <i class="ti tabler-calendar-off me-2"></i>Add Leave
+          <i class="ti ti-calendar-off me-2"></i>Add Leave
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Employee & Date Info -->
         <div class="alert alert-light d-flex align-items-center mb-3">
-          <i class="ti tabler-user me-2"></i>
+          <i class="ti ti-user me-2"></i>
           <div>
             <strong id="leave-employee-name"></strong>
             <br>
@@ -871,14 +871,14 @@
         </div>
 
         <div class="alert alert-info small">
-          <i class="ti tabler-info-circle me-1"></i>
+          <i class="ti ti-info-circle me-1"></i>
           This will create an approved single-day leave record for this employee.
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="save-leave-btn" onclick="saveLeave()">
-          <i class="ti tabler-calendar-plus me-1"></i>Add Leave
+          <i class="ti ti-calendar-plus me-1"></i>Add Leave
         </button>
       </div>
     </div>
@@ -1010,7 +1010,7 @@ function fetchPermissionStatus() {
       // Show cannot use message
       document.getElementById('permission-status-container').innerHTML += `
         <div class="alert alert-warning">
-          <i class="ti tabler-alert-triangle me-1"></i>
+          <i class="ti ti-alert-triangle me-1"></i>
           ${data.reason}
         </div>
       `;
@@ -1020,7 +1020,7 @@ function fetchPermissionStatus() {
     console.error('Error:', error);
     document.getElementById('permission-status-container').innerHTML = `
       <div class="alert alert-danger">
-        <i class="ti tabler-alert-circle me-1"></i>
+        <i class="ti ti-alert-circle me-1"></i>
         Failed to load permission status. Please try again.
       </div>
     `;
@@ -1053,14 +1053,14 @@ function addPermission() {
     } else {
       alert(data.message || 'Failed to add permission');
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-plus me-1"></i>Add Permission';
+      btn.innerHTML = '<i class="ti ti-plus me-1"></i>Add Permission';
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to add permission. Please try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-plus me-1"></i>Add Permission';
+    btn.innerHTML = '<i class="ti ti-plus me-1"></i>Add Permission';
   });
 }
 
@@ -1093,14 +1093,14 @@ function removePermission() {
     } else {
       alert(data.message || 'Failed to remove permission');
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-trash me-1"></i>Remove Permission';
+      btn.innerHTML = '<i class="ti ti-trash me-1"></i>Remove Permission';
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to remove permission. Please try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-trash me-1"></i>Remove Permission';
+    btn.innerHTML = '<i class="ti ti-trash me-1"></i>Remove Permission';
   });
 }
 
@@ -1136,7 +1136,7 @@ function openManualAttendanceModal(employeeId, date, employeeName, type) {
   // Reset button state
   const btn = document.getElementById('save-manual-attendance-btn');
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti tabler-device-floppy me-1"></i>Save Attendance';
+  btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Attendance';
 
   // Show modal
   manualAttendanceModal.show();
@@ -1169,7 +1169,7 @@ function openEditAttendanceModal(employeeId, date, employeeName, type, existingT
   // Reset button state
   const btn = document.getElementById('save-manual-attendance-btn');
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti tabler-device-floppy me-1"></i>Update Attendance';
+  btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Attendance';
 
   // Show modal
   manualAttendanceModal.show();
@@ -1212,14 +1212,14 @@ function saveManualAttendance() {
     } else {
       alert(data.message || 'Failed to save attendance');
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-device-floppy me-1"></i>' + (isEditMode ? 'Update Attendance' : 'Save Attendance');
+      btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i>' + (isEditMode ? 'Update Attendance' : 'Save Attendance');
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to save attendance. Please try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-device-floppy me-1"></i>' + (isEditMode ? 'Update Attendance' : 'Save Attendance');
+    btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i>' + (isEditMode ? 'Update Attendance' : 'Save Attendance');
   });
 }
 
@@ -1271,7 +1271,7 @@ function openAddWfhModal(employeeId, date, employeeName) {
   // Reset button state
   const btn = document.getElementById('save-wfh-btn');
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti tabler-home me-1"></i>Add WFH';
+  btn.innerHTML = '<i class="ti ti-home me-1"></i>Add WFH';
 
   // Show modal
   addWfhModal.show();
@@ -1302,14 +1302,14 @@ function saveWfh() {
     } else {
       alert(data.message || 'Failed to add WFH record');
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-home me-1"></i>Add WFH';
+      btn.innerHTML = '<i class="ti ti-home me-1"></i>Add WFH';
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to add WFH record. Please try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-home me-1"></i>Add WFH';
+    btn.innerHTML = '<i class="ti ti-home me-1"></i>Add WFH';
   });
 }
 
@@ -1331,7 +1331,7 @@ function openAddLeaveModal(employeeId, date, employeeName) {
   // Reset button state
   const btn = document.getElementById('save-leave-btn');
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti tabler-calendar-plus me-1"></i>Add Leave';
+  btn.innerHTML = '<i class="ti ti-calendar-plus me-1"></i>Add Leave';
 
   // Show modal
   addLeaveModal.show();
@@ -1370,14 +1370,14 @@ function saveLeave() {
     } else {
       alert(data.message || 'Failed to add leave record');
       btn.disabled = false;
-      btn.innerHTML = '<i class="ti tabler-calendar-plus me-1"></i>Add Leave';
+      btn.innerHTML = '<i class="ti ti-calendar-plus me-1"></i>Add Leave';
     }
   })
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to add leave record. Please try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-calendar-plus me-1"></i>Add Leave';
+    btn.innerHTML = '<i class="ti ti-calendar-plus me-1"></i>Add Leave';
   });
 }
 

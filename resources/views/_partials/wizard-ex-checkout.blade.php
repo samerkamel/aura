@@ -12,7 +12,7 @@
       </button>
     </div>
     <div class="line">
-      <i class="ti tabler-chevron-right"></i>
+      <i class="ti ti-chevron-right"></i>
     </div>
     <div class="step" data-target="#checkout-address">
       <button type="button" class="step-trigger">
@@ -25,7 +25,7 @@
       </button>
     </div>
     <div class="line">
-      <i class="ti tabler-chevron-right"></i>
+      <i class="ti ti-chevron-right"></i>
     </div>
     <div class="step" data-target="#checkout-payment">
       <button type="button" class="step-trigger">
@@ -38,7 +38,7 @@
       </button>
     </div>
     <div class="line">
-      <i class="ti tabler-chevron-right"></i>
+      <i class="ti ti-chevron-right"></i>
     </div>
     <div class="step" data-target="#checkout-confirmation">
       <button type="button" class="step-trigger">
@@ -64,7 +64,7 @@
             <div class="alert alert-success mb-4" role="alert">
               <div class="d-flex gap-4">
                 <div class="alert-icon flex-shrink-0 rounded me-0">
-                  <i class="ti tabler-percentage"></i>
+                  <i class="ti ti-percentage"></i>
                 </div>
                 <div class="flex-grow-1">
                   <h5 class="alert-heading mb-1">Available Offers</h5>
@@ -134,7 +134,7 @@
             <div class="list-group">
               <a href="javascript:void(0)" class="list-group-item text-primary border-primary d-flex justify-content-between">
                 <span class="fw-medium">Add more products from wishlist</span>
-                <i class="ti tabler-arrow-right ti-sm scaleX-n1-rtl mt-50"></i>
+                <i class="ti ti-arrow-right ti-sm scaleX-n1-rtl mt-50"></i>
               </a>
             </div>
           </div>
@@ -248,7 +248,7 @@
                 <div class="form-check custom-option custom-option-icon position-relative checked">
                   <label class="form-check-label custom-option-content" for="customRadioDelivery1">
                     <span class="custom-option-body">
-                      <i class="ti tabler-user ti-lg"></i>
+                      <i class="ti ti-user ti-lg"></i>
                       <span class="custom-option-title mb-2">Standard</span>
                       <span class="badge bg-label-success btn-pinned">FREE</span>
                       <small>Get your product in 1 Week.</small>
@@ -261,7 +261,7 @@
                 <div class="form-check custom-option custom-option-icon position-relative">
                   <label class="form-check-label custom-option-content" for="customRadioDelivery2">
                     <span class="custom-option-body">
-                      <i class="ti tabler-star ti-lg"></i>
+                      <i class="ti ti-star ti-lg"></i>
                       <span class="custom-option-title mb-2">Express</span>
                       <span class="badge bg-label-secondary btn-pinned">$10</span>
                       <small>Get your product in 3-4 days.</small>
@@ -274,7 +274,7 @@
                 <div class="form-check custom-option custom-option-icon position-relative">
                   <label class="form-check-label custom-option-content" for="customRadioDelivery3">
                     <span class="custom-option-body">
-                      <i class="ti tabler-crown ti-lg"></i>
+                      <i class="ti ti-crown ti-lg"></i>
                       <span class="custom-option-title mb-2">Overnight</span>
                       <span class="badge bg-label-secondary btn-pinned">$15</span>
                       <small>Get your product in 0-1 days.</small>
@@ -348,7 +348,7 @@
             <div class="alert alert-success mb-6" role="alert">
               <div class="d-flex gap-4">
                 <div class="alert-icon flex-shrink-0 rounded me-0">
-                  <i class="ti tabler-percentage"></i>
+                  <i class="ti ti-percentage"></i>
                 </div>
                 <div class="flex-grow-1">
                   <h5 class="alert-heading mb-1">Available Offers</h5>
@@ -399,7 +399,7 @@
                       <label class="form-label" for="paymentCardCvv">CVV Code</label>
                       <div class="input-group input-group-merge">
                         <input type="text" id="paymentCardCvv" class="form-control cvv-code-mask" maxlength="3" placeholder="654" />
-                        <span class="input-group-text cursor-pointer" id="paymentCardCvv2"><i class="ti tabler-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                        <span class="input-group-text cursor-pointer" id="paymentCardCvv2"><i class="ti ti-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                       </div>
                     </div>
                     <div class="col-12">
@@ -484,13 +484,13 @@
             <h4>Thank You! 😇</h4>
             <p>Your order <a href="javascript:void(0)" class="text-heading fw-medium">#1536548131</a> has been placed!</p>
             <p>We sent an email to <a href="mailto:john.doe@example.com" class="text-heading fw-medium">john.doe@example.com</a> with your order confirmation and receipt. If the email hasn't arrived within two minutes, please check your spam folder to see if the email was routed there.</p>
-            <p><span><i class="ti tabler-clock me-1 text-heading"></i> Time placed:&nbsp;</span> 25/05/2020 13:35pm</p>
+            <p><span><i class="ti ti-clock me-1 text-heading"></i> Time placed:&nbsp;</span> 25/05/2020 13:35pm</p>
           </div>
           <!-- Confirmation details -->
           <div class="col-12">
             <ul class="list-group list-group-horizontal-md">
               <li class="list-group-item flex-fill p-6 text-body">
-                <h6 class="d-flex align-items-center gap-2"><i class="ti tabler-map-pin"></i> Shipping</h6>
+                <h6 class="d-flex align-items-center gap-2"><i class="ti ti-map-pin"></i> Shipping</h6>
                 <address class="mb-0">
                   John Doe <br />
                   4135 Parkway Street,<br />
@@ -502,7 +502,7 @@
                 </p>
               </li>
               <li class="list-group-item flex-fill p-6 text-body">
-                <h6 class="d-flex align-items-center gap-2"><i class="ti tabler-credit-card"></i> Billing Address</h6>
+                <h6 class="d-flex align-items-center gap-2"><i class="ti ti-credit-card"></i> Billing Address</h6>
                 <address class="mb-0">
                   John Doe <br />
                   4135 Parkway Street,<br />
@@ -514,7 +514,7 @@
                 </p>
               </li>
               <li class="list-group-item flex-fill p-6 text-body">
-                <h6 class="d-flex align-items-center gap-2"><i class="ti tabler-ship"></i> Shipping Method</h6>
+                <h6 class="d-flex align-items-center gap-2"><i class="ti ti-ship"></i> Shipping Method</h6>
                 <p class="fw-medium mb-4">Preferred Method:</p>
                 Standard Delivery<br />
                 (Normally 3-4 business days)

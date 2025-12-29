@@ -12,7 +12,7 @@
   <img class="banner-bg-img z-n1" src="{{asset('assets/img/pages/header.png')}}" alt="Help center header">
   <h4 class="text-center text-primary"> Hello, how can we help? </h4>
   <div class="input-wrapper mb-4 input-group input-group-merge position-relative mx-auto">
-    <span class="input-group-text" id="basic-addon1"><i class="ti tabler-search"></i></span>
+    <span class="input-group-text" id="basic-addon1"><i class="ti ti-search"></i></span>
     <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
   </div>
   <p class="text-center px-4 mb-0">Common troubleshooting topics: eCommerce, Blogging to payment</p>
@@ -101,7 +101,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-shopping-cart"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-shopping-cart"></i></span>
                   </div>
                   <h5 class="mb-0">Buying</h5>
                 </div>
@@ -111,7 +111,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         What are Favourites?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -119,7 +119,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do I purchase an item?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -127,7 +127,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do i add or change my details?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -135,7 +135,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do refunds work?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -143,7 +143,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Can I Get A Refund?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -151,14 +151,14 @@
                       <span class="text-truncate me-2 me-lg-4">
                         I'm trying to find a specific item
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 10 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>
@@ -169,7 +169,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-help-circle"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-help-circle"></i></span>
                   </div>
                   <h5 class="mb-0">Item Support</h5>
                 </div>
@@ -179,7 +179,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         What is Item Support?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -187,7 +187,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How to contact an author
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -195,7 +195,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Where Is My Purchase Code?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -203,7 +203,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Extend or renew Item Support
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -211,7 +211,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Item Support FAQ
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -219,14 +219,14 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Why has my item been removed?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 14 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>
@@ -237,7 +237,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-currency-dollar"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-currency-dollar"></i></span>
                   </div>
                   <h5 class="mb-0">Licenses</h5>
                 </div>
@@ -247,7 +247,7 @@
                       <span class="text-truncate me-1">
                         Can I use the same license for the same item on multiple sites?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -255,7 +255,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do licenses work for any plugins
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -263,7 +263,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         For logo what license do I need?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -271,7 +271,7 @@
                       <span class="text-truncate me-1">
                         I’m making a test site - it’s not for a client. Which license do I need?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -279,7 +279,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         which license do I need?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -287,14 +287,14 @@
                       <span class="text-truncate me-2 me-lg-4">
                         I want to make multiple end products
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 8 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>
@@ -305,7 +305,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-color-swatch"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-color-swatch"></i></span>
                   </div>
                   <h5 class="mb-0">Template Kits</h5>
                 </div>
@@ -315,7 +315,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Template Kits
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -323,7 +323,7 @@
                       <span class="text-truncate me-1">
                         Elementor Template Kits: PHP Zip File Missing
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -331,7 +331,7 @@
                       <span class="text-truncate me-1">
                         Template Kits - Imported template is blank or broken
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -339,7 +339,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Troubleshooting Import Problems
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -347,7 +347,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How to use the WordPress Plugin
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -355,14 +355,14 @@
                       <span class="text-truncate me-1">
                         How to use the Template Kit Importer Plugin
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 5 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>
@@ -373,7 +373,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-lock-open"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-lock-open"></i></span>
                   </div>
                   <h5 class="mb-0">Account & Password</h5>
                 </div>
@@ -383,7 +383,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Signing in with a social account
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -391,7 +391,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Locked Out of Account
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -399,7 +399,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         I'm not receiving the verification email
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -407,7 +407,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Forgotten Username Or Password
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -415,7 +415,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         New password not accepted
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -423,14 +423,14 @@
                       <span class="text-truncate me-2 me-lg-4">
                         What is Sign In Verification?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 16 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>
@@ -441,7 +441,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm flex-shrink-0 me-3">
-                    <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-user"></i></span>
+                    <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-user"></i></span>
                   </div>
                   <h5 class="mb-0">Account Settings</h5>
                 </div>
@@ -451,7 +451,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do I change my password?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -459,7 +459,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do I change my username?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -467,7 +467,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do I close my account?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -475,7 +475,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How do I change my email address?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li class="mb-2">
@@ -483,7 +483,7 @@
                       <span class="text-truncate me-2 me-lg-4">
                         How can I regain access to my account?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                   <li>
@@ -491,14 +491,14 @@
                       <span class="text-truncate me-2 me-lg-4">
                         Are RSS feeds available on Market?
                       </span>
-                      <i class="ti tabler-chevron-right scaleX-n1-rtl text-muted"></i>
+                      <i class="ti ti-chevron-right scaleX-n1-rtl text-muted"></i>
                     </a>
                   </li>
                 </ul>
                 <p class="mb-0 fw-medium mt-6">
                   <a href="{{url('front-pages/help-center-article')}}" class="d-flex align-items-center">
                     <span class="me-3">See all 12 articles</span>
-                    <i class="ti tabler-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
+                    <i class="ti ti-arrow-right scaleX-n1-rtl ti-sm fw-semibold"></i>
                   </a>
                 </p>
               </div>

@@ -10,11 +10,11 @@
       <div class="card-header">
         <div class="d-flex align-items-center">
           <a href="{{ route('self-service.leave-requests.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-            <i class="ti tabler-arrow-left"></i>
+            <i class="ti ti-arrow-left"></i>
           </a>
           <div>
             <h5 class="mb-0">
-              <i class="ti tabler-calendar-plus me-2"></i>Request Leave
+              <i class="ti ti-calendar-plus me-2"></i>Request Leave
             </h5>
             <small class="text-muted">Submit a new leave request</small>
           </div>
@@ -25,7 +25,7 @@
     <!-- Leave Balances -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti tabler-wallet me-2"></i>Your Leave Balances</h6>
+        <h6 class="mb-0"><i class="ti ti-wallet me-2"></i>Your Leave Balances</h6>
       </div>
       <div class="card-body">
         <div class="row">
@@ -93,7 +93,7 @@
                 <div class="invalid-feedback">{{ $message }}</div>
               @enderror
               @if($allowPastDates ?? false)
-                <small class="form-text text-warning"><i class="ti tabler-alert-triangle me-1"></i>Past dates are allowed for this request.</small>
+                <small class="form-text text-warning"><i class="ti ti-alert-triangle me-1"></i>Past dates are allowed for this request.</small>
               @endif
             </div>
 
@@ -115,7 +115,7 @@
           </div>
 
           <div class="alert alert-info">
-            <i class="ti tabler-info-circle me-2"></i>
+            <i class="ti ti-info-circle me-2"></i>
             @if($employee->manager)
               Your request will be sent to <strong>{{ $employee->manager->name }}</strong> for initial approval, then to admin for final approval.
             @else
@@ -128,7 +128,7 @@
               Cancel
             </a>
             <button type="submit" class="btn btn-primary">
-              <i class="ti tabler-send me-1"></i>Submit Request
+              <i class="ti ti-send me-1"></i>Submit Request
             </button>
           </div>
         </form>

@@ -7,7 +7,7 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Letter Templates</h5>
     <a href="{{ route('letter-templates.create') }}" class="btn btn-primary">
-      <i class="ti tabler-plus me-1"></i>Create Template
+      <i class="ti ti-plus me-1"></i>Create Template
     </a>
   </div>
 
@@ -32,7 +32,7 @@
         @forelse($templates as $template)
         <tr>
           <td>
-            <i class="ti tabler-file-text me-2"></i>
+            <i class="ti ti-file-text me-2"></i>
             <strong>{{ $template->name }}</strong>
           </td>
           <td>
@@ -46,14 +46,14 @@
           <td>
             <div class="dropdown">
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="ti tabler-dots-vertical"></i>
+                <i class="ti ti-dots-vertical"></i>
               </button>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ route('letter-templates.show', $template) }}">
-                  <i class="ti tabler-eye me-2"></i>View
+                  <i class="ti ti-eye me-2"></i>View
                 </a>
                 <a class="dropdown-item" href="{{ route('letter-templates.edit', $template) }}">
-                  <i class="ti tabler-edit me-2"></i>Edit
+                  <i class="ti ti-edit me-2"></i>Edit
                 </a>
                 <div class="dropdown-divider"></div>
                 <form action="{{ route('letter-templates.destroy', $template) }}" method="POST" class="d-inline">
@@ -61,7 +61,7 @@
                   @method('DELETE')
                   <button type="submit" class="dropdown-item text-danger"
                           onclick="return confirm('Are you sure you want to delete this template?')">
-                    <i class="ti tabler-trash me-2"></i>Delete
+                    <i class="ti ti-trash me-2"></i>Delete
                   </button>
                 </form>
               </div>
@@ -72,11 +72,11 @@
         <tr>
           <td colspan="4" class="text-center py-4">
             <div class="d-flex flex-column align-items-center">
-              <i class="ti tabler-file-plus text-muted" style="font-size: 3rem;"></i>
+              <i class="ti ti-file-plus text-muted" style="font-size: 3rem;"></i>
               <h6 class="mt-2">No templates found</h6>
               <p class="text-muted">Start by creating your first letter template</p>
               <a href="{{ route('letter-templates.create') }}" class="btn btn-primary">
-                <i class="ti tabler-plus me-1"></i>Create Template
+                <i class="ti ti-plus me-1"></i>Create Template
               </a>
             </div>
           </td>

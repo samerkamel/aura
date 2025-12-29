@@ -33,7 +33,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-clock me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-clock me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">
               {{ $existingRule ? 'Update' : 'Create' }} Flexible Hours Rule
@@ -42,7 +42,7 @@
           </div>
         </div>
         <a href="{{ route('attendance.rules.index') }}" class="btn btn-outline-secondary">
-          <i class="ti tabler-arrow-left me-1"></i>Back to Rules
+          <i class="ti ti-arrow-left me-1"></i>Back to Rules
         </a>
       </div>
     </div>
@@ -52,13 +52,13 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti tabler-settings me-2"></i>Flexible Hours Configuration
+              <i class="ti ti-settings me-2"></i>Flexible Hours Configuration
             </h6>
           </div>
           <div class="card-body">
             @if($existingRule)
               <div class="alert alert-info" role="alert">
-                <i class="ti tabler-info-circle me-2"></i>
+                <i class="ti ti-info-circle me-2"></i>
                 <strong>Updating Existing Rule:</strong> Only one flexible hours rule is allowed. This will update the current rule.
               </div>
             @endif
@@ -66,7 +66,7 @@
             @if ($errors->any())
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <h6 class="alert-heading">
-                  <i class="ti tabler-x me-2"></i>Validation Errors
+                  <i class="ti ti-x me-2"></i>Validation Errors
                 </h6>
                 <ul class="mb-0">
                   @foreach ($errors->all() as $error)
@@ -140,7 +140,7 @@
               <!-- Example Display -->
               <div class="alert alert-light" role="alert">
                 <h6 class="alert-heading">
-                  <i class="ti tabler-lightbulb me-2"></i>Example
+                  <i class="ti ti-lightbulb me-2"></i>Example
                 </h6>
                 <p class="mb-0">
                   If you set the range from <strong>08:00</strong> to <strong>10:00</strong>, employees can start work anytime between 8:00 AM and 10:00 AM without being marked as late.
@@ -150,10 +150,10 @@
               <!-- Action Buttons -->
               <div class="d-flex justify-content-between">
                 <a href="{{ route('attendance.rules.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti tabler-x me-1"></i>Cancel
+                  <i class="ti ti-x me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti tabler-check me-1"></i>
+                  <i class="ti ti-check me-1"></i>
                   {{ $existingRule ? 'Update Rule' : 'Create Rule' }}
                 </button>
               </div>

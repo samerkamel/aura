@@ -10,7 +10,7 @@
       <div class="card-header">
         <div>
           <h5 class="mb-0">
-            <i class="ti tabler-checklist me-2"></i>Pending Approvals
+            <i class="ti ti-checklist me-2"></i>Pending Approvals
           </h5>
           <small class="text-muted">Review and approve employee requests</small>
         </div>
@@ -19,14 +19,14 @@
 
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show">
-        <i class="ti tabler-check me-2"></i>{{ session('success') }}
+        <i class="ti ti-check me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show">
-        <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
+        <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
@@ -37,7 +37,7 @@
       <div class="card-header bg-label-warning">
         <div class="d-flex justify-content-between align-items-center">
           <h6 class="mb-0">
-            <i class="ti tabler-user-check me-2"></i>Pending Your Approval (as Manager)
+            <i class="ti ti-user-check me-2"></i>Pending Your Approval (as Manager)
           </h6>
           <span class="badge bg-warning">{{ $pendingManagerRequests->count() }}</span>
         </div>
@@ -97,7 +97,7 @@
               </td>
               <td>
                 <a href="{{ route('self-service.approvals.show', $request) }}" class="btn btn-sm btn-primary">
-                  <i class="ti tabler-eye me-1"></i>Review
+                  <i class="ti ti-eye me-1"></i>Review
                 </a>
               </td>
             </tr>
@@ -114,7 +114,7 @@
       <div class="card-header bg-label-info">
         <div class="d-flex justify-content-between align-items-center">
           <h6 class="mb-0">
-            <i class="ti tabler-shield-check me-2"></i>Pending Admin Final Approval
+            <i class="ti ti-shield-check me-2"></i>Pending Admin Final Approval
           </h6>
           <span class="badge bg-info">{{ $pendingAdminRequests->count() }}</span>
         </div>
@@ -172,7 +172,7 @@
               <td>
                 @if($request->manager_approved_at)
                   <span class="badge bg-success">
-                    <i class="ti tabler-check me-1"></i>{{ $request->managerApprover->name ?? 'Manager' }}
+                    <i class="ti ti-check me-1"></i>{{ $request->managerApprover->name ?? 'Manager' }}
                   </span>
                   <br><small class="text-muted">{{ $request->manager_approved_at->format('M d, H:i') }}</small>
                 @else
@@ -181,7 +181,7 @@
               </td>
               <td>
                 <a href="{{ route('self-service.approvals.show', $request) }}" class="btn btn-sm btn-primary">
-                  <i class="ti tabler-eye me-1"></i>Review
+                  <i class="ti ti-eye me-1"></i>Review
                 </a>
               </td>
             </tr>
@@ -198,7 +198,7 @@
       <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
           <h6 class="mb-0">
-            <i class="ti tabler-list me-2"></i>All Pending Requests (Admin View)
+            <i class="ti ti-list me-2"></i>All Pending Requests (Admin View)
           </h6>
           <span class="badge bg-primary">{{ $allPendingRequests->count() }}</span>
         </div>
@@ -269,7 +269,7 @@
               </td>
               <td>
                 <a href="{{ route('self-service.approvals.show', $request) }}" class="btn btn-sm btn-primary">
-                  <i class="ti tabler-eye me-1"></i>Review
+                  <i class="ti ti-eye me-1"></i>Review
                 </a>
               </td>
             </tr>
@@ -284,11 +284,11 @@
     @if(($pendingManagerRequests->isEmpty() || !$employee->isManager()) && ($pendingAdminRequests->isEmpty() || !$isSuperAdmin) && ($allPendingRequests->isEmpty() || !$isSuperAdmin))
     <div class="card">
       <div class="card-body text-center py-5">
-        <i class="ti tabler-check-square text-success" style="font-size: 3rem;"></i>
+        <i class="ti ti-check-square text-success" style="font-size: 3rem;"></i>
         <h5 class="mt-3">All Caught Up!</h5>
         <p class="text-muted">There are no pending requests requiring your approval.</p>
         <a href="{{ route('self-service.dashboard') }}" class="btn btn-outline-primary">
-          <i class="ti tabler-arrow-left me-1"></i>Back to Dashboard
+          <i class="ti ti-arrow-left me-1"></i>Back to Dashboard
         </a>
       </div>
     </div>

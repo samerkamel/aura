@@ -8,7 +8,7 @@
     },
     {
       "name": "Self Service",
-      "icon": "menu-icon tf-icons ti tabler-user-circle",
+      "icon": "menu-icon tf-icons ti ti-user-circle",
       "slug": "self-service",
       "roles": [
         "all"
@@ -48,7 +48,7 @@
     },
     {
       "name": "Approvals",
-      "icon": "menu-icon tf-icons ti tabler-checklist",
+      "icon": "menu-icon tf-icons ti ti-checklist",
       "slug": "self-service-approvals",
       "url": "self-service/approvals",
       "roles": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "Employees",
-      "icon": "menu-icon tf-icons ti tabler-users",
+      "icon": "menu-icon tf-icons ti ti-users",
       "slug": "hr-employees",
       "roles": [
         "super-admin",
@@ -94,7 +94,7 @@
     },
     {
       "name": "Positions",
-      "icon": "menu-icon tf-icons ti tabler-briefcase",
+      "icon": "menu-icon tf-icons ti ti-briefcase",
       "slug": "hr-positions",
       "roles": [
         "super-admin",
@@ -116,7 +116,7 @@
     },
     {
       "name": "Attendance Records",
-      "icon": "menu-icon tf-icons ti tabler-clock",
+      "icon": "menu-icon tf-icons ti ti-clock",
       "slug": "attendance-records",
       "roles": [
         "super-admin",
@@ -158,7 +158,7 @@
     },
     {
       "name": "Attendance Settings",
-      "icon": "menu-icon tf-icons ti tabler-settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "attendance-settings",
       "roles": [
         "super-admin",
@@ -184,7 +184,7 @@
     },
     {
       "name": "Leave Policies",
-      "icon": "menu-icon tf-icons ti tabler-file-text",
+      "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
       "url": "leave-policies",
       "roles": [
@@ -194,7 +194,7 @@
     },
     {
       "name": "Payroll Management",
-      "icon": "menu-icon tf-icons ti tabler-currency-dollar",
+      "icon": "menu-icon tf-icons ti ti-currency-dollar",
       "slug": "payroll-management",
       "roles": [
         "super-admin",
@@ -221,7 +221,7 @@
     },
     {
       "name": "Letter Templates",
-      "icon": "menu-icon tf-icons ti tabler-file-text",
+      "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "letter-templates",
       "url": "letter-templates",
       "roles": [
@@ -231,7 +231,7 @@
     },
     {
       "name": "Assets",
-      "icon": "menu-icon tf-icons ti tabler-package",
+      "icon": "menu-icon tf-icons ti ti-package",
       "slug": "assets",
       "url": "assetmanager/assets",
       "roles": [
@@ -251,7 +251,7 @@
     },
     {
       "name": "Projects",
-      "icon": "menu-icon tf-icons ti tabler-folder",
+      "icon": "menu-icon tf-icons ti ti-folder",
       "slug": "projects",
       "roles": [
         "super-admin",
@@ -292,7 +292,7 @@
     },
     {
       "name": "Accounting",
-      "icon": "menu-icon tf-icons ti tabler-coin",
+      "icon": "menu-icon tf-icons ti ti-coin",
       "slug": "accounting-cash-flow",
       "roles": [
         "super-admin",
@@ -374,7 +374,7 @@
     },
     {
       "name": "Invoice Management",
-      "icon": "menu-icon tf-icons ti tabler-file-invoice",
+      "icon": "menu-icon tf-icons ti ti-file-invoice",
       "slug": "invoice-management",
       "roles": [
         "super-admin",
@@ -411,7 +411,7 @@
     },
     {
       "name": "Invoice Settings",
-      "icon": "menu-icon tf-icons ti tabler-settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "invoice-settings",
       "roles": [
         "super-admin",
@@ -438,7 +438,7 @@
     },
     {
       "name": "User Management",
-      "icon": "menu-icon tf-icons ti tabler-users-group",
+      "icon": "menu-icon tf-icons ti ti-users-group",
       "slug": "administration-users",
       "roles": [
         "super-admin"
@@ -458,7 +458,7 @@
     },
     {
       "name": "Roles & Permissions",
-      "icon": "menu-icon tf-icons ti tabler-shield-check",
+      "icon": "menu-icon tf-icons ti ti-shield-check",
       "slug": "administration-roles",
       "roles": [
         "super-admin"
@@ -478,7 +478,7 @@
     },
     {
       "name": "Customers",
-      "icon": "menu-icon tf-icons ti tabler-users",
+      "icon": "menu-icon tf-icons ti ti-users",
       "slug": "administration-customers-index",
       "url": "administration/customers",
       "roles": [
@@ -488,7 +488,7 @@
     },
     {
       "name": "Settings",
-      "icon": "menu-icon tf-icons ti tabler-settings",
+      "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "settings",
       "roles": [
         "super-admin"

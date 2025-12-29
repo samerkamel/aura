@@ -102,7 +102,7 @@
         <h5 class="card-title m-0 me-2">Topic you are interested in</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="topic" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topic">
             <a class="dropdown-item" href="javascript:void(0);">Highest Views</a>
@@ -118,21 +118,21 @@
         <div class="col-md-4 d-flex justify-content-around align-items-center">
           <div>
             <div class="d-flex align-items-baseline">
-              <span class="text-primary me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-primary me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">UI Design</p>
                 <h5>35%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline my-12">
-              <span class="text-success me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-success me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">Music</p>
                 <h5>14%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline">
-              <span class="text-danger me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-danger me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">React</p>
                 <h5>10%</h5>
@@ -142,21 +142,21 @@
 
           <div>
             <div class="d-flex align-items-baseline">
-              <span class="text-info me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-info me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">UX Design</p>
                 <h5>20%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline my-12">
-              <span class="text-secondary me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-secondary me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">Animation</p>
                 <h5>12%</h5>
               </div>
             </div>
             <div class="d-flex align-items-baseline">
-              <span class="text-warning me-2"><i class='ti tabler-circle-filled ti-12px'></i></span>
+              <span class="text-warning me-2"><i class='ti ti-circle-filled ti-12px'></i></span>
               <div>
                 <p class="mb-0">SEO</p>
                 <h5>9%</h5>
@@ -178,7 +178,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="popularInstructors" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="popularInstructors">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -270,7 +270,7 @@
         <h5 class="card-title m-0 me-2">Top Courses</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="topCourses" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topCourses">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -283,7 +283,7 @@
         <ul class="list-unstyled mb-0">
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-video ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-video ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -296,7 +296,7 @@
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-info"><i class="ti tabler-code ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-info"><i class="ti ti-code ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -309,7 +309,7 @@
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-success"><i class="ti tabler-camera ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-success"><i class="ti ti-camera ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -322,7 +322,7 @@
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-warning"><i class="ti tabler-brand-dribbble ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-warning"><i class="ti ti-brand-dribbble ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -335,7 +335,7 @@
           </li>
           <li class="d-flex align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-danger"><i class="ti tabler-microphone-2 ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-danger"><i class="ti ti-microphone-2 ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -365,7 +365,7 @@
           <div class="col-6">
             <div class="d-flex">
               <div class="avatar flex-shrink-0 me-3">
-                <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-calendar-event ti-28px"></i></span>
+                <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-calendar-event ti-28px"></i></span>
               </div>
               <div>
                 <h6 class="mb-0 text-nowrap">17 Nov 23</h6>
@@ -376,7 +376,7 @@
           <div class="col-6">
             <div class="d-flex">
               <div class="avatar flex-shrink-0 me-3">
-                <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-clock ti-28px"></i></span>
+                <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-clock ti-28px"></i></span>
               </div>
               <div>
                 <h6 class="mb-0 text-nowrap">32 minutes</h6>
@@ -398,7 +398,7 @@
         <h5 class="card-title m-0 me-2">Assignment Progress</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="assignmentProgress" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
+            <i class="ti ti-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="assignmentProgress">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -420,7 +420,7 @@
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -436,7 +436,7 @@
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -452,7 +452,7 @@
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -468,7 +468,7 @@
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>

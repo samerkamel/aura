@@ -29,7 +29,7 @@
         </div>
         <h5 class="mt-4 mb-0">John Doe</h5>
         <span>Admin</span>
-        <i class="ti tabler-x ti-lg cursor-pointer close-sidebar" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-left"></i>
+        <i class="ti ti-x ti-lg cursor-pointer close-sidebar" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-left"></i>
       </div>
       <div class="sidebar-body px-6 pb-6">
         <div class="my-6">
@@ -62,7 +62,7 @@
           <ul class="list-unstyled d-grid gap-4 ms-2 pt-2 text-heading">
             <li class="d-flex justify-content-between align-items-center">
               <div>
-                <i class='ti tabler-lock ti-md me-1'></i>
+                <i class='ti ti-lock ti-md me-1'></i>
                 <span class="align-middle">Two-step Verification</span>
               </div>
               <div class="form-check form-switch mb-0 me-1">
@@ -71,7 +71,7 @@
             </li>
             <li class="d-flex justify-content-between align-items-center">
               <div>
-                <i class='ti tabler-bell ti-md me-1'></i>
+                <i class='ti ti-bell ti-md me-1'></i>
                 <span class="align-middle">Notification</span>
               </div>
               <div class="form-check form-switch mb-0 me-1">
@@ -79,17 +79,17 @@
               </div>
             </li>
             <li>
-              <i class="ti tabler-user-plus ti-md me-1"></i>
+              <i class="ti ti-user-plus ti-md me-1"></i>
               <span class="align-middle">Invite Friends</span>
             </li>
             <li>
-              <i class="ti tabler-trash ti-md me-1"></i>
+              <i class="ti ti-trash ti-md me-1"></i>
               <span class="align-middle">Delete Account</span>
             </li>
           </ul>
         </div>
         <div class="d-flex mt-6">
-          <button class="btn btn-primary w-100" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-left">Logout<i class='ti tabler-logout ti-16px ms-2'></i></button>
+          <button class="btn btn-primary w-100" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-left">Logout<i class='ti ti-logout ti-16px ms-2'></i></button>
         </div>
       </div>
     </div>
@@ -103,11 +103,11 @@
             <img class="user-avatar rounded-circle cursor-pointer" src="{{asset('assets/img/avatars/1.png')}}" alt="Avatar">
           </div>
           <div class="flex-grow-1 input-group input-group-merge">
-            <span class="input-group-text" id="basic-addon-search31"><i class="ti tabler-search"></i></span>
+            <span class="input-group-text" id="basic-addon-search31"><i class="ti ti-search"></i></span>
             <input type="text" class="form-control chat-search-input" placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon-search31">
           </div>
         </div>
-        <i class="ti tabler-x ti-lg cursor-pointer position-absolute top-50 end-0 translate-middle d-lg-none d-block" data-overlay data-bs-toggle="sidebar" data-target="#app-chat-contacts"></i>
+        <i class="ti ti-x ti-lg cursor-pointer position-absolute top-50 end-0 translate-middle d-lg-none d-block" data-overlay data-bs-toggle="sidebar" data-target="#app-chat-contacts"></i>
       </div>
       <div class="sidebar-body">
 
@@ -302,7 +302,7 @@
         <div class="chat-history-header border-bottom">
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex overflow-hidden align-items-center">
-              <i class="ti tabler-menu-2 ti-lg cursor-pointer d-lg-none d-block me-4" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-contacts"></i>
+              <i class="ti ti-menu-2 ti-lg cursor-pointer d-lg-none d-block me-4" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-contacts"></i>
               <div class="flex-shrink-0 avatar avatar-online">
                 <img src="{{asset('assets/img/avatars/4.png')}}" alt="Avatar" class="rounded-circle" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-right">
               </div>
@@ -312,11 +312,11 @@
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <i class="ti tabler-phone ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
-              <i class="ti tabler-video ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
-              <i class="ti tabler-search ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
+              <i class="ti ti-phone ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
+              <i class="ti ti-video ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
+              <i class="ti ti-search ti-md cursor-pointer d-sm-inline-flex d-none me-1 btn btn-sm btn-text-secondary text-secondary btn-icon rounded-pill"></i>
               <div class="dropdown">
-                <button class="btn  btn-sm btn-icon btn-text-secondary text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="true" id="chat-header-actions"><i class="ti tabler-dots-vertical ti-md"></i></button>
+                <button class="btn  btn-sm btn-icon btn-text-secondary text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="true" id="chat-header-actions"><i class="ti ti-dots-vertical ti-md"></i></button>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="chat-header-actions">
                   <a class="dropdown-item" href="javascript:void(0);">View Contact</a>
                   <a class="dropdown-item" href="javascript:void(0);">Mute Notifications</a>
@@ -337,7 +337,7 @@
                     <p class="mb-0">How can we help? We're here for you! 😄</p>
                   </div>
                   <div class="text-end text-muted mt-1">
-                    <i class='ti tabler-checks ti-16px text-success me-1'></i>
+                    <i class='ti ti-checks ti-16px text-success me-1'></i>
                     <small>10:00 AM</small>
                   </div>
                 </div>
@@ -376,7 +376,7 @@
                     <p class="mb-0">{{ config('variables.templateName') ? config('variables.templateName') : 'TemplateName' }} has all the components you'll ever need in a app.</p>
                   </div>
                   <div class="text-end text-muted mt-1">
-                    <i class='ti tabler-checks ti-16px text-success me-1'></i>
+                    <i class='ti ti-checks ti-16px text-success me-1'></i>
                     <small>10:03 AM</small>
                   </div>
                 </div>
@@ -417,7 +417,7 @@
                     <p class="mb-0">Thanks, you can purchase it.</p>
                   </div>
                   <div class="text-end text-muted mt-1">
-                    <i class='ti tabler-checks ti-16px text-success me-1'></i>
+                    <i class='ti ti-checks ti-16px text-success me-1'></i>
                     <small>10:06 AM</small>
                   </div>
                 </div>
@@ -455,7 +455,7 @@
                     <p class="mb-0">Great, Feel free to get in touch.</p>
                   </div>
                   <div class="text-end text-muted mt-1">
-                    <i class='ti tabler-checks ti-16px text-success me-1'></i>
+                    <i class='ti ti-checks ti-16px text-success me-1'></i>
                     <small>10:10 AM</small>
                   </div>
                 </div>
@@ -490,7 +490,7 @@
                     <p class="mb-0">Yes that's correct documentation file, Design files are included with the template.</p>
                   </div>
                   <div class="text-end text-muted mt-1">
-                    <i class='ti tabler-checks ti-16px me-1'></i>
+                    <i class='ti ti-checks ti-16px me-1'></i>
                     <small>10:15 AM</small>
                   </div>
                 </div>
@@ -508,14 +508,14 @@
           <form class="form-send-message d-flex justify-content-between align-items-center ">
             <input class="form-control message-input border-0 me-4 shadow-none" placeholder="Type your message here...">
             <div class="message-actions d-flex align-items-center">
-              <i class="speech-to-text ti tabler-microphone ti-md btn btn-sm btn-text-secondary btn-icon rounded-pill cursor-pointer text-heading"></i>
+              <i class="speech-to-text ti ti-microphone ti-md btn btn-sm btn-text-secondary btn-icon rounded-pill cursor-pointer text-heading"></i>
               <label for="attach-doc" class="form-label mb-0">
-                <i class="ti tabler-paperclip ti-md cursor-pointer btn btn-sm btn-text-secondary btn-icon rounded-pill mx-1 text-heading"></i>
+                <i class="ti ti-paperclip ti-md cursor-pointer btn btn-sm btn-text-secondary btn-icon rounded-pill mx-1 text-heading"></i>
                 <input type="file" id="attach-doc" hidden>
               </label>
               <button class="btn btn-primary d-flex send-msg-btn">
                 <span class="align-middle d-md-inline-block d-none">Send</span>
-                <i class="ti tabler-send ti-16px ms-md-2 ms-0"></i>
+                <i class="ti ti-send ti-16px ms-md-2 ms-0"></i>
               </button>
             </div>
           </form>
@@ -532,7 +532,7 @@
         </div>
         <h5 class="mt-4 mb-0">Felecia Rower</h5>
         <span>NextJS Developer</span>
-        <i class="ti tabler-x ti-lg cursor-pointer close-sidebar d-block" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-right"></i>
+        <i class="ti ti-x ti-lg cursor-pointer close-sidebar d-block" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-right"></i>
       </div>
       <div class="sidebar-body p-6 pt-0">
         <div class="my-6">
@@ -543,15 +543,15 @@
           <p class="text-uppercase mb-1 text-muted">Personal Information</p>
           <ul class="list-unstyled d-grid gap-4 mb-0 ms-2 py-2 text-heading">
             <li class="d-flex align-items-center">
-              <i class='ti tabler-mail ti-md'></i>
+              <i class='ti ti-mail ti-md'></i>
               <span class="align-middle ms-2">josephGreen@email.com</span>
             </li>
             <li class="d-flex align-items-center">
-              <i class='ti tabler-phone-call ti-md'></i>
+              <i class='ti ti-phone-call ti-md'></i>
               <span class="align-middle ms-2">+1(123) 456 - 7890</span>
             </li>
             <li class="d-flex align-items-center">
-              <i class='ti tabler-clock ti-md'></i>
+              <i class='ti ti-clock ti-md'></i>
               <span class="align-middle ms-2">Mon - Fri 10AM - 8PM</span>
             </li>
           </ul>
@@ -560,29 +560,29 @@
           <p class="text-uppercase text-muted mb-1">Options</p>
           <ul class="list-unstyled d-grid gap-4 ms-2 py-2 text-heading">
             <li class="cursor-pointer d-flex align-items-center">
-              <i class='ti tabler-badge ti-md'></i>
+              <i class='ti ti-badge ti-md'></i>
               <span class="align-middle ms-2">Add Tag</span>
             </li>
             <li class="cursor-pointer d-flex align-items-center">
-              <i class='ti tabler-star ti-md'></i>
+              <i class='ti ti-star ti-md'></i>
               <span class="align-middle ms-2">Important Contact</span>
             </li>
             <li class="cursor-pointer d-flex align-items-center">
-              <i class='ti tabler-photo ti-md'></i>
+              <i class='ti ti-photo ti-md'></i>
               <span class="align-middle ms-2">Shared Media</span>
             </li>
             <li class="cursor-pointer d-flex align-items-center">
-              <i class='ti tabler-trash ti-md'></i>
+              <i class='ti ti-trash ti-md'></i>
               <span class="align-middle ms-2">Delete Contact</span>
             </li>
             <li class="cursor-pointer d-flex align-items-center">
-              <i class='ti tabler-ban ti-md'></i>
+              <i class='ti ti-ban ti-md'></i>
               <span class="align-middle ms-2">Block Contact</span>
             </li>
           </ul>
         </div>
         <div class="d-flex mt-6">
-          <button class="btn btn-danger w-100" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-right">Delete Contact<i class='ti tabler-trash ti-16px ms-2'></i></button>
+          <button class="btn btn-danger w-100" data-bs-toggle="sidebar" data-overlay data-target="#app-chat-sidebar-right">Delete Contact<i class='ti ti-trash ti-16px ms-2'></i></button>
         </div>
       </div>
     </div>

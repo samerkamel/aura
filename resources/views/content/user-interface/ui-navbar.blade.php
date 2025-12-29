@@ -97,7 +97,7 @@
 
         <form class="d-flex">
           <div class="input-group">
-            <span class="input-group-text"><i class="tf-icons ti tabler-search"></i></span>
+            <span class="input-group-text"><i class="tf-icons ti ti-search"></i></span>
             <input type="text" class="form-control" placeholder="Search..." />
           </div>
         </form>
@@ -161,19 +161,19 @@
                   <h6 class="m-2">Applications</h6>
                   <ul class="nav flex-column">
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-mail ti-sm me-1"></i> Email</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-mail ti-sm me-1"></i> Email</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-messages ti-sm me-1"></i> Chat</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-messages ti-sm me-1"></i> Chat</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-checklist ti-sm me-1"></i> ToDos</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-checklist ti-sm me-1"></i> ToDos</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-calendar ti-sm me-1"></i> Calender</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-calendar ti-sm me-1"></i> Calender</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link disabled" href="javascript:void(0)" tabindex="-1"><i class="tf-icons ti tabler-ban ti-sm me-1"></i> Disabled</a>
+                      <a class="nav-link mega-dropdown-link disabled" href="javascript:void(0)" tabindex="-1"><i class="tf-icons ti ti-ban ti-sm me-1"></i> Disabled</a>
                     </li>
                   </ul>
                 </div>
@@ -262,19 +262,19 @@
                   <h6 class="m-2">Applications</h6>
                   <ul class="nav flex-column">
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-mail ti-sm me-1"></i> Email</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-mail ti-sm me-1"></i> Email</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-messages ti-sm me-1"></i> Chat</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-messages ti-sm me-1"></i> Chat</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-checklist ti-sm me-1"></i> ToDos</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-checklist ti-sm me-1"></i> ToDos</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti tabler-calendar ti-sm me-1"></i> Calender</a>
+                      <a class="nav-link mega-dropdown-link" href="javascript:void(0)"><i class="tf-icons ti ti-calendar ti-sm me-1"></i> Calender</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link mega-dropdown-link disabled" href="javascript:void(0)" tabindex="-1"><i class="tf-icons ti tabler-ban ti-sm me-1"></i> Disabled</a>
+                      <a class="nav-link mega-dropdown-link disabled" href="javascript:void(0)" tabindex="-1"><i class="tf-icons ti ti-ban ti-sm me-1"></i> Disabled</a>
                     </li>
                   </ul>
                 </div>
@@ -359,13 +359,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -389,13 +389,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -419,13 +419,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -450,13 +450,13 @@
 
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -480,13 +480,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -510,13 +510,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -541,13 +541,13 @@
 
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -571,13 +571,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -602,13 +602,13 @@
         </div>
         <ul class="navbar-nav ms-lg-auto">
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-user ti-xs me-1"></i> Profile</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-user ti-xs me-1"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-settings ti-xs me-1"></i> Settings</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-settings ti-xs me-1"></i> Settings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti tabler-lock-open ti-xs me-1"></i> Logout</a>
+            <a class="nav-link" href="javascript:void(0);"><i class="tf-icons navbar-icon ti ti-lock-open ti-xs me-1"></i> Logout</a>
           </li>
         </ul>
       </div>

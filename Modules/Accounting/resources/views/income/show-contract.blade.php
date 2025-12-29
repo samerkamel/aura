@@ -17,10 +17,10 @@
                         {{ ucfirst($contract->status) }}
                     </span>
                     <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back
+                        <i class="ti ti-arrow-left me-1"></i>Back
                     </a>
                     <a href="{{ route('accounting.income.contracts.edit', $contract) }}" class="btn btn-primary">
-                        <i class="ti tabler-edit me-1"></i>Edit Contract
+                        <i class="ti ti-edit me-1"></i>Edit Contract
                     </a>
                 </div>
             </div>
@@ -111,10 +111,10 @@
                 <h5 class="mb-0">Payment Milestones</h5>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#recurringPaymentsModal">
-                        <i class="ti tabler-refresh me-1"></i>Setup Recurring
+                        <i class="ti ti-refresh me-1"></i>Setup Recurring
                     </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                        <i class="ti tabler-plus me-1"></i>Add Milestone
+                        <i class="ti ti-plus me-1"></i>Add Milestone
                     </button>
                 </div>
             </div>
@@ -187,21 +187,21 @@
                                             <ul class="dropdown-menu">
                                                 @if(!$payment->due_date)
                                                     <li><a class="dropdown-item" href="#" onclick="schedulePayment({{ $payment->id }})">
-                                                        <i class="ti tabler-calendar-plus me-2"></i>Schedule Date
+                                                        <i class="ti ti-calendar-plus me-2"></i>Schedule Date
                                                     </a></li>
                                                     <li><hr class="dropdown-divider"></li>
                                                 @endif
                                                 @if($payment->status === 'pending' && $payment->due_date)
                                                     <li><a class="dropdown-item" href="#" onclick="markAsPaid({{ $payment->id }})">
-                                                        <i class="ti tabler-check me-2"></i>Mark as Paid
+                                                        <i class="ti ti-check me-2"></i>Mark as Paid
                                                     </a></li>
                                                 @endif
                                                 <li><a class="dropdown-item" href="#" onclick="editPayment({{ $payment->id }})">
-                                                    <i class="ti tabler-edit me-2"></i>Edit
+                                                    <i class="ti ti-edit me-2"></i>Edit
                                                 </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item text-danger" href="#" onclick="deletePayment({{ $payment->id }})">
-                                                    <i class="ti tabler-trash me-2"></i>Delete
+                                                    <i class="ti ti-trash me-2"></i>Delete
                                                 </a></li>
                                             </ul>
                                         </div>
@@ -230,15 +230,15 @@
                 @else
                     <div class="text-center py-4">
                         <div class="mb-3">
-                            <i class="ti tabler-calendar-plus" style="font-size: 3rem; color: #ddd;"></i>
+                            <i class="ti ti-calendar-plus" style="font-size: 3rem; color: #ddd;"></i>
                         </div>
                         <h6 class="text-muted">No Payment Milestones</h6>
                         <p class="text-muted mb-3">Add payment milestones to track project phases and income.</p>
                         <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                            <i class="ti tabler-plus me-1"></i>Add First Milestone
+                            <i class="ti ti-plus me-1"></i>Add First Milestone
                         </button>
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#recurringPaymentsModal">
-                            <i class="ti tabler-refresh me-1"></i>Setup Recurring
+                            <i class="ti ti-refresh me-1"></i>Setup Recurring
                         </button>
                     </div>
                 @endif
@@ -347,7 +347,7 @@
                 @csrf
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <i class="ti tabler-info-circle me-2"></i>
+                        <i class="ti ti-info-circle me-2"></i>
                         This will distribute the contract value (EGP {{ number_format($contract->total_amount, 2) }})
                         equally across all payment dates based on your frequency settings.
                         <br><strong>Note:</strong> This will replace any existing recurring payments.

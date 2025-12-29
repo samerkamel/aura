@@ -14,51 +14,51 @@
                 <div class="d-flex gap-2">
                     @if($invoice->status === 'draft' || auth()->user()->hasRole('super-admin'))
                         <a href="{{ route('invoicing.invoices.edit', $invoice) }}" class="btn btn-outline-primary">
-                            <i class="ti tabler-edit me-1"></i>Edit
+                            <i class="ti ti-edit me-1"></i>Edit
                         </a>
                     @endif
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="ti tabler-dots-vertical me-1"></i>Actions
+                            <i class="ti ti-dots-vertical me-1"></i>Actions
                         </button>
                         <ul class="dropdown-menu">
                             @if(in_array($invoice->status, ['draft', 'sent']))
                                 <li>
                                     <a class="dropdown-item" href="#" onclick="markAsSent({{ $invoice->id }})">
-                                        <i class="ti tabler-send me-2"></i>Mark as Sent
+                                        <i class="ti ti-send me-2"></i>Mark as Sent
                                     </a>
                                 </li>
                             @endif
                             @if(in_array($invoice->status, ['sent', 'overdue']))
                                 <li>
                                     <a class="dropdown-item" href="#" onclick="markAsPaid({{ $invoice->id }})">
-                                        <i class="ti tabler-check me-2"></i>Mark as Paid
+                                        <i class="ti ti-check me-2"></i>Mark as Paid
                                     </a>
                                 </li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="#" onclick="printInvoice()">
-                                    <i class="ti tabler-printer me-2"></i>Print
+                                    <i class="ti ti-printer me-2"></i>Print
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#" onclick="downloadPDF()">
-                                    <i class="ti tabler-download me-2"></i>Download PDF
+                                    <i class="ti ti-download me-2"></i>Download PDF
                                 </a>
                             </li>
                             @if($invoice->status === 'draft')
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="cancelInvoice({{ $invoice->id }})">
-                                        <i class="ti tabler-x me-2"></i>Cancel Invoice
+                                        <i class="ti ti-x me-2"></i>Cancel Invoice
                                     </a>
                                 </li>
                             @endif
                         </ul>
                     </div>
                     <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Invoices
+                        <i class="ti ti-arrow-left me-1"></i>Back to Invoices
                     </a>
                 </div>
             </div>
@@ -157,7 +157,7 @@
                                         @endif
                                         @if($item->contract_payment_id)
                                             <small class="text-muted">
-                                                <i class="ti tabler-link me-1"></i>
+                                                <i class="ti ti-link me-1"></i>
                                                 Linked to contract payment
                                             </small>
                                         @endif
@@ -308,7 +308,7 @@
                 </div>
                 @if($invoice->status !== 'cancelled' && $invoice->remaining_amount > 0 && auth()->user()->can('manage-invoices'))
                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                        <i class="ti tabler-plus me-1"></i>Add Payment
+                        <i class="ti ti-plus me-1"></i>Add Payment
                     </button>
                 @endif
             </div>
@@ -322,7 +322,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-info p-2 me-2 rounded">
-                                            <i class="ti tabler-currency-dollar ti-sm"></i>
+                                            <i class="ti ti-currency-dollar ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -339,7 +339,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-success p-2 me-2 rounded">
-                                            <i class="ti tabler-check ti-sm"></i>
+                                            <i class="ti ti-check ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -356,7 +356,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-warning p-2 me-2 rounded">
-                                            <i class="ti tabler-clock ti-sm"></i>
+                                            <i class="ti ti-clock ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -373,7 +373,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-primary p-2 me-2 rounded">
-                                            <i class="ti tabler-list ti-sm"></i>
+                                            <i class="ti ti-list ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -437,7 +437,7 @@
                                     <td>
                                         @if($payment->hasAttachment())
                                             <a href="{{ $payment->attachment_url }}" class="btn btn-sm btn-outline-primary" title="Download {{ $payment->attachment_original_name }}">
-                                                <i class="ti tabler-paperclip me-1"></i>{{ \Illuminate\Support\Str::limit($payment->attachment_original_name, 20) }}
+                                                <i class="ti ti-paperclip me-1"></i>{{ \Illuminate\Support\Str::limit($payment->attachment_original_name, 20) }}
                                             </a>
                                         @else
                                             <span class="text-muted">—</span>
@@ -448,14 +448,14 @@
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                    <i class="ti tabler-dots-vertical"></i>
+                                                    <i class="ti ti-dots-vertical"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     <button type="button" class="dropdown-item" onclick="editPayment({{ $payment->id }})">
-                                                        <i class="ti tabler-edit me-2"></i>Edit
+                                                        <i class="ti ti-edit me-2"></i>Edit
                                                     </button>
                                                     <button type="button" class="dropdown-item text-danger" onclick="deletePayment({{ $payment->id }})">
-                                                        <i class="ti tabler-trash me-2"></i>Delete
+                                                        <i class="ti ti-trash me-2"></i>Delete
                                                     </button>
                                                 </div>
                                             </div>
@@ -469,13 +469,13 @@
                 @else
                     <div class="text-center py-4">
                         <div class="mb-3">
-                            <i class="ti tabler-currency-dollar display-6 text-muted"></i>
+                            <i class="ti ti-currency-dollar display-6 text-muted"></i>
                         </div>
                         <h6 class="mb-2">No payments recorded</h6>
                         <p class="text-muted">No payments have been recorded for this invoice yet.</p>
                         @if($invoice->status !== 'cancelled' && auth()->user()->can('manage-invoices'))
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
-                                <i class="ti tabler-plus me-1"></i>Add First Payment
+                                <i class="ti ti-plus me-1"></i>Add First Payment
                             </button>
                         @endif
                     </div>

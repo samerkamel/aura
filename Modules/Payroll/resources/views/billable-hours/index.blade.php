@@ -9,7 +9,7 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti tabler-clock me-2"></i>Manage Billable Hours
+            <i class="ti ti-clock me-2"></i>Manage Billable Hours
           </h5>
           <small class="text-muted">
             Period: {{ $periodStart->format('M j') }} - {{ $periodEnd->format('M j, Y') }}
@@ -32,7 +32,7 @@
 
           @if ($errors->any())
             <div class="alert alert-danger">
-              <h6><i class="ti tabler-alert-circle me-2"></i>Validation Errors</h6>
+              <h6><i class="ti ti-alert-circle me-2"></i>Validation Errors</h6>
               <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                   <li>{{ $error }}</li>
@@ -46,7 +46,7 @@
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
               <h6 class="mb-0">
-                <i class="ti tabler-brand-jira me-2"></i>Jira Integration
+                <i class="ti ti-brand-jira me-2"></i>Jira Integration
               </h6>
               @if(isset($lastSyncLog) && $lastSyncLog)
                 <small class="text-muted">
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-md-4 text-end">
                   <button type="button" class="btn btn-outline-primary btn-sm" onclick="syncJiraHours()">
-                    <i class="ti tabler-refresh me-1"></i>Sync from Jira
+                    <i class="ti ti-refresh me-1"></i>Sync from Jira
                   </button>
                 </div>
               </div>
@@ -90,40 +90,40 @@
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
               <h6 class="mb-0">
-                <i class="ti tabler-brand-jira me-2"></i>Jira Integration
+                <i class="ti ti-brand-jira me-2"></i>Jira Integration
               </h6>
               <div class="btn-group">
                 <a href="{{ route('payroll.billable-hours.jira-worklogs') }}" class="btn btn-sm btn-outline-primary">
-                  <i class="ti tabler-list me-1"></i>View Worklogs
+                  <i class="ti ti-list me-1"></i>View Worklogs
                 </a>
                 <a href="{{ route('payroll.billable-hours.jira-user-mapping') }}" class="btn btn-sm btn-outline-secondary">
-                  <i class="ti tabler-link me-1"></i>User Mapping
+                  <i class="ti ti-link me-1"></i>User Mapping
                 </a>
               </div>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-md-6 border-end">
-                  <h6 class="mb-2"><i class="ti tabler-api me-1"></i>API Sync</h6>
+                  <h6 class="mb-2"><i class="ti ti-api me-1"></i>API Sync</h6>
                   <p class="small text-muted mb-2">
                     Sync worklogs directly from Jira API for mapped employees
                   </p>
                   <div class="d-flex gap-2">
                     <a href="{{ route('payroll.billable-hours.jira-user-mapping') }}" class="btn btn-outline-primary btn-sm">
-                      <i class="ti tabler-link me-1"></i>Map Users
+                      <i class="ti ti-link me-1"></i>Map Users
                     </a>
                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#manualSyncModal">
-                      <i class="ti tabler-refresh me-1"></i>Sync Now
+                      <i class="ti ti-refresh me-1"></i>Sync Now
                     </button>
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <h6 class="mb-2"><i class="ti tabler-file-upload me-1"></i>CSV Import</h6>
+                  <h6 class="mb-2"><i class="ti ti-file-upload me-1"></i>CSV Import</h6>
                   <p class="small text-muted mb-2">
                     Upload CSV exports from Jira containing worklog data
                   </p>
                   <a href="{{ route('payroll.billable-hours.import-jira-worklogs') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="ti tabler-upload me-1"></i>Import CSV
+                    <i class="ti ti-upload me-1"></i>Import CSV
                   </a>
                 </div>
               </div>
@@ -136,7 +136,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="manualSyncModalLabel">
-                    <i class="ti tabler-refresh me-2"></i>Sync from Jira API
+                    <i class="ti ti-refresh me-2"></i>Sync from Jira API
                   </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -174,7 +174,7 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                   <button type="button" class="btn btn-primary" id="startSyncBtn" onclick="startManualSync()">
-                    <i class="ti tabler-refresh me-1"></i>Start Sync
+                    <i class="ti ti-refresh me-1"></i>Start Sync
                   </button>
                 </div>
               </div>
@@ -185,12 +185,12 @@
           <div class="card mb-4">
             <div class="card-header">
               <h6 class="mb-0">
-                <i class="ti tabler-file-upload me-2"></i>CSV Import
+                <i class="ti ti-file-upload me-2"></i>CSV Import
               </h6>
             </div>
             <div class="card-body">
               <div class="alert alert-info mb-3">
-                <h6><i class="ti tabler-info-circle me-2"></i>CSV Format Requirements</h6>
+                <h6><i class="ti ti-info-circle me-2"></i>CSV Format Requirements</h6>
                 <p class="mb-2">Your CSV file must contain the following columns:</p>
                 <ul class="mb-2">
                   @foreach($expectedHeaders as $header)
@@ -217,7 +217,7 @@
                   </div>
                   <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">
-                      <i class="ti tabler-upload me-1"></i>Import CSV
+                      <i class="ti ti-upload me-1"></i>Import CSV
                     </button>
                   </div>
                 </div>
@@ -229,7 +229,7 @@
           <div class="card">
             <div class="card-header">
               <h6 class="mb-0">
-                <i class="ti tabler-clock-hour-4 me-2"></i>Billable Hours Summary
+                <i class="ti ti-clock-hour-4 me-2"></i>Billable Hours Summary
               </h6>
             </div>
             <div class="card-body">
@@ -266,7 +266,7 @@
                           <td>
                             @if($employee->jira_hours > 0)
                               <span class="badge bg-label-primary">
-                                <i class="ti tabler-brand-jira me-1"></i>{{ number_format($employee->jira_hours, 2) }} hrs
+                                <i class="ti ti-brand-jira me-1"></i>{{ number_format($employee->jira_hours, 2) }} hrs
                               </span>
                             @else
                               <span class="text-muted">-</span>
@@ -295,7 +295,7 @@
                       @empty
                         <tr>
                           <td colspan="5" class="text-center text-muted">
-                            <i class="ti tabler-users-off me-2"></i>No active employees found.
+                            <i class="ti ti-users-off me-2"></i>No active employees found.
                           </td>
                         </tr>
                       @endforelse
@@ -306,10 +306,10 @@
                 @if($employees->isNotEmpty())
                   <div class="d-flex justify-content-between mt-3">
                     <button type="button" class="btn btn-outline-secondary" onclick="clearAllHours()">
-                      <i class="ti tabler-x me-1"></i>Clear All
+                      <i class="ti ti-x me-1"></i>Clear All
                     </button>
                     <button type="submit" class="btn btn-primary">
-                      <i class="ti tabler-device-floppy me-1"></i>Save All Changes
+                      <i class="ti ti-device-floppy me-1"></i>Save All Changes
                     </button>
                   </div>
                 @endif
@@ -356,7 +356,7 @@ function startManualSync() {
   if (period === 'custom' && (!startDate || !endDate)) {
     resultDiv.classList.remove('d-none');
     alertDiv.className = 'alert alert-danger mb-0';
-    alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>Please select both start and end dates.';
+    alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>Please select both start and end dates.';
     return;
   }
 
@@ -386,22 +386,22 @@ function startManualSync() {
     resultDiv.classList.remove('d-none');
     if (data.success) {
       alertDiv.className = 'alert alert-success mb-0';
-      alertDiv.innerHTML = '<i class="ti tabler-check me-1"></i>' + data.message;
+      alertDiv.innerHTML = '<i class="ti ti-check me-1"></i>' + data.message;
       // Reload page after a short delay
       setTimeout(() => location.reload(), 2000);
     } else {
       alertDiv.className = 'alert alert-danger mb-0';
-      alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>' + data.message;
+      alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>' + data.message;
     }
   })
   .catch(error => {
     resultDiv.classList.remove('d-none');
     alertDiv.className = 'alert alert-danger mb-0';
-    alertDiv.innerHTML = '<i class="ti tabler-alert-circle me-1"></i>Network error: ' + error.message;
+    alertDiv.innerHTML = '<i class="ti ti-alert-circle me-1"></i>Network error: ' + error.message;
   })
   .finally(() => {
     btn.disabled = false;
-    btn.innerHTML = '<i class="ti tabler-refresh me-1"></i>Start Sync';
+    btn.innerHTML = '<i class="ti ti-refresh me-1"></i>Start Sync';
   });
 }
 

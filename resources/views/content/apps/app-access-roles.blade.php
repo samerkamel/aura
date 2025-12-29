@@ -62,7 +62,7 @@ $configData = Helper::appClasses();
             <h5 class="mb-1">Administrator</h5>
             <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Edit Role</span></a>
           </div>
-          <a href="javascript:void(0);"><i class="ti tabler-copy ti-md text-heading"></i></a>
+          <a href="javascript:void(0);"><i class="ti ti-copy ti-md text-heading"></i></a>
         </div>
       </div>
     </div>
@@ -92,7 +92,7 @@ $configData = Helper::appClasses();
             <h5 class="mb-1">Manager</h5>
             <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Edit Role</span></a>
           </div>
-          <a href="javascript:void(0);"><i class="ti tabler-copy ti-md text-heading"></i></a>
+          <a href="javascript:void(0);"><i class="ti ti-copy ti-md text-heading"></i></a>
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@ $configData = Helper::appClasses();
             <h5 class="mb-1">Users</h5>
             <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Edit Role</span></a>
           </div>
-          <a href="javascript:void(0);"><i class="ti tabler-copy ti-md text-heading"></i></a>
+          <a href="javascript:void(0);"><i class="ti ti-copy ti-md text-heading"></i></a>
         </div>
       </div>
     </div>
@@ -152,7 +152,7 @@ $configData = Helper::appClasses();
             <h5 class="mb-1">Support</h5>
             <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Edit Role</span></a>
           </div>
-          <a href="javascript:void(0);"><i class="ti tabler-copy ti-md text-heading"></i></a>
+          <a href="javascript:void(0);"><i class="ti ti-copy ti-md text-heading"></i></a>
         </div>
       </div>
     </div>
@@ -182,7 +182,7 @@ $configData = Helper::appClasses();
             <h5 class="mb-1">Restricted User</h5>
             <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Edit Role</span></a>
           </div>
-          <a href="javascript:void(0);"><i class="ti tabler-copy ti-md text-heading"></i></a>
+          <a href="javascript:void(0);"><i class="ti ti-copy ti-md text-heading"></i></a>
         </div>
       </div>
     </div>

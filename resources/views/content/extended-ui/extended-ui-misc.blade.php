@@ -66,19 +66,19 @@
             </p>
             <div class="btn-group mb-4">
               <button type="button" id="document-Pause" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Pause</span><i class="ti tabler-player-pause ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Pause</span><i class="ti ti-player-pause ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="document-Resume" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Resume</span><i class="ti tabler-player-play ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Resume</span><i class="ti ti-player-play ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="document-Elapsed" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Elapsed</span><i class="ti tabler-hourglass ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Elapsed</span><i class="ti ti-hourglass ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="document-Init" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Init</span><i class="ti tabler-plus ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Init</span><i class="ti ti-plus ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="document-Destroy" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Destroy</span><i class="ti tabler-x ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Destroy</span><i class="ti ti-x ti-xs d-sm-none"></i>
               </button>
             </div>
             <textarea rows="10" cols="30" id="document-Status" class="form-control"></textarea>
@@ -90,16 +90,16 @@
             </p>
             <div class="btn-group mb-4">
               <button type="button" id="element-Reset" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Reset</span><i class="ti tabler-refresh ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Reset</span><i class="ti ti-refresh ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="element-LastActive" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Last Active</span><i class="ti tabler-clock-2 ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Last Active</span><i class="ti ti-clock-2 ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="element-Remaining" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">Remaining</span><i class="ti tabler-device-watch-stats-2 ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">Remaining</span><i class="ti ti-device-watch-stats-2 ti-xs d-sm-none"></i>
               </button>
               <button type="button" id="element-State" class="btn btn-primary btn-sm">
-                <span class="d-none d-sm-block">State</span><i class="ti tabler-device-watch ti-xs d-sm-none"></i>
+                <span class="d-none d-sm-block">State</span><i class="ti ti-device-watch ti-xs d-sm-none"></i>
               </button>
             </div>
             <textarea rows="10" cols="30" id="element-Status" class="form-control"></textarea>

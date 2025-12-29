@@ -13,13 +13,13 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.income.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Income
+                        <i class="ti ti-arrow-left me-1"></i>Back to Income
                     </a>
                     <a href="{{ route('accounting.income.contracts.import') }}" class="btn btn-outline-info btn-sm" title="Import Contracts from CSV">
-                        <i class="ti tabler-upload"></i>
+                        <i class="ti ti-upload"></i>
                     </a>
                     <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
-                        <i class="ti tabler-plus me-1"></i>New Contract
+                        <i class="ti ti-plus me-1"></i>New Contract
                     </a>
                 </div>
             </div>
@@ -59,12 +59,12 @@
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="ti tabler-search me-1"></i>Filter
+                                <i class="ti ti-search me-1"></i>Filter
                             </button>
                         </div>
                         <div class="col-md-2">
                             <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary w-100">
-                                <i class="ti tabler-x me-1"></i>Clear
+                                <i class="ti ti-x me-1"></i>Clear
                             </a>
                         </div>
                     </div>
@@ -139,32 +139,32 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti tabler-dots-vertical"></i>
+                                            <i class="ti ti-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}">
-                                                <i class="ti tabler-eye me-2"></i>View Details
+                                                <i class="ti ti-eye me-2"></i>View Details
                                             </a>
                                             <a class="dropdown-item" href="{{ route('accounting.income.contracts.edit', $contract) }}">
-                                                <i class="ti tabler-edit me-2"></i>Edit Contract
+                                                <i class="ti ti-edit me-2"></i>Edit Contract
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="{{ route('accounting.income.schedules.create', $contract) }}">
-                                                <i class="ti tabler-calendar-plus me-2"></i>Add Income Schedule
+                                                <i class="ti ti-calendar-plus me-2"></i>Add Income Schedule
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('accounting.income.contracts.toggle-status', $contract) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti tabler-{{ $contract->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                    <i class="ti ti-{{ $contract->is_active ? 'pause' : 'play' }} me-2"></i>
                                                     {{ $contract->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
                                             <div class="dropdown-divider"></div>
                                             <button type="button" class="dropdown-item text-danger"
                                                     onclick="confirmDelete('{{ $contract->id }}', '{{ $contract->contract_number }}', '{{ $contract->client_name }}')">
-                                                <i class="ti tabler-trash me-2"></i>Delete
+                                                <i class="ti ti-trash me-2"></i>Delete
                                             </button>
                                         </div>
                                     </div>
@@ -174,11 +174,11 @@
                             <tr>
                                 <td colspan="8" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti tabler-file-text text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti ti-file-text text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No contracts found</h5>
                                         <p class="text-muted">Create your first contract to start managing income schedules</p>
                                         <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
-                                            <i class="ti tabler-plus me-1"></i>Create Contract
+                                            <i class="ti ti-plus me-1"></i>Create Contract
                                         </a>
                                     </div>
                                 </td>
@@ -249,7 +249,7 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-3">
-                    <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
+                    <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
                 </div>
                 <h6 class="text-center">Are you sure you want to delete this contract?</h6>
                 <p class="text-center text-muted">
@@ -257,7 +257,7 @@
                     Client: <strong id="deleteContractClient"></strong>
                 </p>
                 <div class="alert alert-warning">
-                    <i class="ti tabler-info-circle me-2"></i>
+                    <i class="ti ti-info-circle me-2"></i>
                     This action cannot be undone. All associated income schedules will also be deleted.
                 </div>
             </div>
@@ -267,7 +267,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="ti tabler-trash me-1"></i>Delete Contract
+                        <i class="ti ti-trash me-1"></i>Delete Contract
                     </button>
                 </form>
             </div>

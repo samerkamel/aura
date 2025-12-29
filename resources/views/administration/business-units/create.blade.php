@@ -25,7 +25,7 @@
     <div class="card mb-6">
       <div class="card-header">
         <h4 class="card-title mb-0">
-          <i class="ti tabler-building me-2"></i>Create New Business Unit
+          <i class="ti ti-building me-2"></i>Create New Business Unit
         </h4>
         <p class="card-text">Add a new business unit to organize your company operations</p>
       </div>
@@ -130,10 +130,10 @@
                 <div class="card-body">
                   <div class="d-flex justify-content-end gap-3">
                     <a href="{{ route('administration.business-units.index') }}" class="btn btn-outline-secondary">
-                      <i class="ti tabler-x me-1"></i>Cancel
+                      <i class="ti ti-x me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                      <i class="ti tabler-check me-1"></i>Create Business Unit
+                      <i class="ti ti-check me-1"></i>Create Business Unit
                     </button>
                   </div>
                 </div>
@@ -149,7 +149,7 @@
 @if($errors->any())
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Validation Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

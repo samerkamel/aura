@@ -7,11 +7,11 @@
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti tabler-users me-1_5"></i> Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti tabler-lock me-1_5"></i> Security</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti tabler-bookmark me-1_5"></i> Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti tabler-bell me-1_5"></i> Notifications</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti tabler-link me-1_5"></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti ti-users me-1_5"></i> Account</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti ti-lock me-1_5"></i> Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti ti-bookmark me-1_5"></i> Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti ti-bell me-1_5"></i> Notifications</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti ti-link me-1_5"></i> Connections</a></li>
       </ul>
     </div>
     <div class="card">
@@ -122,7 +122,7 @@
                   <small>Not Connected</small>
                 </div>
                 <div class="col-5 text-end mt-sm-0 mt-2">
-                  <button class="btn btn-icon btn-label-secondary"><i class='ti tabler-link ti-md'></i></button> </div>
+                  <button class="btn btn-icon btn-label-secondary"><i class='ti ti-link ti-md'></i></button> </div>
               </div>
             </div>
             <div class="d-flex mb-4 align-items-center">
@@ -135,7 +135,7 @@
                   <a href="{{config('variables.twitterUrl')}}" target="_blank" class="small">&#64;{{ (!empty(config('variables.creatorName')) ? config('variables.creatorName') : '') }}</a>
                 </div>
                 <div class="col-5 text-end mt-sm-0 mt-2">
-                  <button class="btn btn-icon btn-label-danger"><i class='ti tabler-trash ti-md'></i></button> </div>
+                  <button class="btn btn-icon btn-label-danger"><i class='ti ti-trash ti-md'></i></button> </div>
               </div>
             </div>
             <div class="d-flex mb-4 align-items-center">
@@ -148,7 +148,7 @@
                   <a href="{{config('variables.instagramUrl')}}" target="_blank" class="small">&#64;{{ (!empty(config('variables.creatorName')) ? config('variables.creatorName') : '') }}</a>
                 </div>
                 <div class="col-5 text-end mt-sm-0 mt-2">
-                  <button class="btn btn-icon btn-label-danger"><i class='ti tabler-trash ti-md'></i></button> </div>
+                  <button class="btn btn-icon btn-label-danger"><i class='ti ti-trash ti-md'></i></button> </div>
               </div>
             </div>
             <div class="d-flex mb-4 align-items-center">
@@ -161,7 +161,7 @@
                   <small>Not Connected</small>
                 </div>
                 <div class="col-5 text-end mt-sm-0 mt-2">
-                  <button class="btn btn-icon btn-label-secondary"><i class='ti tabler-link ti-md'></i></button> </div>
+                  <button class="btn btn-icon btn-label-secondary"><i class='ti ti-link ti-md'></i></button> </div>
               </div>
             </div>
             <div class="d-flex align-items-center">
@@ -174,7 +174,7 @@
                   <small>Not Connected</small>
                 </div>
                 <div class="col-5 text-end">
-                  <button class="btn btn-icon btn-label-secondary"><i class='ti tabler-link ti-md'></i></button>
+                  <button class="btn btn-icon btn-label-secondary"><i class='ti ti-link ti-md'></i></button>
                 </div>
               </div>
             </div>

@@ -132,18 +132,18 @@
           <small class="text-light fw-medium">Basic</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn btn-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
           <div class="demo-inline-spacing">
             <button type="button" class="btn rounded-pill btn-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn rounded-pill btn-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
         </div>
@@ -151,18 +151,18 @@
           <small class="text-light fw-medium">Label</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-label-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn btn-label-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
           <div class="demo-inline-spacing">
             <button type="button" class="btn rounded-pill btn-label-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn rounded-pill btn-label-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
         </div>
@@ -170,18 +170,18 @@
           <small class="text-light fw-medium">Outline</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-outline-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn btn-outline-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
           <div class="demo-inline-spacing">
             <button type="button" class="btn rounded-pill btn-outline-primary">
-              <span class="ti-xs ti tabler-star me-2"></span>Primary
+              <span class="ti-xs ti ti-star me-2"></span>Primary
             </button>
             <button type="button" class="btn rounded-pill btn-outline-secondary">
-              <span class="ti-xs ti tabler-bell me-2"></span>Secondary
+              <span class="ti-xs ti ti-bell me-2"></span>Secondary
             </button>
           </div>
         </div>
@@ -192,16 +192,16 @@
           <small class="text-light fw-medium">Basic</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-icon btn-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn btn-icon btn-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
           </div>
         </div>
@@ -209,16 +209,16 @@
           <small class="text-light fw-medium">Label</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-icon btn-label-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn btn-icon btn-label-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-label-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-label-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
           </div>
         </div>
@@ -226,16 +226,16 @@
           <small class="text-light fw-medium">Outline</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-icon btn-outline-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn btn-icon btn-outline-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-outline-primary">
-              <span class="ti tabler-star ti-md"></span>
+              <span class="ti ti-star ti-md"></span>
             </button>
             <button type="button" class="btn rounded-pill btn-icon btn-outline-secondary">
-              <span class="ti tabler-bell ti-md"></span>
+              <span class="ti ti-bell ti-md"></span>
             </button>
           </div>
         </div>
@@ -252,38 +252,38 @@
         <div class="col-lg-4 p-6">
           <small class="text-light fw-medium">Basic</small>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn btn-facebook"><i class="tf-icons ti tabler-brand-facebook ti-xs me-1"></i> Facebook</button>
-            <button type="button" class="btn btn-twitter"><i class="tf-icons ti tabler-brand-twitter ti-xs me-1"></i> Twitter</button>
+            <button type="button" class="btn btn-facebook"><i class="tf-icons ti ti-brand-facebook ti-xs me-1"></i> Facebook</button>
+            <button type="button" class="btn btn-twitter"><i class="tf-icons ti ti-brand-twitter ti-xs me-1"></i> Twitter</button>
           </div>
           <div class="demo-inline-spacing">
             <button type="button" class="btn rounded-pill btn-google-plus">
-              <i class="tf-icons ti tabler-brand-google ti-xs me-2"></i> Google+
+              <i class="tf-icons ti ti-brand-google ti-xs me-2"></i> Google+
             </button>
             <button type="button" class="btn rounded-pill btn-instagram">
-              <i class="tf-icons ti tabler-brand-instagram ti-xs me-2"></i> Instagram
+              <i class="tf-icons ti ti-brand-instagram ti-xs me-2"></i> Instagram
             </button>
           </div>
         </div>
         <div class="col-lg-4 p-6">
           <small class="text-light fw-medium">Label</small>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn btn-label-linkedin"><i class="tf-icons ti tabler-brand-linkedin ti-xs me-2"></i> Linkedin</button>
-            <button type="button" class="btn btn-label-github"><i class="tf-icons ti tabler-brand-github ti-xs me-2"></i> Github</button>
+            <button type="button" class="btn btn-label-linkedin"><i class="tf-icons ti ti-brand-linkedin ti-xs me-2"></i> Linkedin</button>
+            <button type="button" class="btn btn-label-github"><i class="tf-icons ti ti-brand-github ti-xs me-2"></i> Github</button>
           </div>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn rounded-pill btn-label-pinterest"> <i class="tf-icons ti tabler-brand-pinterest ti-xs me-2"></i> Pinterest </button>
-            <button type="button" class="btn rounded-pill btn-label-slack"> <i class="tf-icons ti tabler-brand-slack ti-xs me-2"></i> Slack </button>
+            <button type="button" class="btn rounded-pill btn-label-pinterest"> <i class="tf-icons ti ti-brand-pinterest ti-xs me-2"></i> Pinterest </button>
+            <button type="button" class="btn rounded-pill btn-label-slack"> <i class="tf-icons ti ti-brand-slack ti-xs me-2"></i> Slack </button>
           </div>
         </div>
         <div class="col-lg-4 p-6">
           <small class="text-light fw-medium">Outline & Text</small>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn btn-outline-dribbble"> <i class="tf-icons ti tabler-brand-dribbble ti-xs me-2"></i> Dribbble </button>
-            <button type="button" class="btn btn-text-reddit"><i class="tf-icons ti tabler-brand-reddit ti-xs me-2"></i> Reddit</button>
+            <button type="button" class="btn btn-outline-dribbble"> <i class="tf-icons ti ti-brand-dribbble ti-xs me-2"></i> Dribbble </button>
+            <button type="button" class="btn btn-text-reddit"><i class="tf-icons ti ti-brand-reddit ti-xs me-2"></i> Reddit</button>
           </div>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn rounded-pill btn-outline-youtube"> <i class="tf-icons ti tabler-brand-youtube ti-xs me-2"></i> Youtube </button>
-            <button type="button" class="btn rounded-pill btn-text-vimeo"> <i class="tf-icons ti tabler-brand-vimeo ti-xs me-2"></i> Vimeo </button>
+            <button type="button" class="btn rounded-pill btn-outline-youtube"> <i class="tf-icons ti ti-brand-youtube ti-xs me-2"></i> Youtube </button>
+            <button type="button" class="btn rounded-pill btn-text-vimeo"> <i class="tf-icons ti ti-brand-vimeo ti-xs me-2"></i> Vimeo </button>
           </div>
         </div>
       </div>
@@ -292,26 +292,26 @@
         <div class="col-lg-4 p-6">
           <small class="text-light fw-medium">Basic Icons</small>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn btn-icon btn-facebook"><i class="tf-icons ti tabler-brand-facebook ti-md"></i></button>
-            <button type="button" class="btn btn-icon btn-twitter"><i class="tf-icons ti tabler-brand-twitter ti-md"></i></button>
+            <button type="button" class="btn btn-icon btn-facebook"><i class="tf-icons ti ti-brand-facebook ti-md"></i></button>
+            <button type="button" class="btn btn-icon btn-twitter"><i class="tf-icons ti ti-brand-twitter ti-md"></i></button>
             <button type="button" class="btn btn-icon rounded-pill btn-google-plus">
-              <i class="tf-icons ti tabler-brand-google ti-md"></i>
+              <i class="tf-icons ti ti-brand-google ti-md"></i>
             </button>
             <button type="button" class="btn btn-icon rounded-pill btn-instagram">
-              <i class="tf-icons ti tabler-brand-instagram ti-md"></i>
+              <i class="tf-icons ti ti-brand-instagram ti-md"></i>
             </button>
           </div>
         </div>
         <div class="col-lg-4 p-6">
           <small class="text-light fw-medium">Label Icons</small>
           <div class="demo-inline-spacing">
-            <button type="button" class="btn btn-icon btn-label-linkedin"><i class="tf-icons ti tabler-brand-linkedin ti-md"></i></button>
-            <button type="button" class="btn btn-icon btn-label-github"><i class="tf-icons ti tabler-brand-github ti-md"></i></button>
+            <button type="button" class="btn btn-icon btn-label-linkedin"><i class="tf-icons ti ti-brand-linkedin ti-md"></i></button>
+            <button type="button" class="btn btn-icon btn-label-github"><i class="tf-icons ti ti-brand-github ti-md"></i></button>
             <button type="button" class="btn btn-icon rounded-pill btn-label-pinterest">
-              <i class="tf-icons ti tabler-brand-pinterest ti-md"></i>
+              <i class="tf-icons ti ti-brand-pinterest ti-md"></i>
             </button>
             <button type="button" class="btn btn-icon rounded-pill btn-label-slack">
-              <i class="tf-icons ti tabler-brand-slack ti-md"></i>
+              <i class="tf-icons ti ti-brand-slack ti-md"></i>
             </button>
           </div>
         </div>
@@ -319,14 +319,14 @@
           <small class="text-light fw-medium">Outline & Text Icons</small>
           <div class="demo-inline-spacing">
             <button type="button" class="btn btn-icon btn-outline-dribbble">
-              <i class="tf-icons ti tabler-brand-dribbble ti-md"></i>
+              <i class="tf-icons ti ti-brand-dribbble ti-md"></i>
             </button>
-            <button type="button" class="btn btn-icon btn-text-reddit"><i class="tf-icons ti tabler-brand-reddit ti-md"></i></button>
+            <button type="button" class="btn btn-icon btn-text-reddit"><i class="tf-icons ti ti-brand-reddit ti-md"></i></button>
             <button type="button" class="btn btn-icon rounded-pill btn-outline-youtube">
-              <i class="tf-icons ti tabler-brand-youtube ti-md"></i>
+              <i class="tf-icons ti ti-brand-youtube ti-md"></i>
             </button>
             <button type="button" class="btn btn-icon rounded-pill btn-text-vimeo">
-              <i class="tf-icons ti tabler-brand-vimeo ti-md"></i>
+              <i class="tf-icons ti ti-brand-vimeo ti-md"></i>
             </button>
           </div>
         </div>
@@ -410,7 +410,7 @@
               <input type="checkbox" class="btn-check" id="btncheck1" checked>
               <label class="btn btn-outline-primary" for="btncheck1">
                 <span class="d-block d-sm-none">
-                  <i class="ti tabler-home ti-sm"></i>
+                  <i class="ti ti-home ti-sm"></i>
                 </span>
                 <span class="d-none d-sm-block">Checkbox 1 (pre-checked)</span>
               </label>
@@ -418,7 +418,7 @@
               <input type="checkbox" class="btn-check" id="btncheck2">
               <label class="btn btn-outline-primary" for="btncheck2">
                 <span class="d-block d-sm-none">
-                  <i class="ti tabler-plane-tilt ti-sm"></i>
+                  <i class="ti ti-plane-tilt ti-sm"></i>
                 </span>
                 <span class="d-none d-sm-block"> Checkbox 2</span>
               </label>
@@ -426,7 +426,7 @@
               <input type="checkbox" class="btn-check" id="btncheck3">
               <label class="btn btn-outline-primary" for="btncheck3">
                 <span class="d-block d-sm-none">
-                  <i class="ti tabler-bell ti-sm"></i>
+                  <i class="ti ti-bell ti-sm"></i>
                 </span>
                 <span class="d-none d-sm-block"> Checkbox 3</span>
               </label>
@@ -498,18 +498,18 @@
             <small class="text-light fw-medium">Button Toolbar</small>
             <div class="btn-toolbar demo-inline-spacing" role="toolbar" aria-label="Toolbar with button groups">
               <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-bell"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-clipboard"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-device-tv"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-browser-check"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-bell"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-clipboard"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-device-tv"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-browser-check"></i></button>
               </div>
               <div class="btn-group" role="group" aria-label="Second group">
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-bold"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-italic"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-underline"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-bold"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-italic"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-underline"></i></button>
               </div>
               <div class="btn-group" role="group" aria-label="Third group">
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-volume-2"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-volume-2"></i></button>
               </div>
             </div>
           </div>
@@ -517,11 +517,11 @@
             <small class="text-light fw-medium">Button Nesting</small>
             <div class="mt-4">
               <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-truck"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-sun"></i></button>
-                <button type="button" class="btn btn-outline-secondary"><i class="ti tabler-cloud"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-truck"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-sun"></i></button>
+                <button type="button" class="btn btn-outline-secondary"><i class="ti ti-cloud"></i></button>
                 <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md d-sm-none"></i><span class="d-none d-sm-block">Dropdown</span></button>
+                  <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ti ti-dots-vertical ti-md d-sm-none"></i><span class="d-none d-sm-block">Dropdown</span></button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <a class="dropdown-item" href="javascript:void(0);">Dropdown link</a>
                     <a class="dropdown-item" href="javascript:void(0);">Dropdown link</a>

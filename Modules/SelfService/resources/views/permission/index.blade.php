@@ -10,12 +10,12 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0">
-            <i class="ti tabler-clock-pause me-2"></i>My Permission Requests
+            <i class="ti ti-clock-pause me-2"></i>My Permission Requests
           </h5>
           <small class="text-muted">View and manage your permission requests (late arrival / early leave)</small>
         </div>
         <a href="{{ route('self-service.permission-requests.create') }}" class="btn btn-primary">
-          <i class="ti tabler-plus me-1"></i>New Request
+          <i class="ti ti-plus me-1"></i>New Request
         </a>
       </div>
     </div>
@@ -36,7 +36,7 @@
                   @endif
                 </small>
               </div>
-              <i class="ti tabler-clock-check" style="font-size: 2rem; opacity: 0.5;"></i>
+              <i class="ti ti-clock-check" style="font-size: 2rem; opacity: 0.5;"></i>
             </div>
           </div>
         </div>
@@ -45,14 +45,14 @@
 
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show">
-        <i class="ti tabler-check me-2"></i>{{ session('success') }}
+        <i class="ti ti-check me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show">
-        <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
+        <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
@@ -105,13 +105,13 @@
               <td>
                 <div class="d-flex gap-1">
                   <a href="{{ route('self-service.permission-requests.show', $request) }}" class="btn btn-sm btn-outline-primary" title="View Details">
-                    <i class="ti tabler-eye"></i>
+                    <i class="ti ti-eye"></i>
                   </a>
                   @if($request->canBeCancelled())
                     <form action="{{ route('self-service.permission-requests.cancel', $request) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this request?')">
                       @csrf
                       <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel Request">
-                        <i class="ti tabler-x"></i>
+                        <i class="ti ti-x"></i>
                       </button>
                     </form>
                   @endif
@@ -121,11 +121,11 @@
             @empty
             <tr>
               <td colspan="6" class="text-center py-5">
-                <i class="ti tabler-inbox text-muted" style="font-size: 3rem;"></i>
+                <i class="ti ti-inbox text-muted" style="font-size: 3rem;"></i>
                 <h6 class="mt-2">No permission requests found</h6>
                 <p class="text-muted">You haven't submitted any permission requests yet.</p>
                 <a href="{{ route('self-service.permission-requests.create') }}" class="btn btn-primary">
-                  <i class="ti tabler-plus me-1"></i>Submit Your First Request
+                  <i class="ti ti-plus me-1"></i>Submit Your First Request
                 </a>
               </td>
             </tr>

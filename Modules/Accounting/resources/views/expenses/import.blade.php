@@ -22,10 +22,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('accounting.expenses.import.sample') }}" class="btn btn-outline-info">
-                <i class="ti tabler-download me-2"></i>Download Sample CSV
+                <i class="ti ti-download me-2"></i>Download Sample CSV
             </a>
             <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-secondary">
-                <i class="ti tabler-arrow-left me-2"></i>Back to Paid Expenses
+                <i class="ti ti-arrow-left me-2"></i>Back to Paid Expenses
             </a>
         </div>
     </div>
@@ -66,10 +66,10 @@
 
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-secondary">
-                                <i class="ti tabler-x me-1"></i>Cancel
+                                <i class="ti ti-x me-1"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti tabler-upload me-1"></i>Import Expenses
+                                <i class="ti ti-upload me-1"></i>Import Expenses
                             </button>
                         </div>
                     </form>
@@ -82,7 +82,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-info-circle me-2"></i>CSV Format Guide
+                        <i class="ti ti-info-circle me-2"></i>CSV Format Guide
                     </h5>
                 </div>
                 <div class="card-body">
@@ -113,7 +113,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-category me-2"></i>Available Categories
+                        <i class="ti ti-category me-2"></i>Available Categories
                     </h5>
                 </div>
                 <div class="card-body">
@@ -146,7 +146,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti tabler-credit-card me-2"></i>Available Accounts
+                        <i class="ti ti-credit-card me-2"></i>Available Accounts
                     </h5>
                 </div>
                 <div class="card-body">

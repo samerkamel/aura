@@ -76,21 +76,21 @@
           <div class="mb-6">
             <label class="form-label" for="basic-icon-default-fullname">Full Name</label>
             <div class="input-group input-group-merge">
-              <span id="basic-icon-default-fullname2" class="input-group-text"><i class="ti tabler-user"></i></span>
+              <span id="basic-icon-default-fullname2" class="input-group-text"><i class="ti ti-user"></i></span>
               <input type="text" class="form-control" id="basic-icon-default-fullname" placeholder="John Doe" aria-label="John Doe" aria-describedby="basic-icon-default-fullname2" />
             </div>
           </div>
           <div class="mb-6">
             <label class="form-label" for="basic-icon-default-company">Company</label>
             <div class="input-group input-group-merge">
-              <span id="basic-icon-default-company2" class="input-group-text"><i class="ti tabler-building"></i></span>
+              <span id="basic-icon-default-company2" class="input-group-text"><i class="ti ti-building"></i></span>
               <input type="text" id="basic-icon-default-company" class="form-control" placeholder="ACME Inc." aria-label="ACME Inc." aria-describedby="basic-icon-default-company2" />
             </div>
           </div>
           <div class="mb-6">
             <label class="form-label" for="basic-icon-default-email">Email</label>
             <div class="input-group input-group-merge">
-              <span class="input-group-text"><i class="ti tabler-mail"></i></span>
+              <span class="input-group-text"><i class="ti ti-mail"></i></span>
               <input type="text" id="basic-icon-default-email" class="form-control" placeholder="john.doe" aria-label="john.doe" aria-describedby="basic-icon-default-email2" />
               <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
             </div>
@@ -99,14 +99,14 @@
           <div class="mb-6">
             <label class="form-label" for="basic-icon-default-phone">Phone No</label>
             <div class="input-group input-group-merge">
-              <span id="basic-icon-default-phone2" class="input-group-text"><i class="ti tabler-phone"></i></span>
+              <span id="basic-icon-default-phone2" class="input-group-text"><i class="ti ti-phone"></i></span>
               <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2" />
             </div>
           </div>
           <div class="mb-6">
             <label class="form-label" for="basic-icon-default-message">Message</label>
             <div class="input-group input-group-merge">
-              <span id="basic-icon-default-message2" class="input-group-text"><i class="ti tabler-message-dots"></i></span>
+              <span id="basic-icon-default-message2" class="input-group-text"><i class="ti ti-message-dots"></i></span>
               <textarea id="basic-icon-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2"></textarea>
             </div>
           </div>
@@ -140,7 +140,7 @@
           <label class="form-label" for="multicol-password">Password</label>
           <div class="input-group input-group-merge">
             <input type="password" id="multicol-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multicol-password2" />
-            <span class="input-group-text cursor-pointer" id="multicol-password2"><i class="ti tabler-eye-off"></i></span>
+            <span class="input-group-text cursor-pointer" id="multicol-password2"><i class="ti ti-eye-off"></i></span>
           </div>
         </div>
       </div>
@@ -149,7 +149,7 @@
           <label class="form-label" for="multicol-confirm-password">Confirm Password</label>
           <div class="input-group input-group-merge">
             <input type="password" id="multicol-confirm-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multicol-confirm-password2" />
-            <span class="input-group-text cursor-pointer" id="multicol-confirm-password2"><i class="ti tabler-eye-off"></i></span>
+            <span class="input-group-text cursor-pointer" id="multicol-confirm-password2"><i class="ti ti-eye-off"></i></span>
           </div>
         </div>
       </div>
@@ -393,14 +393,14 @@
                 <div class="form-check form-check-inline">
                   <input name="collapsible-payment" class="form-check-input form-check-input-payment" type="radio" value="credit-card" id="collapsible-payment-cc" checked="" />
                   <label class="form-check-label" for="collapsible-payment-cc">
-                    Credit/Debit/ATM Card <i class="ti tabler-credit-card"></i>
+                    Credit/Debit/ATM Card <i class="ti ti-credit-card"></i>
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
                   <input name="collapsible-payment" class="form-check-input form-check-input-payment" type="radio" value="cash" id="collapsible-payment-cash" />
                   <label class="form-check-label" for="collapsible-payment-cash">
                     Cash On Delivery
-                    <i class="ti tabler-help" data-bs-toggle="tooltip" data-bs-placement="top" title="You can pay once you receive the product."></i>
+                    <i class="ti ti-help" data-bs-toggle="tooltip" data-bs-placement="top" title="You can pay once you receive the product."></i>
                   </label>
                 </div>
               </div>
@@ -431,7 +431,7 @@
                         <label class="form-label" for="collapsible-payment-cvv">CVV Code</label>
                         <div class="input-group input-group-merge">
                           <input type="text" id="collapsible-payment-cvv" class="form-control cvv-code-mask" maxlength="3" placeholder="654" />
-                          <span class="input-group-text cursor-pointer" id="collapsible-payment-cvv2"><i class="ti tabler-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                          <span class="input-group-text cursor-pointer" id="collapsible-payment-cvv2"><i class="ti ti-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                         </div>
                       </div>
                     </div>
@@ -459,13 +459,13 @@
         <div class="nav-align-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tabs-personal" aria-controls="form-tabs-personal" role="tab" aria-selected="true"><span class="ti tabler-user ti-lg d-sm-none"></span><span class="d-none d-sm-block">Personal Info</span></button>
+              <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#form-tabs-personal" aria-controls="form-tabs-personal" role="tab" aria-selected="true"><span class="ti ti-user ti-lg d-sm-none"></span><span class="d-none d-sm-block">Personal Info</span></button>
             </li>
             <li class="nav-item">
-              <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tabs-account" aria-controls="form-tabs-account" role="tab" aria-selected="false"><span class="ti tabler-user-cog ti-lg d-sm-none"></span><span class="d-none d-sm-block">Account Details</span></button>
+              <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tabs-account" aria-controls="form-tabs-account" role="tab" aria-selected="false"><span class="ti ti-user-cog ti-lg d-sm-none"></span><span class="d-none d-sm-block">Account Details</span></button>
             </li>
             <li class="nav-item">
-              <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tabs-social" aria-controls="form-tabs-social" role="tab" aria-selected="false"><span class="ti tabler-link ti-lg d-sm-none"></span><span class="d-none d-sm-block">Social Links</span></button>
+              <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#form-tabs-social" aria-controls="form-tabs-social" role="tab" aria-selected="false"><span class="ti ti-link ti-lg d-sm-none"></span><span class="d-none d-sm-block">Social Links</span></button>
             </li>
           </ul>
         </div>
@@ -557,7 +557,7 @@
                     <label class="form-label" for="formtabs-password">Password</label>
                     <div class="input-group input-group-merge">
                       <input type="password" id="formtabs-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formtabs-password2" />
-                      <span class="input-group-text cursor-pointer" id="formtabs-password2"><i class="ti tabler-eye-off"></i></span>
+                      <span class="input-group-text cursor-pointer" id="formtabs-password2"><i class="ti ti-eye-off"></i></span>
                     </div>
                   </div>
                 </div>
@@ -566,7 +566,7 @@
                     <label class="form-label" for="formtabs-confirm-password">Confirm Password</label>
                     <div class="input-group input-group-merge">
                       <input type="password" id="formtabs-confirm-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formtabs-confirm-password2" />
-                      <span class="input-group-text cursor-pointer" id="formtabs-confirm-password2"><i class="ti tabler-eye-off"></i></span>
+                      <span class="input-group-text cursor-pointer" id="formtabs-confirm-password2"><i class="ti ti-eye-off"></i></span>
                     </div>
                   </div>
                 </div>
@@ -634,7 +634,7 @@
           <label class="form-label" for="form-alignment-password">Password</label>
           <div class="input-group input-group-merge">
             <input type="password" id="form-alignment-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="form-alignment-password2" />
-            <span class="input-group-text cursor-pointer" id="form-alignment-password2"><i class="ti tabler-eye-off"></i></span>
+            <span class="input-group-text cursor-pointer" id="form-alignment-password2"><i class="ti ti-eye-off"></i></span>
           </div>
         </div>
         <div class="mb-6">

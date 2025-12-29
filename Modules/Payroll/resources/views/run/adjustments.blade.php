@@ -11,20 +11,20 @@
         <div class="card-header d-flex justify-content-between align-items-center">
           <div>
             <h5 class="mb-0">
-              <i class="ti tabler-adjustments me-2"></i>Adjust Payroll
+              <i class="ti ti-adjustments me-2"></i>Adjust Payroll
             </h5>
             <small class="text-muted">
               Make adjustments before finalizing payroll for {{ $periodEnd->format('F Y') }}
             </small>
           </div>
           <a href="{{ route('payroll.run.review', ['period' => $selectedPeriod]) }}" class="btn btn-label-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Review
+            <i class="ti ti-arrow-left me-1"></i>Back to Review
           </a>
         </div>
         <div class="card-body">
           <!-- Period Info -->
           <div class="alert alert-info mb-0">
-            <i class="ti tabler-info-circle me-2"></i>
+            <i class="ti ti-info-circle me-2"></i>
             <strong>Period:</strong> {{ $periodStart->format('M j, Y') }} - {{ $periodEnd->format('M j, Y') }}
             <span class="ms-3"><strong>Employees:</strong> {{ $payrollRuns->count() }}</span>
             <span class="ms-3">
@@ -48,14 +48,14 @@
 
   @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <i class="ti tabler-check me-2"></i>{{ session('success') }}
+      <i class="ti ti-check me-2"></i>{{ session('success') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
 
   @if($errors->has('finalization'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <i class="ti tabler-alert-circle me-2"></i>{{ $errors->first('finalization') }}
+      <i class="ti ti-alert-circle me-2"></i>{{ $errors->first('finalization') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
@@ -75,10 +75,10 @@
             </div>
             <div>
               <button type="button" class="btn btn-label-info btn-sm me-2" onclick="recalculatePayroll()">
-                <i class="ti tabler-calculator me-1"></i>Recalculate
+                <i class="ti ti-calculator me-1"></i>Recalculate
               </button>
               <button type="button" class="btn btn-label-warning btn-sm" onclick="resetAllAdjustments()">
-                <i class="ti tabler-refresh me-1"></i>Reset All
+                <i class="ti ti-refresh me-1"></i>Reset All
               </button>
             </div>
           </div>
@@ -194,7 +194,7 @@
                     <tr>
                       <td colspan="9" class="text-center py-4">
                         <div class="empty-state">
-                          <i class="ti tabler-users-off display-4 text-muted"></i>
+                          <i class="ti ti-users-off display-4 text-muted"></i>
                           <h5 class="mt-3">No Payroll Data</h5>
                           <p class="text-muted">No payroll records found for this period.</p>
                         </div>
@@ -231,24 +231,24 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <p class="text-muted mb-0">
-                    <i class="ti tabler-info-circle me-1"></i>
+                    <i class="ti ti-info-circle me-1"></i>
                     Save your adjustments before finalizing. Finalized payroll cannot be modified.
                   </p>
                 </div>
                 <div class="btn-group">
                   @if($pending > 0)
                     <button type="submit" class="btn btn-primary">
-                      <i class="ti tabler-device-floppy me-1"></i>Save Adjustments
+                      <i class="ti ti-device-floppy me-1"></i>Save Adjustments
                     </button>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#finalizeModal">
-                      <i class="ti tabler-file-export me-1"></i>Finalize & Export
+                      <i class="ti ti-file-export me-1"></i>Finalize & Export
                     </button>
                   @else
                     <form method="POST" action="{{ route('payroll.run.finalize-adjusted') }}" class="d-inline">
                       @csrf
                       <input type="hidden" name="period" value="{{ $selectedPeriod }}">
                       <button type="submit" class="btn btn-success">
-                        <i class="ti tabler-download me-1"></i>Download Bank Sheet
+                        <i class="ti ti-download me-1"></i>Download Bank Sheet
                       </button>
                     </form>
                   @endif
@@ -274,7 +274,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="finalizeModalLabel">
-          <i class="ti tabler-alert-triangle text-warning me-2"></i>Confirm Finalization
+          <i class="ti ti-alert-triangle text-warning me-2"></i>Confirm Finalization
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -290,7 +290,7 @@
           @csrf
           <input type="hidden" name="period" value="{{ $selectedPeriod }}">
           <button type="submit" class="btn btn-success">
-            <i class="ti tabler-check me-1"></i>Finalize & Export
+            <i class="ti ti-check me-1"></i>Finalize & Export
           </button>
         </form>
       </div>

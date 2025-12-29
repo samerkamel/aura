@@ -44,14 +44,14 @@
       </div>
       <div>
         <a href="{{ route('self-service.projects.index') }}" class="btn btn-outline-light btn-sm">
-          <i class="ti tabler-arrow-left me-1"></i>Back to My Projects
+          <i class="ti ti-arrow-left me-1"></i>Back to My Projects
         </a>
       </div>
     </div>
     <h2 class="mb-2">{{ $project->name }}</h2>
     @if($project->customer)
       <p class="mb-0 opacity-75">
-        <i class="ti tabler-building me-1"></i>{{ $project->customer->display_name }}
+        <i class="ti ti-building me-1"></i>{{ $project->customer->display_name }}
       </p>
     @endif
     @if($project->description)
@@ -93,7 +93,7 @@
       <div class="card">
         <div class="card-header">
           <h5 class="mb-0">
-            <i class="ti tabler-users me-2 text-info"></i>Team Members
+            <i class="ti ti-users me-2 text-info"></i>Team Members
             <span class="badge bg-info ms-2">{{ $project->employees->count() }}</span>
           </h5>
         </div>
@@ -135,7 +135,7 @@
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
-              <i class="ti tabler-clock me-2 text-info"></i>Hours by Employee
+              <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
             </h5>
             <span class="badge bg-info">
               {{ number_format($totalHours, 1) }}h
@@ -157,11 +157,11 @@
             <div class="col-4">
               <div class="btn-group w-100">
                 <button type="submit" class="btn btn-sm btn-primary">
-                  <i class="ti tabler-filter"></i>
+                  <i class="ti ti-filter"></i>
                 </button>
                 @if($startDate && $endDate)
                   <a href="{{ route('self-service.projects.show', $project) }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </a>
                 @endif
               </div>
@@ -208,7 +208,7 @@
             </div>
           @else
             <div class="text-center py-4">
-              <i class="ti tabler-clock-off display-6 text-muted mb-3 d-block"></i>
+              <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted">No hours logged for this period.</p>
             </div>
           @endif
@@ -221,7 +221,7 @@
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti tabler-list me-2 text-warning"></i>Recent Work Entries
+            <i class="ti ti-list me-2 text-warning"></i>Recent Work Entries
           </h5>
           <span class="badge bg-secondary">{{ $worklogs->count() }} entries</span>
         </div>
@@ -258,7 +258,7 @@
             @endif
           @else
             <div class="text-center py-4">
-              <i class="ti tabler-clock-off display-6 text-muted mb-3 d-block"></i>
+              <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted">No work entries found for this period.</p>
             </div>
           @endif

@@ -12,7 +12,7 @@
                     <small class="text-muted">Track all invoice payments across business units</small>
                 </div>
                 <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti tabler-file-invoice me-1"></i>Back to Invoices
+                    <i class="ti ti-file-invoice me-1"></i>Back to Invoices
                 </a>
             </div>
 
@@ -67,10 +67,10 @@
                                     <label class="form-label">&nbsp;</label>
                                     <div class="d-flex gap-1">
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="ti tabler-search"></i>
+                                            <i class="ti ti-search"></i>
                                         </button>
                                         <a href="{{ route('invoicing.payments.index') }}" class="btn btn-outline-secondary">
-                                            <i class="ti tabler-x"></i>
+                                            <i class="ti ti-x"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-success p-2 me-2 rounded">
-                                            <i class="ti tabler-currency-dollar ti-sm"></i>
+                                            <i class="ti ti-currency-dollar ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -104,7 +104,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-info p-2 me-2 rounded">
-                                            <i class="ti tabler-list ti-sm"></i>
+                                            <i class="ti ti-list ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -121,7 +121,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="badge bg-label-primary p-2 me-2 rounded">
-                                            <i class="ti tabler-calendar ti-sm"></i>
+                                            <i class="ti ti-calendar ti-sm"></i>
                                         </span>
                                     </div>
                                     <div class="text-end">
@@ -202,19 +202,19 @@
                                     <td>
                                         <div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="ti tabler-dots-vertical"></i>
+                                                <i class="ti ti-dots-vertical"></i>
                                             </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $payment->invoice) }}">
-                                                    <i class="ti tabler-eye me-2"></i>View Invoice
+                                                    <i class="ti ti-eye me-2"></i>View Invoice
                                                 </a>
                                                 @if(auth()->user()->can('manage-invoices'))
                                                     <div class="dropdown-divider"></div>
                                                     <button type="button" class="dropdown-item" onclick="editPayment({{ $payment->id }})">
-                                                        <i class="ti tabler-edit me-2"></i>Edit Payment
+                                                        <i class="ti ti-edit me-2"></i>Edit Payment
                                                     </button>
                                                     <button type="button" class="dropdown-item text-danger" onclick="deletePayment({{ $payment->id }})">
-                                                        <i class="ti tabler-trash me-2"></i>Delete Payment
+                                                        <i class="ti ti-trash me-2"></i>Delete Payment
                                                     </button>
                                                 @endif
                                             </div>
@@ -235,12 +235,12 @@
                 @else
                     <div class="text-center py-5">
                         <div class="mb-3">
-                            <i class="ti tabler-currency-dollar display-6 text-muted"></i>
+                            <i class="ti ti-currency-dollar display-6 text-muted"></i>
                         </div>
                         <h5 class="mb-2">No payments found</h5>
                         <p class="text-muted">No invoice payments match your current filters.</p>
                         <a href="{{ route('invoicing.payments.index') }}" class="btn btn-outline-secondary">
-                            <i class="ti tabler-refresh me-1"></i>Clear Filters
+                            <i class="ti ti-refresh me-1"></i>Clear Filters
                         </a>
                     </div>
                 @endif

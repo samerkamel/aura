@@ -17,7 +17,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-primary">
-                                    <i class="ti tabler-receipt-refund ti-md"></i>
+                                    <i class="ti ti-receipt-refund ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-secondary">
-                                    <i class="ti tabler-pencil ti-md"></i>
+                                    <i class="ti ti-pencil ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-success">
-                                    <i class="ti tabler-credit-card ti-md"></i>
+                                    <i class="ti ti-credit-card ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-warning">
-                                    <i class="ti tabler-currency-dollar ti-md"></i>
+                                    <i class="ti ti-currency-dollar ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                     <small class="text-muted">Create and manage customer credit notes</small>
                 </div>
                 <a href="{{ route('accounting.credit-notes.create') }}" class="btn btn-primary">
-                    <i class="ti tabler-plus me-1"></i>New Credit Note
+                    <i class="ti ti-plus me-1"></i>New Credit Note
                 </a>
             </div>
 
@@ -139,10 +139,10 @@
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-outline-primary">
-                            <i class="ti tabler-filter me-1"></i>Filter
+                            <i class="ti ti-filter me-1"></i>Filter
                         </button>
                         <a href="{{ route('accounting.credit-notes.index') }}" class="btn btn-outline-secondary">
-                            <i class="ti tabler-x"></i>
+                            <i class="ti ti-x"></i>
                         </a>
                     </div>
                 </form>
@@ -207,26 +207,26 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti tabler-dots-vertical"></i>
+                                            <i class="ti ti-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="{{ route('accounting.credit-notes.show', $creditNote) }}">
-                                                <i class="ti tabler-eye me-1"></i> View
+                                                <i class="ti ti-eye me-1"></i> View
                                             </a>
                                             @if($creditNote->canBeEdited())
                                                 <a class="dropdown-item" href="{{ route('accounting.credit-notes.edit', $creditNote) }}">
-                                                    <i class="ti tabler-pencil me-1"></i> Edit
+                                                    <i class="ti ti-pencil me-1"></i> Edit
                                                 </a>
                                             @endif
                                             <a class="dropdown-item" href="{{ route('accounting.credit-notes.pdf', $creditNote) }}">
-                                                <i class="ti tabler-file-download me-1"></i> Download PDF
+                                                <i class="ti ti-file-download me-1"></i> Download PDF
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             @if($creditNote->canBeOpened())
                                                 <form action="{{ route('accounting.credit-notes.open', $creditNote) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item">
-                                                        <i class="ti tabler-credit-card me-1"></i> Mark as Open
+                                                        <i class="ti ti-credit-card me-1"></i> Mark as Open
                                                     </button>
                                                 </form>
                                             @endif
@@ -235,7 +235,7 @@
                                                       onsubmit="return confirm('Are you sure you want to void this credit note?')">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="ti tabler-ban me-1"></i> Void
+                                                        <i class="ti ti-ban me-1"></i> Void
                                                     </button>
                                                 </form>
                                             @endif
@@ -246,7 +246,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="ti tabler-trash me-1"></i> Delete
+                                                        <i class="ti ti-trash me-1"></i> Delete
                                                     </button>
                                                 </form>
                                             @endif
@@ -258,7 +258,7 @@
                             <tr>
                                 <td colspan="8" class="text-center py-4">
                                     <div class="text-muted">
-                                        <i class="ti tabler-receipt-off" style="font-size: 3rem;"></i>
+                                        <i class="ti ti-receipt-off" style="font-size: 3rem;"></i>
                                         <p class="mt-2 mb-0">No credit notes found</p>
                                     </div>
                                 </td>

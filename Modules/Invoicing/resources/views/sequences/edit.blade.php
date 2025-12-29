@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('invoicing.sequences.show', $invoiceSequence) }}" class="btn btn-outline-info">
-                        <i class="ti tabler-eye me-1"></i>View Sequence
+                        <i class="ti ti-eye me-1"></i>View Sequence
                     </a>
                     <a href="{{ route('invoicing.sequences.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Sequences
+                        <i class="ti ti-arrow-left me-1"></i>Back to Sequences
                     </a>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                         <div class="col-md-8">
                             <h6 class="mb-3">Current Status</h6>
                             <div class="alert alert-info">
-                                <h6 class="alert-heading"><i class="ti tabler-info-circle me-2"></i>Sequence Information</h6>
+                                <h6 class="alert-heading"><i class="ti ti-info-circle me-2"></i>Sequence Information</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p class="mb-1"><strong>Current Number:</strong> {{ $invoiceSequence->current_number }}</p>
@@ -187,17 +187,17 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('invoicing.sequences.show', $invoiceSequence) }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-x me-1"></i>Cancel
+                        <i class="ti ti-x me-1"></i>Cancel
                     </a>
                     <div>
                         @if($invoiceSequence->invoices->count() > 0)
                             <span class="text-muted me-3">
-                                <i class="ti tabler-alert-triangle me-1"></i>
+                                <i class="ti ti-alert-triangle me-1"></i>
                                 {{ $invoiceSequence->invoices->count() }} invoices use this sequence
                             </span>
                         @endif
                         <button type="submit" class="btn btn-primary">
-                            <i class="ti tabler-device-floppy me-1"></i>Update Sequence
+                            <i class="ti ti-device-floppy me-1"></i>Update Sequence
                         </button>
                     </div>
                 </div>

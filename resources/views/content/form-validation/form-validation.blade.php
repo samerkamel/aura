@@ -54,7 +54,7 @@
             <label class="form-label" for="basic-default-password">Password</label>
             <div class="input-group input-group-merge">
               <input type="password" id="basic-default-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="basic-default-password3" required />
-              <span class="input-group-text cursor-pointer" id="basic-default-password3"><i class="ti tabler-eye-off"></i></span>
+              <span class="input-group-text cursor-pointer" id="basic-default-password3"><i class="ti ti-eye-off"></i></span>
             </div>
           </div>
           <div class="mb-6">
@@ -136,7 +136,7 @@
             <label class="form-label" for="bs-validation-password">Password</label>
             <div class="input-group input-group-merge">
               <input type="password" id="bs-validation-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" required />
-              <span class="input-group-text cursor-pointer" id="basic-default-password4"><i class="ti tabler-eye-off"></i></span>
+              <span class="input-group-text cursor-pointer" id="basic-default-password4"><i class="ti ti-eye-off"></i></span>
             </div>
             <div class="valid-feedback"> Looks good! </div>
             <div class="invalid-feedback"> Please enter your password. </div>
@@ -234,7 +234,7 @@
               <label class="form-label" for="formValidationPass">Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" id="formValidationPass" name="formValidationPass" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multicol-password2" />
-                <span class="input-group-text cursor-pointer" id="multicol-password2"><i class="ti tabler-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer" id="multicol-password2"><i class="ti ti-eye-off"></i></span>
               </div>
             </div>
           </div>
@@ -243,7 +243,7 @@
               <label class="form-label" for="formValidationConfirmPass">Confirm Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" id="formValidationConfirmPass" name="formValidationConfirmPass" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multicol-confirm-password2" />
-                <span class="input-group-text cursor-pointer" id="multicol-confirm-password2"><i class="ti tabler-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer" id="multicol-confirm-password2"><i class="ti ti-eye-off"></i></span>
               </div>
             </div>
           </div>
@@ -342,7 +342,7 @@
               <div class="form-check custom-option custom-option-icon">
                 <label class="form-check-label custom-option-content" for="basicPlanMain1">
                   <span class="custom-option-body">
-                    <i class="ti tabler-brand-telegram"></i>
+                    <i class="ti ti-brand-telegram"></i>
                     <span class="custom-option-title"> Starter </span>
                     <small> Get 5gb of space and 1 team member. </small>
                   </span>
@@ -354,7 +354,7 @@
               <div class="form-check custom-option custom-option-icon">
                 <label class="form-check-label custom-option-content" for="basicPlanMain2">
                   <span class="custom-option-body">
-                    <i class="ti tabler-users"></i>
+                    <i class="ti ti-users"></i>
                     <span class="custom-option-title"> Personal </span>
                     <small> Get 15gb of space and 5 team member. </small>
                   </span>
@@ -366,7 +366,7 @@
               <div class="form-check custom-option custom-option-icon">
                 <label class="form-check-label custom-option-content" for="basicPlanMain3">
                   <span class="custom-option-body">
-                    <i class="ti tabler-crown"></i>
+                    <i class="ti ti-crown"></i>
                     <span class="custom-option-title"> Premium </span>
                     <small> Get 25gb of space and 15 members. </small>
                   </span>

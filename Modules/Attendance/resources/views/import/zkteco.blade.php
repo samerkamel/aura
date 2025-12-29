@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti tabler-fingerprint me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti ti-fingerprint me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Import ZKTeco Fingerprint Attendance</h5>
             <small class="text-muted">Upload a .dat file from ZKTeco fingerprint device</small>
@@ -17,10 +17,10 @@
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('attendance.import.create') }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-file-text me-1"></i>CSV Import
+            <i class="ti ti-file-text me-1"></i>CSV Import
           </a>
           <a href="{{ route('attendance.index') }}" class="btn btn-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Attendance
+            <i class="ti ti-arrow-left me-1"></i>Back to Attendance
           </a>
         </div>
       </div>
@@ -32,20 +32,20 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti tabler-file-upload me-2"></i>ZKTeco DAT File Upload
+              <i class="ti ti-file-upload me-2"></i>ZKTeco DAT File Upload
             </h6>
           </div>
           <div class="card-body">
             @if(isset($error))
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="ti tabler-alert-circle me-2"></i>{{ $error }}
+                <i class="ti ti-alert-circle me-2"></i>{{ $error }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
             @endif
 
             <!-- ZKTeco Format Information -->
             <div class="alert alert-info mb-4">
-              <h6><i class="ti tabler-info-circle me-2"></i>ZKTeco File Format</h6>
+              <h6><i class="ti ti-info-circle me-2"></i>ZKTeco File Format</h6>
               <p class="mb-2">The system accepts <strong>attlog.dat</strong> files exported from ZKTeco fingerprint devices.</p>
               <div class="row">
                 <div class="col-md-6">
@@ -63,7 +63,7 @@
               </div>
               <hr class="my-2">
               <small class="text-muted">
-                <i class="ti tabler-alert-triangle me-1"></i>
+                <i class="ti ti-alert-triangle me-1"></i>
                 <strong>Important:</strong> The USER_ID in the file must match the employee's <strong>Attendance ID</strong> in the system.
                 Make sure employees have their Attendance ID configured correctly.
               </small>
@@ -71,7 +71,7 @@
 
             @if ($errors->any())
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <h6><i class="ti tabler-alert-circle me-2"></i>Validation Errors</h6>
+                <h6><i class="ti ti-alert-circle me-2"></i>Validation Errors</h6>
                 <ul class="mb-0">
                   @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -96,7 +96,7 @@
                        accept=".dat,.txt"
                        required>
                 <div class="form-text">
-                  <i class="ti tabler-file-text me-1"></i>
+                  <i class="ti ti-file-text me-1"></i>
                   Accepts .dat or .txt files. Maximum file size: 50MB
                 </div>
                 @error('dat_file')
@@ -107,10 +107,10 @@
               <!-- Action Buttons -->
               <div class="d-flex justify-content-between">
                 <a href="{{ route('attendance.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti tabler-arrow-left me-1"></i>Cancel
+                  <i class="ti ti-arrow-left me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti tabler-eye me-1"></i>Preview Import
+                  <i class="ti ti-eye me-1"></i>Preview Import
                 </button>
               </div>
             </form>
@@ -132,11 +132,11 @@ document.getElementById('dat_file').addEventListener('change', function(e) {
 
         // Update form text to show selected file info
         const formText = e.target.parentNode.querySelector('.form-text');
-        formText.innerHTML = `<i class="ti tabler-file-check me-1 text-success"></i>Selected: ${fileName} (${fileSize} MB)`;
+        formText.innerHTML = `<i class="ti ti-file-check me-1 text-success"></i>Selected: ${fileName} (${fileSize} MB)`;
 
         // Validate file size (50MB limit)
         if (file.size > 50 * 1024 * 1024) {
-            formText.innerHTML = `<i class="ti tabler-alert-triangle me-1 text-danger"></i>Error: File size exceeds 50MB limit`;
+            formText.innerHTML = `<i class="ti ti-alert-triangle me-1 text-danger"></i>Error: File size exceeds 50MB limit`;
         }
     }
 });

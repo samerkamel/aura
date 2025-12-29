@@ -11,11 +11,11 @@
         <div class="card-header">
           <div class="d-flex align-items-center">
             <a href="{{ route('payroll.billable-hours.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-              <i class="ti tabler-arrow-left"></i>
+              <i class="ti ti-arrow-left"></i>
             </a>
             <div>
               <h5 class="mb-0">
-                <i class="ti tabler-brand-jira me-2"></i>Import Jira Worklogs
+                <i class="ti ti-brand-jira me-2"></i>Import Jira Worklogs
               </h5>
               <small class="text-muted">Upload Jira worklog CSV exports</small>
             </div>
@@ -39,7 +39,7 @@
 
       @if ($errors->any())
         <div class="alert alert-danger">
-          <h6><i class="ti tabler-alert-circle me-2"></i>Validation Errors</h6>
+          <h6><i class="ti ti-alert-circle me-2"></i>Validation Errors</h6>
           <ul class="mb-0">
             @foreach ($errors->all() as $error)
               <li>{{ $error }}</li>
@@ -54,12 +54,12 @@
           <div class="card mb-4">
             <div class="card-header">
               <h6 class="mb-0">
-                <i class="ti tabler-file-upload me-2"></i>Upload CSV File
+                <i class="ti ti-file-upload me-2"></i>Upload CSV File
               </h6>
             </div>
             <div class="card-body">
               <div class="alert alert-info mb-4">
-                <h6><i class="ti tabler-info-circle me-2"></i>Expected CSV Format</h6>
+                <h6><i class="ti ti-info-circle me-2"></i>Expected CSV Format</h6>
                 <p class="mb-2">Your CSV file should be exported from Jira with the following columns:</p>
                 <ul class="mb-2">
                   <li><strong>Author</strong> - The name of the person who logged the work</li>
@@ -93,7 +93,7 @@
                     Cancel
                   </a>
                   <button type="submit" class="btn btn-primary">
-                    <i class="ti tabler-upload me-1"></i>Import Worklogs
+                    <i class="ti ti-upload me-1"></i>Import Worklogs
                   </button>
                 </div>
               </form>
@@ -106,13 +106,13 @@
           <div class="card">
             <div class="card-header">
               <h6 class="mb-0">
-                <i class="ti tabler-users me-2"></i>Mapped Employees
+                <i class="ti ti-users me-2"></i>Mapped Employees
               </h6>
             </div>
             <div class="card-body">
               @if($mappedEmployees->isEmpty())
                 <div class="alert alert-warning mb-0">
-                  <i class="ti tabler-alert-triangle me-2"></i>
+                  <i class="ti ti-alert-triangle me-2"></i>
                   <strong>No employees mapped!</strong>
                   <p class="mb-0 mt-2">
                     You need to set the "Jira Author Name" field on employees before importing worklogs.

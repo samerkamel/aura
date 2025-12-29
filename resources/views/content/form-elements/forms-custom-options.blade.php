@@ -94,7 +94,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customRadioIcon1">
                 <span class="custom-option-body">
-                  <i class="ti tabler-rocket"></i>
+                  <i class="ti ti-rocket"></i>
                   <span class="custom-option-title">Starter</span>
                   <small> Cake sugar plum fruitcake I love sweet roll jelly-o.</small>
                 </span>
@@ -106,7 +106,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customRadioIcon2">
                 <span class="custom-option-body">
-                  <i class="ti tabler-star"></i>
+                  <i class="ti ti-star"></i>
                   <span class="custom-option-title"> Personal </span>
                   <small> Cake sugar plum fruitcake I love sweet roll jelly-o. </small>
                 </span>
@@ -118,7 +118,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customRadioIcon3">
                 <span class="custom-option-body">
-                  <i class="ti tabler-briefcase"></i>
+                  <i class="ti ti-briefcase"></i>
                   <span class="custom-option-title"> Enterprise </span>
                   <small>Cake sugar plum fruitcake I love sweet roll jelly-o.</small>
                 </span>
@@ -142,7 +142,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customCheckboxIcon1">
                 <span class="custom-option-body">
-                  <i class="ti tabler-folder"></i>
+                  <i class="ti ti-folder"></i>
                   <span class="custom-option-title"> Backup </span>
                   <small> Cake sugar plum fruitcake I love sweet roll jelly-o. </small>
                 </span>
@@ -154,7 +154,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customCheckboxIcon2">
                 <span class="custom-option-body">
-                  <i class="ti tabler-ban"></i>
+                  <i class="ti ti-ban"></i>
                   <span class="custom-option-title"> Encrypt </span>
                   <small> Cake sugar plum fruitcake I love sweet roll jelly-o. </small>
                 </span>
@@ -166,7 +166,7 @@
             <div class="form-check custom-option custom-option-icon">
               <label class="form-check-label custom-option-content" for="customCheckboxIcon3">
                 <span class="custom-option-body">
-                  <i class="ti tabler-lock"></i>
+                  <i class="ti ti-lock"></i>
                   <span class="custom-option-title"> Site Lock </span>
                   <small> Cake sugar plum fruitcake I love sweet roll jelly-o. </small>
                 </span>

@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.income.contracts.show', $incomeSchedule->contract) }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-arrow-left me-1"></i>Back to Contract
+                        <i class="ti ti-arrow-left me-1"></i>Back to Contract
                     </a>
                     <a href="{{ route('accounting.income.schedules.edit', $incomeSchedule) }}" class="btn btn-primary">
-                        <i class="ti tabler-edit me-1"></i>Edit Schedule
+                        <i class="ti ti-edit me-1"></i>Edit Schedule
                     </a>
                 </div>
             </div>
@@ -215,7 +215,7 @@
                                     </div>
                                 @else
                                     <div class="text-center py-4">
-                                        <i class="ti tabler-calendar-off text-muted mb-3" style="font-size: 3rem;"></i>
+                                        <i class="ti ti-calendar-off text-muted mb-3" style="font-size: 3rem;"></i>
                                         <h6>No Upcoming Payments</h6>
                                         <p class="text-muted">This schedule has no payments scheduled for the next 6 months.</p>
                                     </div>
@@ -246,17 +246,17 @@
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-outline-{{ $incomeSchedule->is_active ? 'warning' : 'success' }} btn-sm w-100">
-                                            <i class="ti tabler-{{ $incomeSchedule->is_active ? 'pause' : 'play' }} me-1"></i>
+                                            <i class="ti ti-{{ $incomeSchedule->is_active ? 'pause' : 'play' }} me-1"></i>
                                             {{ $incomeSchedule->is_active ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </form>
 
                                     <a href="{{ route('accounting.income.schedules.edit', $incomeSchedule) }}" class="btn btn-primary btn-sm">
-                                        <i class="ti tabler-edit me-1"></i>Edit Schedule
+                                        <i class="ti ti-edit me-1"></i>Edit Schedule
                                     </a>
 
                                     <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete()">
-                                        <i class="ti tabler-trash me-1"></i>Delete Schedule
+                                        <i class="ti ti-trash me-1"></i>Delete Schedule
                                     </button>
                                 </div>
                             </div>
@@ -321,7 +321,7 @@
 
                                 <div class="d-grid">
                                     <a href="{{ route('accounting.income.contracts.show', $incomeSchedule->contract) }}" class="btn btn-outline-primary btn-sm">
-                                        <i class="ti tabler-file-text me-1"></i>View Contract
+                                        <i class="ti ti-file-text me-1"></i>View Contract
                                     </a>
                                 </div>
                             </div>
@@ -343,7 +343,7 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-3">
-                    <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
+                    <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
                 </div>
                 <h6 class="text-center">Are you sure you want to delete this income schedule?</h6>
                 <p class="text-center text-muted">
@@ -351,7 +351,7 @@
                     Contract: <strong>{{ $incomeSchedule->contract->contract_number }}</strong>
                 </p>
                 <div class="alert alert-warning">
-                    <i class="ti tabler-info-circle me-2"></i>
+                    <i class="ti ti-info-circle me-2"></i>
                     This action cannot be undone. The schedule will be removed from cash flow projections.
                 </div>
             </div>
@@ -361,7 +361,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="ti tabler-trash me-1"></i>Delete Schedule
+                        <i class="ti ti-trash me-1"></i>Delete Schedule
                     </button>
                 </form>
             </div>

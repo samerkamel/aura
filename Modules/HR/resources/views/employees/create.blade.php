@@ -79,7 +79,7 @@
           </div>
 
           <!-- Identification -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-id me-2"></i>Identification</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-id me-2"></i>Identification</h6>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label" for="attendance_id">Attendance ID</label>
@@ -144,7 +144,7 @@
           </div>
 
           <!-- Position & Employment -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-briefcase me-2"></i>Position & Employment</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-briefcase me-2"></i>Position & Employment</h6>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label" for="position_id">Position</label>
@@ -192,7 +192,7 @@
 
           @if($canEditSalary)
           <!-- Salary Information (Permission Protected) -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-currency-dollar me-2"></i>Salary Information</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-currency-dollar me-2"></i>Salary Information</h6>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label" for="base_salary">Base Salary (EGP)</label>
@@ -216,7 +216,7 @@
           @endif
 
           <!-- Contact Information -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-phone me-2"></i>Contact Information</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-phone me-2"></i>Contact Information</h6>
           <div class="row">
             <div class="col-md-3 mb-3">
               <label class="form-label" for="contact_info_mobile_number">Mobile Number</label>
@@ -260,7 +260,7 @@
           </div>
 
           <!-- Bank Information -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-building-bank me-2"></i>Bank Information</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-building-bank me-2"></i>Bank Information</h6>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label" for="bank_info_bank_name">Bank Name</label>
@@ -304,7 +304,7 @@
           </div>
 
           <!-- Emergency Contact -->
-          <h6 class="mt-4 mb-3"><i class="ti tabler-urgent me-2"></i>Emergency Contact</h6>
+          <h6 class="mt-4 mb-3"><i class="ti ti-urgent me-2"></i>Emergency Contact</h6>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label" for="emergency_contact_name">Contact Name</label>

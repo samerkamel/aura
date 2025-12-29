@@ -32,7 +32,7 @@
             </div>
           </div>
           <a href="{{ route('administration.business-units.show', $businessUnit) }}" class="btn btn-outline-secondary">
-            <i class="ti tabler-arrow-left me-1"></i>Back to Details
+            <i class="ti ti-arrow-left me-1"></i>Back to Details
           </a>
         </div>
       </div>
@@ -44,7 +44,7 @@
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-user-plus me-2"></i>Assign User to Business Unit
+          <i class="ti ti-user-plus me-2"></i>Assign User to Business Unit
         </h5>
       </div>
       <div class="card-body">
@@ -81,7 +81,7 @@
             </div>
             <div class="col-12 col-md-3 mb-3">
               <button type="submit" class="btn btn-primary w-100">
-                <i class="ti tabler-plus me-1"></i>Assign User
+                <i class="ti ti-plus me-1"></i>Assign User
               </button>
             </div>
           </div>
@@ -95,7 +95,7 @@
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti tabler-users me-2"></i>Assigned Users ({{ $businessUnit->users->count() }})
+          <i class="ti ti-users me-2"></i>Assigned Users ({{ $businessUnit->users->count() }})
         </h5>
       </div>
       <div class="card-body">
@@ -148,11 +148,11 @@
                     <td>
                       <div class="dropdown">
                         <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                          <i class="ti tabler-dots-vertical"></i>
+                          <i class="ti ti-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu">
                           <a class="dropdown-item" href="{{ route('administration.users.show', $user) }}">
-                            <i class="ti tabler-eye me-2"></i>View User
+                            <i class="ti ti-eye me-2"></i>View User
                           </a>
                           <div class="dropdown-divider"></div>
                           <form method="POST" action="{{ route('administration.business-units.unassign-user', $businessUnit) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to unassign this user from the business unit?')">
@@ -160,7 +160,7 @@
                             @method('DELETE')
                             <input type="hidden" name="user_id" value="{{ $user->id }}">
                             <button type="submit" class="dropdown-item text-danger">
-                              <i class="ti tabler-user-minus me-2"></i>Unassign User
+                              <i class="ti ti-user-minus me-2"></i>Unassign User
                             </button>
                           </form>
                         </div>
@@ -173,7 +173,7 @@
           </div>
         @else
           <div class="text-center py-5">
-            <i class="ti tabler-users ti-lg text-muted mb-3"></i>
+            <i class="ti ti-users ti-lg text-muted mb-3"></i>
             <h5 class="text-muted">No Users Assigned</h5>
             <p class="text-muted mb-4">This business unit doesn't have any assigned users yet.</p>
           </div>
@@ -186,7 +186,7 @@
 @if(session('success'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-success show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-check text-success me-2"></i>
+      <i class="ti ti-check text-success me-2"></i>
       <div class="me-auto fw-medium">Success!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -197,7 +197,7 @@
 @if(session('error'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -208,7 +208,7 @@
 @if($errors->any())
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Validation Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

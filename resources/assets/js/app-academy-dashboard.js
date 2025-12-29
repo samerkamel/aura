@@ -296,14 +296,11 @@
   // Variable declaration for table
   var dt_academy_course = $('.datatables-academy-course'),
     logoObj = {
-      angular:
-        '<span class="badge bg-label-danger rounded p-1_5"><i class="ti tabler-brand-angular ti-28px"></i></span>',
-      figma: '<span class="badge bg-label-warning rounded p-1_5"><i class="ti tabler-brand-figma ti-28px"></i></span>',
-      react:
-        '<span class="badge bg-label-info rounded p-1_5"><i class="ti tabler-brand-react-native ti-28px"></i></span>',
-      art: '<span class="badge bg-label-success rounded p-1_5"><i class="ti tabler-color-swatch ti-28px"></i></span>',
-      fundamentals:
-        '<span class="badge bg-label-primary rounded p-1_5"><i class="ti tabler-diamond ti-28px"></i></span>'
+      angular: '<span class="badge bg-label-danger rounded p-1_5"><i class="ti ti-brand-angular ti-28px"></i></span>',
+      figma: '<span class="badge bg-label-warning rounded p-1_5"><i class="ti ti-brand-figma ti-28px"></i></span>',
+      react: '<span class="badge bg-label-info rounded p-1_5"><i class="ti ti-brand-react-native ti-28px"></i></span>',
+      art: '<span class="badge bg-label-success rounded p-1_5"><i class="ti ti-color-swatch ti-28px"></i></span>',
+      fundamentals: '<span class="badge bg-label-primary rounded p-1_5"><i class="ti ti-diamond ti-28px"></i></span>'
     };
 
   // orders datatable
@@ -441,15 +438,15 @@
             return (
               '<div class="d-flex align-items-center justify-content-between">' +
               '<div class="w-px-50 d-flex align-items-center">' +
-              '<i class="ti tabler-users ti-lg me-2 text-primary"></i><span>' +
+              '<i class="ti ti-users ti-lg me-2 text-primary"></i><span>' +
               $user_number +
               '</span></div>' +
               '<div class="w-px-50 d-flex align-items-center">' +
-              '<i class="ti tabler-book ti-lg me-2 text-info"></i><span>' +
+              '<i class="ti ti-book ti-lg me-2 text-info"></i><span>' +
               $note +
               '</span></div>' +
               '<div class="w-px-50 d-flex align-items-center">' +
-              '<i class="ti tabler-video ti-lg me-2 text-danger"></i><span>' +
+              '<i class="ti ti-video ti-lg me-2 text-danger"></i><span>' +
               $view +
               '</span></div>' +
               '</div>'
@@ -471,8 +468,8 @@
         search: '',
         searchPlaceholder: 'Search Course',
         paginate: {
-          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
-          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
+          next: '<i class="ti ti-chevron-right ti-sm"></i>',
+          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown

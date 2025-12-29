@@ -45,14 +45,14 @@
             Currency
           </button>
           <div class="dropdown-menu dropdown-menu-end">
-            <a class="dropdown-item" href="javascript:void(0);"><i class='ti tabler-currency-dollar'></i> USD</a>
-            <a class="dropdown-item" href="javascript:void(0);"><i class='ti tabler-currency-euro'></i> Euro</a>
-            <a class="dropdown-item" href="javascript:void(0);"><i class='ti tabler-currency-pound'></i> Pound</a>
+            <a class="dropdown-item" href="javascript:void(0);"><i class='ti ti-currency-dollar'></i> USD</a>
+            <a class="dropdown-item" href="javascript:void(0);"><i class='ti ti-currency-euro'></i> Euro</a>
+            <a class="dropdown-item" href="javascript:void(0);"><i class='ti ti-currency-pound'></i> Pound</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="javascript:void(0);"><i class='ti tabler-currency-bitcoin'></i> Bitcoin</a>
+            <a class="dropdown-item" href="javascript:void(0);"><i class='ti ti-currency-bitcoin'></i> Bitcoin</a>
           </div>
         </div>
-        <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger"><i class='ti tabler-logout me-1'></i>Logout</a>
+        <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger"><i class='ti ti-logout me-1'></i>Logout</a>
       </div>
     </div>
   </footer>
@@ -225,10 +225,10 @@
           <h4 class="fw-bold mb-4"><a href="{{ config('variables.livePreview') }}" target="_blank" class="footer-text">{{ config('variables.templateName') }} </a></h4>
           <span>Get ready for better world</span>
           <div class="social-icon my-4">
-            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-facebook me-2"><i class='ti tabler-brand-facebook'></i></a>
-            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-twitter me-2"><i class='ti tabler-brand-twitter'></i></a>
-            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-linkedin me-2"><i class='ti tabler-brand-linkedin'></i></a>
-            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-github"><i class='ti tabler-brand-github'></i></a>
+            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-facebook me-2"><i class='ti ti-brand-facebook'></i></a>
+            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-twitter me-2"><i class='ti ti-brand-twitter'></i></a>
+            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-linkedin me-2"><i class='ti ti-brand-linkedin'></i></a>
+            <a href="javascript:void(0)" class="btn btn-icon btn-sm btn-github"><i class='ti ti-brand-github'></i></a>
           </div>
           <p class="pt-6">
             <script>

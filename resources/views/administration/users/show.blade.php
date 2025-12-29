@@ -18,10 +18,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.users.edit', $user) }}" class="btn btn-primary">
-                <i class="ti tabler-edit me-2"></i>Edit User
+                <i class="ti ti-edit me-2"></i>Edit User
             </a>
             <a href="{{ route('administration.users.index') }}" class="btn btn-outline-secondary">
-                <i class="ti tabler-arrow-left me-2"></i>Back to Users
+                <i class="ti ti-arrow-left me-2"></i>Back to Users
             </a>
         </div>
     </div>
@@ -76,7 +76,7 @@
                                 <button type="submit"
                                         class="btn {{ $user->is_active ? 'btn-warning' : 'btn-success' }} w-100"
                                         onclick="return confirm('Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} this user?')">
-                                    <i class="ti tabler-{{ $user->is_active ? 'user-x' : 'user-check' }} me-2"></i>
+                                    <i class="ti ti-{{ $user->is_active ? 'user-x' : 'user-check' }} me-2"></i>
                                     {{ $user->is_active ? 'Deactivate User' : 'Activate User' }}
                                 </button>
                             </form>
@@ -86,12 +86,12 @@
                                 <button type="submit"
                                         class="btn btn-danger w-100"
                                         onclick="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
-                                    <i class="ti tabler-trash me-2"></i>Delete User
+                                    <i class="ti ti-trash me-2"></i>Delete User
                                 </button>
                             </form>
                             @else
                             <div class="alert alert-info">
-                                <i class="ti tabler-info-circle me-2"></i>
+                                <i class="ti ti-info-circle me-2"></i>
                                 You cannot modify your own account from this page.
                             </div>
                             @endif
@@ -107,7 +107,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti tabler-shield-check me-2"></i>User Roles
+                        <i class="ti ti-shield-check me-2"></i>User Roles
                     </h5>
                     <span class="badge bg-label-primary">{{ $user->roles->count() }} {{ $user->roles->count() === 1 ? 'Role' : 'Roles' }}</span>
                 </div>
@@ -119,7 +119,7 @@
                                 <div class="d-flex align-items-center p-3 border rounded">
                                     <div class="avatar flex-shrink-0 me-3">
                                         <span class="avatar-initial rounded bg-label-primary">
-                                            <i class="ti tabler-shield"></i>
+                                            <i class="ti ti-shield"></i>
                                         </span>
                                     </div>
                                     <div class="flex-grow-1">
@@ -138,7 +138,7 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <i class="ti tabler-shield-x ti-3x text-muted mb-3"></i>
+                            <i class="ti ti-shield-x ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Roles Assigned</h5>
                             <p class="text-muted mb-0">This user has no roles assigned. Click edit to assign roles.</p>
                         </div>
@@ -150,7 +150,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti tabler-key me-2"></i>User Permissions
+                        <i class="ti ti-key me-2"></i>User Permissions
                     </h5>
                     @php
                         $allPermissions = $user->roles->flatMap->permissions->unique('id');
@@ -165,13 +165,13 @@
                         @foreach($groupedPermissions as $category => $permissions)
                         <div class="mb-4">
                             <h6 class="text-primary mb-3">
-                                <i class="ti tabler-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
+                                <i class="ti ti-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
                             </h6>
                             <div class="row">
                                 @foreach($permissions as $permission)
                                 <div class="col-lg-4 col-md-6 mb-2">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti tabler-check text-success me-2"></i>
+                                        <i class="ti ti-check text-success me-2"></i>
                                         <span>{{ $permission->display_name }}</span>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@
                         @endforeach
                     @else
                         <div class="text-center py-4">
-                            <i class="ti tabler-key-off ti-3x text-muted mb-3"></i>
+                            <i class="ti ti-key-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Permissions</h5>
                             <p class="text-muted mb-0">This user has no permissions assigned through roles.</p>
                         </div>

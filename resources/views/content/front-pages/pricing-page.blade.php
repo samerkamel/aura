@@ -34,7 +34,7 @@ $configData = Helper::appClasses();
         <span class="switch-label fs-6 text-body">Annually</span>
       </label>
       <div class="mt-n5 ms-n10 ml-2 mb-10 d-none d-sm-flex align-items-center gap-1">
-        <i class="ti tabler-corner-left-down ti-lg text-muted scaleX-n1-rtl"></i>
+        <i class="ti ti-corner-left-down ti-lg text-muted scaleX-n1-rtl"></i>
         <span class="badge badge-sm bg-label-primary rounded-1 mb-3 ">Save up to 10%</span>
       </div>
     </div>
@@ -179,7 +179,7 @@ $configData = Helper::appClasses();
                 </th>
                 <th scope="col">
                   <p class="mb-0 position-relative">Pro
-                    <span class="badge badge-center rounded-pill bg-primary position-absolute mt-n2 ms-1"><i class="ti tabler-star mt-n1"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary position-absolute mt-n2 ms-1"><i class="ti ti-star mt-n1"></i></span>
                   </p>
                   <small class="text-body fw-normal text-capitalize">$7.5/month</small>
                 </th>
@@ -193,118 +193,118 @@ $configData = Helper::appClasses();
               <tr>
                 <td class="text-heading">14-days free trial</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">No user limit</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Product Support</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Email Support</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td>
                   <span class="badge bg-label-primary badge-sm">Add-On-Available</span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Integrations</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Removal of Front branding</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td>
                   <span class="badge bg-label-primary badge-sm">Add-On-Available</span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Active maintenance & support</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="text-heading">Data storage for 365 days</td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-secondary p-0">
-                    <i class="ti tabler-x"></i>
+                    <i class="ti ti-x"></i>
                   </span>
                 </td>
                 <td><span class="badge badge-center rounded-pill w-px-20 h-px-20 bg-label-primary p-0">
-                    <i class="ti tabler-check"></i>
+                    <i class="ti ti-check"></i>
                   </span>
                 </td>
               </tr>

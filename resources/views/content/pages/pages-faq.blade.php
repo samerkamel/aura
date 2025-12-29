@@ -17,7 +17,7 @@ $configData = Helper::appClasses();
   <h4 class="text-center mb-2"> Hello, how can we help? </h4>
   <p class="text-center mb-0 px-4">or choose a category to quickly find the help you need</p>
   <div class="input-wrapper mt-4 input-group input-group-merge px-lg-5">
-    <span class="input-group-text" id="basic-addon1"><i class="ti tabler-search"></i></span>
+    <span class="input-group-text" id="basic-addon1"><i class="ti ti-search"></i></span>
     <input type="text" class="form-control" placeholder="Search articles..." aria-label="Search" aria-describedby="basic-addon1" />
   </div>
 </div>
@@ -29,31 +29,31 @@ $configData = Helper::appClasses();
       <ul class="nav nav-pills flex-column">
         <li class="nav-item">
           <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#payment">
-            <i class="ti tabler-credit-card me-1_5 ti-sm"></i>
+            <i class="ti ti-credit-card me-1_5 ti-sm"></i>
             <span class="align-middle fw-medium">Payment</span>
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="tab" data-bs-target="#delivery">
-            <i class="ti tabler-briefcase me-1_5 ti-sm"></i>
+            <i class="ti ti-briefcase me-1_5 ti-sm"></i>
             <span class="align-middle fw-medium">Delivery</span>
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="tab" data-bs-target="#cancellation">
-            <i class="ti tabler-rotate-clockwise-2 me-1_5 ti-sm"></i>
+            <i class="ti ti-rotate-clockwise-2 me-1_5 ti-sm"></i>
             <span class="align-middle fw-medium">Cancellation & Return</span>
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orders">
-            <i class="ti tabler-box me-1_5 ti-sm"></i>
+            <i class="ti ti-box me-1_5 ti-sm"></i>
             <span class="align-middle fw-medium">My Orders</span>
           </button>
         </li>
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="tab" data-bs-target="#product">
-            <i class="ti tabler-settings me-1_5 ti-sm"></i>
+            <i class="ti ti-settings me-1_5 ti-sm"></i>
             <span class="align-middle fw-medium">Product & Services</span>
           </button>
         </li>
@@ -74,7 +74,7 @@ $configData = Helper::appClasses();
         <div class="d-flex mb-4 gap-4">
           <div class="avatar avatar-md">
             <div class="avatar-initial bg-label-primary rounded">
-              <i class="ti tabler-credit-card ti-30px"></i>
+              <i class="ti ti-credit-card ti-30px"></i>
             </div>
           </div>
           <div>
@@ -164,7 +164,7 @@ $configData = Helper::appClasses();
         <div class="d-flex mb-4 gap-4 align-items-center">
           <div class="avatar avatar-md">
             <span class="avatar-initial bg-label-primary rounded">
-              <i class="ti tabler-briefcase ti-30px"></i>
+              <i class="ti ti-briefcase ti-30px"></i>
             </span>
           </div>
           <div>
@@ -225,7 +225,7 @@ $configData = Helper::appClasses();
         <div class="d-flex mb-4 gap-4 align-items-center">
           <div class="avatar avatar-md">
             <span class="avatar-initial bg-label-primary rounded">
-              <i class="ti tabler-rotate-clockwise-2 ti-30px"></i>
+              <i class="ti ti-rotate-clockwise-2 ti-30px"></i>
             </span>
           </div>
           <div>
@@ -290,7 +290,7 @@ $configData = Helper::appClasses();
         <div class="d-flex mb-4 gap-4 align-items-center">
           <div class="avatar avatar-md">
             <span class="avatar-initial bg-label-primary rounded">
-              <i class="ti tabler-box ti-30px"></i>
+              <i class="ti ti-box ti-30px"></i>
             </span>
           </div>
           <div>
@@ -365,7 +365,7 @@ $configData = Helper::appClasses();
         <div class="d-flex mb-4 gap-4 align-items-center">
           <div class="avatar avatar-md">
             <span class="avatar-initial bg-label-primary rounded">
-              <i class="ti tabler-camera ti-30px"></i>
+              <i class="ti ti-camera ti-30px"></i>
             </span>
           </div>
           <div>
@@ -442,7 +442,7 @@ $configData = Helper::appClasses();
     <div class="py-6 rounded bg-faq-section d-flex align-items-center flex-column">
       <div class="avatar avatar-md">
         <span class="avatar-initial bg-label-primary rounded">
-          <i class="ti tabler-phone ti-26px"></i>
+          <i class="ti ti-phone ti-26px"></i>
         </span>
       </div>
       <h5 class="mt-4 mb-1"><a class="text-heading" href="tel:+(1)25482568">+(1) 2548 2568</a></h5>
@@ -453,7 +453,7 @@ $configData = Helper::appClasses();
     <div class="py-6 rounded bg-faq-section d-flex align-items-center flex-column">
       <div class="avatar avatar-md">
         <span class="avatar-initial bg-label-primary rounded">
-          <i class="ti tabler-mail ti-26px"></i>
+          <i class="ti ti-mail ti-26px"></i>
         </span>
       </div>
       <h5 class="mt-4 mb-1"><a class="text-heading" href="mailto:help@help.com">help@help.com</a></h5>

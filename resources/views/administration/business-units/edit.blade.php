@@ -25,7 +25,7 @@
     <div class="card mb-6">
       <div class="card-header">
         <h4 class="card-title mb-0">
-          <i class="ti tabler-edit me-2"></i>Edit Business Unit
+          <i class="ti ti-edit me-2"></i>Edit Business Unit
         </h4>
         <p class="card-text">Update business unit information and settings</p>
       </div>
@@ -158,16 +158,16 @@
                     <div>
                       @if($businessUnit->products()->count() == 0 && $businessUnit->contracts()->count() == 0)
                         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                          <i class="ti tabler-trash me-1"></i>Delete Business Unit
+                          <i class="ti ti-trash me-1"></i>Delete Business Unit
                         </button>
                       @endif
                     </div>
                     <div class="d-flex gap-3">
                       <a href="{{ route('administration.business-units.show', $businessUnit) }}" class="btn btn-outline-secondary">
-                        <i class="ti tabler-x me-1"></i>Cancel
+                        <i class="ti ti-x me-1"></i>Cancel
                       </a>
                       <button type="submit" class="btn btn-primary">
-                        <i class="ti tabler-check me-1"></i>Update Business Unit
+                        <i class="ti ti-check me-1"></i>Update Business Unit
                       </button>
                     </div>
                   </div>
@@ -192,7 +192,7 @@
         </div>
         <div class="modal-body">
           <div class="text-center">
-            <i class="ti tabler-alert-triangle ti-lg text-warning mb-3"></i>
+            <i class="ti ti-alert-triangle ti-lg text-warning mb-3"></i>
             <h6>Are you sure you want to delete this business unit?</h6>
             <p class="text-muted mb-0">
               This action cannot be undone. The business unit "{{ $businessUnit->name }}" will be permanently removed.
@@ -215,7 +215,7 @@
 @if($errors->any())
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
     <div class="toast-header">
-      <i class="ti tabler-x text-danger me-2"></i>
+      <i class="ti ti-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Validation Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
