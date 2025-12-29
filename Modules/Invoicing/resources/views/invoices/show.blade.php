@@ -150,7 +150,7 @@
                                     <td>
                                         <div class="fw-semibold">{{ $item->description }}</div>
                                         @if($item->long_description)
-                                            <div class="text-muted small">{!! nl2br(e($item->long_description)) !!}</div>
+                                            <div class="text-muted small">{!! nl2br(e(str_replace(['<br />', '<br/>', '<br>'], "\n", $item->long_description))) !!}</div>
                                         @endif
                                         @if($item->contract_payment_id)
                                             <small class="text-muted">
