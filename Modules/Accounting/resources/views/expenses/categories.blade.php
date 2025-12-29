@@ -106,8 +106,11 @@
                             <tr class="{{ !$category->is_active ? 'opacity-50' : '' }}">
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if($category->parent_id)
-                                            <div class="me-2 text-muted">└─</div>
+                                        @php $depth = $category->depth ?? 0; @endphp
+                                        @if($depth > 0)
+                                            <div class="me-2 text-muted" style="font-family: monospace;">
+                                                {{ str_repeat('│  ', $depth - 1) }}└─
+                                            </div>
                                         @endif
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
@@ -130,9 +133,9 @@
                                                 <br><span class="text-muted" dir="rtl">{{ $category->name_ar }}</span>
                                             @endif
                                             @if($category->parent)
-                                                <br><small class="text-muted">Under: {{ $category->parent->name }}</small>
+                                                <br><small class="text-muted">Under: {{ $category->parent->full_name }}</small>
                                             @elseif($category->subcategories->count() > 0)
-                                                <br><small class="text-info">{{ $category->subcategories->count() }} subcategories</small>
+                                                <br><small class="text-info">{{ $category->subcategories->count() }} direct subcategories</small>
                                             @endif
                                             @if(!$category->is_active)
                                                 <br><small class="text-muted fst-italic">Inactive</small>
@@ -266,12 +269,14 @@
                     <div class="mb-3">
                         <label for="add_parent_id" class="form-label">Parent Category <small class="text-muted">(Optional)</small></label>
                         <select class="form-select" id="add_parent_id" name="parent_id">
-                            <option value="">Main Category</option>
+                            <option value="">── Main Category (Top Level)</option>
                             @foreach($parentCategories as $parentCategory)
-                                <option value="{{ $parentCategory->id }}">{{ $parentCategory->name }}</option>
+                                <option value="{{ $parentCategory->id }}">
+                                    {{ str_repeat('│  ', $parentCategory->tree_depth) }}├─ {{ $parentCategory->name }}
+                                </option>
                             @endforeach
                         </select>
-                        <small class="text-muted">Leave blank to create a main category, or select a parent to create a subcategory</small>
+                        <small class="text-muted">Select a parent to create nested categories at any level</small>
                     </div>
 
                     <div class="mb-3" id="expense_type_field">

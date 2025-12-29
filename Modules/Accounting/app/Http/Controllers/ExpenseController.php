@@ -454,59 +454,65 @@ class ExpenseController extends Controller
             fn ($a, $b) => $a->name <=> $b->name,
         ])->values();
 
-        // Flatten the hierarchy for the table display
+        // Flatten the hierarchy for the table display (supports unlimited nesting)
         $categories = collect();
-        foreach ($mainCategories as $mainCategory) {
-            // Calculate YTD and average values for main category
-            $mainCategory->ytd_total = $this->calculateYtdTotal($mainCategory, $currentYear);
-            $mainCategory->ytd_average_per_month = $monthsElapsed > 0 ? $mainCategory->ytd_total / $monthsElapsed : 0;
-            $mainCategory->average_scheduled_per_month = $mainCategory->monthly_amount;
 
-            // Calculate planned budget based on tier
-            $budget = $mainCategory->budgets->first();
-            if ($budget) {
-                $percentage = $budget->budget_percentage;
-                if ($budget->calculation_base === 'total_revenue') {
-                    // Tier 1: from total revenue
-                    $mainCategory->planned_monthly = ($percentage / 100) * $totalMonthlyRevenue;
+        // Recursive function to add categories with all descendants
+        $addCategoryWithDescendants = function ($category, $parentTier, $parentCalculationBase, $depth = 0) use (&$addCategoryWithDescendants, &$categories, $currentYear, $monthsElapsed, $totalMonthlyRevenue, $monthlyNetIncome) {
+            // Load the parent relationship
+            $category->load('parent');
+
+            // Calculate YTD and average values
+            $category->ytd_total = $this->calculateYtdTotal($category, $currentYear);
+            $category->ytd_average_per_month = $monthsElapsed > 0 ? $category->ytd_total / $monthsElapsed : 0;
+            $category->average_scheduled_per_month = $category->monthly_amount;
+
+            // For main categories, calculate planned budget
+            if ($category->parent_id === null) {
+                $budget = $category->budgets->first();
+                if ($budget) {
+                    $percentage = $budget->budget_percentage;
+                    if ($budget->calculation_base === 'total_revenue') {
+                        $category->planned_monthly = ($percentage / 100) * $totalMonthlyRevenue;
+                    } else {
+                        $category->planned_monthly = ($percentage / 100) * $monthlyNetIncome;
+                    }
+                    $category->planned_ytd = $category->planned_monthly * $monthsElapsed;
                 } else {
-                    // Tier 2: from net income
-                    $mainCategory->planned_monthly = ($percentage / 100) * $monthlyNetIncome;
+                    $category->planned_monthly = 0;
+                    $category->planned_ytd = 0;
                 }
-                $mainCategory->planned_ytd = $mainCategory->planned_monthly * $monthsElapsed;
             } else {
-                $mainCategory->planned_monthly = 0;
-                $mainCategory->planned_ytd = 0;
-            }
-
-            $categories->push($mainCategory);
-
-            // Add subcategories right after their parent (already sorted by sort_order in query)
-            foreach ($mainCategory->subcategories as $subcategory) {
-                // Load the parent relationship for subcategory
-                $subcategory->load('parent');
-
-                // Calculate YTD and average values for subcategory
-                $subcategory->ytd_total = $this->calculateYtdTotal($subcategory, $currentYear);
-                $subcategory->ytd_average_per_month = $monthsElapsed > 0 ? $subcategory->ytd_total / $monthsElapsed : 0;
-                $subcategory->average_scheduled_per_month = $subcategory->monthly_amount;
-
                 // Subcategories inherit parent's tier and budget info for display
-                $subcategory->tier = $mainCategory->tier;
-                $subcategory->budget_percentage = 0;
-                $subcategory->calculation_base = $mainCategory->calculation_base;
-                $subcategory->planned_monthly = 0;
-                $subcategory->planned_ytd = 0;
-
-                $categories->push($subcategory);
+                $category->tier = $parentTier;
+                $category->budget_percentage = 0;
+                $category->calculation_base = $parentCalculationBase;
+                $category->planned_monthly = 0;
+                $category->planned_ytd = 0;
             }
+
+            // Set depth for display purposes
+            $category->depth = $depth;
+
+            $categories->push($category);
+
+            // Recursively add all subcategories
+            foreach ($category->subcategories as $subcategory) {
+                $addCategoryWithDescendants(
+                    $subcategory,
+                    $category->tier,
+                    $category->calculation_base,
+                    $depth + 1
+                );
+            }
+        };
+
+        foreach ($mainCategories as $mainCategory) {
+            $addCategoryWithDescendants($mainCategory, $mainCategory->tier, $mainCategory->calculation_base, 0);
         }
 
-        // Get only main categories for parent selection
-        $parentCategories = ExpenseCategory::active()
-            ->mainCategories()
-            ->orderBy('name')
-            ->get();
+        // Get all categories in hierarchical order for parent selection (supports unlimited nesting)
+        $parentCategories = ExpenseCategory::getFlatTree(activeOnly: true);
 
         // Get expense types for selection
         $expenseTypes = \Modules\Accounting\Models\ExpenseType::active()
@@ -868,7 +874,7 @@ class ExpenseController extends Controller
             abort(403, 'Unauthorized to import expense categories.');
         }
 
-        $parentCategories = ExpenseCategory::active()->mainCategories()->orderBy('name')->get();
+        $parentCategories = ExpenseCategory::getFlatTree(activeOnly: true);
 
         return view('accounting::expenses.import-categories', compact('parentCategories'));
     }

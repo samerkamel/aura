@@ -152,15 +152,105 @@ class ExpenseCategory extends Model
     }
 
     /**
-     * Get full category name including parent.
+     * Get full category name including all ancestors.
      */
     public function getFullNameAttribute(): string
     {
-        if ($this->parent) {
-            return $this->parent->name . ' > ' . $this->name;
+        $ancestors = $this->getAncestors();
+        if ($ancestors->isNotEmpty()) {
+            return $ancestors->pluck('name')->push($this->name)->implode(' > ');
         }
 
         return $this->name;
+    }
+
+    /**
+     * Get all ancestors (parent, grandparent, etc.) from root to immediate parent.
+     */
+    public function getAncestors(): \Illuminate\Support\Collection
+    {
+        $ancestors = collect();
+        $current = $this->parent;
+
+        while ($current) {
+            $ancestors->prepend($current);
+            $current = $current->parent;
+        }
+
+        return $ancestors;
+    }
+
+    /**
+     * Get the depth level of this category (0 = root, 1 = first level child, etc.)
+     */
+    public function getDepthAttribute(): int
+    {
+        return $this->getAncestors()->count();
+    }
+
+    /**
+     * Get all descendants recursively.
+     */
+    public function allDescendants(): \Illuminate\Support\Collection
+    {
+        $descendants = collect();
+
+        foreach ($this->subcategories as $child) {
+            $descendants->push($child);
+            $descendants = $descendants->merge($child->allDescendants());
+        }
+
+        return $descendants;
+    }
+
+    /**
+     * Get all category IDs that are descendants of this category (to prevent circular references).
+     */
+    public function getDescendantIds(): array
+    {
+        return $this->allDescendants()->pluck('id')->toArray();
+    }
+
+    /**
+     * Build a flat tree structure with depth for display purposes.
+     * Returns all categories in hierarchical order with depth indicator.
+     */
+    public static function getFlatTree(bool $activeOnly = true): \Illuminate\Support\Collection
+    {
+        $query = static::query()->whereNull('parent_id')->orderBy('sort_order')->orderBy('name');
+
+        if ($activeOnly) {
+            $query->where('is_active', true);
+        }
+
+        $rootCategories = $query->get();
+        $flatTree = collect();
+
+        foreach ($rootCategories as $category) {
+            static::addToFlatTree($flatTree, $category, 0, $activeOnly);
+        }
+
+        return $flatTree;
+    }
+
+    /**
+     * Recursively add categories to flat tree.
+     */
+    private static function addToFlatTree(\Illuminate\Support\Collection &$tree, ExpenseCategory $category, int $depth, bool $activeOnly): void
+    {
+        $category->tree_depth = $depth;
+        $category->tree_prefix = str_repeat('─ ', $depth);
+        $tree->push($category);
+
+        $query = $category->subcategories()->orderBy('sort_order')->orderBy('name');
+
+        if ($activeOnly) {
+            $query->where('is_active', true);
+        }
+
+        foreach ($query->get() as $child) {
+            static::addToFlatTree($tree, $child, $depth + 1, $activeOnly);
+        }
     }
 
     /**
