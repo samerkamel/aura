@@ -18,7 +18,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
                 <h5 class="mb-0">
-                    <i class="ti ti-calendar-off me-2"></i>Missing Attendance Days
+                    <i class="ti tabler-calendar-off me-2"></i>Missing Attendance Days
                 </h5>
                 <small class="text-muted">Working days with no check-ins from any employees</small>
             </div>
@@ -38,7 +38,7 @@
                 </select>
 
                 <button type="button" class="btn btn-primary" onclick="applyFilters()">
-                    <i class="ti ti-filter me-1"></i>Filter
+                    <i class="ti tabler-filter me-1"></i>Filter
                 </button>
             </div>
         </div>
@@ -47,14 +47,14 @@
     <!-- Alerts -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="ti ti-check me-2"></i>{{ session('success') }}
+            <i class="ti tabler-check me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+            <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -63,7 +63,7 @@
     <div class="card">
         <div class="card-header">
             <h6 class="mb-0">
-                <i class="ti ti-list me-2"></i>
+                <i class="ti tabler-list me-2"></i>
                 @if(count($missingDates) > 0)
                     Found {{ count($missingDates) }} day(s) with no attendance
                 @else
@@ -90,7 +90,7 @@
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-sm me-2 bg-label-warning">
                                                 <span class="avatar-initial rounded-circle">
-                                                    <i class="ti ti-calendar-event"></i>
+                                                    <i class="ti tabler-calendar-event"></i>
                                                 </span>
                                             </div>
                                             <span class="fw-medium">{{ $missing['formatted'] }}</span>
@@ -107,7 +107,7 @@
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#addHolidayModal"
                                                     onclick="setHolidayDate('{{ $missing['date']->format('Y-m-d') }}', '{{ $missing['formatted'] }}')">
-                                                <i class="ti ti-calendar-plus me-1"></i>Add as Holiday
+                                                <i class="ti tabler-calendar-plus me-1"></i>Add as Holiday
                                             </button>
                                             <!-- Set WFH for All Button -->
                                             <button type="button"
@@ -115,7 +115,7 @@
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#setWfhModal"
                                                     onclick="setWfhDate('{{ $missing['date']->format('Y-m-d') }}', '{{ $missing['formatted'] }}')">
-                                                <i class="ti ti-home me-1"></i>Set WFH for All
+                                                <i class="ti tabler-home me-1"></i>Set WFH for All
                                             </button>
                                         </div>
                                     </td>
@@ -128,7 +128,7 @@
                 <div class="text-center py-5">
                     <div class="avatar avatar-lg mb-3 bg-label-success">
                         <span class="avatar-initial rounded-circle">
-                            <i class="ti ti-check fs-3"></i>
+                            <i class="ti tabler-check fs-3"></i>
                         </span>
                     </div>
                     <h6>All Clear!</h6>
@@ -146,7 +146,7 @@
             <div class="d-flex align-items-start">
                 <div class="avatar avatar-sm me-3 bg-label-info">
                     <span class="avatar-initial rounded-circle">
-                        <i class="ti ti-info-circle"></i>
+                        <i class="ti tabler-info-circle"></i>
                     </span>
                 </div>
                 <div>
@@ -173,7 +173,7 @@
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="ti ti-calendar-plus me-2"></i>Add Public Holiday
+                        <i class="ti tabler-calendar-plus me-2"></i>Add Public Holiday
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -199,7 +199,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">
-                        <i class="ti ti-calendar-plus me-1"></i>Add Holiday
+                        <i class="ti tabler-calendar-plus me-1"></i>Add Holiday
                     </button>
                 </div>
             </form>
@@ -215,7 +215,7 @@
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="ti ti-home me-2"></i>Set WFH for All Employees
+                        <i class="ti tabler-home me-2"></i>Set WFH for All Employees
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -224,7 +224,7 @@
 
                     <div class="alert alert-info mb-3">
                         <div class="d-flex">
-                            <i class="ti ti-info-circle me-2 mt-1"></i>
+                            <i class="ti tabler-info-circle me-2 mt-1"></i>
                             <div>
                                 <strong>This will create WFH records</strong> for all active employees on the selected date.
                             </div>
@@ -249,7 +249,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-home me-1"></i>Set WFH for All
+                        <i class="ti tabler-home me-1"></i>Set WFH for All
                     </button>
                 </div>
             </form>

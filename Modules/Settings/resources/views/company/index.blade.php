@@ -23,7 +23,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-building me-2"></i>Company Information
+                                <i class="ti tabler-building me-2"></i>Company Information
                             </h5>
                         </div>
                         <div class="card-body">
@@ -110,7 +110,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-file-certificate me-2"></i>Tax & Legal Information
+                                <i class="ti tabler-file-certificate me-2"></i>Tax & Legal Information
                             </h5>
                         </div>
                         <div class="card-body">
@@ -174,7 +174,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-calendar-stats me-2"></i>Fiscal & Payroll Cycle Settings
+                                <i class="ti tabler-calendar-stats me-2"></i>Fiscal & Payroll Cycle Settings
                             </h5>
                             <small class="text-muted">Configure your fiscal year and payroll cycle periods</small>
                         </div>
@@ -218,7 +218,7 @@
 
                                 <div class="col-12">
                                     <div class="alert alert-info mb-0">
-                                        <i class="ti ti-info-circle me-2"></i>
+                                        <i class="ti tabler-info-circle me-2"></i>
                                         <strong>Current Period:</strong> {{ $settings->getPeriodLabel() ?? 'Not configured' }}<br>
                                         <strong>Fiscal Year:</strong> {{ $settings->getFiscalYearLabel() ?? 'Not configured' }}
                                         ({{ $settings->getFiscalYearStart()?->format('M d, Y') }} - {{ $settings->getFiscalYearEnd()?->format('M d, Y') }})
@@ -232,7 +232,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-building-bank me-2"></i>Bank Details
+                                <i class="ti tabler-building-bank me-2"></i>Bank Details
                             </h5>
                             <small class="text-muted">These details will appear on estimates and invoices</small>
                         </div>
@@ -303,7 +303,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-layout-dashboard me-2"></i>Dashboard Logo
+                                <i class="ti tabler-layout-dashboard me-2"></i>Dashboard Logo
                             </h5>
                             <small class="text-muted">Displayed in sidebar and navbar</small>
                         </div>
@@ -322,7 +322,7 @@
                             @else
                                 <div class="mb-3">
                                     <div class="border rounded p-3 bg-light">
-                                        <i class="ti ti-photo-off text-muted" style="font-size: 2rem;"></i>
+                                        <i class="ti tabler-photo-off text-muted" style="font-size: 2rem;"></i>
                                         <p class="text-muted mb-0 mt-2 small">No logo uploaded</p>
                                     </div>
                                 </div>
@@ -346,7 +346,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="ti ti-file-invoice me-2"></i>Document Logo
+                                <i class="ti tabler-file-invoice me-2"></i>Document Logo
                             </h5>
                             <small class="text-muted">Used in estimates, invoices & PDFs</small>
                         </div>
@@ -365,7 +365,7 @@
                             @else
                                 <div class="mb-3">
                                     <div class="border rounded p-3 bg-light">
-                                        <i class="ti ti-photo-off text-muted" style="font-size: 2rem;"></i>
+                                        <i class="ti tabler-photo-off text-muted" style="font-size: 2rem;"></i>
                                         <p class="text-muted mb-0 mt-2 small">No logo uploaded</p>
                                     </div>
                                 </div>
@@ -389,7 +389,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title mb-0">
-                                <i class="ti ti-bulb me-2"></i>Tips
+                                <i class="ti tabler-bulb me-2"></i>Tips
                             </h6>
                         </div>
                         <div class="card-body">
@@ -412,7 +412,7 @@
                     <div class="card">
                         <div class="card-footer d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-device-floppy me-1"></i>Save Settings
+                                <i class="ti tabler-device-floppy me-1"></i>Save Settings
                             </button>
                         </div>
                     </div>

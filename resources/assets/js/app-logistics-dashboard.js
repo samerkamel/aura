@@ -341,7 +341,7 @@ $(function () {
               '<div class="d-flex justify-content-start align-items-center user-name">' +
               '<div class="avatar-wrapper">' +
               '<div class="avatar me-4">' +
-              '<span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti ti-car ti-28px"></i></span>' +
+              '<span class="avatar-initial rounded-circle bg-label-secondary"><i class="ti tabler-car ti-28px"></i></span>' +
               '</div>' +
               '</div>' +
               '<div class="d-flex flex-column">' +
@@ -429,8 +429,8 @@ $(function () {
       displayLength: 5,
       language: {
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       responsive: {

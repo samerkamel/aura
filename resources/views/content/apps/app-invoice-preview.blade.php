@@ -187,7 +187,7 @@
     <div class="card">
       <div class="card-body">
         <button class="btn btn-primary d-grid w-100 mb-4" data-bs-toggle="offcanvas" data-bs-target="#sendInvoiceOffcanvas">
-          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti ti-send ti-xs me-2"></i>Send Invoice</span>
+          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti tabler-send ti-xs me-2"></i>Send Invoice</span>
         </button>
         <button class="btn btn-label-secondary d-grid w-100 mb-4">
           Download
@@ -201,7 +201,7 @@
           </a>
         </div>
         <button class="btn btn-success d-grid w-100" data-bs-toggle="offcanvas" data-bs-target="#addPaymentOffcanvas">
-          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti ti-currency-dollar ti-xs me-2"></i>Add Payment</span>
+          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti tabler-currency-dollar ti-xs me-2"></i>Add Payment</span>
         </button>
       </div>
     </div>

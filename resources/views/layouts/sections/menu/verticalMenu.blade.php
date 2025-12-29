@@ -23,7 +23,7 @@ $companySettings = CompanySetting::getSettings();
 
       <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
         <i class="ti menu-toggle-icon d-none d-xl-block align-middle"></i>
-        <i class="ti ti-x d-block d-xl-none ti-md align-middle"></i>
+        <i class="ti tabler-x d-block d-xl-none ti-md align-middle"></i>
       </a>
     </div>
   @endif

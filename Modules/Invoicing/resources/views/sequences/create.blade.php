@@ -12,7 +12,7 @@
                     <small class="text-muted">Create a new invoice numbering sequence</small>
                 </div>
                 <a href="{{ route('invoicing.sequences.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left me-1"></i>Back to Sequences
+                    <i class="ti tabler-arrow-left me-1"></i>Back to Sequences
                 </a>
             </div>
 
@@ -128,7 +128,7 @@
                         <div class="col-12">
                             <h6 class="mb-3">Format Examples</h6>
                             <div class="alert alert-info">
-                                <h6 class="alert-heading"><i class="ti ti-info-circle me-2"></i>Format Guide</h6>
+                                <h6 class="alert-heading"><i class="ti tabler-info-circle me-2"></i>Format Guide</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <p class="mb-2"><strong>Available Placeholders:</strong></p>
@@ -157,7 +157,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="alert alert-light">
-                                <h6 class="alert-heading"><i class="ti ti-eye me-2"></i>Preview</h6>
+                                <h6 class="alert-heading"><i class="ti tabler-eye me-2"></i>Preview</h6>
                                 <p class="mb-1"><strong>Format:</strong> <code id="preview-format">{PREFIX}-{YEAR}-{NUMBER:6}</code></p>
                                 <p class="mb-0"><strong>Next Invoice Number:</strong> <span id="preview-number" class="badge bg-success">INV-2025-000001</span></p>
                             </div>
@@ -182,10 +182,10 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('invoicing.sequences.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-x me-1"></i>Cancel
+                        <i class="ti tabler-x me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-plus me-1"></i>Create Sequence
+                        <i class="ti tabler-plus me-1"></i>Create Sequence
                     </button>
                 </div>
             </form>

@@ -12,7 +12,7 @@
                     <small class="text-muted">Add a financial account to track expenses and balances</small>
                 </div>
                 <a href="{{ route('accounting.accounts.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left me-1"></i>Back to Accounts
+                    <i class="ti tabler-arrow-left me-1"></i>Back to Accounts
                 </a>
             </div>
 
@@ -200,10 +200,10 @@
                             <div class="card">
                                 <div class="card-footer d-flex justify-content-between">
                                     <a href="{{ route('accounting.accounts.index') }}" class="btn btn-outline-secondary">
-                                        <i class="ti ti-x me-1"></i>Cancel
+                                        <i class="ti tabler-x me-1"></i>Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="ti ti-device-floppy me-1"></i>Create Account
+                                        <i class="ti tabler-device-floppy me-1"></i>Create Account
                                     </button>
                                 </div>
                             </div>

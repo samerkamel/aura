@@ -15,7 +15,7 @@
               <label class="form-check-label custom-option-content" for="customRadioTemp1" data-bs-target="#twoFactorAuthOne" data-bs-toggle="modal">
                 <input name="customRadioTemp" class="form-check-input" type="radio" value="" id="customRadioTemp1" checked />
                 <span class="custom-option-header">
-                  <span class="h6 mb-0 d-flex align-items-center"><i class="ti ti-settings me-1"></i>Authenticator Apps</span>
+                  <span class="h6 mb-0 d-flex align-items-center"><i class="ti tabler-settings me-1"></i>Authenticator Apps</span>
                 </span>
                 <span class="custom-option-body">
                   <small>Get code from an app like Google Authenticator or Microsoft Authenticator.</small>
@@ -28,7 +28,7 @@
               <label class="form-check-label custom-option-content" for="customRadioTemp2" data-bs-target="#twoFactorAuthTwo" data-bs-toggle="modal">
                 <input name="customRadioTemp" class="form-check-input" type="radio" value="" id="customRadioTemp2" />
                 <span class="custom-option-header">
-                  <span class="h6 mb-0 d-flex align-items-center"><i class="ti ti-message me-1"></i>SMS</span>
+                  <span class="h6 mb-0 d-flex align-items-center"><i class="ti tabler-message me-1"></i>SMS</span>
                 </span>
                 <span class="custom-option-body">
                   <small>We will send a code via SMS if you need to use your backup login method.</small>
@@ -66,7 +66,7 @@
         </div>
         <div class="text-end">
           <button type="button" class="btn btn-label-secondary me-3" data-bs-toggle="modal" data-bs-target="#twoFactorAuth"><span class="align-middle">Cancel</span></button>
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"><span class="align-middle">Submit</span><i class="ti ti-check ti-xs ms-2"></i></button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"><span class="align-middle">Submit</span><i class="ti tabler-check ti-xs ms-2"></i></button>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
         </div>
         <div class="text-end">
           <button type="button" class="btn btn-label-secondary me-3" data-bs-toggle="modal" data-bs-target="#twoFactorAuth"><span class="align-middle">Cancel</span></button>
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"><span class="align-middle">Submit</span><i class="ti ti-check ms-2"></i></button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"><span class="align-middle">Submit</span><i class="ti tabler-check ms-2"></i></button>
         </div>
       </div>
     </div>

@@ -10,11 +10,11 @@
       <div class="card-header">
         <div class="d-flex align-items-center">
           <a href="{{ route('self-service.wfh-requests.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-            <i class="ti ti-arrow-left"></i>
+            <i class="ti tabler-arrow-left"></i>
           </a>
           <div>
             <h5 class="mb-0">
-              <i class="ti ti-home-plus me-2"></i>Request Work From Home
+              <i class="ti tabler-home-plus me-2"></i>Request Work From Home
             </h5>
             <small class="text-muted">Submit a new WFH request</small>
           </div>
@@ -25,7 +25,7 @@
     <!-- WFH Allowance -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-wallet me-2"></i>Your WFH Allowance</h6>
+        <h6 class="mb-0"><i class="ti tabler-wallet me-2"></i>Your WFH Allowance</h6>
       </div>
       <div class="card-body">
         <div class="row align-items-center">
@@ -33,7 +33,7 @@
             <div class="d-flex align-items-center">
               <div class="avatar avatar-lg me-3 bg-label-success">
                 <span class="avatar-initial rounded">
-                  <i class="ti ti-home"></i>
+                  <i class="ti tabler-home"></i>
                 </span>
               </div>
               <div>
@@ -71,7 +71,7 @@
 
     @if($wfhData['remaining'] <= 0)
       <div class="alert alert-warning">
-        <i class="ti ti-alert-triangle me-2"></i>
+        <i class="ti tabler-alert-triangle me-2"></i>
         <strong>Allowance Exceeded</strong> - You have used all your WFH days for this month.
       </div>
     @endif
@@ -89,7 +89,7 @@
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
             @if($allowPastDates ?? false)
-              <small class="form-text text-warning"><i class="ti ti-alert-triangle me-1"></i>Past dates are allowed for this request.</small>
+              <small class="form-text text-warning"><i class="ti tabler-alert-triangle me-1"></i>Past dates are allowed for this request.</small>
             @else
               <small class="text-muted">Select the date you wish to work from home</small>
             @endif
@@ -104,7 +104,7 @@
           </div>
 
           <div class="alert alert-info">
-            <i class="ti ti-info-circle me-2"></i>
+            <i class="ti tabler-info-circle me-2"></i>
             @if($employee->manager)
               Your request will be sent to <strong>{{ $employee->manager->name }}</strong> for initial approval, then to admin for final approval.
             @else
@@ -117,7 +117,7 @@
               Cancel
             </a>
             <button type="submit" class="btn btn-primary" {{ $wfhData['remaining'] <= 0 ? 'disabled' : '' }}>
-              <i class="ti ti-send me-1"></i>Submit Request
+              <i class="ti tabler-send me-1"></i>Submit Request
             </button>
           </div>
         </form>

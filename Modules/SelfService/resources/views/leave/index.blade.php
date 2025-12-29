@@ -10,12 +10,12 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0">
-            <i class="ti ti-calendar-off me-2"></i>My Leave Requests
+            <i class="ti tabler-calendar-off me-2"></i>My Leave Requests
           </h5>
           <small class="text-muted">View and manage your leave requests</small>
         </div>
         <a href="{{ route('self-service.leave-requests.create') }}" class="btn btn-primary">
-          <i class="ti ti-plus me-1"></i>New Request
+          <i class="ti tabler-plus me-1"></i>New Request
         </a>
       </div>
     </div>
@@ -31,7 +31,7 @@
                 <p class="mb-1">{{ $balance['policy_name'] }}</p>
                 <h4 class="mb-0">{{ number_format($balance['remaining_days'], 1) }} <small class="text-muted">/ {{ number_format($balance['entitled_days'], 1) }} days</small></h4>
               </div>
-              <i class="ti ti-calendar-stats" style="font-size: 2rem; opacity: 0.5;"></i>
+              <i class="ti tabler-calendar-stats" style="font-size: 2rem; opacity: 0.5;"></i>
             </div>
           </div>
         </div>
@@ -41,14 +41,14 @@
 
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show">
-        <i class="ti ti-check me-2"></i>{{ session('success') }}
+        <i class="ti tabler-check me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show">
-        <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+        <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
@@ -104,13 +104,13 @@
               <td>
                 <div class="d-flex gap-1">
                   <a href="{{ route('self-service.leave-requests.show', $request) }}" class="btn btn-sm btn-outline-primary" title="View Details">
-                    <i class="ti ti-eye"></i>
+                    <i class="ti tabler-eye"></i>
                   </a>
                   @if($request->canBeCancelled())
                     <form action="{{ route('self-service.leave-requests.cancel', $request) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this request?')">
                       @csrf
                       <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel Request">
-                        <i class="ti ti-x"></i>
+                        <i class="ti tabler-x"></i>
                       </button>
                     </form>
                   @endif
@@ -120,11 +120,11 @@
             @empty
             <tr>
               <td colspan="6" class="text-center py-5">
-                <i class="ti ti-inbox text-muted" style="font-size: 3rem;"></i>
+                <i class="ti tabler-inbox text-muted" style="font-size: 3rem;"></i>
                 <h6 class="mt-2">No leave requests found</h6>
                 <p class="text-muted">You haven't submitted any leave requests yet.</p>
                 <a href="{{ route('self-service.leave-requests.create') }}" class="btn btn-primary">
-                  <i class="ti ti-plus me-1"></i>Submit Your First Request
+                  <i class="ti tabler-plus me-1"></i>Submit Your First Request
                 </a>
               </td>
             </tr>

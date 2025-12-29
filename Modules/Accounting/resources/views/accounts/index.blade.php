@@ -17,7 +17,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-primary">
-                                    <i class="ti ti-credit-card ti-md"></i>
+                                    <i class="ti tabler-credit-card ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-success">
-                                    <i class="ti ti-check ti-md"></i>
+                                    <i class="ti tabler-check ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-info">
-                                    <i class="ti ti-wallet ti-md"></i>
+                                    <i class="ti tabler-wallet ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-warning">
-                                    <i class="ti ti-category ti-md"></i>
+                                    <i class="ti tabler-category ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                     <small class="text-muted">Manage your financial accounts and track balances</small>
                 </div>
                 <a href="{{ route('accounting.accounts.create') }}" class="btn btn-primary">
-                    <i class="ti ti-plus me-1"></i>New Account
+                    <i class="ti tabler-plus me-1"></i>New Account
                 </a>
             </div>
 
@@ -133,7 +133,7 @@
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="ti ti-search me-1"></i>Filter
+                                <i class="ti tabler-search me-1"></i>Filter
                             </button>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                         <div class="row mt-2">
                             <div class="col-12">
                                 <a href="{{ route('accounting.accounts.index') }}" class="btn btn-outline-secondary btn-sm">
-                                    <i class="ti ti-x me-1"></i>Clear Filters
+                                    <i class="ti tabler-x me-1"></i>Clear Filters
                                 </a>
                             </div>
                         </div>
@@ -216,21 +216,21 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti ti-dots-vertical"></i>
+                                            <i class="ti tabler-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{{ route('accounting.accounts.show', $account) }}">
-                                                <i class="ti ti-eye me-2"></i>View Details
+                                                <i class="ti tabler-eye me-2"></i>View Details
                                             </a>
                                             <a class="dropdown-item" href="{{ route('accounting.accounts.edit', $account) }}">
-                                                <i class="ti ti-edit me-2"></i>Edit Account
+                                                <i class="ti tabler-edit me-2"></i>Edit Account
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('accounting.accounts.toggle-status', $account) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti ti-{{ $account->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                    <i class="ti tabler-{{ $account->is_active ? 'pause' : 'play' }} me-2"></i>
                                                     {{ $account->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
@@ -240,7 +240,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="ti ti-trash me-2"></i>Delete Account
+                                                    <i class="ti tabler-trash me-2"></i>Delete Account
                                                 </button>
                                             </form>
                                         </div>
@@ -251,11 +251,11 @@
                             <tr>
                                 <td colspan="7" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti ti-credit-card text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti tabler-credit-card text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No accounts found</h5>
                                         <p class="text-muted">Create your first financial account to start tracking expenses</p>
                                         <a href="{{ route('accounting.accounts.create') }}" class="btn btn-primary">
-                                            <i class="ti ti-plus me-1"></i>Create Account
+                                            <i class="ti tabler-plus me-1"></i>Create Account
                                         </a>
                                     </div>
                                 </td>

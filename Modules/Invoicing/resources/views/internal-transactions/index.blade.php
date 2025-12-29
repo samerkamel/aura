@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('invoicing.internal-sequences.index') }}" class="btn btn-outline-info">
-                        <i class="ti ti-list-numbers me-1"></i>Sequences
+                        <i class="ti tabler-list-numbers me-1"></i>Sequences
                     </a>
                     <a href="{{ route('invoicing.internal-transactions.create') }}" class="btn btn-primary">
-                        <i class="ti ti-plus me-1"></i>New Transaction
+                        <i class="ti tabler-plus me-1"></i>New Transaction
                     </a>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('invoicing.internal-transactions.show', $transaction) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="ti ti-eye"></i>
+                                            <i class="ti tabler-eye"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -81,12 +81,12 @@
                 @else
                     <div class="text-center py-5">
                         <div class="mb-3">
-                            <i class="ti ti-building-bank display-6 text-muted"></i>
+                            <i class="ti tabler-building-bank display-6 text-muted"></i>
                         </div>
                         <h5 class="mb-2">No internal transactions found</h5>
                         <p class="text-muted">Create your first internal transaction to start tracking inter-business unit transfers.</p>
                         <a href="{{ route('invoicing.internal-transactions.create') }}" class="btn btn-primary">
-                            <i class="ti ti-plus me-1"></i>Create First Transaction
+                            <i class="ti tabler-plus me-1"></i>Create First Transaction
                         </a>
                     </div>
                 @endif

@@ -21,7 +21,7 @@
                         </select>
                     </form>
                     <button type="button" class="btn btn-outline-primary" onclick="window.print()">
-                        <i class="ti ti-printer me-1"></i>Print
+                        <i class="ti tabler-printer me-1"></i>Print
                     </button>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                         {{-- Income / Products Section --}}
                         <tr class="table-success">
                             <td colspan="7" class="fw-bold">
-                                <i class="ti ti-arrow-down-right me-1"></i> INCOME (Products Revenue)
+                                <i class="ti tabler-arrow-down-right me-1"></i> INCOME (Products Revenue)
                             </td>
                         </tr>
                         @foreach($products as $product)
@@ -286,7 +286,7 @@
 
             <div class="card-footer">
                 <small class="text-muted">
-                    <i class="ti ti-info-circle me-1"></i>
+                    <i class="ti tabler-info-circle me-1"></i>
                     Report generated on {{ now()->format('M d, Y H:i') }}.
                     <strong class="text-primary">R</strong> = Calculated from Total Revenue |
                     <strong class="text-warning">NI</strong> = Calculated from Net Income after Tier 1 deductions

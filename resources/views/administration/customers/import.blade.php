@@ -18,10 +18,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.customers.import.sample') }}" class="btn btn-outline-info">
-                <i class="ti ti-download me-2"></i>Download Sample CSV
+                <i class="ti tabler-download me-2"></i>Download Sample CSV
             </a>
             <a href="{{ route('administration.customers.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-2"></i>Back to Customers
+                <i class="ti tabler-arrow-left me-2"></i>Back to Customers
             </a>
         </div>
     </div>
@@ -62,10 +62,10 @@
 
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ route('administration.customers.index') }}" class="btn btn-outline-secondary">
-                                <i class="ti ti-x me-1"></i>Cancel
+                                <i class="ti tabler-x me-1"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-upload me-1"></i>Import Customers
+                                <i class="ti tabler-upload me-1"></i>Import Customers
                             </button>
                         </div>
                     </form>
@@ -78,7 +78,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-info-circle me-2"></i>CSV Format Guide
+                        <i class="ti tabler-info-circle me-2"></i>CSV Format Guide
                     </h5>
                 </div>
                 <div class="card-body">
@@ -110,7 +110,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-users me-2"></i>Contact Persons Format
+                        <i class="ti tabler-users me-2"></i>Contact Persons Format
                     </h5>
                 </div>
                 <div class="card-body">
@@ -131,7 +131,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-tag me-2"></i>Customer Types
+                        <i class="ti tabler-tag me-2"></i>Customer Types
                     </h5>
                 </div>
                 <div class="card-body">
@@ -140,7 +140,7 @@
                             <div class="text-center">
                                 <div class="avatar avatar-md mx-auto mb-2">
                                     <span class="avatar-initial rounded bg-label-primary">
-                                        <i class="ti ti-user ti-md"></i>
+                                        <i class="ti tabler-user ti-md"></i>
                                     </span>
                                 </div>
                                 <h6>Individual</h6>
@@ -151,7 +151,7 @@
                             <div class="text-center">
                                 <div class="avatar avatar-md mx-auto mb-2">
                                     <span class="avatar-initial rounded bg-label-info">
-                                        <i class="ti ti-building ti-md"></i>
+                                        <i class="ti tabler-building ti-md"></i>
                                     </span>
                                 </div>
                                 <h6>Company</h6>

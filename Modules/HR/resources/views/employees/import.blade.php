@@ -12,7 +12,7 @@
                     <small class="text-muted">Import employee data from CSV or Excel files</small>
                 </div>
                 <a href="{{ route('hr.employees.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left me-1"></i>Back to Employees
+                    <i class="ti tabler-arrow-left me-1"></i>Back to Employees
                 </a>
             </div>
 
@@ -36,7 +36,7 @@
                     <div class="col-lg-6 mb-4">
                         <div class="card bg-label-info">
                             <div class="card-header">
-                                <h6 class="card-title mb-0"><i class="ti ti-info-circle me-2"></i>Import Instructions</h6>
+                                <h6 class="card-title mb-0"><i class="ti tabler-info-circle me-2"></i>Import Instructions</h6>
                             </div>
                             <div class="card-body">
                                 <h6>Required Columns:</h6>
@@ -67,7 +67,7 @@
                                 </ul>
 
                                 <div class="alert alert-warning">
-                                    <i class="ti ti-alert-triangle me-2"></i>
+                                    <i class="ti tabler-alert-triangle me-2"></i>
                                     <strong>Note:</strong> If an employee with the same email exists, their information will be updated with the new data.
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                     <div class="col-lg-6">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="card-title mb-0"><i class="ti ti-upload me-2"></i>Upload File</h6>
+                                <h6 class="card-title mb-0"><i class="ti tabler-upload me-2"></i>Upload File</h6>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('hr.employees.import.process') }}" method="POST" enctype="multipart/form-data">
@@ -102,7 +102,7 @@
 
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="ti ti-upload me-2"></i>Import Employees
+                                            <i class="ti tabler-upload me-2"></i>Import Employees
                                         </button>
                                     </div>
                                 </form>
@@ -112,12 +112,12 @@
                         <!-- Sample Template -->
                         <div class="card mt-4">
                             <div class="card-header">
-                                <h6 class="card-title mb-0"><i class="ti ti-download me-2"></i>Sample Template</h6>
+                                <h6 class="card-title mb-0"><i class="ti tabler-download me-2"></i>Sample Template</h6>
                             </div>
                             <div class="card-body">
                                 <p class="text-muted mb-3">Download a sample template to see the expected format:</p>
                                 <button type="button" class="btn btn-outline-info w-100" onclick="downloadSampleCSV()">
-                                    <i class="ti ti-file-type-csv me-2"></i>Download Sample CSV
+                                    <i class="ti tabler-file-type-csv me-2"></i>Download Sample CSV
                                 </button>
                             </div>
                         </div>

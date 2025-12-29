@@ -165,8 +165,8 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-              '<button class="btn btn-icon btn-text-secondary rounded-pill waves-effect waves-light"><i class="ti ti-edit"></i></button>' +
-              '<button class="btn btn-icon btn-text-secondary rounded-pill waves-effect waves-light dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></button>' +
+              '<button class="btn btn-icon btn-text-secondary rounded-pill waves-effect waves-light"><i class="ti tabler-edit"></i></button>' +
+              '<button class="btn btn-icon btn-text-secondary rounded-pill waves-effect waves-light dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical ti-md"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="javascript:0;" class="dropdown-item">View</a>' +
               '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
@@ -192,14 +192,14 @@ $(function () {
         search: '',
         searchPlaceholder: 'Search Category',
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       // Button for offcanvas
       buttons: [
         {
-          text: '<i class="ti ti-plus ti-xs me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add Category</span>',
+          text: '<i class="ti tabler-plus ti-xs me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add Category</span>',
           className: 'add-new btn btn-primary ms-2 waves-effect waves-light',
           attr: {
             'data-bs-toggle': 'offcanvas',

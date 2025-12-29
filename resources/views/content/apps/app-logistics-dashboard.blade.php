@@ -33,7 +33,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-truck ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-primary"><i class='ti tabler-truck ti-28px'></i></span>
           </div>
           <h4 class="mb-0">42</h4>
         </div>
@@ -50,7 +50,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-warning"><i class='ti ti-alert-triangle ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-warning"><i class='ti tabler-alert-triangle ti-28px'></i></span>
           </div>
           <h4 class="mb-0">8</h4>
         </div>
@@ -67,7 +67,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-danger"><i class='ti ti-git-fork ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-danger"><i class='ti tabler-git-fork ti-28px'></i></span>
           </div>
           <h4 class="mb-0">27</h4>
         </div>
@@ -84,7 +84,7 @@
       <div class="card-body">
         <div class="d-flex align-items-center mb-2">
           <div class="avatar me-4">
-            <span class="avatar-initial rounded bg-label-info"><i class='ti ti-clock ti-28px'></i></span>
+            <span class="avatar-initial rounded bg-label-info"><i class='ti tabler-clock ti-28px'></i></span>
           </div>
           <h4 class="mb-0">13</h4>
         </div>
@@ -107,7 +107,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="vehiclesOverview" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesOverview">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -136,7 +136,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti ti-car ti-lg text-heading'></i>
+                      <i class='ti tabler-car ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">On the way</h6>
                   </div>
@@ -152,7 +152,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti ti-circle-arrow-down ti-lg text-heading'></i>
+                      <i class='ti tabler-circle-arrow-down ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Unloading</h6>
                   </div>
@@ -168,7 +168,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti ti-circle-arrow-up ti-lg text-heading'></i>
+                      <i class='ti tabler-circle-arrow-up ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Loading</h6>
                   </div>
@@ -184,7 +184,7 @@
                 <td class="w-50 ps-0">
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="me-2">
-                      <i class='ti ti-clock ti-lg text-heading'></i>
+                      <i class='ti tabler-clock ti-lg text-heading'></i>
                     </div>
                     <h6 class="mb-0 fw-normal">Waiting</h6>
                   </div>
@@ -248,7 +248,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="deliveryPerformance" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryPerformance">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -261,13 +261,13 @@
         <ul class="p-0 m-0">
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-package ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-package ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages in transit</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   25.8%
                 </small>
               </div>
@@ -278,13 +278,13 @@
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-info"><i class="ti ti-truck ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-info"><i class="ti tabler-truck ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages out for delivery</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   4.3%
                 </small>
               </div>
@@ -295,13 +295,13 @@
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-success"><i class="ti ti-circle-check ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-success"><i class="ti tabler-circle-check ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages delivered</h6>
                 <small class="text-danger fw-normal d-block">
-                  <i class="ti ti-chevron-down mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-down mb-1 me-1"></i>
                   12.5%
                 </small>
               </div>
@@ -312,13 +312,13 @@
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-warning"><i class="ti ti-percentage ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-warning"><i class="ti tabler-percentage ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Delivery success rate</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   35.6%
                 </small>
               </div>
@@ -329,13 +329,13 @@
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-secondary"><i class="ti ti-clock ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-secondary"><i class="ti tabler-clock ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Average delivery time</h6>
                 <small class="text-danger fw-normal d-block">
-                  <i class="ti ti-chevron-down mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-down mb-1 me-1"></i>
                   2.15%
                 </small>
               </div>
@@ -346,13 +346,13 @@
           </li>
           <li class="d-flex">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-danger"><i class="ti ti-users ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-danger"><i class="ti tabler-users ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Customer satisfaction</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   5.7%
                 </small>
               </div>
@@ -375,7 +375,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="deliveryExceptions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryExceptions">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -400,7 +400,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="salesByCountryTabs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="salesByCountryTabs">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -427,7 +427,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -439,7 +439,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -454,7 +454,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -466,7 +466,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -483,7 +483,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -495,7 +495,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -510,7 +510,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -522,7 +522,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -538,7 +538,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -550,7 +550,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -565,7 +565,7 @@
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -577,7 +577,7 @@
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -606,7 +606,7 @@
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="routeVehicles" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="routeVehicles">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>

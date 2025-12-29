@@ -21,7 +21,7 @@
             </nav>
         </div>
         <a href="{{ route('administration.users.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-2"></i>Back to Users
+            <i class="ti tabler-arrow-left me-2"></i>Back to Users
         </a>
     </div>
 
@@ -63,7 +63,7 @@
                                     <input type="password" class="form-control @error('password') is-invalid @enderror"
                                            id="password" name="password" required>
                                     <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                        <i class="ti ti-eye"></i>
+                                        <i class="ti tabler-eye"></i>
                                     </button>
                                 </div>
                                 @error('password')
@@ -79,7 +79,7 @@
                                     <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
                                            id="password_confirmation" name="password_confirmation" required>
                                     <button type="button" class="btn btn-outline-secondary" id="togglePasswordConfirm">
-                                        <i class="ti ti-eye"></i>
+                                        <i class="ti tabler-eye"></i>
                                     </button>
                                 </div>
                                 @error('password_confirmation')
@@ -122,10 +122,10 @@
                         <div class="pt-4 border-top mt-4">
                             <div class="d-flex justify-content-end gap-3">
                                 <a href="{{ route('administration.users.index') }}" class="btn btn-outline-secondary">
-                                    <i class="ti ti-x me-1"></i>Cancel
+                                    <i class="ti tabler-x me-1"></i>Cancel
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy me-1"></i>Create User
+                                    <i class="ti tabler-device-floppy me-1"></i>Create User
                                 </button>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-info-circle me-2"></i>Information
+                        <i class="ti tabler-info-circle me-2"></i>Information
                     </h5>
                 </div>
                 <div class="card-body">
@@ -161,7 +161,7 @@
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-shield-check me-2"></i>Available Roles
+                        <i class="ti tabler-shield-check me-2"></i>Available Roles
                     </h5>
                 </div>
                 <div class="card-body">
@@ -169,7 +169,7 @@
                     <div class="d-flex align-items-center mb-3">
                         <div class="avatar avatar-xs flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti ti-shield ti-xs"></i>
+                                <i class="ti tabler-shield ti-xs"></i>
                             </span>
                         </div>
                         <div class="flex-grow-1">

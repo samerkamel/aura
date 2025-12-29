@@ -14,39 +14,39 @@
                 <div class="d-flex gap-2">
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical me-1"></i>Actions
+                            <i class="ti tabler-dots-vertical me-1"></i>Actions
                         </button>
                         <ul class="dropdown-menu">
                             @if($internalTransaction->status === 'pending')
                                 <li>
                                     <a class="dropdown-item text-success" href="#" onclick="approveTransaction({{ $internalTransaction->id }})">
-                                        <i class="ti ti-check me-2"></i>Approve Transaction
+                                        <i class="ti tabler-check me-2"></i>Approve Transaction
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="rejectTransaction({{ $internalTransaction->id }})">
-                                        <i class="ti ti-x me-2"></i>Reject Transaction
+                                        <i class="ti tabler-x me-2"></i>Reject Transaction
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                             @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('invoicing.internal-transactions.edit', $internalTransaction) }}">
-                                    <i class="ti ti-edit me-2"></i>Edit Transaction
+                                    <i class="ti tabler-edit me-2"></i>Edit Transaction
                                 </a>
                             </li>
                             @if($internalTransaction->status === 'draft')
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="deleteTransaction({{ $internalTransaction->id }})">
-                                        <i class="ti ti-trash me-2"></i>Delete Transaction
+                                        <i class="ti tabler-trash me-2"></i>Delete Transaction
                                     </a>
                                 </li>
                             @endif
                         </ul>
                     </div>
                     <a href="{{ route('invoicing.internal-transactions.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Transactions
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Transactions
                     </a>
                 </div>
             </div>

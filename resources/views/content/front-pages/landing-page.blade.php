@@ -147,10 +147,10 @@ $configData = Helper::appClasses();
           </p>
           <div class="landing-reviews-btns">
             <button id="reviews-previous-btn" class="btn btn-label-primary reviews-btn me-4 scaleX-n1-rtl" type="button">
-              <i class="ti ti-chevron-left ti-md"></i>
+              <i class="ti tabler-chevron-left ti-md"></i>
             </button>
             <button id="reviews-next-btn" class="btn btn-label-primary reviews-btn scaleX-n1-rtl" type="button">
-              <i class="ti ti-chevron-right ti-md"></i>
+              <i class="ti tabler-chevron-right ti-md"></i>
             </button>
           </div>
         </div>
@@ -169,11 +169,11 @@ $configData = Helper::appClasses();
                         to use it again for my next project.”
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -198,11 +198,11 @@ $configData = Helper::appClasses();
                         dashboard sites on almost any project.”
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -227,11 +227,11 @@ $configData = Helper::appClasses();
                         it's always easy to find a screenshot from their website.
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -256,11 +256,11 @@ $configData = Helper::appClasses();
                         any interface I want.
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -285,11 +285,11 @@ $configData = Helper::appClasses();
                         dashboard sites on almost any project.”
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -314,11 +314,11 @@ $configData = Helper::appClasses();
                         officia numquam nostrum repellendus consequuntur!
                       </p>
                       <div class="text-warning mb-4">
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star-filled"></i>
-                        <i class="ti ti-star"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star-filled"></i>
+                        <i class="ti tabler-star"></i>
                       </div>
                       <div class="d-flex align-items-center">
                         <div class="avatar me-3 avatar-sm">
@@ -485,43 +485,43 @@ $configData = Helper::appClasses();
               <ul class="list-unstyled pricing-list">
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Timeline
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Basic search
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Live chat widget
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Email marketing
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Custom Forms
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Traffic analytics
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Basic Support
                   </h6>
                 </li>
@@ -555,43 +555,43 @@ $configData = Helper::appClasses();
               <ul class="list-unstyled pricing-list">
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Everything in basic
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Timeline with database
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Advanced search
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Marketing automation
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Advanced chatbot
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Campaign management
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Collaboration tools
                   </h6>
                 </li>
@@ -625,43 +625,43 @@ $configData = Helper::appClasses();
               <ul class="list-unstyled pricing-list">
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Everything in premium
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Timeline with database
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Fuzzy search
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     A/B testing sanbox
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Custom permissions
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Social media automation
                   </h6>
                 </li>
                 <li>
                   <h6 class="mb-3">
-                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti ti-check ti-14px"></i></span>
+                    <span class="badge badge-center rounded-pill bg-label-primary p-0 me-2"><i class="ti tabler-check ti-14px"></i></span>
                     Sales automation tools
                   </h6>
                 </li>
@@ -876,7 +876,7 @@ $configData = Helper::appClasses();
               <div class="row g-4">
                 <div class="col-md-6 col-lg-12 col-xl-6">
                   <div class="d-flex align-items-center">
-                    <div class="badge bg-label-primary rounded p-1_5 me-3"><i class="ti ti-mail ti-lg"></i></div>
+                    <div class="badge bg-label-primary rounded p-1_5 me-3"><i class="ti tabler-mail ti-lg"></i></div>
                     <div>
                       <p class="mb-0">Email</p>
                       <h6 class="mb-0"><a href="mailto:example@gmail.com" class="text-heading">example@gmail.com</a></h6>
@@ -885,7 +885,7 @@ $configData = Helper::appClasses();
                 </div>
                 <div class="col-md-6 col-lg-12 col-xl-6">
                   <div class="d-flex align-items-center">
-                    <div class="badge bg-label-success rounded p-1_5 me-3"><i class="ti ti-phone-call ti-lg"></i></div>
+                    <div class="badge bg-label-success rounded p-1_5 me-3"><i class="ti tabler-phone-call ti-lg"></i></div>
                     <div>
                       <p class="mb-0">Phone</p>
                       <h6 class="mb-0"><a href="tel:+1234-568-963" class="text-heading">+1234 568 963</a></h6>

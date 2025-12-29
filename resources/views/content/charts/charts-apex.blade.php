@@ -26,7 +26,7 @@
           <p class="card-subtitle my-0">Commercial networks</p>
         </div>
         <div class="dropdown">
-          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -53,7 +53,7 @@
       <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
         <h5 class="card-title mb-0">Data Science</h5>
         <div class="dropdown">
-          <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -108,7 +108,7 @@
         <div class="d-sm-flex d-none align-items-center">
           <h5 class="mb-0 me-4">$ 100,000</h5>
           <span class="badge bg-label-secondary">
-            <i class='ti ti-arrow-big-down ti-xs text-danger'></i>
+            <i class='ti tabler-arrow-big-down ti-xs text-danger'></i>
             <span class="align-middle">20%</span>
           </span>
         </div>
@@ -129,7 +129,7 @@
           <h5 class="card-title mb-0">$74,382.72</h5>
         </div>
         <div class="dropdown">
-          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -159,7 +159,7 @@
           <p class="card-subtitle my-0">$50,863.98</p>
         </div>
         <div class="dropdown">
-          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -187,7 +187,7 @@
         <h5 class="card-title mb-0">Daily Sales States</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="heatChartDd" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heatChartDd">
             <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
@@ -209,7 +209,7 @@
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0">Statistics</h5>
         <div class="dropdown">
-          <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -237,7 +237,7 @@
         <h5 class="card-title mb-0">Mobile Comparison</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="heatChartDd1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heatChartDd1">
             <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
@@ -262,7 +262,7 @@
           <p class="card-subtitle my-0">Spending on various categories</p>
         </div>
         <div class="dropdown d-none d-sm-flex">
-          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
             <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>

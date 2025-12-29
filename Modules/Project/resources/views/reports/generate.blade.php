@@ -9,13 +9,13 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-report-analytics me-2"></i>Report Preview
+            <i class="ti tabler-report-analytics me-2"></i>Report Preview
             <small class="text-muted ms-2">
               {{ $startDate->format('M d, Y') }} - {{ $endDate->format('M d, Y') }}
             </small>
           </h5>
           <a href="{{ route('projects.reports.create') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Change Dates
+            <i class="ti tabler-arrow-left me-1"></i>Change Dates
           </a>
         </div>
         <div class="card-body">
@@ -32,7 +32,7 @@
             <input type="hidden" name="end_date" value="{{ $endDate->format('Y-m-d') }}">
 
             <div class="alert alert-info mb-4">
-              <i class="ti ti-info-circle me-2"></i>
+              <i class="ti tabler-info-circle me-2"></i>
               <strong>Edit rates below</strong> - Rates are automatically filled for repeated employees.
               @if($canEditHours)
                 <br><strong>Super Admin:</strong> You can also edit hours and add custom projects.
@@ -139,7 +139,7 @@
               @endforeach
             @else
               <div class="alert alert-warning mb-4">
-                <i class="ti ti-alert-triangle me-2"></i>
+                <i class="ti tabler-alert-triangle me-2"></i>
                 No worklog data found for the selected date range. You can still add custom projects below.
               </div>
             @endif
@@ -149,10 +149,10 @@
               <div class="card mb-4 border border-success">
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">
-                    <i class="ti ti-plus me-2"></i>Add Custom Project
+                    <i class="ti tabler-plus me-2"></i>Add Custom Project
                   </h6>
                   <button type="button" class="btn btn-light btn-sm" id="addProjectBtn">
-                    <i class="ti ti-plus me-1"></i>Add Project
+                    <i class="ti tabler-plus me-1"></i>Add Project
                   </button>
                 </div>
                 <div class="card-body" id="customProjectsContainer">
@@ -167,7 +167,7 @@
             <div class="card mb-4 border border-info">
               <div class="card-header bg-info text-white">
                 <h6 class="mb-0">
-                  <i class="ti ti-users-group me-2"></i>Summary by Team
+                  <i class="ti tabler-users-group me-2"></i>Summary by Team
                 </h6>
               </div>
               <div class="card-body p-0">
@@ -239,10 +239,10 @@
 
             <div class="d-flex justify-content-between">
               <a href="{{ route('projects.reports.create') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-1"></i>Back to Date Selection
+                <i class="ti tabler-arrow-left me-1"></i>Back to Date Selection
               </a>
               <button type="submit" class="btn btn-primary">
-                <i class="ti ti-device-floppy me-1"></i>Save Report
+                <i class="ti tabler-device-floppy me-1"></i>Save Report
               </button>
             </div>
           </form>
@@ -275,7 +275,7 @@
         </div>
       </div>
       <button type="button" class="btn btn-outline-danger btn-sm remove-project-btn">
-        <i class="ti ti-trash"></i>
+        <i class="ti tabler-trash"></i>
       </button>
     </div>
     <div class="card-body p-0">
@@ -298,7 +298,7 @@
             <tr>
               <td colspan="6">
                 <button type="button" class="btn btn-outline-success btn-sm add-employee-btn">
-                  <i class="ti ti-plus me-1"></i>Add Employee
+                  <i class="ti tabler-plus me-1"></i>Add Employee
                 </button>
               </td>
             </tr>
@@ -371,7 +371,7 @@
     </td>
     <td class="text-center">
       <button type="button" class="btn btn-outline-danger btn-sm remove-employee-btn">
-        <i class="ti ti-x"></i>
+        <i class="ti tabler-x"></i>
       </button>
     </td>
   </tr>

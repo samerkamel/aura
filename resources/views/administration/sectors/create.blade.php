@@ -12,7 +12,7 @@ $configData = Helper::appClasses();
     <div class="card">
       <div class="card-header border-bottom">
         <h5 class="card-title mb-0">
-          <i class="ti ti-world me-2"></i>Create New Sector
+          <i class="ti tabler-world me-2"></i>Create New Sector
         </h5>
       </div>
 
@@ -82,10 +82,10 @@ $configData = Helper::appClasses();
 
         <div class="card-footer d-flex justify-content-between">
           <a href="{{ route('administration.sectors.index') }}" class="btn btn-secondary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Sectors
+            <i class="ti tabler-arrow-left me-1"></i>Back to Sectors
           </a>
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-check me-1"></i>Create Sector
+            <i class="ti tabler-check me-1"></i>Create Sector
           </button>
         </div>
       </form>

@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-calendar-event me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-calendar-event me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Public Holidays</h5>
             <small class="text-muted">Manage public holidays for attendance calculations</small>
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             @endfor
           </select>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">
-            <i class="ti ti-plus me-1"></i>Add Holiday
+            <i class="ti tabler-plus me-1"></i>Add Holiday
           </button>
         </div>
       </div>
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Success/Error Messages -->
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="ti ti-check me-1"></i>
+        <i class="ti tabler-check me-1"></i>
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     @if($errors->any())
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="ti ti-alert-circle me-1"></i>
+        <i class="ti tabler-alert-circle me-1"></i>
         <ul class="mb-0">
           @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti ti-calendar-stats me-2"></i>Holidays for {{ $year }}
+          <i class="ti tabler-calendar-stats me-2"></i>Holidays for {{ $year }}
         </h6>
       </div>
       <div class="card-body">
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   <tr>
                     <td>
                       <div class="d-flex align-items-center">
-                        <i class="ti ti-calendar-event me-2 text-primary"></i>
+                        <i class="ti tabler-calendar-event me-2 text-primary"></i>
                         <span class="fw-medium">{{ $holiday->name }}</span>
                       </div>
                     </td>
@@ -174,17 +174,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                       <div class="dropdown">
                         <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                          <i class="ti ti-dots-vertical"></i>
+                          <i class="ti tabler-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                           <button type="button" class="dropdown-item" onclick="openEditModal({{ $holiday->id }}, '{{ addslashes($holiday->name) }}', '{{ $holiday->date->format('Y-m-d') }}')">
-                            <i class="ti ti-edit me-1"></i>Edit
+                            <i class="ti tabler-edit me-1"></i>Edit
                           </button>
                           <form action="{{ route('attendance.public-holidays.destroy', $holiday) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete this holiday?')">
-                              <i class="ti ti-trash me-1"></i>Delete
+                              <i class="ti tabler-trash me-1"></i>Delete
                             </button>
                           </form>
                         </div>
@@ -199,13 +199,13 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="text-center py-5">
             <div class="avatar avatar-xl mx-auto mb-3">
               <div class="avatar-initial bg-label-secondary rounded-circle">
-                <i class="ti ti-calendar-off" style="font-size: 2rem;"></i>
+                <i class="ti tabler-calendar-off" style="font-size: 2rem;"></i>
               </div>
             </div>
             <h6 class="mb-1">No public holidays found</h6>
             <p class="text-muted mb-3">No public holidays have been configured for {{ $year }}</p>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">
-              <i class="ti ti-plus me-1"></i>Add First Holiday
+              <i class="ti tabler-plus me-1"></i>Add First Holiday
             </button>
           </div>
         @endif
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addHolidayModalLabel">
-          <i class="ti ti-calendar-plus me-2"></i>Add Public Holiday
+          <i class="ti tabler-calendar-plus me-2"></i>Add Public Holiday
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             <div class="alert alert-info">
-              <i class="ti ti-info-circle me-1"></i>
+              <i class="ti tabler-info-circle me-1"></i>
               <small>A separate holiday entry will be created for each day in the selected range.</small>
             </div>
           </div>
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-footer">
           <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-check me-1"></i>Add Holiday<span id="add-text-suffix"></span>
+            <i class="ti tabler-check me-1"></i>Add Holiday<span id="add-text-suffix"></span>
           </button>
         </div>
       </form>
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editHolidayModalLabel">
-          <i class="ti ti-calendar-event me-2"></i>Edit Public Holiday
+          <i class="ti tabler-calendar-event me-2"></i>Edit Public Holiday
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-footer">
           <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-check me-1"></i>Update Holiday
+            <i class="ti tabler-check me-1"></i>Update Holiday
           </button>
         </div>
       </form>

@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
         <div>
           @can('manage-customers')
             <a href="{{ route('administration.customers.edit', $customer) }}" class="btn btn-primary btn-sm">
-              <i class="ti ti-edit me-1"></i>Edit
+              <i class="ti tabler-edit me-1"></i>Edit
             </a>
           @endcan
           <a href="{{ route('administration.customers.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Back
+            <i class="ti tabler-arrow-left me-1"></i>Back
           </a>
         </div>
       </div>
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="mb-3">
               <label class="form-label text-muted">Email</label>
               <div>
-                <i class="ti ti-mail me-1"></i>
+                <i class="ti tabler-mail me-1"></i>
                 <a href="mailto:{{ $customer->email }}">{{ $customer->email }}</a>
               </div>
             </div>
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="mb-3">
               <label class="form-label text-muted">Phone</label>
               <div>
-                <i class="ti ti-phone me-1"></i>
+                <i class="ti tabler-phone me-1"></i>
                 <a href="tel:{{ $customer->phone }}">{{ $customer->phone }}</a>
               </div>
             </div>
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="mb-3">
               <label class="form-label text-muted">Website</label>
               <div>
-                <i class="ti ti-world me-1"></i>
+                <i class="ti tabler-world me-1"></i>
                 <a href="{{ $customer->website }}" target="_blank">{{ $customer->website }}</a>
               </div>
             </div>
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="mb-3">
               <label class="form-label text-muted">Address</label>
               <div>
-                <i class="ti ti-map-pin me-1"></i>
+                <i class="ti tabler-map-pin me-1"></i>
                 <span class="text-wrap">{{ $customer->address }}</span>
               </div>
             </div>
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card mb-4">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-calendar me-2"></i>Filter by Year
+          <i class="ti tabler-calendar me-2"></i>Filter by Year
         </h5>
       </div>
       <div class="card-body">
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card mb-4">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-chart-bar me-2"></i>Statistics
+          <i class="ti tabler-chart-bar me-2"></i>Statistics
           @if($selectedYear !== 'lifetime')
             <small class="text-muted">({{ $selectedYear }})</small>
           @endif
@@ -177,41 +177,41 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-folder me-1"></i> Projects</span>
+          <span><i class="ti tabler-folder me-1"></i> Projects</span>
           <span class="badge bg-label-info fs-6">{{ $totals['projects_count'] }}</span>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-clock me-1"></i> Total Hours</span>
+          <span><i class="ti tabler-clock me-1"></i> Total Hours</span>
           <span class="badge bg-label-primary fs-6">{{ number_format($totals['projects_hours'], 1) }}h</span>
         </div>
 
         <hr>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-file-text me-1"></i> Contracts</span>
+          <span><i class="ti tabler-file-text me-1"></i> Contracts</span>
           <span class="badge bg-label-success fs-6">{{ $totals['contracts_count'] }}</span>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-currency-dollar me-1"></i> Contract Value</span>
+          <span><i class="ti tabler-currency-dollar me-1"></i> Contract Value</span>
           <span class="badge bg-label-warning fs-6">{{ number_format($totals['contracts_value'], 0) }}</span>
         </div>
 
         <hr>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-file-invoice me-1"></i> Invoices</span>
+          <span><i class="ti tabler-file-invoice me-1"></i> Invoices</span>
           <span class="badge bg-label-primary fs-6">{{ $totals['invoices_count'] }}</span>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <span><i class="ti ti-receipt me-1"></i> Invoice Total</span>
+          <span><i class="ti tabler-receipt me-1"></i> Invoice Total</span>
           <span class="badge bg-label-info fs-6">{{ number_format($totals['invoices_value'], 0) }}</span>
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
-          <span><i class="ti ti-check me-1"></i> Paid</span>
+          <span><i class="ti tabler-check me-1"></i> Paid</span>
           <span class="badge bg-label-success fs-6">{{ number_format($totals['invoices_paid'], 0) }}</span>
         </div>
       </div>
@@ -222,13 +222,13 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-settings me-2"></i>Actions
+          <i class="ti tabler-settings me-2"></i>Actions
         </h5>
       </div>
       <div class="card-body">
         <div class="d-grid gap-2">
           <a href="{{ route('administration.customers.edit', $customer) }}" class="btn btn-outline-primary">
-            <i class="ti ti-edit me-1"></i>Edit Customer
+            <i class="ti tabler-edit me-1"></i>Edit Customer
           </a>
 
           @if($customer->contracts_count == 0)
@@ -237,12 +237,12 @@ document.addEventListener('DOMContentLoaded', function() {
               @csrf
               @method('DELETE')
               <button type="submit" class="btn btn-outline-danger w-100">
-                <i class="ti ti-trash me-1"></i>Delete Customer
+                <i class="ti tabler-trash me-1"></i>Delete Customer
               </button>
             </form>
           @else
             <button type="button" class="btn btn-outline-secondary disabled" disabled>
-              <i class="ti ti-info-circle me-1"></i>Cannot delete (has contracts)
+              <i class="ti tabler-info-circle me-1"></i>Cannot delete (has contracts)
             </button>
           @endif
         </div>
@@ -260,19 +260,19 @@ document.addEventListener('DOMContentLoaded', function() {
         <ul class="nav nav-tabs card-header-tabs" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#projects-tab" role="tab">
-              <i class="ti ti-folder me-1"></i>Projects
+              <i class="ti tabler-folder me-1"></i>Projects
               <span class="badge bg-info ms-1">{{ $projects->count() }}</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#contracts-tab" role="tab">
-              <i class="ti ti-file-text me-1"></i>Contracts
+              <i class="ti tabler-file-text me-1"></i>Contracts
               <span class="badge bg-success ms-1">{{ $contracts->count() }}</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#invoices-tab" role="tab">
-              <i class="ti ti-file-invoice me-1"></i>Invoices
+              <i class="ti tabler-file-invoice me-1"></i>Invoices
               <span class="badge bg-primary ms-1">{{ $invoices->count() }}</span>
             </a>
           </li>
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       </td>
                       <td>
                         <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-primary">
-                          <i class="ti ti-eye"></i>
+                          <i class="ti tabler-eye"></i>
                         </a>
                       </td>
                     </tr>
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             @else
               <div class="text-center py-5">
-                <i class="ti ti-folder-off text-muted" style="font-size: 3rem;"></i>
+                <i class="ti tabler-folder-off text-muted" style="font-size: 3rem;"></i>
                 <p class="text-muted mt-3">No projects found for this customer
                   @if($selectedYear !== 'lifetime')
                     in {{ $selectedYear }}
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       </td>
                       <td>
                         <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="btn btn-sm btn-outline-primary">
-                          <i class="ti ti-eye"></i>
+                          <i class="ti tabler-eye"></i>
                         </a>
                       </td>
                     </tr>
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             @else
               <div class="text-center py-5">
-                <i class="ti ti-file-off text-muted" style="font-size: 3rem;"></i>
+                <i class="ti tabler-file-off text-muted" style="font-size: 3rem;"></i>
                 <p class="text-muted mt-3">No contracts found for this customer
                   @if($selectedYear !== 'lifetime')
                     in {{ $selectedYear }}
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       </td>
                       <td>
                         <a href="{{ route('invoicing.invoices.show', $invoice) }}" class="btn btn-sm btn-outline-primary">
-                          <i class="ti ti-eye"></i>
+                          <i class="ti tabler-eye"></i>
                         </a>
                       </td>
                     </tr>
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             @else
               <div class="text-center py-5">
-                <i class="ti ti-file-invoice text-muted" style="font-size: 3rem;"></i>
+                <i class="ti tabler-file-invoice text-muted" style="font-size: 3rem;"></i>
                 <p class="text-muted mt-3">No invoices found for this customer
                   @if($selectedYear !== 'lifetime')
                     in {{ $selectedYear }}
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
 @if(session('success'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-success show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti ti-check text-success me-2"></i>
+      <i class="ti tabler-check text-success me-2"></i>
       <div class="me-auto fw-medium">Success!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

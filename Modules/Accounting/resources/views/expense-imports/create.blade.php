@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="alert alert-info">
-                        <h6><i class="ti ti-info-circle me-2"></i>Expected File Format</h6>
+                        <h6><i class="ti tabler-info-circle me-2"></i>Expected File Format</h6>
                         <p class="mb-2">The file should have the following columns:</p>
                         <ul class="mb-0">
                             <li><strong>Date</strong> - DD/MM/YYYY format</li>
@@ -56,10 +56,10 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('accounting.expense-imports.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Cancel
+                        <i class="ti tabler-arrow-left me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-upload me-1"></i>Upload & Parse
+                        <i class="ti tabler-upload me-1"></i>Upload & Parse
                     </button>
                 </div>
             </form>
@@ -120,14 +120,14 @@
             </div>
             <div class="card-body">
                 <ul class="list-unstyled mb-0">
-                    <li><i class="ti ti-wallet text-primary me-2"></i>Samer</li>
-                    <li><i class="ti ti-wallet text-primary me-2"></i>Simon</li>
-                    <li><i class="ti ti-wallet text-primary me-2"></i>Fadi</li>
-                    <li><i class="ti ti-wallet text-primary me-2"></i>Adel</li>
-                    <li><i class="ti ti-cash text-success me-2"></i>CapEx Cash</li>
-                    <li><i class="ti ti-cash text-success me-2"></i>Cash</li>
-                    <li><i class="ti ti-building-bank text-info me-2"></i>Bank (QNB)EGP</li>
-                    <li><i class="ti ti-cash text-warning me-2"></i>Margins</li>
+                    <li><i class="ti tabler-wallet text-primary me-2"></i>Samer</li>
+                    <li><i class="ti tabler-wallet text-primary me-2"></i>Simon</li>
+                    <li><i class="ti tabler-wallet text-primary me-2"></i>Fadi</li>
+                    <li><i class="ti tabler-wallet text-primary me-2"></i>Adel</li>
+                    <li><i class="ti tabler-cash text-success me-2"></i>CapEx Cash</li>
+                    <li><i class="ti tabler-cash text-success me-2"></i>Cash</li>
+                    <li><i class="ti tabler-building-bank text-info me-2"></i>Bank (QNB)EGP</li>
+                    <li><i class="ti tabler-cash text-warning me-2"></i>Margins</li>
                 </ul>
             </div>
         </div>

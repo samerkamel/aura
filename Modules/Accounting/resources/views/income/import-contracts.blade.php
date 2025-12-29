@@ -18,10 +18,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('accounting.income.contracts.import.sample') }}" class="btn btn-outline-info">
-                <i class="ti ti-download me-2"></i>Download Sample CSV
+                <i class="ti tabler-download me-2"></i>Download Sample CSV
             </a>
             <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-2"></i>Back to Contracts
+                <i class="ti tabler-arrow-left me-2"></i>Back to Contracts
             </a>
         </div>
     </div>
@@ -62,10 +62,10 @@
 
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
-                                <i class="ti ti-x me-1"></i>Cancel
+                                <i class="ti tabler-x me-1"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-upload me-1"></i>Import Contracts
+                                <i class="ti tabler-upload me-1"></i>Import Contracts
                             </button>
                         </div>
                     </form>
@@ -78,7 +78,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-info-circle me-2"></i>CSV Format Guide
+                        <i class="ti tabler-info-circle me-2"></i>CSV Format Guide
                     </h5>
                 </div>
                 <div class="card-body">
@@ -110,7 +110,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-users me-2"></i>Available Customers
+                        <i class="ti tabler-users me-2"></i>Available Customers
                     </h5>
                 </div>
                 <div class="card-body">
@@ -150,7 +150,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-building me-2"></i>Available Business Units
+                        <i class="ti tabler-building me-2"></i>Available Business Units
                     </h5>
                 </div>
                 <div class="card-body">

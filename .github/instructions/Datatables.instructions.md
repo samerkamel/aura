@@ -20,7 +20,7 @@ This document establishes standards for implementing DataTables in the QFlow sys
     <div>
       <!-- Primary action button(s) -->
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewModal">
-        <i class="ti ti-plus me-sm-1"></i>
+        <i class="ti tabler-plus me-sm-1"></i>
         <span class="d-none d-sm-inline-block">Add New</span>
       </button>
     </div>
@@ -76,7 +76,7 @@ This document establishes standards for implementing DataTables in the QFlow sys
       data-bs-toggle="tooltip"
       data-bs-placement="top"
       title="View">
-      <i class="ti ti-eye ti-sm me-2"></i>
+      <i class="ti tabler-eye ti-sm me-2"></i>
     </a>
 
     <!-- Edit action -->
@@ -87,7 +87,7 @@ This document establishes standards for implementing DataTables in the QFlow sys
       data-bs-toggle="tooltip"
       data-bs-placement="top"
       title="Edit">
-      <i class="ti ti-edit ti-sm me-2"></i>
+      <i class="ti tabler-edit ti-sm me-2"></i>
     </a>
 
     <!-- Delete action -->
@@ -99,7 +99,7 @@ This document establishes standards for implementing DataTables in the QFlow sys
       data-bs-toggle="tooltip"
       data-bs-placement="top"
       title="Delete">
-      <i class="ti ti-trash ti-sm mx-2"></i>
+      <i class="ti tabler-trash ti-sm mx-2"></i>
     </a>
   </div>
 </td>
@@ -182,29 +182,29 @@ if (dataTable) {
       {
         extend: 'collection',
         className: 'btn btn-label-secondary dropdown-toggle mx-3',
-        text: '<i class="ti ti-file-export me-1"></i><span class="d-none d-sm-inline-block">Export</span>',
+        text: '<i class="ti tabler-file-export me-1"></i><span class="d-none d-sm-inline-block">Export</span>',
         buttons: [
           {
             extend: 'print',
-            text: '<i class="ti ti-printer me-2"></i>Print',
+            text: '<i class="ti tabler-printer me-2"></i>Print',
             className: 'dropdown-item',
             exportOptions: { columns: ':not(:last-child)' } // Exclude actions column
           },
           {
             extend: 'csv',
-            text: '<i class="ti ti-file-text me-2"></i>CSV',
+            text: '<i class="ti tabler-file-text me-2"></i>CSV',
             className: 'dropdown-item',
             exportOptions: { columns: ':not(:last-child)' }
           },
           {
             extend: 'excel',
-            text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
+            text: '<i class="ti tabler-file-spreadsheet me-2"></i>Excel',
             className: 'dropdown-item',
             exportOptions: { columns: ':not(:last-child)' }
           },
           {
             extend: 'pdf',
-            text: '<i class="ti ti-file-code-2 me-2"></i>PDF',
+            text: '<i class="ti tabler-file-code-2 me-2"></i>PDF',
             className: 'dropdown-item',
             exportOptions: { columns: ':not(:last-child)' }
           }
@@ -344,7 +344,7 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
       <h5>No records found</h5>
       <p class="mb-4">There are no records available at this time.</p>
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewModal">
-        <i class="ti ti-plus me-1"></i> Add New Record
+        <i class="ti tabler-plus me-1"></i> Add New Record
       </button>
     </div>
   </td>

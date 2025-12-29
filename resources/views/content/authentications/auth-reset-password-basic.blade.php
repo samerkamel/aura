@@ -54,14 +54,14 @@ $customizerHidden = 'customizer-hide';
               <label class="form-label" for="password">New Password</label>
               <div class="input-group input-group-merge">
                 <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
             <div class="mb-6 form-password-toggle">
               <label class="form-label" for="confirm-password">Confirm Password</label>
               <div class="input-group input-group-merge">
                 <input type="password" id="confirm-password" class="form-control" name="confirm-password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
             <button class="btn btn-primary d-grid w-100 mb-6">
@@ -69,7 +69,7 @@ $customizerHidden = 'customizer-hide';
             </button>
             <div class="text-center">
               <a href="{{url('auth/login-basic')}}">
-                <i class="ti ti-chevron-left scaleX-n1-rtl me-1_5"></i>
+                <i class="ti tabler-chevron-left scaleX-n1-rtl me-1_5"></i>
                 Back to login
               </a>
             </div>

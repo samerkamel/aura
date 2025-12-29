@@ -12,7 +12,7 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
       <div class="navbar-brand app-brand demo d-flex py-0 py-lg-2 me-4 me-xl-8">
         <!-- Mobile menu toggle: Start-->
         <button class="navbar-toggler border-0 px-0 me-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <i class="ti ti-menu-2 ti-lg align-middle text-heading fw-medium"></i>
+          <i class="ti tabler-menu-2 ti-lg align-middle text-heading fw-medium"></i>
         </button>
         <!-- Mobile menu toggle: End-->
         <a href="{{url('front-pages/landing')}}" class="app-brand-link">
@@ -24,7 +24,7 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
       <!-- Menu wrapper: Start -->
       <div class="collapse navbar-collapse landing-nav-menu" id="navbarSupportedContent">
         <button class="navbar-toggler border-0 text-heading position-absolute end-0 top-0 scaleX-n1-rtl" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <i class="ti ti-x ti-lg"></i>
+          <i class="ti tabler-x ti-lg"></i>
         </button>
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
@@ -51,32 +51,32 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
                 <div class="col-12 col-lg">
                   <div class="h6 d-flex align-items-center mb-3 mb-lg-5">
                     <div class="avatar flex-shrink-0 me-3">
-                      <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-layout-grid ti-lg'></i></span>
+                      <span class="avatar-initial rounded bg-label-primary"><i class='ti tabler-layout-grid ti-lg'></i></span>
                     </div>
                     <span class="ps-1">Other</span>
                   </div>
                   <ul class="nav flex-column">
                     <li class="nav-item {{ $currentRouteName === 'front-pages-pricing' ? 'active' : '' }}">
                       <a class="nav-link mega-dropdown-link" href="{{ url('front-pages/pricing') }}">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         <span>Pricing</span>
                       </a>
                     </li>
                     <li class="nav-item {{ $currentRouteName === 'front-pages-payment' ? 'active' : '' }}">
                       <a class="nav-link mega-dropdown-link" href="{{ url('front-pages/payment') }}">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         <span>Payment</span>
                       </a>
                     </li>
                     <li class="nav-item {{ $currentRouteName === 'front-pages-checkout' ? 'active' : '' }}">
                       <a class="nav-link mega-dropdown-link" href="{{ url('front-pages/checkout') }}">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         <span>Checkout</span>
                       </a>
                     </li>
                     <li class="nav-item {{ $currentRouteName === 'front-pages-help-center' ? 'active' : '' }}">
                       <a class="nav-link mega-dropdown-link" href="{{ url('front-pages/help-center') }}">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         <span>Help Center</span>
                       </a>
                     </li>
@@ -85,62 +85,62 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
                 <div class="col-12 col-lg">
                   <div class="h6 d-flex align-items-center mb-3 mb-lg-5">
                     <div class="avatar flex-shrink-0 me-3">
-                      <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-lock-open ti-lg'></i></span>
+                      <span class="avatar-initial rounded bg-label-primary"><i class='ti tabler-lock-open ti-lg'></i></span>
                     </div>
                     <span class="ps-1">Auth Demo</span>
                   </div>
                   <ul class="nav flex-column">
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/login-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Login (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/login-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Login (Cover)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/register-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Register (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/register-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Register (Cover)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/register-multisteps')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Register (Multi-steps)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/forgot-password-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Forgot Password (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/forgot-password-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Forgot Password (Cover)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/reset-password-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Reset Password (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/reset-password-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Reset Password (Cover)
                       </a>
                     </li>
@@ -149,56 +149,56 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
                 <div class="col-12 col-lg">
                   <div class="h6 d-flex align-items-center mb-3 mb-lg-5">
                     <div class="avatar flex-shrink-0 me-3">
-                      <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-file-analytics ti-lg'></i></span>
+                      <span class="avatar-initial rounded bg-label-primary"><i class='ti tabler-file-analytics ti-lg'></i></span>
                     </div>
                     <span class="ps-1">Other</span>
                   </div>
                   <ul class="nav flex-column">
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/pages/misc-error')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Error
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/pages/misc-under-maintenance')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Under Maintenance
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/pages/misc-comingsoon')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Coming Soon
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/pages/misc-not-authorized')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Not Authorized
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/verify-email-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Verify Email (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/verify-email-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Verify Email (Cover)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/two-steps-basic')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Two Steps (Basic)
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link mega-dropdown-link" href="{{url('/auth/two-steps-cover')}}" target="_blank">
-                        <i class='ti ti-circle me-1'></i>
+                        <i class='ti tabler-circle me-1'></i>
                         Two Steps (Cover)
                       </a>
                     </li>
@@ -225,22 +225,22 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
         <!-- Style Switcher -->
         <li class="nav-item dropdown-style-switcher dropdown me-2 me-xl-1">
           <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-            <i class='ti ti-lg'></i>
+            <i class='ti tabler-lg'></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-styles">
             <li>
               <a class="dropdown-item" href="javascript:void(0);" data-theme="light">
-                <span class="align-middle"><i class='ti ti-sun me-3'></i>Light</span>
+                <span class="align-middle"><i class='ti tabler-sun me-3'></i>Light</span>
               </a>
             </li>
             <li>
               <a class="dropdown-item" href="javascript:void(0);" data-theme="dark">
-                <span class="align-middle"><i class="ti ti-moon-stars me-3"></i>Dark</span>
+                <span class="align-middle"><i class="ti tabler-moon-stars me-3"></i>Dark</span>
               </a>
             </li>
             <li>
               <a class="dropdown-item" href="javascript:void(0);" data-theme="system">
-                <span class="align-middle"><i class="ti ti-device-desktop-analytics me-3"></i>System</span>
+                <span class="align-middle"><i class="ti tabler-device-desktop-analytics me-3"></i>System</span>
               </a>
             </li>
           </ul>
@@ -249,7 +249,7 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
         @endif
         <!-- navbar button: Start -->
         <li>
-          <a href="{{url('/auth/login-cover')}}" class="btn btn-primary" target="_blank"><span class="tf-icons ti ti-login scaleX-n1-rtl me-md-1"></span><span class="d-none d-md-block">Login/Register</span></a>
+          <a href="{{url('/auth/login-cover')}}" class="btn btn-primary" target="_blank"><span class="tf-icons ti tabler-login scaleX-n1-rtl me-md-1"></span><span class="d-none d-md-block">Login/Register</span></a>
         </li>
         <!-- navbar button: End -->
       </ul>

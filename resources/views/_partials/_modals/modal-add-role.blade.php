@@ -21,7 +21,7 @@
               <table class="table table-flush-spacing">
                 <tbody>
                   <tr>
-                    <td class="text-nowrap fw-medium text-heading">Administrator Access <i class="ti ti-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="Allows a full access to the system"></i></td>
+                    <td class="text-nowrap fw-medium text-heading">Administrator Access <i class="ti tabler-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="Allows a full access to the system"></i></td>
                     <td>
                       <div class="d-flex justify-content-end">
                         <div class="form-check mb-0">

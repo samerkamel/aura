@@ -35,11 +35,11 @@
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti ti-users me-1_5"></i> Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti ti-lock me-1_5"></i> Security</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti ti-bookmark me-1_5"></i> Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti ti-bell me-1_5"></i> Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti ti-link me-1_5"></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti tabler-users me-1_5"></i> Account</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-security')}}"><i class="ti-sm ti tabler-lock me-1_5"></i> Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti tabler-bookmark me-1_5"></i> Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti tabler-bell me-1_5"></i> Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti tabler-link me-1_5"></i> Connections</a></li>
       </ul>
     </div>
     <div class="card mb-6">
@@ -50,11 +50,11 @@
           <div class="button-wrapper">
             <label for="upload" class="btn btn-primary me-3 mb-4" tabindex="0">
               <span class="d-none d-sm-block">Upload new photo</span>
-              <i class="ti ti-upload d-block d-sm-none"></i>
+              <i class="ti tabler-upload d-block d-sm-none"></i>
               <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" />
             </label>
             <button type="button" class="btn btn-label-secondary account-image-reset mb-4">
-              <i class="ti ti-refresh-dot d-block d-sm-none"></i>
+              <i class="ti tabler-refresh-dot d-block d-sm-none"></i>
               <span class="d-none d-sm-block">Reset</span>
             </button>
 

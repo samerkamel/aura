@@ -14,7 +14,7 @@
                 <div class="d-flex gap-2">
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="ti ti-calendar me-1"></i>{{ $year }}
+                            <i class="ti tabler-calendar me-1"></i>{{ $year }}
                         </button>
                         <ul class="dropdown-menu">
                             @foreach($years as $yearOption)
@@ -28,10 +28,10 @@
                         </ul>
                     </div>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createProductModal">
-                        <i class="ti ti-plus me-1"></i>Add Product to BU
+                        <i class="ti tabler-plus me-1"></i>Add Product to BU
                     </button>
                     <a href="{{ route('accounting.income-sheet.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Income Sheet
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Income Sheet
                     </a>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                     <div class="col-md-3">
                         <div class="card border border-primary">
                             <div class="card-body text-center">
-                                <i class="ti ti-wallet text-primary mb-2" style="font-size: 2rem;"></i>
+                                <i class="ti tabler-wallet text-primary mb-2" style="font-size: 2rem;"></i>
                                 <h6 class="card-title text-primary">Total Target</h6>
                                 <h4 class="mb-0" id="total-target">-</h4>
                             </div>
@@ -51,7 +51,7 @@
                     <div class="col-md-3">
                         <div class="card border border-warning">
                             <div class="card-body text-center">
-                                <i class="ti ti-credit-card text-warning mb-2" style="font-size: 2rem;"></i>
+                                <i class="ti tabler-credit-card text-warning mb-2" style="font-size: 2rem;"></i>
                                 <h6 class="card-title text-warning">Projected</h6>
                                 <h4 class="mb-0" id="total-projected">-</h4>
                             </div>
@@ -60,7 +60,7 @@
                     <div class="col-md-3">
                         <div class="card border border-danger">
                             <div class="card-body text-center">
-                                <i class="ti ti-minus text-danger mb-2" style="font-size: 2rem;"></i>
+                                <i class="ti tabler-minus text-danger mb-2" style="font-size: 2rem;"></i>
                                 <h6 class="card-title text-success">Actual Revenue</h6>
                                 <h4 class="mb-0" id="total-actual">-</h4>
                             </div>
@@ -69,7 +69,7 @@
                     <div class="col-md-3">
                         <div class="card border border-success">
                             <div class="card-body text-center">
-                                <i class="ti ti-percentage text-success mb-2" style="font-size: 2rem;"></i>
+                                <i class="ti tabler-percentage text-success mb-2" style="font-size: 2rem;"></i>
                                 <h6 class="card-title text-info">Achievement</h6>
                                 <h4 class="mb-0" id="avg-achievement">-</h4>
                             </div>
@@ -98,7 +98,7 @@
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-sm me-2">
                                                 <span class="avatar-initial rounded-circle bg-label-primary">
-                                                    <i class="ti ti-package ti-sm"></i>
+                                                    <i class="ti tabler-package ti-sm"></i>
                                                 </span>
                                             </div>
                                             <div>
@@ -154,21 +154,21 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="#" onclick="editBudget({{ $budget->id }})">
-                                                    <i class="ti ti-edit me-1"></i>Edit Target
+                                                    <i class="ti tabler-edit me-1"></i>Edit Target
                                                 </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="allocateBudget({{ $budget->id }})">
-                                                    <i class="ti ti-trending-up me-1"></i>Update Projection
+                                                    <i class="ti tabler-trending-up me-1"></i>Update Projection
                                                 </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="spendBudget({{ $budget->id }})">
-                                                    <i class="ti ti-plus me-1"></i>Record Revenue
+                                                    <i class="ti tabler-plus me-1"></i>Record Revenue
                                                 </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" href="{{ route('budgets.history', $budget) }}">
-                                                    <i class="ti ti-history me-1"></i>View History
+                                                    <i class="ti tabler-history me-1"></i>View History
                                                 </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item text-danger" href="#" onclick="deleteBudget({{ $budget->id }})">
-                                                    <i class="ti ti-trash me-1"></i>Delete
+                                                    <i class="ti tabler-trash me-1"></i>Delete
                                                 </a></li>
                                             </ul>
                                         </div>
@@ -178,11 +178,11 @@
                                 <tr>
                                     <td colspan="7" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
-                                            <i class="ti ti-building text-muted mb-3" style="font-size: 4rem;"></i>
+                                            <i class="ti tabler-building text-muted mb-3" style="font-size: 4rem;"></i>
                                             <h5>No Active Products</h5>
                                             <p class="text-muted">This business unit has no active products configured</p>
                                             <a href="{{ route('administration.products.index') }}" class="btn btn-primary">
-                                                <i class="ti ti-plus me-1"></i>Manage Products
+                                                <i class="ti tabler-plus me-1"></i>Manage Products
                                             </a>
                                         </div>
                                     </td>

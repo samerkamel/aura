@@ -45,7 +45,7 @@
   <div class="col-12">
     @if(session('success'))
     <div class="alert alert-success alert-dismissible mb-4" role="alert">
-      <i class="ti ti-check me-2"></i>{{ session('success') }}
+      <i class="ti tabler-check me-2"></i>{{ session('success') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
@@ -60,17 +60,17 @@
           <div>
             <h2 class="mb-1 text-white">{{ $user->name }}</h2>
             <p class="mb-2 opacity-75">
-              <i class="ti ti-mail me-1"></i>{{ $user->email }}
+              <i class="ti tabler-mail me-1"></i>{{ $user->email }}
             </p>
             @if($employee)
             <div class="d-flex gap-2 flex-wrap">
               @if($employee->positionRelation)
               <span class="badge bg-white text-primary">
-                <i class="ti ti-briefcase me-1"></i>{{ $employee->positionRelation->full_title }}
+                <i class="ti tabler-briefcase me-1"></i>{{ $employee->positionRelation->full_title }}
               </span>
               @endif
               <span class="badge bg-white text-success">
-                <i class="ti ti-calendar me-1"></i>Joined {{ $employee->start_date ? $employee->start_date->format('M Y') : 'N/A' }}
+                <i class="ti tabler-calendar me-1"></i>Joined {{ $employee->start_date ? $employee->start_date->format('M Y') : 'N/A' }}
               </span>
             </div>
             @endif
@@ -120,7 +120,7 @@
         <div class="card info-card h-100">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="ti ti-user me-2 text-primary"></i>Account Information
+              <i class="ti tabler-user me-2 text-primary"></i>Account Information
             </h5>
           </div>
           <div class="card-body">
@@ -160,7 +160,7 @@
               </div>
 
               <button type="submit" class="btn btn-primary">
-                <i class="ti ti-device-floppy me-1"></i>Save Changes
+                <i class="ti tabler-device-floppy me-1"></i>Save Changes
               </button>
             </form>
           </div>
@@ -172,7 +172,7 @@
         <div class="card info-card h-100">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="ti ti-lock me-2 text-warning"></i>Change Password
+              <i class="ti tabler-lock me-2 text-warning"></i>Change Password
             </h5>
           </div>
           <div class="card-body">
@@ -186,7 +186,7 @@
                   <input type="password" class="form-control @error('current_password') is-invalid @enderror"
                          id="current_password" name="current_password" required>
                   <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('current_password')">
-                    <i class="ti ti-eye"></i>
+                    <i class="ti tabler-eye"></i>
                   </button>
                 </div>
                 @error('current_password')
@@ -200,7 +200,7 @@
                   <input type="password" class="form-control @error('password') is-invalid @enderror"
                          id="password" name="password" required>
                   <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                    <i class="ti ti-eye"></i>
+                    <i class="ti tabler-eye"></i>
                   </button>
                 </div>
                 @error('password')
@@ -215,13 +215,13 @@
                   <input type="password" class="form-control"
                          id="password_confirmation" name="password_confirmation" required>
                   <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_confirmation')">
-                    <i class="ti ti-eye"></i>
+                    <i class="ti tabler-eye"></i>
                   </button>
                 </div>
               </div>
 
               <button type="submit" class="btn btn-warning">
-                <i class="ti ti-lock me-1"></i>Change Password
+                <i class="ti tabler-lock me-1"></i>Change Password
               </button>
             </form>
           </div>
@@ -236,7 +236,7 @@
         <div class="card info-card h-100">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="ti ti-id me-2 text-info"></i>Personal Details
+              <i class="ti tabler-id me-2 text-info"></i>Personal Details
             </h5>
           </div>
           <div class="card-body">
@@ -284,7 +284,7 @@
         <div class="card info-card h-100">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="ti ti-briefcase me-2 text-success"></i>Employment Details
+              <i class="ti tabler-briefcase me-2 text-success"></i>Employment Details
             </h5>
           </div>
           <div class="card-body">
@@ -337,29 +337,29 @@
     <div class="card">
       <div class="card-header">
         <h5 class="mb-0">
-          <i class="ti ti-link me-2 text-primary"></i>Quick Links
+          <i class="ti tabler-link me-2 text-primary"></i>Quick Links
         </h5>
       </div>
       <div class="card-body">
         <div class="row g-3">
           <div class="col-md-3">
             <a href="{{ route('self-service.attendance') }}" class="btn btn-outline-primary w-100">
-              <i class="ti ti-clock me-2"></i>My Attendance
+              <i class="ti tabler-clock me-2"></i>My Attendance
             </a>
           </div>
           <div class="col-md-3">
             <a href="{{ route('self-service.leave-requests.index') }}" class="btn btn-outline-info w-100">
-              <i class="ti ti-calendar me-2"></i>Leave Requests
+              <i class="ti tabler-calendar me-2"></i>Leave Requests
             </a>
           </div>
           <div class="col-md-3">
             <a href="{{ route('self-service.wfh-requests.index') }}" class="btn btn-outline-success w-100">
-              <i class="ti ti-home me-2"></i>WFH Requests
+              <i class="ti tabler-home me-2"></i>WFH Requests
             </a>
           </div>
           <div class="col-md-3">
             <a href="{{ route('self-service.permission-requests.index') }}" class="btn btn-outline-warning w-100">
-              <i class="ti ti-clock-pause me-2"></i>Permission Requests
+              <i class="ti tabler-clock-pause me-2"></i>Permission Requests
             </a>
           </div>
         </div>

@@ -77,7 +77,7 @@
   <div class="col-12">
     @if(session('success'))
     <div class="alert alert-success alert-dismissible mb-4" role="alert">
-      <i class="ti ti-check me-2"></i>{{ session('success') }}
+      <i class="ti tabler-check me-2"></i>{{ session('success') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
@@ -89,7 +89,7 @@
           <!-- Title and Actions -->
           <div class="col-lg-4 mb-3 mb-lg-0">
             <h4 class="mb-1">
-              <i class="ti ti-users me-2 text-primary"></i>Employee Directory
+              <i class="ti tabler-users me-2 text-primary"></i>Employee Directory
             </h4>
             <p class="text-muted mb-0">Manage your team members</p>
           </div>
@@ -100,7 +100,7 @@
               <input type="hidden" name="status" value="{{ $status }}">
               <input type="hidden" name="view" value="{{ $view }}">
               <div class="search-box">
-                <i class="ti ti-search search-icon"></i>
+                <i class="ti tabler-search search-icon"></i>
                 <input type="text" name="search" class="form-control" placeholder="Search employees..."
                        value="{{ $search }}" id="employeeSearch">
               </div>
@@ -114,19 +114,19 @@
               <div class="btn-group view-toggle" role="group">
                 <a href="{{ route('hr.employees.index', ['status' => $status, 'search' => $search, 'view' => 'grid']) }}"
                    class="btn btn-outline-secondary {{ $view === 'grid' ? 'active' : '' }}" title="Grid View">
-                  <i class="ti ti-layout-grid"></i>
+                  <i class="ti tabler-layout-grid"></i>
                 </a>
                 <a href="{{ route('hr.employees.index', ['status' => $status, 'search' => $search, 'view' => 'table']) }}"
                    class="btn btn-outline-secondary {{ $view === 'table' ? 'active' : '' }}" title="Table View">
-                  <i class="ti ti-list"></i>
+                  <i class="ti tabler-list"></i>
                 </a>
               </div>
 
               <a href="{{ route('hr.employees.import.show') }}" class="btn btn-outline-info">
-                <i class="ti ti-upload me-1"></i><span class="d-none d-md-inline">Import</span>
+                <i class="ti tabler-upload me-1"></i><span class="d-none d-md-inline">Import</span>
               </a>
               <a href="{{ route('hr.employees.create') }}" class="btn btn-primary">
-                <i class="ti ti-plus me-1"></i><span class="d-none d-md-inline">Add Employee</span>
+                <i class="ti tabler-plus me-1"></i><span class="d-none d-md-inline">Add Employee</span>
               </a>
             </div>
           </div>
@@ -149,7 +149,7 @@
             </a>
             <a href="{{ route('hr.employees.index', ['status' => 'all', 'view' => $view]) }}"
                class="btn {{ $status === 'all' ? 'btn-info' : 'btn-outline-info' }} rounded-pill">
-              <i class="ti ti-users me-1"></i>
+              <i class="ti tabler-users me-1"></i>
               All
               <span class="badge {{ $status === 'all' ? 'bg-white text-info' : 'bg-info' }} ms-1">{{ $activeCount + $inactiveCount }}</span>
             </a>
@@ -164,24 +164,24 @@
       <div class="card-body empty-state">
         <div class="empty-state-icon">
           @if($status === 'active')
-            <i class="ti ti-user-plus"></i>
+            <i class="ti tabler-user-plus"></i>
           @elseif($status === 'inactive')
-            <i class="ti ti-user-off"></i>
+            <i class="ti tabler-user-off"></i>
           @else
-            <i class="ti ti-users"></i>
+            <i class="ti tabler-users"></i>
           @endif
         </div>
         @if(!empty($search))
           <h5>No employees found matching "{{ $search }}"</h5>
           <p class="text-muted mb-4">Try adjusting your search terms</p>
           <a href="{{ route('hr.employees.index', ['status' => $status, 'view' => $view]) }}" class="btn btn-outline-primary">
-            <i class="ti ti-x me-1"></i>Clear Search
+            <i class="ti tabler-x me-1"></i>Clear Search
           </a>
         @elseif($status === 'active')
           <h5>No active employees found</h5>
           <p class="text-muted mb-4">Start by creating your first employee</p>
           <a href="{{ route('hr.employees.create') }}" class="btn btn-primary">
-            <i class="ti ti-plus me-1"></i>Create Employee
+            <i class="ti tabler-plus me-1"></i>Create Employee
           </a>
         @elseif($status === 'inactive')
           <h5>No inactive employees</h5>
@@ -190,7 +190,7 @@
           <h5>No employees found</h5>
           <p class="text-muted mb-4">Start by creating your first employee</p>
           <a href="{{ route('hr.employees.create') }}" class="btn btn-primary">
-            <i class="ti ti-plus me-1"></i>Create Employee
+            <i class="ti tabler-plus me-1"></i>Create Employee
           </a>
         @endif
       </div>
@@ -243,16 +243,16 @@
               <!-- Info -->
               <div class="employee-info text-muted">
                 <div class="mb-1">
-                  <i class="ti ti-mail me-1"></i>{{ $employee->email }}
+                  <i class="ti tabler-mail me-1"></i>{{ $employee->email }}
                 </div>
                 @if($employee->start_date)
                 <div class="mb-1">
-                  <i class="ti ti-calendar me-1"></i>Since {{ $employee->start_date->format('M Y') }}
+                  <i class="ti tabler-calendar me-1"></i>Since {{ $employee->start_date->format('M Y') }}
                 </div>
                 @endif
                 @if($employee->manager)
                 <div>
-                  <i class="ti ti-user me-1"></i>Reports to: {{ $employee->manager->name }}
+                  <i class="ti tabler-user me-1"></i>Reports to: {{ $employee->manager->name }}
                 </div>
                 @endif
               </div>
@@ -262,17 +262,17 @@
             <div class="card-footer bg-transparent border-top pt-3">
               <div class="d-flex justify-content-center gap-2">
                 <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-sm btn-outline-primary" title="View">
-                  <i class="ti ti-eye"></i>
+                  <i class="ti tabler-eye"></i>
                 </a>
                 <a href="{{ route('hr.employees.edit', $employee) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
-                  <i class="ti ti-edit"></i>
+                  <i class="ti tabler-edit"></i>
                 </a>
                 <form action="{{ route('hr.employees.destroy', $employee) }}" method="POST" class="d-inline"
                       onsubmit="return confirm('Are you sure you want to delete {{ $employee->name }}?')">
                   @csrf
                   @method('DELETE')
                   <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                    <i class="ti ti-trash"></i>
+                    <i class="ti tabler-trash"></i>
                   </button>
                 </form>
               </div>
@@ -360,17 +360,17 @@
                 <td class="text-center">
                   <div class="d-inline-flex gap-1">
                     <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-sm btn-icon btn-text-secondary" title="View">
-                      <i class="ti ti-eye"></i>
+                      <i class="ti tabler-eye"></i>
                     </a>
                     <a href="{{ route('hr.employees.edit', $employee) }}" class="btn btn-sm btn-icon btn-text-secondary" title="Edit">
-                      <i class="ti ti-edit"></i>
+                      <i class="ti tabler-edit"></i>
                     </a>
                     <form action="{{ route('hr.employees.destroy', $employee) }}" method="POST" class="d-inline"
                           onsubmit="return confirm('Are you sure you want to delete {{ $employee->name }}?')">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="btn btn-sm btn-icon btn-text-danger" title="Delete">
-                        <i class="ti ti-trash"></i>
+                        <i class="ti tabler-trash"></i>
                       </button>
                     </form>
                   </div>

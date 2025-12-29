@@ -27,7 +27,7 @@
       </div>
       <div class="mb-6">
         <span class="badge bg-label-primary">
-          <i class="ti ti-link ti-xs"></i>
+          <i class="ti tabler-link ti-xs"></i>
           <span class="align-middle">Invoice Attached</span>
         </span>
       </div>

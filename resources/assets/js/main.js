@@ -501,7 +501,7 @@ if (typeof $ !== 'undefined') {
                 notFound:
                   '<div class="not-found px-4 py-2">' +
                   '<h6 class="suggestions-header text-primary mb-2">Pages</h6>' +
-                  '<p class="py-2 mb-0"><i class="ti ti-alert-circle ti-xs me-2"></i> No Results Found</p>' +
+                  '<p class="py-2 mb-0"><i class="ti tabler-alert-circle ti-xs me-2"></i> No Results Found</p>' +
                   '</div>'
               }
             },
@@ -541,7 +541,7 @@ if (typeof $ !== 'undefined') {
                 notFound:
                   '<div class="not-found px-4 py-2">' +
                   '<h6 class="suggestions-header text-primary mb-2">Files</h6>' +
-                  '<p class="py-2 mb-0"><i class="ti ti-alert-circle ti-xs me-2"></i> No Results Found</p>' +
+                  '<p class="py-2 mb-0"><i class="ti tabler-alert-circle ti-xs me-2"></i> No Results Found</p>' +
                   '</div>'
               }
             },
@@ -580,7 +580,7 @@ if (typeof $ !== 'undefined') {
                 notFound:
                   '<div class="not-found px-4 py-2">' +
                   '<h6 class="suggestions-header text-primary mb-2">Members</h6>' +
-                  '<p class="py-2 mb-0"><i class="ti ti-alert-circle ti-xs me-2"></i> No Results Found</p>' +
+                  '<p class="py-2 mb-0"><i class="ti tabler-alert-circle ti-xs me-2"></i> No Results Found</p>' +
                   '</div>'
               }
             }

@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-upload me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-upload me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Import Attendance from CSV</h5>
             <small class="text-muted">Upload a CSV file containing employee attendance logs</small>
@@ -17,10 +17,10 @@
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-outline-primary">
-            <i class="ti ti-fingerprint me-1"></i>ZKTeco Import
+            <i class="ti tabler-fingerprint me-1"></i>ZKTeco Import
           </a>
           <a href="{{ route('attendance.index') }}" class="btn btn-secondary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Attendance
+            <i class="ti tabler-arrow-left me-1"></i>Back to Attendance
           </a>
         </div>
       </div>
@@ -32,13 +32,13 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-file-upload me-2"></i>CSV File Upload
+              <i class="ti tabler-file-upload me-2"></i>CSV File Upload
             </h6>
           </div>
           <div class="card-body">
             <!-- CSV Format Information -->
             <div class="alert alert-info mb-4">
-              <h6><i class="ti ti-info-circle me-2"></i>CSV Format Requirements</h6>
+              <h6><i class="ti tabler-info-circle me-2"></i>CSV Format Requirements</h6>
               <p class="mb-2">Your CSV file must contain the following columns:</p>
               <ul class="mb-2">
                 @foreach($expectedHeaders as $header)
@@ -53,7 +53,7 @@
 
             @if ($errors->any())
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <h6><i class="ti ti-alert-circle me-2"></i>Validation Errors</h6>
+                <h6><i class="ti tabler-alert-circle me-2"></i>Validation Errors</h6>
                 <ul class="mb-0">
                   @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -78,7 +78,7 @@
                        accept=".csv"
                        required>
                 <div class="form-text">
-                  <i class="ti ti-file-text me-1"></i>
+                  <i class="ti tabler-file-text me-1"></i>
                   Only CSV files are accepted. Maximum file size: 10MB
                 </div>
                 @error('csv_file')
@@ -89,10 +89,10 @@
               <!-- Action Buttons -->
               <div class="d-flex justify-content-between">
                 <a href="{{ route('attendance.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti ti-arrow-left me-1"></i>Cancel
+                  <i class="ti tabler-arrow-left me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti ti-upload me-1"></i>Import CSV
+                  <i class="ti tabler-upload me-1"></i>Import CSV
                 </button>
               </div>
             </form>
@@ -114,16 +114,16 @@ document.getElementById('csv_file').addEventListener('change', function(e) {
 
         // Update form text to show selected file info
         const formText = e.target.parentNode.querySelector('.form-text');
-        formText.innerHTML = `<i class="ti ti-file-check me-1 text-success"></i>Selected: ${fileName} (${fileSize} MB)`;
+        formText.innerHTML = `<i class="ti tabler-file-check me-1 text-success"></i>Selected: ${fileName} (${fileSize} MB)`;
 
         // Validate file type
         if (!file.name.toLowerCase().endsWith('.csv')) {
-            formText.innerHTML = `<i class="ti ti-alert-triangle me-1 text-warning"></i>Warning: Please select a CSV file`;
+            formText.innerHTML = `<i class="ti tabler-alert-triangle me-1 text-warning"></i>Warning: Please select a CSV file`;
         }
 
         // Validate file size (10MB limit)
         if (file.size > 10 * 1024 * 1024) {
-            formText.innerHTML = `<i class="ti ti-alert-triangle me-1 text-danger"></i>Error: File size exceeds 10MB limit`;
+            formText.innerHTML = `<i class="ti tabler-alert-triangle me-1 text-danger"></i>Error: File size exceeds 10MB limit`;
         }
     }
 });

@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('invoicing.sequences.index') }}" class="btn btn-outline-info">
-                        <i class="ti ti-file-invoice me-1"></i>Invoice Sequences
+                        <i class="ti tabler-file-invoice me-1"></i>Invoice Sequences
                     </a>
                     <a href="{{ route('invoicing.internal-sequences.create') }}" class="btn btn-primary">
-                        <i class="ti ti-plus me-1"></i>New Sequence
+                        <i class="ti tabler-plus me-1"></i>New Sequence
                     </a>
                 </div>
             </div>
@@ -101,30 +101,30 @@
                                     <td>
                                         <div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="ti ti-dots-vertical"></i>
+                                                <i class="ti tabler-dots-vertical"></i>
                                             </button>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="{{ route('invoicing.internal-sequences.show', $sequence) }}">
-                                                    <i class="ti ti-eye me-2"></i>View Details
+                                                    <i class="ti tabler-eye me-2"></i>View Details
                                                 </a>
                                                 <a class="dropdown-item" href="{{ route('invoicing.internal-sequences.edit', $sequence) }}">
-                                                    <i class="ti ti-edit me-2"></i>Edit
+                                                    <i class="ti tabler-edit me-2"></i>Edit
                                                 </a>
                                                 <div class="dropdown-divider"></div>
                                                 <button type="button" class="dropdown-item" onclick="toggleSequence({{ $sequence->id }})">
                                                     @if($sequence->is_active)
-                                                        <i class="ti ti-pause me-2"></i>Deactivate
+                                                        <i class="ti tabler-pause me-2"></i>Deactivate
                                                     @else
-                                                        <i class="ti ti-play me-2"></i>Activate
+                                                        <i class="ti tabler-play me-2"></i>Activate
                                                     @endif
                                                 </button>
                                                 <button type="button" class="dropdown-item text-warning" onclick="resetSequence({{ $sequence->id }})">
-                                                    <i class="ti ti-refresh me-2"></i>Reset Counter
+                                                    <i class="ti tabler-refresh me-2"></i>Reset Counter
                                                 </button>
                                                 @if($sequence->internalTransactions_count == 0)
                                                     <div class="dropdown-divider"></div>
                                                     <button type="button" class="dropdown-item text-danger" onclick="deleteSequence({{ $sequence->id }})">
-                                                        <i class="ti ti-trash me-2"></i>Delete
+                                                        <i class="ti tabler-trash me-2"></i>Delete
                                                     </button>
                                                 @endif
                                             </div>
@@ -138,12 +138,12 @@
                 @else
                     <div class="text-center py-5">
                         <div class="mb-3">
-                            <i class="ti ti-building-bank display-6 text-muted"></i>
+                            <i class="ti tabler-building-bank display-6 text-muted"></i>
                         </div>
                         <h5 class="mb-2">No internal transaction sequences found</h5>
                         <p class="text-muted">Create your first internal transaction sequence to start generating transaction numbers.</p>
                         <a href="{{ route('invoicing.internal-sequences.create') }}" class="btn btn-primary">
-                            <i class="ti ti-plus me-1"></i>Create First Sequence
+                            <i class="ti tabler-plus me-1"></i>Create First Sequence
                         </a>
                     </div>
                 @endif
@@ -161,7 +161,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-primary p-2 me-2 rounded">
-                            <i class="ti ti-list-numbers ti-sm"></i>
+                            <i class="ti tabler-list-numbers ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -178,7 +178,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-success p-2 me-2 rounded">
-                            <i class="ti ti-check ti-sm"></i>
+                            <i class="ti tabler-check ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -195,7 +195,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-info p-2 me-2 rounded">
-                            <i class="ti ti-building-bank ti-sm"></i>
+                            <i class="ti tabler-building-bank ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
@@ -212,7 +212,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-warning p-2 me-2 rounded">
-                            <i class="ti ti-building ti-sm"></i>
+                            <i class="ti tabler-building ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">

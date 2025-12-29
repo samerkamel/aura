@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-settings me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-settings me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Attendance Settings</h5>
             <small class="text-muted">Configure standard work hours and weekend days</small>
@@ -24,13 +24,13 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-clock me-2"></i>Work Schedule Configuration
+              <i class="ti tabler-clock me-2"></i>Work Schedule Configuration
             </h6>
           </div>
           <div class="card-body">
             @if(session('success'))
               <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="ti ti-check me-1"></i>
+                <i class="ti tabler-check me-1"></i>
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
@@ -58,7 +58,7 @@
                   <span class="input-group-text">hours</span>
                 </div>
                 <div class="form-text">
-                  <i class="ti ti-info-circle me-1"></i>
+                  <i class="ti tabler-info-circle me-1"></i>
                   Enter the standard number of work hours required per day (e.g., 8). Also used for vacation days.
                 </div>
                 @error('work_hours_per_day')
@@ -84,7 +84,7 @@
                   <span class="input-group-text">hours</span>
                 </div>
                 <div class="form-text">
-                  <i class="ti ti-info-circle me-1"></i>
+                  <i class="ti tabler-info-circle me-1"></i>
                   Hours counted as attendance for Work From Home days (e.g., 6)
                 </div>
                 @error('wfh_attendance_hours')
@@ -98,7 +98,7 @@
                   Self-Service Request Settings
                 </label>
                 <div class="form-text mb-3">
-                  <i class="ti ti-info-circle me-1"></i>
+                  <i class="ti tabler-info-circle me-1"></i>
                   Configure options for employee self-service requests
                 </div>
                 <div class="form-check form-switch mb-2">
@@ -113,7 +113,7 @@
                   </label>
                 </div>
                 <div class="form-text text-warning mb-3">
-                  <i class="ti ti-alert-triangle me-1"></i>
+                  <i class="ti tabler-alert-triangle me-1"></i>
                   When enabled, employees can submit leave, WFH, and permission requests for past dates.
                   This is useful during system transitions when employees need to submit retroactive requests.
                 </div>
@@ -125,7 +125,7 @@
                   Official Weekend Days <span class="text-danger">*</span>
                 </label>
                 <div class="form-text mb-3">
-                  <i class="ti ti-info-circle me-1"></i>
+                  <i class="ti tabler-info-circle me-1"></i>
                   Select the days that are considered weekends (non-working days)
                 </div>
 
@@ -166,7 +166,7 @@
 
               <!-- Current Settings Summary -->
               <div class="alert alert-info">
-                <h6><i class="ti ti-info-circle me-1"></i>Current Settings Summary</h6>
+                <h6><i class="ti tabler-info-circle me-1"></i>Current Settings Summary</h6>
                 <ul class="mb-0">
                   <li><strong>Work Hours per Day:</strong> {{ $workHoursPerDay }} hours</li>
                   <li><strong>WFH Attendance Hours:</strong> {{ $wfhAttendanceHours }} hours</li>
@@ -190,7 +190,7 @@
               <!-- Submit Button -->
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti ti-device-floppy me-1"></i>Save Settings
+                  <i class="ti tabler-device-floppy me-1"></i>Save Settings
                 </button>
               </div>
             </form>

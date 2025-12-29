@@ -14,41 +14,41 @@
                 <div class="d-flex gap-2">
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical me-1"></i>Actions
+                            <i class="ti tabler-dots-vertical me-1"></i>Actions
                         </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="{{ route('invoicing.sequences.edit', $invoiceSequence) }}">
-                                    <i class="ti ti-edit me-2"></i>Edit Sequence
+                                    <i class="ti tabler-edit me-2"></i>Edit Sequence
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="#" onclick="toggleSequence({{ $invoiceSequence->id }})">
                                     @if($invoiceSequence->is_active)
-                                        <i class="ti ti-pause me-2"></i>Deactivate
+                                        <i class="ti tabler-pause me-2"></i>Deactivate
                                     @else
-                                        <i class="ti ti-play me-2"></i>Activate
+                                        <i class="ti tabler-play me-2"></i>Activate
                                     @endif
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item text-warning" href="#" onclick="resetSequence({{ $invoiceSequence->id }})">
-                                    <i class="ti ti-refresh me-2"></i>Reset Counter
+                                    <i class="ti tabler-refresh me-2"></i>Reset Counter
                                 </a>
                             </li>
                             @if($invoiceSequence->invoices->count() == 0)
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="deleteSequence({{ $invoiceSequence->id }})">
-                                        <i class="ti ti-trash me-2"></i>Delete Sequence
+                                        <i class="ti tabler-trash me-2"></i>Delete Sequence
                                     </a>
                                 </li>
                             @endif
                         </ul>
                     </div>
                     <a href="{{ route('invoicing.sequences.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Sequences
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Sequences
                     </a>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="badge bg-label-primary p-2 me-2 rounded">
-                                                <i class="ti ti-file-invoice ti-sm"></i>
+                                                <i class="ti tabler-file-invoice ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-end">
@@ -189,7 +189,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="badge bg-label-success p-2 me-2 rounded">
-                                                <i class="ti ti-check ti-sm"></i>
+                                                <i class="ti tabler-check ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-end">
@@ -206,7 +206,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="badge bg-label-warning p-2 me-2 rounded">
-                                                <i class="ti ti-clock ti-sm"></i>
+                                                <i class="ti tabler-clock ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-end">
@@ -223,7 +223,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="badge bg-label-info p-2 me-2 rounded">
-                                                <i class="ti ti-currency-dollar ti-sm"></i>
+                                                <i class="ti tabler-currency-dollar ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-end">

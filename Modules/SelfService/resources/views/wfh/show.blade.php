@@ -11,11 +11,11 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center">
             <a href="{{ route('self-service.wfh-requests.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-              <i class="ti ti-arrow-left"></i>
+              <i class="ti tabler-arrow-left"></i>
             </a>
             <div>
               <h5 class="mb-0">
-                <i class="ti ti-home me-2"></i>WFH Request Details
+                <i class="ti tabler-home me-2"></i>WFH Request Details
               </h5>
               <small class="text-muted">Request #{{ $wfh_request->id }}</small>
             </div>
@@ -37,14 +37,14 @@
 
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show">
-        <i class="ti ti-check me-2"></i>{{ session('success') }}
+        <i class="ti tabler-check me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show">
-        <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+        <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
@@ -52,7 +52,7 @@
     <!-- Request Details -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-info-circle me-2"></i>Request Information</h6>
+        <h6 class="mb-0"><i class="ti tabler-info-circle me-2"></i>Request Information</h6>
       </div>
       <div class="card-body">
         <div class="row">
@@ -75,14 +75,14 @@
     <!-- Approval Timeline -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-list-check me-2"></i>Approval Timeline</h6>
+        <h6 class="mb-0"><i class="ti tabler-list-check me-2"></i>Approval Timeline</h6>
       </div>
       <div class="card-body">
         <ul class="timeline">
           <!-- Submitted -->
           <li class="timeline-item">
             <span class="timeline-indicator timeline-indicator-success">
-              <i class="ti ti-send"></i>
+              <i class="ti tabler-send"></i>
             </span>
             <div class="timeline-event">
               <div class="timeline-header">
@@ -99,7 +99,7 @@
           <li class="timeline-item">
             @if($wfh_request->manager_approved_at)
               <span class="timeline-indicator timeline-indicator-success">
-                <i class="ti ti-check"></i>
+                <i class="ti tabler-check"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -112,7 +112,7 @@
               </div>
             @elseif($wfh_request->status === 'pending_manager')
               <span class="timeline-indicator timeline-indicator-warning">
-                <i class="ti ti-clock"></i>
+                <i class="ti tabler-clock"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -124,7 +124,7 @@
               </div>
             @elseif($wfh_request->status === 'rejected' && !$wfh_request->manager_approved_at)
               <span class="timeline-indicator timeline-indicator-danger">
-                <i class="ti ti-x"></i>
+                <i class="ti tabler-x"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -144,7 +144,7 @@
           <li class="timeline-item">
             @if($wfh_request->admin_approved_at)
               <span class="timeline-indicator timeline-indicator-success">
-                <i class="ti ti-check"></i>
+                <i class="ti tabler-check"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -157,7 +157,7 @@
               </div>
             @elseif($wfh_request->status === 'pending_admin')
               <span class="timeline-indicator timeline-indicator-warning">
-                <i class="ti ti-clock"></i>
+                <i class="ti tabler-clock"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -169,7 +169,7 @@
               </div>
             @elseif($wfh_request->status === 'rejected' && $wfh_request->manager_approved_at)
               <span class="timeline-indicator timeline-indicator-danger">
-                <i class="ti ti-x"></i>
+                <i class="ti tabler-x"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -188,7 +188,7 @@
           @if($wfh_request->status === 'cancelled')
           <li class="timeline-item">
             <span class="timeline-indicator timeline-indicator-secondary">
-              <i class="ti ti-ban"></i>
+              <i class="ti tabler-ban"></i>
             </span>
             <div class="timeline-event">
               <div class="timeline-header">
@@ -207,7 +207,7 @@
     <!-- Rejection Reason -->
     @if($wfh_request->status === 'rejected' && $wfh_request->rejection_reason)
     <div class="alert alert-danger">
-      <h6 class="alert-heading"><i class="ti ti-alert-circle me-2"></i>Rejection Reason</h6>
+      <h6 class="alert-heading"><i class="ti tabler-alert-circle me-2"></i>Rejection Reason</h6>
       <p class="mb-0">{{ $wfh_request->rejection_reason }}</p>
     </div>
     @endif
@@ -215,13 +215,13 @@
     <!-- Actions -->
     <div class="d-flex justify-content-between">
       <a href="{{ route('self-service.wfh-requests.index') }}" class="btn btn-outline-secondary">
-        <i class="ti ti-arrow-left me-1"></i>Back to List
+        <i class="ti tabler-arrow-left me-1"></i>Back to List
       </a>
       @if($wfh_request->canBeCancelled())
         <form action="{{ route('self-service.wfh-requests.cancel', $wfh_request) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this request?')">
           @csrf
           <button type="submit" class="btn btn-danger">
-            <i class="ti ti-x me-1"></i>Cancel Request
+            <i class="ti tabler-x me-1"></i>Cancel Request
           </button>
         </form>
       @endif

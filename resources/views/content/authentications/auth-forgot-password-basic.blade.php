@@ -57,7 +57,7 @@ $customizerHidden = 'customizer-hide';
           </form>
           <div class="text-center">
             <a href="{{url('auth/login-basic')}}" class="d-flex justify-content-center">
-              <i class="ti ti-chevron-left scaleX-n1-rtl me-1_5"></i>
+              <i class="ti tabler-chevron-left scaleX-n1-rtl me-1_5"></i>
               Back to login
             </a>
           </div>

@@ -53,10 +53,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.roles.show', $role) }}" class="btn btn-outline-info">
-                <i class="ti ti-eye me-2"></i>View Details
+                <i class="ti tabler-eye me-2"></i>View Details
             </a>
             <a href="{{ route('administration.roles.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-2"></i>Back to Roles
+                <i class="ti tabler-arrow-left me-2"></i>Back to Roles
             </a>
         </div>
     </div>
@@ -136,7 +136,7 @@
                                 <div class="category-header">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0">
-                                            <i class="ti ti-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
+                                            <i class="ti tabler-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
                                         </h6>
                                         <div>
                                             <button type="button" class="btn btn-xs btn-outline-primary category-select-all" data-category="{{ $category }}">
@@ -171,7 +171,7 @@
                             @endforeach
                         @else
                             <div class="text-center py-4">
-                                <i class="ti ti-key-off ti-3x text-muted mb-3"></i>
+                                <i class="ti tabler-key-off ti-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">No Permissions Available</h5>
                                 <p class="text-muted mb-0">No permissions have been created yet.</p>
                             </div>
@@ -188,7 +188,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="ti ti-shield me-2"></i>Role Preview
+                            <i class="ti tabler-shield me-2"></i>Role Preview
                         </h5>
                     </div>
                     <div class="card-body text-center">
@@ -207,7 +207,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="ti ti-users me-2"></i>Assigned Users
+                            <i class="ti tabler-users me-2"></i>Assigned Users
                         </h5>
                     </div>
                     <div class="card-body">
@@ -236,10 +236,10 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-device-floppy me-2"></i>Update Role
+                                <i class="ti tabler-device-floppy me-2"></i>Update Role
                             </button>
                             <a href="{{ route('administration.roles.show', $role) }}" class="btn btn-outline-secondary">
-                                <i class="ti ti-x me-2"></i>Cancel
+                                <i class="ti tabler-x me-2"></i>Cancel
                             </a>
                         </div>
                     </div>

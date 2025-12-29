@@ -40,7 +40,7 @@ $configData = Helper::appClasses();
   <div class="bs-stepper-header border-end">
     <div class="step" data-target="#deal-type">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-users ti-sm"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-users ti-sm"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Deal Type</span>
           <span class="bs-stepper-subtitle">Choose type of deal</span>
@@ -50,7 +50,7 @@ $configData = Helper::appClasses();
     <div class="line"></div>
     <div class="step" data-target="#deal-details">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-id ti-sm"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-id ti-sm"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Deal Details</span>
           <span class="bs-stepper-subtitle">Provide deal details</span>
@@ -60,7 +60,7 @@ $configData = Helper::appClasses();
     <div class="line"></div>
     <div class="step" data-target="#deal-usage">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-credit-card ti-sm"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-credit-card ti-sm"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Deal Usage</span>
           <span class="bs-stepper-subtitle">Limitations & Offers</span>
@@ -70,7 +70,7 @@ $configData = Helper::appClasses();
     <div class="line"></div>
     <div class="step" data-target="#review-complete">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-checkbox ti-sm"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-checkbox ti-sm"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Review & Complete</span>
           <span class="bs-stepper-subtitle">Launch a deal!</span>
@@ -159,10 +159,10 @@ $configData = Helper::appClasses();
             <div id="dealRegionHelp" class="form-text">Select applicable regions for the deal.</div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+            <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
               <span class="align-middle d-sm-inline-block d-none">Previous</span>
             </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -229,10 +229,10 @@ $configData = Helper::appClasses();
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
               <span class="align-middle d-sm-inline-block d-none">Previous</span>
             </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -288,10 +288,10 @@ $configData = Helper::appClasses();
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
               <span class="align-middle d-sm-inline-block d-none">Previous</span>
             </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -348,10 +348,10 @@ $configData = Helper::appClasses();
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
               <span class="align-middle d-sm-inline-block d-none">Previous</span>
             </button>
-            <button class="btn btn-success btn-submit btn-next"><span class="align-middle d-sm-inline-block d-none me-sm-2">Submit</span><i class="ti ti-check ti-xs"></i></button>
+            <button class="btn btn-success btn-submit btn-next"><span class="align-middle d-sm-inline-block d-none me-sm-2">Submit</span><i class="ti tabler-check ti-xs"></i></button>
           </div>
         </div>
       </div>

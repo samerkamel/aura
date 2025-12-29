@@ -9,17 +9,17 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-folder me-2"></i>Projects
+            <i class="ti tabler-folder me-2"></i>Projects
           </h5>
           <div class="d-flex gap-2">
             <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline">
               @csrf
               <button type="submit" class="btn btn-outline-primary btn-sm">
-                <i class="ti ti-refresh me-1"></i>Sync from Jira
+                <i class="ti tabler-refresh me-1"></i>Sync from Jira
               </button>
             </form>
             <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm">
-              <i class="ti ti-plus me-1"></i>Add Project
+              <i class="ti tabler-plus me-1"></i>Add Project
             </a>
           </div>
         </div>
@@ -75,10 +75,10 @@
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                   <button type="submit" class="btn btn-primary me-2">
-                    <i class="ti ti-filter me-1"></i>Filter
+                    <i class="ti tabler-filter me-1"></i>Filter
                   </button>
                   <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-x me-1"></i>Clear
+                    <i class="ti tabler-x me-1"></i>Clear
                   </a>
                 </div>
               </form>
@@ -110,7 +110,7 @@
                         {{ $project->name }}
                       </a>
                       @if($project->jira_project_id)
-                        <br><small class="text-muted"><i class="ti ti-brand-jira"></i> Jira ID: {{ $project->jira_project_id }}</small>
+                        <br><small class="text-muted"><i class="ti tabler-brand-jira"></i> Jira ID: {{ $project->jira_project_id }}</small>
                       @endif
                     </td>
                     <td>
@@ -128,9 +128,9 @@
                         @csrf
                         <button type="submit" class="btn btn-sm {{ $project->needs_monthly_report ? 'btn-success' : 'btn-outline-secondary' }}">
                           @if($project->needs_monthly_report)
-                            <i class="ti ti-check me-1"></i>Yes
+                            <i class="ti tabler-check me-1"></i>Yes
                           @else
-                            <i class="ti ti-x me-1"></i>No
+                            <i class="ti tabler-x me-1"></i>No
                           @endif
                         </button>
                       </form>
@@ -145,14 +145,14 @@
                     <td>
                       <div class="dropdown">
                         <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                          <i class="ti ti-dots-vertical"></i>
+                          <i class="ti tabler-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu">
                           <a class="dropdown-item" href="{{ route('projects.show', $project) }}">
-                            <i class="ti ti-eye me-1"></i> View
+                            <i class="ti tabler-eye me-1"></i> View
                           </a>
                           <a class="dropdown-item" href="{{ route('projects.edit', $project) }}">
-                            <i class="ti ti-pencil me-1"></i> Edit
+                            <i class="ti tabler-pencil me-1"></i> Edit
                           </a>
                           <div class="dropdown-divider"></div>
                           <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline"
@@ -160,7 +160,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">
-                              <i class="ti ti-trash me-1"></i> Delete
+                              <i class="ti tabler-trash me-1"></i> Delete
                             </button>
                           </form>
                         </div>
@@ -170,7 +170,7 @@
                 @empty
                   <tr>
                     <td colspan="7" class="text-center text-muted py-4">
-                      <i class="ti ti-folder-off me-2"></i>No projects found.
+                      <i class="ti tabler-folder-off me-2"></i>No projects found.
                       <a href="{{ route('projects.create') }}">Create one</a> or
                       <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline">
                         @csrf

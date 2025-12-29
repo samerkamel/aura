@@ -9,14 +9,14 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-rules me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-rules me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Attendance Rules</h5>
             <small class="text-muted">Manage attendance rules and policies</small>
           </div>
         </div>
         <a href="{{ route('attendance.rules.create') }}" class="btn btn-primary">
-          <i class="ti ti-plus me-1"></i>Create Rule
+          <i class="ti tabler-plus me-1"></i>Create Rule
         </a>
       </div>
     </div>
@@ -24,7 +24,7 @@
     <!-- Success Message -->
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="ti ti-check me-1"></i>
+        <i class="ti tabler-check me-1"></i>
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -36,10 +36,10 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">
-              <i class="ti ti-clock me-2"></i>Flexible Hours Rules
+              <i class="ti tabler-clock me-2"></i>Flexible Hours Rules
             </h6>
             <a href="{{ route('attendance.rules.create') }}" class="btn btn-sm btn-outline-primary">
-              <i class="ti ti-plus me-1"></i>Add Flexible Hours
+              <i class="ti tabler-plus me-1"></i>Add Flexible Hours
             </a>
           </div>
           <div class="card-body">
@@ -66,7 +66,7 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <i class="ti ti-clock me-2 text-info"></i>
+                            <i class="ti tabler-clock me-2 text-info"></i>
                             <span>{{ $rule->config['from'] ?? 'N/A' }} - {{ $rule->config['to'] ?? 'N/A' }}</span>
                           </div>
                         </td>
@@ -78,7 +78,7 @@
                         <td>
                           <a href="{{ route('attendance.rules.create') }}"
                              class="btn btn-sm btn-outline-primary">
-                            <i class="ti ti-edit me-1"></i>Edit
+                            <i class="ti tabler-edit me-1"></i>Edit
                           </a>
                         </td>
                       </tr>
@@ -89,11 +89,11 @@
             @else
               <div class="text-center py-4">
                 <div class="mb-3">
-                  <i class="ti ti-clock text-muted" style="font-size: 2rem;"></i>
+                  <i class="ti tabler-clock text-muted" style="font-size: 2rem;"></i>
                 </div>
                 <p class="text-muted mb-3">No flexible hours rules configured yet.</p>
                 <a href="{{ route('attendance.rules.create') }}" class="btn btn-primary btn-sm">
-                  <i class="ti ti-plus me-1"></i>Create Flexible Hours Rule
+                  <i class="ti tabler-plus me-1"></i>Create Flexible Hours Rule
                 </a>
               </div>
             @endif
@@ -108,10 +108,10 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">
-              <i class="ti ti-alert-triangle me-2"></i>Late-in Penalties
+              <i class="ti tabler-alert-triangle me-2"></i>Late-in Penalties
             </h6>
             <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addPenaltyModal">
-              <i class="ti ti-plus me-1"></i>Add Penalty Rule
+              <i class="ti tabler-plus me-1"></i>Add Penalty Rule
             </button>
           </div>
           <div class="card-body">
@@ -139,13 +139,13 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <i class="ti ti-clock-hour-4 me-2 text-warning"></i>
+                            <i class="ti tabler-clock-hour-4 me-2 text-warning"></i>
                             <span>{{ $rule->config['late_minutes'] ?? 'N/A' }} minutes</span>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <i class="ti ti-minus me-2 text-danger"></i>
+                            <i class="ti tabler-minus me-2 text-danger"></i>
                             <span>{{ $rule->config['penalty_minutes'] ?? 'N/A' }} minutes</span>
                           </div>
                         </td>
@@ -161,7 +161,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                              <i class="ti ti-trash me-1"></i>Delete
+                              <i class="ti tabler-trash me-1"></i>Delete
                             </button>
                           </form>
                         </td>
@@ -173,11 +173,11 @@
             @else
               <div class="text-center py-4">
                 <div class="mb-3">
-                  <i class="ti ti-alert-triangle text-muted" style="font-size: 2rem;"></i>
+                  <i class="ti tabler-alert-triangle text-muted" style="font-size: 2rem;"></i>
                 </div>
                 <p class="text-muted mb-3">No late penalty rules configured yet.</p>
                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#addPenaltyModal">
-                  <i class="ti ti-plus me-1"></i>Create First Penalty Rule
+                  <i class="ti tabler-plus me-1"></i>Create First Penalty Rule
                 </button>
               </div>
             @endif
@@ -192,7 +192,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-user-check me-2"></i>Employee Permissions
+              <i class="ti tabler-user-check me-2"></i>Employee Permissions
             </h6>
           </div>
           <div class="card-body">
@@ -244,18 +244,18 @@
               </div>
 
               <div class="alert alert-info">
-                <i class="ti ti-info-circle me-2"></i>
+                <i class="ti tabler-info-circle me-2"></i>
                 <strong>Example:</strong> Allow 2 permissions per month, each lasting 60 minutes. This time will not be treated as a penalty.
               </div>
 
               <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">
-                  <i class="ti ti-device-floppy me-1"></i>
+                  <i class="ti tabler-device-floppy me-1"></i>
                   {{ $permissionRule ? 'Update Configuration' : 'Save Configuration' }}
                 </button>
                 @if($permissionRule)
                   <span class="text-muted align-self-center">
-                    <i class="ti ti-info-circle me-1"></i>Last updated: {{ $permissionRule->updated_at->format('M d, Y H:i') }}
+                    <i class="ti tabler-info-circle me-1"></i>Last updated: {{ $permissionRule->updated_at->format('M d, Y H:i') }}
                   </span>
                 @endif
               </div>
@@ -271,7 +271,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-home-2 me-2"></i>Work-From-Home (WFH) Policy
+              <i class="ti tabler-home-2 me-2"></i>Work-From-Home (WFH) Policy
             </h6>
           </div>
           <div class="card-body">
@@ -323,18 +323,18 @@
               </div>
 
               <div class="alert alert-info">
-                <i class="ti ti-info-circle me-2"></i>
+                <i class="ti tabler-info-circle me-2"></i>
                 <strong>Example:</strong> Allow 5 WFH days per month, each counting as 80% attendance. A WFH day will contribute 80% to the employee's total attendance score.
               </div>
 
               <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">
-                  <i class="ti ti-device-floppy me-1"></i>
+                  <i class="ti tabler-device-floppy me-1"></i>
                   {{ $wfhRule ? 'Update WFH Policy' : 'Save WFH Policy' }}
                 </button>
                 @if($wfhRule)
                   <span class="text-muted align-self-center">
-                    <i class="ti ti-info-circle me-1"></i>Last updated: {{ $wfhRule->updated_at->format('M d, Y H:i') }}
+                    <i class="ti tabler-info-circle me-1"></i>Last updated: {{ $wfhRule->updated_at->format('M d, Y H:i') }}
                   </span>
                 @endif
               </div>
@@ -357,7 +357,7 @@
 
         <div class="modal-header">
           <h5 class="modal-title" id="addPenaltyModalLabel">
-            <i class="ti ti-alert-triangle me-2"></i>Add Late Penalty Rule
+            <i class="ti tabler-alert-triangle me-2"></i>Add Late Penalty Rule
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -415,7 +415,7 @@
           </div>
 
           <div class="alert alert-info">
-            <i class="ti ti-info-circle me-2"></i>
+            <i class="ti tabler-info-circle me-2"></i>
             <strong>Example:</strong> If an employee is late by 15 minutes, deduct 30 minutes from their attendance.
           </div>
         </div>
@@ -423,7 +423,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-danger">
-            <i class="ti ti-plus me-1"></i>Add Penalty Rule
+            <i class="ti tabler-plus me-1"></i>Add Penalty Rule
           </button>
         </div>
       </form>

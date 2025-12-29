@@ -150,7 +150,7 @@ $configData = Helper::appClasses();
             <div class="d-grid mt-5">
               <button class="btn btn-success">
                 <span class="me-2">Proceed with Payment</span>
-                <i class="ti ti-arrow-right scaleX-n1-rtl"></i>
+                <i class="ti tabler-arrow-right scaleX-n1-rtl"></i>
               </button>
             </div>
 

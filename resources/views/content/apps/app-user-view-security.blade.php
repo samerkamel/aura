@@ -55,7 +55,7 @@
           <div class="d-flex align-items-center me-5 gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti ti-checkbox ti-lg'></i>
+                <i class='ti tabler-checkbox ti-lg'></i>
               </div>
             </div>
             <div>
@@ -66,7 +66,7 @@
           <div class="d-flex align-items-center gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti ti-briefcase ti-lg'></i>
+                <i class='ti tabler-briefcase ti-lg'></i>
               </div>
             </div>
             <div>
@@ -131,9 +131,9 @@
           </div>
         </div>
         <ul class="list-unstyled g-2 my-6">
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mb-1">
           <span class="h6 mb-0">Days</span>
@@ -158,11 +158,11 @@
     <!-- User Pills -->
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 row-gap-2">
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/account')}}"><i class="ti ti-user-check me-1_5 ti-sm"></i>Account</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti ti-lock me-1_5 ti-sm"></i>Security</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/billing')}}"><i class="ti ti-bookmark me-1_5 ti-sm"></i>Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti ti-bell me-1_5 ti-sm"></i>Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti ti-link me-1_5 ti-sm"></i>Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/account')}}"><i class="ti tabler-user-check me-1_5 ti-sm"></i>Account</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti tabler-lock me-1_5 ti-sm"></i>Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/billing')}}"><i class="ti tabler-bookmark me-1_5 ti-sm"></i>Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti tabler-bell me-1_5 ti-sm"></i>Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti tabler-link me-1_5 ti-sm"></i>Connections</a></li>
       </ul>
     </div>
     <!--/ User Pills -->
@@ -182,7 +182,7 @@
               <label class="form-label" for="newPassword">New Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" id="newPassword" name="newPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
 
@@ -190,7 +190,7 @@
               <label class="form-label" for="confirmPassword">Confirm New Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
             <div>
@@ -213,8 +213,8 @@
         <div class="mb-4">
           <div class="d-flex w-100 action-icons">
             <input id="defaultInput" class="form-control me-4" type="text" placeholder="+1(968) 945-8832">
-            <a href="javascript:;" class="btn btn-icon btn-text-secondary" data-bs-target="#enableOTP" data-bs-toggle="modal"><i class="ti ti-edit ti-md"></i></a>
-            <a href="javascript:;" class="btn btn-icon btn-text-secondary"><i class="ti ti-trash ti-md"></i></a>
+            <a href="javascript:;" class="btn btn-icon btn-text-secondary" data-bs-target="#enableOTP" data-bs-toggle="modal"><i class="ti tabler-edit ti-md"></i></a>
+            <a href="javascript:;" class="btn btn-icon btn-text-secondary"><i class="ti tabler-trash ti-md"></i></a>
           </div>
         </div>
         <p class="mb-0">Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in.
@@ -239,25 +239,25 @@
           </thead>
           <tbody>
             <tr>
-              <td class="text-truncate"><i class='ti ti-brand-windows ti-md text-info me-4'></i> <span class="text-heading">Chrome on Windows</span></td>
+              <td class="text-truncate"><i class='ti tabler-brand-windows ti-md text-info me-4'></i> <span class="text-heading">Chrome on Windows</span></td>
               <td class="text-truncate">HP Spectre 360</td>
               <td class="text-truncate">Switzerland</td>
               <td class="text-truncate">10, July 2021 20:07</td>
             </tr>
             <tr>
-              <td class="text-truncate"><i class='ti ti-device-mobile ti-md text-danger me-4'></i> <span class="text-heading">Chrome on iPhone</span></td>
+              <td class="text-truncate"><i class='ti tabler-device-mobile ti-md text-danger me-4'></i> <span class="text-heading">Chrome on iPhone</span></td>
               <td class="text-truncate">iPhone 12x</td>
               <td class="text-truncate">Australia</td>
               <td class="text-truncate">13, July 2021 10:10</td>
             </tr>
             <tr>
-              <td class="text-truncate"><i class='ti ti-brand-android ti-md text-success me-4'></i> <span class="text-heading">Chrome on Android</span></td>
+              <td class="text-truncate"><i class='ti tabler-brand-android ti-md text-success me-4'></i> <span class="text-heading">Chrome on Android</span></td>
               <td class="text-truncate">Oneplus 9 Pro</td>
               <td class="text-truncate">Dubai</td>
               <td class="text-truncate">14, July 2021 15:15</td>
             </tr>
             <tr>
-              <td class="text-truncate"><i class='ti ti-brand-apple ti-md me-4'></i> <span class="text-heading">Chrome on MacOS</span></td>
+              <td class="text-truncate"><i class='ti tabler-brand-apple ti-md me-4'></i> <span class="text-heading">Chrome on MacOS</span></td>
               <td class="text-truncate">Apple iMac</td>
               <td class="text-truncate">India</td>
               <td class="text-truncate">16, July 2021 16:17</td>

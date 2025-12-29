@@ -21,10 +21,10 @@
                         </select>
                     </form>
                     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#copyBudgetsModal">
-                        <i class="ti ti-copy me-1"></i>Copy from Year
+                        <i class="ti tabler-copy me-1"></i>Copy from Year
                     </button>
                     <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Categories
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Categories
                     </a>
                 </div>
             </div>
@@ -45,7 +45,7 @@
 
             <div class="card-body">
                 <div class="alert alert-info mb-3">
-                    <i class="ti ti-info-circle me-2"></i>
+                    <i class="ti tabler-info-circle me-2"></i>
                     <strong>Two-Tier Budget System:</strong>
                     <ul class="mb-0 mt-2">
                         <li><strong>Tier 1 (Total Revenue):</strong> Budget percentage is calculated from total monthly revenue (e.g., VAT, Cost of Sales). Total: {{ \Modules\Accounting\Models\ExpenseCategoryBudget::TIER1_PERCENTAGE }}%</li>
@@ -154,7 +154,7 @@
                                                 data-calculation-base="{{ $budget->calculation_base }}"
                                                 data-budget-notes="{{ $budget->notes }}"
                                                 title="Edit Budget">
-                                            <i class="ti ti-edit"></i>
+                                            <i class="ti tabler-edit"></i>
                                         </button>
                                         <form action="{{ route('accounting.expenses.categories.budgets.destroy', [$category, $budget]) }}"
                                               method="POST" class="d-inline">
@@ -163,7 +163,7 @@
                                             <button type="submit" class="btn btn-sm btn-icon btn-outline-danger"
                                                     title="Delete Budget"
                                                     onclick="return confirm('Are you sure you want to delete this budget?')">
-                                                <i class="ti ti-trash"></i>
+                                                <i class="ti tabler-trash"></i>
                                             </button>
                                         </form>
                                     @else
@@ -172,7 +172,7 @@
                                                 data-bs-target="#addBudgetModal"
                                                 data-category-id="{{ $category->id }}"
                                                 data-category-name="{{ $category->name }}">
-                                            <i class="ti ti-plus me-1"></i>Set Budget
+                                            <i class="ti tabler-plus me-1"></i>Set Budget
                                         </button>
                                     @endif
                                 </td>
@@ -181,11 +181,11 @@
                             <tr>
                                 <td colspan="8" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti tabler-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No main categories found</h5>
                                         <p class="text-muted">Create main expense categories first to set budgets</p>
                                         <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-primary">
-                                            <i class="ti ti-plus me-1"></i>Manage Categories
+                                            <i class="ti tabler-plus me-1"></i>Manage Categories
                                         </a>
                                     </div>
                                 </td>
@@ -329,7 +329,7 @@
                 @csrf
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <i class="ti ti-info-circle me-2"></i>
+                        <i class="ti tabler-info-circle me-2"></i>
                         Copy all budget percentages from a source year to a target year. Existing budgets in the target year will be skipped.
                     </div>
 
@@ -358,7 +358,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-copy me-1"></i>Copy Budgets
+                        <i class="ti tabler-copy me-1"></i>Copy Budgets
                     </button>
                 </div>
             </form>

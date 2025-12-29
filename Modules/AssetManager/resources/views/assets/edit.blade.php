@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-edit me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-edit me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Edit Asset</h5>
             <small class="text-muted">Update asset information</small>
@@ -17,10 +17,10 @@
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('assetmanager.assets.show', $asset) }}" class="btn btn-outline-info">
-            <i class="ti ti-eye me-1"></i>View Details
+            <i class="ti tabler-eye me-1"></i>View Details
           </a>
           <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Assets
+            <i class="ti tabler-arrow-left me-1"></i>Back to Assets
           </a>
         </div>
       </div>
@@ -30,7 +30,7 @@
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti ti-info-circle me-2"></i>Asset Information
+          <i class="ti tabler-info-circle me-2"></i>Asset Information
         </h6>
       </div>
       <div class="card-body">
@@ -85,7 +85,7 @@
               </select>
               @if($asset->isAssigned())
                 <div class="form-text text-warning">
-                  <i class="ti ti-alert-triangle me-1"></i>
+                  <i class="ti tabler-alert-triangle me-1"></i>
                   This asset is currently assigned. Changing status may affect the assignment.
                 </div>
               @endif
@@ -141,7 +141,7 @@
             <div class="row">
               <div class="col-12 mb-3">
                 <div class="alert alert-info">
-                  <i class="ti ti-info-circle me-2"></i>
+                  <i class="ti tabler-info-circle me-2"></i>
                   <strong>Current Assignment:</strong>
                   This asset is currently assigned to
                   <strong>{{ $asset->currentEmployee->first()->name }}</strong>
@@ -157,10 +157,10 @@
               <hr class="my-4">
               <div class="d-flex justify-content-between">
                 <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti ti-x me-1"></i>Cancel
+                  <i class="ti tabler-x me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti ti-check me-1"></i>Update Asset
+                  <i class="ti tabler-check me-1"></i>Update Asset
                 </button>
               </div>
             </div>

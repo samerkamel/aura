@@ -34,7 +34,7 @@
             </nav>
         </div>
         <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-2"></i>Back to Products
+            <i class="ti tabler-arrow-left me-2"></i>Back to Products
         </a>
     </div>
 
@@ -131,7 +131,7 @@
                             <!-- Annual Budget Section -->
                             <div class="col-12">
                                 <hr class="my-3">
-                                <h6 class="mb-3"><i class="ti ti-calendar-dollar me-2"></i>Annual Budget</h6>
+                                <h6 class="mb-3"><i class="ti tabler-calendar-dollar me-2"></i>Annual Budget</h6>
                             </div>
 
                             <!-- Budget Year -->
@@ -199,10 +199,10 @@
                         <div class="pt-4 border-top mt-4">
                             <div class="d-flex justify-content-end gap-3">
                                 <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
-                                    <i class="ti ti-x me-1"></i>Cancel
+                                    <i class="ti tabler-x me-1"></i>Cancel
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy me-1"></i>Create Product
+                                    <i class="ti tabler-device-floppy me-1"></i>Create Product
                                 </button>
                             </div>
                         </div>
@@ -216,7 +216,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="ti ti-info-circle me-2"></i>Information
+                        <i class="ti tabler-info-circle me-2"></i>Information
                     </h5>
                 </div>
                 <div class="card-body">
@@ -230,7 +230,7 @@
                         </ul>
                     </div>
                     <div class="alert alert-warning mt-3">
-                        <h6><i class="ti ti-calendar-dollar me-1"></i>Annual Budget</h6>
+                        <h6><i class="ti tabler-calendar-dollar me-1"></i>Annual Budget</h6>
                         <ul class="mb-0 ps-3">
                             <li>Budgets are tracked per year</li>
                             <li>You can add budgets for different years after creation</li>

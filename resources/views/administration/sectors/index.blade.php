@@ -13,10 +13,10 @@ $configData = Helper::appClasses();
     <div class="card">
       <div class="card-header border-bottom d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti ti-world me-2"></i>Sectors Management
+          <i class="ti tabler-world me-2"></i>Sectors Management
         </h5>
         <a href="{{ route('administration.sectors.create') }}" class="btn btn-primary">
-          <i class="ti ti-plus me-1"></i>Create Sector
+          <i class="ti tabler-plus me-1"></i>Create Sector
         </a>
       </div>
 
@@ -53,7 +53,7 @@ $configData = Helper::appClasses();
                     <div class="d-flex align-items-center">
                       <div class="avatar avatar-sm me-2">
                         <span class="avatar-initial rounded-circle bg-label-primary">
-                          <i class="ti ti-world ti-sm"></i>
+                          <i class="ti tabler-world ti-sm"></i>
                         </span>
                       </div>
                       <div>
@@ -96,19 +96,19 @@ $configData = Helper::appClasses();
                       <ul class="dropdown-menu">
                         <li>
                           <a class="dropdown-item" href="{{ route('administration.sectors.show', $sector) }}">
-                            <i class="ti ti-eye me-1"></i>View Details
+                            <i class="ti tabler-eye me-1"></i>View Details
                           </a>
                         </li>
                         <li>
                           <a class="dropdown-item" href="{{ route('administration.sectors.edit', $sector) }}">
-                            <i class="ti ti-edit me-1"></i>Edit
+                            <i class="ti tabler-edit me-1"></i>Edit
                           </a>
                         </li>
                         @if($sector->business_units_count == 0)
                           <li><hr class="dropdown-divider"></li>
                           <li>
                             <a class="dropdown-item text-danger" href="#" onclick="deleteSector({{ $sector->id }})">
-                              <i class="ti ti-trash me-1"></i>Delete
+                              <i class="ti tabler-trash me-1"></i>Delete
                             </a>
                           </li>
                         @endif
@@ -120,11 +120,11 @@ $configData = Helper::appClasses();
                 <tr>
                   <td colspan="5" class="text-center py-5">
                     <div class="d-flex flex-column align-items-center">
-                      <i class="ti ti-world text-muted mb-3" style="font-size: 4rem;"></i>
+                      <i class="ti tabler-world text-muted mb-3" style="font-size: 4rem;"></i>
                       <h5>No Sectors Found</h5>
                       <p class="text-muted">Create your first sector to organize business units</p>
                       <a href="{{ route('administration.sectors.create') }}" class="btn btn-primary">
-                        <i class="ti ti-plus me-1"></i>Create Sector
+                        <i class="ti tabler-plus me-1"></i>Create Sector
                       </a>
                     </div>
                   </td>

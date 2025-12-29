@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-eye me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-eye me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">{{ $asset->name }}</h5>
             <small class="text-muted">Asset Details</small>
@@ -17,10 +17,10 @@
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('assetmanager.assets.edit', $asset) }}" class="btn btn-outline-primary">
-            <i class="ti ti-edit me-1"></i>Edit Asset
+            <i class="ti tabler-edit me-1"></i>Edit Asset
           </a>
           <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Assets
+            <i class="ti tabler-arrow-left me-1"></i>Back to Assets
           </a>
         </div>
       </div>
@@ -32,7 +32,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-info-circle me-2"></i>Asset Information
+              <i class="ti tabler-info-circle me-2"></i>Asset Information
             </h6>
           </div>
           <div class="card-body">
@@ -106,7 +106,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-history me-2"></i>Assignment History
+              <i class="ti tabler-history me-2"></i>Assignment History
             </h6>
           </div>
           <div class="card-body">
@@ -127,7 +127,7 @@
                       <tr class="{{ is_null($employee->pivot->returned_date) ? 'table-active' : '' }}">
                         <td>
                           <div class="d-flex align-items-center">
-                            <i class="ti ti-user me-2 text-primary"></i>
+                            <i class="ti tabler-user me-2 text-primary"></i>
                             <span>{{ $employee->name }}</span>
                             @if(is_null($employee->pivot->returned_date))
                               <span class="badge bg-label-success ms-2">Current</span>
@@ -171,7 +171,7 @@
             @else
               <div class="text-center py-4">
                 <div class="mb-3">
-                  <i class="ti ti-history text-muted" style="font-size: 2rem;"></i>
+                  <i class="ti tabler-history text-muted" style="font-size: 2rem;"></i>
                 </div>
                 <p class="text-muted mb-0">No assignment history yet.</p>
                 <small class="text-muted">This asset has never been assigned to an employee.</small>
@@ -189,7 +189,7 @@
           <div class="card mb-4">
             <div class="card-header">
               <h6 class="mb-0">
-                <i class="ti ti-user-check me-2"></i>Current Assignment
+                <i class="ti tabler-user-check me-2"></i>Current Assignment
               </h6>
             </div>
             <div class="card-body">
@@ -222,7 +222,7 @@
                       data-asset-id="{{ $asset->id }}" data-asset-name="{{ $asset->name }}"
                       data-employee-id="{{ $currentEmployee->id }}"
                       data-employee-name="{{ $currentEmployee->name }}">
-                <i class="ti ti-user-minus me-1"></i>Return Asset
+                <i class="ti tabler-user-minus me-1"></i>Return Asset
               </button>
             </div>
           </div>
@@ -232,7 +232,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-bolt me-2"></i>Quick Actions
+              <i class="ti tabler-bolt me-2"></i>Quick Actions
             </h6>
           </div>
           <div class="card-body">
@@ -241,23 +241,23 @@
                 <button type="button" class="btn btn-outline-primary"
                         data-bs-toggle="modal" data-bs-target="#assignModal"
                         data-asset-id="{{ $asset->id }}" data-asset-name="{{ $asset->name }}">
-                  <i class="ti ti-user-plus me-1"></i>Assign to Employee
+                  <i class="ti tabler-user-plus me-1"></i>Assign to Employee
                 </button>
               @endif
 
               <a href="{{ route('assetmanager.assets.edit', $asset) }}" class="btn btn-outline-info">
-                <i class="ti ti-edit me-1"></i>Edit Asset
+                <i class="ti tabler-edit me-1"></i>Edit Asset
               </a>
 
               @if(!$asset->isAssigned())
                 <button type="button" class="btn btn-outline-danger"
                         data-bs-toggle="modal" data-bs-target="#deleteModal"
                         data-asset-id="{{ $asset->id }}" data-asset-name="{{ $asset->name }}">
-                  <i class="ti ti-trash me-1"></i>Delete Asset
+                  <i class="ti tabler-trash me-1"></i>Delete Asset
                 </button>
               @else
                 <button type="button" class="btn btn-outline-danger" disabled>
-                  <i class="ti ti-trash me-1"></i>Cannot Delete (Assigned)
+                  <i class="ti tabler-trash me-1"></i>Cannot Delete (Assigned)
                 </button>
               @endif
             </div>
@@ -268,7 +268,7 @@
         <div class="card">
           <div class="card-header">
             <h6 class="mb-0">
-              <i class="ti ti-clock me-2"></i>Asset Timeline
+              <i class="ti tabler-clock me-2"></i>Asset Timeline
             </h6>
           </div>
           <div class="card-body">
@@ -434,7 +434,7 @@
       </div>
       <div class="modal-body">
         <div class="text-center">
-          <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
+          <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
           <h6 class="mt-3 mb-2">Are you sure?</h6>
           <p class="text-muted mb-3">
             You are about to delete the asset "<span id="delete_asset_name" class="fw-bold"></span>".

@@ -2,75 +2,75 @@
   "menu": [
     {
       "name": "Dashboards",
-      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "icon": "menu-icon tf-icons ti tabler-smart-home",
       "slug": "dashboard",
       "submenu": [
         {
           "url": "/",
-          "icon": "menu-icon tf-icons ti ti-chart-pie-2",
+          "icon": "menu-icon tf-icons ti tabler-chart-pie-2",
           "name": "Analytics",
           "slug": "dashboard-analytics"
         },
         {
           "url": "dashboard/crm",
           "name": "CRM",
-          "icon": "menu-icon tf-icons ti ti-3d-cube-sphere",
+          "icon": "menu-icon tf-icons ti tabler-3d-cube-sphere",
           "slug": "dashboard-crm"
         },
         {
           "url": "app/ecommerce/dashboard",
           "name": "eCommerce",
-          "icon": "menu-icon tf-icons ti ti-shopping-cart",
+          "icon": "menu-icon tf-icons ti tabler-shopping-cart",
           "slug": "app-ecommerce-dashboard"
         },
         {
           "url": "app/logistics/dashboard",
           "name": "Logistics",
-          "icon": "menu-icon tf-icons ti ti-truck",
+          "icon": "menu-icon tf-icons ti tabler-truck",
           "slug": "app-logistics-dashboard"
         },
         {
           "url": "app/academy/dashboard",
           "name": "Academy",
-          "icon": "menu-icon tf-icons ti ti-book",
+          "icon": "menu-icon tf-icons ti tabler-book",
           "slug": "app-academy-dashboard"
         }
       ]
     },
     {
       "name": "Layouts",
-      "icon": "menu-icon tf-icons ti ti-layout-sidebar",
+      "icon": "menu-icon tf-icons ti tabler-layout-sidebar",
       "slug": "layouts",
       "submenu": [
         {
           "url": "layouts/without-menu",
           "name": "Without menu",
-          "icon": "menu-icon tf-icons ti ti-menu-2",
+          "icon": "menu-icon tf-icons ti tabler-menu-2",
           "slug": "layouts-without-menu"
         },
         {
           "url": "layouts/vertical",
           "name": "Vertical",
-          "icon": "menu-icon tf-icons ti ti-layout-distribute-vertical",
+          "icon": "menu-icon tf-icons ti tabler-layout-distribute-vertical",
           "slug": "layouts-vertical",
           "target": "_blank"
         },
         {
           "url": "layouts/fluid",
           "name": "Fluid",
-          "icon": "menu-icon tf-icons ti ti-maximize",
+          "icon": "menu-icon tf-icons ti tabler-maximize",
           "slug": "layouts-fluid"
         },
         {
           "url": "layouts/container",
           "name": "Container",
-          "icon": "menu-icon tf-icons ti ti-arrows-maximize",
+          "icon": "menu-icon tf-icons ti tabler-arrows-maximize",
           "slug": "layouts-container"
         },
         {
           "url": "layouts/blank",
           "name": "Blank",
-          "icon": "menu-icon tf-icons ti ti-square",
+          "icon": "menu-icon tf-icons ti tabler-square",
           "slug": "layouts-blank",
           "target": "_blank"
         }
@@ -78,7 +78,7 @@
     },
     {
       "name": "Apps",
-      "icon": "menu-icon tf-icons ti ti-layout-grid-add",
+      "icon": "menu-icon tf-icons ti tabler-layout-grid-add",
       "slug": [
         "app",
         "laravel"
@@ -87,30 +87,30 @@
         {
           "url": "app/email",
           "name": "Email",
-          "icon": "menu-icon tf-icons ti ti-mail",
+          "icon": "menu-icon tf-icons ti tabler-mail",
           "slug": "app-email"
         },
         {
           "url": "app/chat",
           "name": "Chat",
-          "icon": "menu-icon tf-icons ti ti-messages",
+          "icon": "menu-icon tf-icons ti tabler-messages",
           "slug": "app-chat"
         },
         {
           "url": "app/calendar",
           "name": "Calendar",
-          "icon": "menu-icon tf-icons ti ti-calendar",
+          "icon": "menu-icon tf-icons ti tabler-calendar",
           "slug": "app-calendar"
         },
         {
           "url": "app/kanban",
           "name": "Kanban",
-          "icon": "menu-icon tf-icons ti ti-layout-kanban",
+          "icon": "menu-icon tf-icons ti tabler-layout-kanban",
           "slug": "app-kanban"
         },
         {
           "name": "Academy",
-          "icon": "menu-icon tf-icons ti ti-book",
+          "icon": "menu-icon tf-icons ti tabler-book",
           "slug": "app-academy",
           "submenu": [
             {
@@ -132,7 +132,7 @@
         },
         {
           "name": "Logistics",
-          "icon": "menu-icon tf-icons ti ti-truck",
+          "icon": "menu-icon tf-icons ti tabler-truck",
           "slug": "app-logistics",
           "submenu": [
             {
@@ -149,7 +149,7 @@
         },
         {
           "name": "Invoice",
-          "icon": "menu-icon tf-icons ti ti-file-dollar",
+          "icon": "menu-icon tf-icons ti tabler-file-dollar",
           "slug": "app-invoice",
           "submenu": [
             {
@@ -177,7 +177,7 @@
         {
           "name": "Users",
           "slug": "app-user",
-          "icon": "menu-icon tf-icons ti ti-users",
+          "icon": "menu-icon tf-icons ti tabler-users",
           "submenu": [
             {
               "url": "app/user/list",
@@ -219,7 +219,7 @@
         },
         {
           "name": "Roles & Permissions",
-          "icon": "menu-icon tf-icons ti ti-settings",
+          "icon": "menu-icon tf-icons ti tabler-settings",
           "slug": "app-access",
           "submenu": [
             {
@@ -236,7 +236,7 @@
         },
         {
           "name": "Laravel Example",
-          "icon": "menu-icon tf-icons ti ti-brand-php",
+          "icon": "menu-icon tf-icons ti tabler-brand-php",
           "slug": "laravel-example",
           "submenu": [
             {
@@ -250,7 +250,7 @@
     },
     {
       "name": "Pages",
-      "icon": "menu-icon tf-icons ti ti-file",
+      "icon": "menu-icon tf-icons ti tabler-file",
       "slug": [
         "pages",
         "auth",
@@ -260,7 +260,7 @@
       "submenu": [
         {
           "name": "Front Pages",
-          "icon": "menu-icon tf-icons ti ti-files",
+          "icon": "menu-icon tf-icons ti tabler-files",
           "slug": "front-pages",
           "submenu": [
             {
@@ -297,7 +297,7 @@
         },
         {
           "name": "User Profile",
-          "icon": "menu-icon tf-icons ti ti-user-circle",
+          "icon": "menu-icon tf-icons ti tabler-user-circle",
           "slug": "pages-profile",
           "submenu": [
             {
@@ -324,7 +324,7 @@
         },
         {
           "name": "Account Settings",
-          "icon": "menu-icon tf-icons ti ti-settings",
+          "icon": "menu-icon tf-icons ti tabler-settings",
           "slug": "pages-account-settings",
           "submenu": [
             {
@@ -357,18 +357,18 @@
         {
           "url": "pages/faq",
           "name": "FAQ",
-          "icon": "menu-icon tf-icons ti ti-help",
+          "icon": "menu-icon tf-icons ti tabler-help",
           "slug": "pages-faq"
         },
         {
           "url": "pages/pricing",
           "name": "Pricing",
-          "icon": "menu-icon tf-icons ti ti-diamond",
+          "icon": "menu-icon tf-icons ti tabler-diamond",
           "slug": "pages-pricing"
         },
         {
           "name": "Misc",
-          "icon": "menu-icon tf-icons ti ti-3d-cube-sphere",
+          "icon": "menu-icon tf-icons ti tabler-3d-cube-sphere",
           "slug": "pages-misc",
           "submenu": [
             {
@@ -399,7 +399,7 @@
         },
         {
           "name": "Authentications",
-          "icon": "menu-icon tf-icons ti ti-lock",
+          "icon": "menu-icon tf-icons ti tabler-lock",
           "slug": "auth",
           "submenu": [
             {
@@ -520,7 +520,7 @@
         },
         {
           "name": "Wizard Examples",
-          "icon": "menu-icon tf-icons ti ti-forms",
+          "icon": "menu-icon tf-icons ti tabler-forms",
           "slug": "wizard-ex",
           "submenu": [
             {
@@ -543,14 +543,14 @@
         {
           "url": "modal-examples",
           "name": "Modal Examples",
-          "icon": "menu-icon tf-icons ti ti-square",
+          "icon": "menu-icon tf-icons ti tabler-square",
           "slug": "modal-examples"
         }
       ]
     },
     {
       "name": "Components",
-      "icon": "menu-icon tf-icons ti ti-toggle-left",
+      "icon": "menu-icon tf-icons ti tabler-toggle-left",
       "slug": [
         "cards",
         "ui",
@@ -560,7 +560,7 @@
       "submenu": [
         {
           "name": "Cards",
-          "icon": "menu-icon tf-icons ti ti-id",
+          "icon": "menu-icon tf-icons ti tabler-id",
           "slug": "cards",
           "submenu": [
             {
@@ -592,7 +592,7 @@
         },
         {
           "name": "User interface",
-          "icon": "menu-icon tf-icons ti ti-color-swatch",
+          "icon": "menu-icon tf-icons ti tabler-color-swatch",
           "slug": "ui",
           "submenu": [
             {
@@ -694,7 +694,7 @@
         },
         {
           "name": "Extended UI",
-          "icon": "menu-icon tf-icons ti ti-components",
+          "icon": "menu-icon tf-icons ti tabler-components",
           "slug": "extended",
           "submenu": [
             {
@@ -772,7 +772,7 @@
         },
         {
           "name": "Icons",
-          "icon": "menu-icon tf-icons ti ti-brand-tabler",
+          "icon": "menu-icon tf-icons ti tabler-brand-tabler",
           "slug": "icons",
           "submenu": [
             {
@@ -791,7 +791,7 @@
     },
     {
       "name": "Forms",
-      "icon": "menu-icon tf-icons ti ti-forms",
+      "icon": "menu-icon tf-icons ti tabler-forms",
       "slug": [
         "forms",
         "form-layouts",
@@ -801,7 +801,7 @@
       "submenu": [
         {
           "name": "Form Elements",
-          "icon": "menu-icon tf-icons ti ti-toggle-left",
+          "icon": "menu-icon tf-icons ti tabler-toggle-left",
           "slug": "forms",
           "submenu": [
             {
@@ -858,7 +858,7 @@
         },
         {
           "name": "Form Layouts",
-          "icon": "menu-icon tf-icons ti ti-layout-navbar",
+          "icon": "menu-icon tf-icons ti tabler-layout-navbar",
           "slug": "form-layouts",
           "submenu": [
             {
@@ -880,7 +880,7 @@
         },
         {
           "name": "Form Wizard",
-          "icon": "menu-icon tf-icons ti ti-text-wrap-disabled",
+          "icon": "menu-icon tf-icons ti tabler-text-wrap-disabled",
           "slug": "form-wizard",
           "submenu": [
             {
@@ -898,14 +898,14 @@
         {
           "url": "form/validation",
           "name": "Form Validation",
-          "icon": "menu-icon tf-icons ti ti-checkbox",
+          "icon": "menu-icon tf-icons ti tabler-checkbox",
           "slug": "form-validation"
         }
       ]
     },
     {
       "name": "Tables",
-      "icon": "menu-icon tf-icons ti ti-layout-grid",
+      "icon": "menu-icon tf-icons ti tabler-layout-grid",
       "slug": [
         "tables",
         "tables-datatables"
@@ -914,12 +914,12 @@
         {
           "url": "tables/basic",
           "name": "Tables",
-          "icon": "menu-icon tf-icons ti ti-table",
+          "icon": "menu-icon tf-icons ti tabler-table",
           "slug": "tables-basic"
         },
         {
           "name": "Datatables",
-          "icon": "menu-icon tf-icons ti ti-layout-grid",
+          "icon": "menu-icon tf-icons ti tabler-layout-grid",
           "slug": "tables-datatables",
           "submenu": [
             {
@@ -943,7 +943,7 @@
     },
     {
       "name": "Charts & Maps",
-      "icon": "menu-icon tf-icons ti ti-chart-bar",
+      "icon": "menu-icon tf-icons ti tabler-chart-bar",
       "slug": [
         "charts",
         "maps"
@@ -951,7 +951,7 @@
       "submenu": [
         {
           "name": "Charts",
-          "icon": "menu-icon tf-icons ti ti-chart-pie",
+          "icon": "menu-icon tf-icons ti tabler-chart-pie",
           "slug": "charts",
           "submenu": [
             {
@@ -968,7 +968,7 @@
         },
         {
           "url": "maps/leaflet",
-          "icon": "menu-icon tf-icons ti ti-map",
+          "icon": "menu-icon tf-icons ti tabler-map",
           "name": "Leaflet Maps",
           "slug": "maps-leaflet"
         }

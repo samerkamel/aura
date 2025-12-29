@@ -830,10 +830,10 @@ $configData = Helper::appClasses();
                   </div>
                 </div>
                 <a class="carousel-control-prev" href="#modalCarouselControls" role="button" data-bs-slide="prev">
-                  <i class="ti ti-chevrons-left me-2"></i><span>Previous</span>
+                  <i class="ti tabler-chevrons-left me-2"></i><span>Previous</span>
                 </a>
                 <a class="carousel-control-next" href="#modalCarouselControls" role="button" data-bs-slide="next">
-                  <span>Next</span><i class="ti ti-chevrons-right ms-2"></i>
+                  <span>Next</span><i class="ti tabler-chevrons-right ms-2"></i>
                 </a>
               </div>
             </div>
@@ -1020,10 +1020,10 @@ $configData = Helper::appClasses();
                   </div>
                 </div>
                 <a class="carousel-control-prev" href="#modalHorizontalCarouselControls" role="button" data-bs-slide="prev">
-                  <i class="ti ti-chevrons-left me-2"></i><span>Previous</span>
+                  <i class="ti tabler-chevrons-left me-2"></i><span>Previous</span>
                 </a>
                 <a class="carousel-control-next" href="#modalHorizontalCarouselControls" role="button" data-bs-slide="next">
-                  <span>Next</span><i class="ti ti-chevrons-right ms-2"></i>
+                  <span>Next</span><i class="ti tabler-chevrons-right ms-2"></i>
                 </a>
               </div>
             </div>

@@ -44,17 +44,17 @@
               <h4 class="mb-2 mt-lg-6">John Doe</h4>
               <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-palette ti-lg'></i><span class="fw-medium">UX Designer</span>
+                  <i class='ti tabler-palette ti-lg'></i><span class="fw-medium">UX Designer</span>
                 </li>
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-map-pin ti-lg'></i><span class="fw-medium">Vatican City</span>
+                  <i class='ti tabler-map-pin ti-lg'></i><span class="fw-medium">Vatican City</span>
                 </li>
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-calendar ti-lg'></i><span class="fw-medium"> Joined April 2021</span></li>
+                  <i class='ti tabler-calendar ti-lg'></i><span class="fw-medium"> Joined April 2021</span></li>
               </ul>
             </div>
             <a href="javascript:void(0)" class="btn btn-primary mb-1">
-              <i class='ti ti-user-check ti-xs me-2'></i>Connected
+              <i class='ti tabler-user-check ti-xs me-2'></i>Connected
             </a>
           </div>
         </div>
@@ -69,10 +69,10 @@
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class='ti-sm ti ti-user-check me-1_5'></i> Profile</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-teams')}}"><i class='ti-sm ti ti-users me-1_5'></i> Teams</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-projects')}}"><i class='ti-sm ti ti-layout-grid me-1_5'></i> Projects</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-connections')}}"><i class='ti-sm ti ti-link me-1_5'></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class='ti-sm ti tabler-user-check me-1_5'></i> Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-teams')}}"><i class='ti-sm ti tabler-users me-1_5'></i> Teams</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-projects')}}"><i class='ti-sm ti tabler-layout-grid me-1_5'></i> Projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-connections')}}"><i class='ti-sm ti tabler-link me-1_5'></i> Connections</a></li>
       </ul>
     </div>
   </div>
@@ -87,17 +87,17 @@
       <div class="card-body">
         <small class="card-text text-uppercase text-muted small">About</small>
         <ul class="list-unstyled my-3 py-1">
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-user ti-lg"></i><span class="fw-medium mx-2">Full Name:</span> <span>John Doe</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-check ti-lg"></i><span class="fw-medium mx-2">Status:</span> <span>Active</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-crown ti-lg"></i><span class="fw-medium mx-2">Role:</span> <span>Developer</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-flag ti-lg"></i><span class="fw-medium mx-2">Country:</span> <span>USA</span></li>
-          <li class="d-flex align-items-center mb-2"><i class="ti ti-language ti-lg"></i><span class="fw-medium mx-2">Languages:</span> <span>English</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-user ti-lg"></i><span class="fw-medium mx-2">Full Name:</span> <span>John Doe</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-check ti-lg"></i><span class="fw-medium mx-2">Status:</span> <span>Active</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-crown ti-lg"></i><span class="fw-medium mx-2">Role:</span> <span>Developer</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-flag ti-lg"></i><span class="fw-medium mx-2">Country:</span> <span>USA</span></li>
+          <li class="d-flex align-items-center mb-2"><i class="ti tabler-language ti-lg"></i><span class="fw-medium mx-2">Languages:</span> <span>English</span></li>
         </ul>
         <small class="card-text text-uppercase text-muted small">Contacts</small>
         <ul class="list-unstyled my-3 py-1">
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-phone-call ti-lg"></i><span class="fw-medium mx-2">Contact:</span> <span>(123) 456-7890</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-messages ti-lg"></i><span class="fw-medium mx-2">Skype:</span> <span>john.doe</span></li>
-          <li class="d-flex align-items-center mb-4"><i class="ti ti-mail ti-lg"></i><span class="fw-medium mx-2">Email:</span> <span>john.doe@example.com</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-phone-call ti-lg"></i><span class="fw-medium mx-2">Contact:</span> <span>(123) 456-7890</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-messages ti-lg"></i><span class="fw-medium mx-2">Skype:</span> <span>john.doe</span></li>
+          <li class="d-flex align-items-center mb-4"><i class="ti tabler-mail ti-lg"></i><span class="fw-medium mx-2">Email:</span> <span>john.doe@example.com</span></li>
         </ul>
         <small class="card-text text-uppercase text-muted small">Teams</small>
         <ul class="list-unstyled mb-0 mt-3 pt-1">
@@ -114,9 +114,9 @@
       <div class="card-body">
         <small class="card-text text-uppercase text-muted small">Overview</small>
         <ul class="list-unstyled mb-0 mt-3 pt-1">
-          <li class="d-flex align-items-end mb-4"><i class="ti ti-check ti-lg"></i><span class="fw-medium mx-2">Task Compiled:</span> <span>13.5k</span></li>
-          <li class="d-flex align-items-end mb-4"><i class="ti ti-layout-grid ti-lg"></i><span class="fw-medium mx-2">Projects Compiled:</span> <span>146</span></li>
-          <li class="d-flex align-items-end"><i class="ti ti-users ti-lg"></i><span class="fw-medium mx-2">Connections:</span> <span>897</span></li>
+          <li class="d-flex align-items-end mb-4"><i class="ti tabler-check ti-lg"></i><span class="fw-medium mx-2">Task Compiled:</span> <span>13.5k</span></li>
+          <li class="d-flex align-items-end mb-4"><i class="ti tabler-layout-grid ti-lg"></i><span class="fw-medium mx-2">Projects Compiled:</span> <span>146</span></li>
+          <li class="d-flex align-items-end"><i class="ti tabler-users ti-lg"></i><span class="fw-medium mx-2">Connections:</span> <span>897</span></li>
         </ul>
       </div>
     </div>
@@ -126,7 +126,7 @@
     <!-- Activity Timeline -->
     <div class="card card-action mb-6">
       <div class="card-header align-items-center">
-        <h5 class="card-action-title mb-0"><i class='ti ti-chart-bar ti-lg text-body me-4'></i>Activity Timeline</h5>
+        <h5 class="card-action-title mb-0"><i class='ti tabler-chart-bar ti-lg text-body me-4'></i>Activity Timeline</h5>
       </div>
       <div class="card-body pt-3">
         <ul class="timeline mb-0">
@@ -215,7 +215,7 @@
             <h5 class="card-action-title mb-0">Connections</h5>
             <div class="card-action-element">
               <div class="dropdown">
-                <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 text-muted" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+                <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0 text-muted" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item" href="javascript:void(0);">Share connections</a></li>
                   <li><a class="dropdown-item" href="javascript:void(0);">Suggest edits</a></li>
@@ -241,7 +241,7 @@
                     </div>
                   </div>
                   <div class="ms-auto">
-                    <button class="btn btn-label-primary btn-icon"><i class="ti ti-user-check ti-md"></i></button>
+                    <button class="btn btn-label-primary btn-icon"><i class="ti tabler-user-check ti-md"></i></button>
                   </div>
                 </div>
               </li>
@@ -257,7 +257,7 @@
                     </div>
                   </div>
                   <div class="ms-auto">
-                    <button class="btn btn-primary btn-icon"><i class="ti ti-user-x ti-md"></i></button>
+                    <button class="btn btn-primary btn-icon"><i class="ti tabler-user-x ti-md"></i></button>
                   </div>
                 </div>
               </li>
@@ -273,7 +273,7 @@
                     </div>
                   </div>
                   <div class="ms-auto">
-                    <button class="btn btn-primary btn-icon"><i class="ti ti-user-x ti-md"></i></button>
+                    <button class="btn btn-primary btn-icon"><i class="ti tabler-user-x ti-md"></i></button>
                   </div>
                 </div>
               </li>
@@ -289,7 +289,7 @@
                     </div>
                   </div>
                   <div class="ms-auto">
-                    <button class="btn btn-label-primary btn-icon"><i class="ti ti-user-check ti-md"></i></button>
+                    <button class="btn btn-label-primary btn-icon"><i class="ti tabler-user-check ti-md"></i></button>
                   </div>
                 </div>
               <li class="mb-6">
@@ -304,7 +304,7 @@
                     </div>
                   </div>
                   <div class="ms-auto">
-                    <button class="btn btn-label-primary btn-icon"><i class="ti ti-user-check ti-md"></i></button>
+                    <button class="btn btn-label-primary btn-icon"><i class="ti tabler-user-check ti-md"></i></button>
                   </div>
                 </div>
               </li>
@@ -323,7 +323,7 @@
             <h5 class="card-action-title mb-0">Teams</h5>
             <div class="card-action-element">
               <div class="dropdown">
-                <button type="button" class="btn btn-icon btn-text-secondary dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical text-muted"></i></button>
+                <button type="button" class="btn btn-icon btn-text-secondary dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical text-muted"></i></button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item" href="javascript:void(0);">Share teams</a></li>
                   <li><a class="dropdown-item" href="javascript:void(0);">Suggest edits</a></li>

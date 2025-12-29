@@ -69,23 +69,23 @@
         <div class="demo-inline-spacing mt-4">
           <ul class="list-group">
             <li class="list-group-item d-flex align-items-center">
-              <i class="ti ti-device-tv ti-md me-3"></i>
+              <i class="ti tabler-device-tv ti-md me-3"></i>
               Soufflé pastry pie ice
             </li>
             <li class="list-group-item d-flex align-items-center">
-              <i class="ti ti-bell ti-md me-3"></i>
+              <i class="ti tabler-bell ti-md me-3"></i>
               Bear claw cake biscuit
             </li>
             <li class="list-group-item d-flex align-items-center">
-              <i class="ti ti-headphones ti-md me-3"></i>
+              <i class="ti tabler-headphones ti-md me-3"></i>
               Tart tiramisu cake
             </li>
             <li class="list-group-item d-flex align-items-center">
-              <i class="ti ti-bookmark ti-md me-3"></i>
+              <i class="ti tabler-bookmark ti-md me-3"></i>
               Bonbon toffee muffin
             </li>
             <li class="list-group-item d-flex align-items-center">
-              <i class="ti ti-paper-bag ti-md me-3"></i>
+              <i class="ti tabler-paper-bag ti-md me-3"></i>
               Dragée tootsie roll
             </li>
           </ul>
@@ -451,7 +451,7 @@
         <div class="demo-inline-spacing mt-4">
           <div class="list-group">
             <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex align-items-center p-4">
-              <div class="badge bg-primary rounded p-1 me-4"><i class="ti ti-brand-bootstrap ti-xl text-white"></i>
+              <div class="badge bg-primary rounded p-1 me-4"><i class="ti tabler-brand-bootstrap ti-xl text-white"></i>
             </div>
               <div class="w-100">
                 <h6 class="mb-2">Bootstrap is an open source toolkit</h6>
@@ -461,7 +461,7 @@
               </div>
             </a>
             <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex align-items-center p-4">
-              <div class="badge bg-success rounded p-1 me-4"><i class="ti ti-brand-vue ti-xl text-white"></i></div>
+              <div class="badge bg-success rounded p-1 me-4"><i class="ti tabler-brand-vue ti-xl text-white"></i></div>
               <div class="w-100">
                 <h6 class="mb-2">Vue.js is the Progressive JavaScript Framework</h6>
                 <div class="progress" style="height: 5px;">
@@ -470,7 +470,7 @@
               </div>
             </a>
             <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex align-items-center p-4">
-              <div class="badge bg-danger rounded p-1 me-4"><i class="ti ti-brand-angular ti-xl text-white"></i></div>
+              <div class="badge bg-danger rounded p-1 me-4"><i class="ti tabler-brand-angular ti-xl text-white"></i></div>
               <div class="w-100">
                 <h6 class="mb-2">Angular implements Functional Programming concepts</h6>
                 <div class="progress" style="height: 5px;">
@@ -479,7 +479,7 @@
               </div>
             </a>
             <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex align-items-center p-4">
-              <div class="badge bg-info rounded p-1 me-4"><i class="ti ti-brand-react-native ti-xl text-white"></i></div>
+              <div class="badge bg-info rounded p-1 me-4"><i class="ti tabler-brand-react-native ti-xl text-white"></i></div>
               <div class="w-100">
                 <h6 class="mb-2">List group item heading</h6>
                 <div class="progress" style="height: 5px;">
@@ -488,7 +488,7 @@
               </div>
             </a>
             <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex align-items-center p-4">
-              <div class="badge bg-warning rounded p-1 me-4"><i class="ti ti-brand-javascript ti-xl text-white"></i></div>
+              <div class="badge bg-warning rounded p-1 me-4"><i class="ti tabler-brand-javascript ti-xl text-white"></i></div>
               <div class="w-100">
                 <h6 class="mb-2">JavaScript, the most popular framework</h6>
                 <div class="progress" style="height: 5px;">

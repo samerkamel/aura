@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-success" onclick="window.print()">
-                        <i class="ti ti-printer me-1"></i>Print
+                        <i class="ti tabler-printer me-1"></i>Print
                     </button>
                     <a href="{{ route('accounting.income-sheet.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Income Sheet
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Income Sheet
                     </a>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="avatar avatar-sm mb-2">
                                             <span class="avatar-initial rounded-circle bg-label-info">
-                                                <i class="ti ti-package ti-sm"></i>
+                                                <i class="ti tabler-package ti-sm"></i>
                                             </span>
                                         </div>
                                         <div class="text-center">
@@ -139,11 +139,11 @@
                             <tr>
                                 <td colspan="15" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti ti-package-off display-6 text-muted mb-3"></i>
+                                        <i class="ti tabler-package-off display-6 text-muted mb-3"></i>
                                         <h5 class="text-muted">No Products Found</h5>
                                         <p class="text-muted mb-0">No products are configured for {{ $businessUnit->name }}.</p>
                                         <a href="{{ route('administration.products.index') }}" class="btn btn-outline-primary mt-3">
-                                            <i class="ti ti-plus me-1"></i>Add Products
+                                            <i class="ti tabler-plus me-1"></i>Add Products
                                         </a>
                                     </div>
                                 </td>

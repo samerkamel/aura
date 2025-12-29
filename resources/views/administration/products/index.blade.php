@@ -60,7 +60,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0">Product Management</h4>
         <a href="{{ route('administration.products.create') }}" class="btn btn-primary">
-            <i class="ti ti-plus me-2"></i>Create Product
+            <i class="ti tabler-plus me-2"></i>Create Product
         </a>
     </div>
 
@@ -68,7 +68,7 @@
     <div class="alert alert-{{ $selectedFiscalYear == $currentFiscalYear ? 'success' : 'warning' }} mb-4">
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-                <i class="ti ti-calendar-event ti-lg me-2"></i>
+                <i class="ti tabler-calendar-event ti-lg me-2"></i>
                 <div>
                     <h6 class="mb-0">Fiscal Year {{ $selectedFiscalYear }}</h6>
                     <small>{{ $statistics['fiscal_year_start']->format('M d, Y') }} - {{ $statistics['fiscal_year_end']->format('M d, Y') }}</small>
@@ -81,7 +81,7 @@
                 @if($selectedFiscalYear != $currentFiscalYear)
                     <a href="{{ route('administration.products.index', array_merge(request()->except('fiscal_year'), ['fiscal_year' => $currentFiscalYear])) }}"
                        class="btn btn-sm btn-success">
-                        <i class="ti ti-arrow-back me-1"></i>Current FY
+                        <i class="ti tabler-arrow-back me-1"></i>Current FY
                     </a>
                 @endif
             </div>
@@ -96,7 +96,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti ti-file-text ti-sm"></i>
+                                <i class="ti tabler-file-text ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -115,7 +115,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti ti-building-store ti-sm"></i>
+                                <i class="ti tabler-building-store ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -134,7 +134,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-info">
-                                <i class="ti ti-calendar ti-sm"></i>
+                                <i class="ti tabler-calendar ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -153,7 +153,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti ti-coin ti-sm"></i>
+                                <i class="ti tabler-coin ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -301,12 +301,12 @@
                                 <a href="{{ route('administration.products.show', $product) }}"
                                    class="btn btn-sm btn-icon btn-outline-primary"
                                    data-bs-toggle="tooltip" title="View Details">
-                                    <i class="ti ti-eye"></i>
+                                    <i class="ti tabler-eye"></i>
                                 </a>
                                 <a href="{{ route('administration.products.edit', $product) }}"
                                    class="btn btn-sm btn-icon btn-outline-info"
                                    data-bs-toggle="tooltip" title="Edit Product">
-                                    <i class="ti ti-edit"></i>
+                                    <i class="ti tabler-edit"></i>
                                 </a>
                                 <form method="POST" action="{{ route('administration.products.toggle-status', $product) }}" class="d-inline">
                                     @csrf
@@ -316,7 +316,7 @@
                                             data-bs-toggle="tooltip"
                                             title="{{ $product->is_active ? 'Deactivate' : 'Activate' }} Product"
                                             onclick="return confirm('Are you sure you want to {{ $product->is_active ? 'deactivate' : 'activate' }} this product?')">
-                                        <i class="ti ti-{{ $product->is_active ? 'toggle-right' : 'toggle-left' }}"></i>
+                                        <i class="ti tabler-{{ $product->is_active ? 'toggle-right' : 'toggle-left' }}"></i>
                                     </button>
                                 </form>
                                 @if($product->contracts->count() === 0)
@@ -327,7 +327,7 @@
                                             class="btn btn-sm btn-icon btn-outline-danger"
                                             data-bs-toggle="tooltip" title="Delete Product"
                                             onclick="return confirm('Are you sure you want to delete this product? This action cannot be undone.')">
-                                        <i class="ti ti-trash"></i>
+                                        <i class="ti tabler-trash"></i>
                                     </button>
                                 </form>
                                 @endif
@@ -338,7 +338,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-4">
                             <div class="text-muted">
-                                <i class="ti ti-building-off ti-3x mb-3 d-block"></i>
+                                <i class="ti tabler-building-off ti-3x mb-3 d-block"></i>
                                 <h5>No products found</h5>
                                 <p class="mb-0">No products match your current filters.</p>
                             </div>

@@ -154,7 +154,7 @@
                 </div>
                 <div class="mb-6 col-lg-12 col-xl-2 col-12 d-flex align-items-end mb-0">
                   <button class="btn btn-label-danger" data-repeater-delete>
-                    <i class="ti ti-x ti-xs me-1"></i>
+                    <i class="ti tabler-x ti-xs me-1"></i>
                     <span class="align-middle">Delete</span>
                   </button>
                 </div>
@@ -164,7 +164,7 @@
           </div>
           <div class="mb-0">
             <button class="btn btn-primary" data-repeater-create>
-              <i class="ti ti-plus ti-xs me-2"></i>
+              <i class="ti tabler-plus ti-xs me-2"></i>
               <span class="align-middle">Add</span>
             </button>
           </div>

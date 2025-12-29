@@ -16,10 +16,10 @@
           @endif
           <div class="btn-group">
             <a href="{{ route('letter-templates.edit', $letterTemplate) }}" class="btn btn-primary btn-sm">
-              <i class="ti ti-edit me-1"></i>Edit
+              <i class="ti tabler-edit me-1"></i>Edit
             </a>
             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
-              <i class="ti ti-trash me-1"></i>Delete
+              <i class="ti tabler-trash me-1"></i>Delete
             </button>
           </div>
         </div>
@@ -84,10 +84,10 @@
 
         <div class="d-flex justify-content-between">
           <a href="{{ route('letter-templates.index') }}" class="btn btn-outline-secondary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Templates
+            <i class="ti tabler-arrow-left me-1"></i>Back to Templates
           </a>
           <a href="{{ route('letter-templates.edit', $letterTemplate) }}" class="btn btn-primary">
-            <i class="ti ti-edit me-1"></i>Edit Template
+            <i class="ti tabler-edit me-1"></i>Edit Template
           </a>
         </div>
 

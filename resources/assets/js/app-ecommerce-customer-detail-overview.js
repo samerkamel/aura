@@ -93,7 +93,7 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="text-xxl-center">' +
-              '<button class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
+              '<button class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="javascript:;" class="dropdown-item">View</a>' +
               '<a href="javascript:;" class="dropdown-item  delete-record">Delete</a>' +
@@ -117,8 +117,8 @@ $(function () {
         search: '',
         searchPlaceholder: 'Search order',
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown

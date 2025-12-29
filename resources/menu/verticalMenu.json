@@ -2,13 +2,17 @@
   "menu": [
     {
       "menuHeader": "My Portal",
-      "roles": ["all"]
+      "roles": [
+        "all"
+      ]
     },
     {
       "name": "Self Service",
-      "icon": "menu-icon tf-icons ti ti-user-circle",
+      "icon": "menu-icon tf-icons ti tabler-user-circle",
       "slug": "self-service",
-      "roles": ["all"],
+      "roles": [
+        "all"
+      ],
       "submenu": [
         {
           "url": "self-service",
@@ -44,20 +48,32 @@
     },
     {
       "name": "Approvals",
-      "icon": "menu-icon tf-icons ti ti-checklist",
+      "icon": "menu-icon tf-icons ti tabler-checklist",
       "slug": "self-service-approvals",
       "url": "self-service/approvals",
-      "roles": ["manager", "super-admin", "hr-manager"]
+      "roles": [
+        "manager",
+        "super-admin",
+        "hr-manager"
+      ]
     },
     {
       "menuHeader": "HR Management",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"]
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "hr-assistant"
+      ]
     },
     {
       "name": "Employees",
-      "icon": "menu-icon tf-icons ti ti-users",
+      "icon": "menu-icon tf-icons ti tabler-users",
       "slug": "hr-employees",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"],
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "hr-assistant"
+      ],
       "submenu": [
         {
           "url": "hr/employees",
@@ -78,9 +94,13 @@
     },
     {
       "name": "Positions",
-      "icon": "menu-icon tf-icons ti ti-briefcase",
+      "icon": "menu-icon tf-icons ti tabler-briefcase",
       "slug": "hr-positions",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"],
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "hr-assistant"
+      ],
       "submenu": [
         {
           "url": "hr/positions",
@@ -96,9 +116,13 @@
     },
     {
       "name": "Attendance Records",
-      "icon": "menu-icon tf-icons ti ti-clock",
+      "icon": "menu-icon tf-icons ti tabler-clock",
       "slug": "attendance-records",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"],
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "hr-assistant"
+      ],
       "submenu": [
         {
           "url": "attendance/records",
@@ -134,9 +158,12 @@
     },
     {
       "name": "Attendance Settings",
-      "icon": "menu-icon tf-icons ti ti-settings",
+      "icon": "menu-icon tf-icons ti tabler-settings",
       "slug": "attendance-settings",
-      "roles": ["super-admin", "hr-manager"],
+      "roles": [
+        "super-admin",
+        "hr-manager"
+      ],
       "submenu": [
         {
           "url": "attendance/settings",
@@ -157,16 +184,23 @@
     },
     {
       "name": "Leave Policies",
-      "icon": "menu-icon tf-icons ti ti-file-text",
+      "icon": "menu-icon tf-icons ti tabler-file-text",
       "slug": "leave-policies",
       "url": "leave-policies",
-      "roles": ["super-admin", "hr-manager"]
+      "roles": [
+        "super-admin",
+        "hr-manager"
+      ]
     },
     {
       "name": "Payroll Management",
-      "icon": "menu-icon tf-icons ti ti-currency-dollar",
+      "icon": "menu-icon tf-icons ti tabler-currency-dollar",
       "slug": "payroll-management",
-      "roles": ["super-admin", "hr-manager", "finance-manager"],
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "finance-manager"
+      ],
       "submenu": [
         {
           "url": "payroll/run-review",
@@ -187,27 +221,44 @@
     },
     {
       "name": "Letter Templates",
-      "icon": "menu-icon tf-icons ti ti-file-text",
+      "icon": "menu-icon tf-icons ti tabler-file-text",
       "slug": "letter-templates",
       "url": "letter-templates",
-      "roles": ["super-admin", "hr-manager"]
+      "roles": [
+        "super-admin",
+        "hr-manager"
+      ]
     },
     {
       "name": "Assets",
-      "icon": "menu-icon tf-icons ti ti-package",
+      "icon": "menu-icon tf-icons ti tabler-package",
       "slug": "assets",
       "url": "assetmanager/assets",
-      "roles": ["super-admin", "hr-manager", "hr-assistant"]
+      "roles": [
+        "super-admin",
+        "hr-manager",
+        "hr-assistant"
+      ]
     },
     {
       "menuHeader": "Projects",
-      "roles": ["super-admin", "finance-manager", "hr-manager", "project-manager"]
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "hr-manager",
+        "project-manager"
+      ]
     },
     {
       "name": "Projects",
-      "icon": "menu-icon tf-icons ti ti-folder",
+      "icon": "menu-icon tf-icons ti tabler-folder",
       "slug": "projects",
-      "roles": ["super-admin", "finance-manager", "hr-manager", "project-manager"],
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "hr-manager",
+        "project-manager"
+      ],
       "submenu": [
         {
           "url": "projects",
@@ -233,13 +284,21 @@
     },
     {
       "menuHeader": "Financial Planning",
-      "roles": ["super-admin", "finance-manager", "finance-readonly"]
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
     },
     {
       "name": "Accounting",
-      "icon": "menu-icon tf-icons ti ti-coin",
+      "icon": "menu-icon tf-icons ti tabler-coin",
       "slug": "accounting-cash-flow",
-      "roles": ["super-admin", "finance-manager", "finance-readonly"],
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ],
       "submenu": [
         {
           "url": "accounting",
@@ -315,9 +374,13 @@
     },
     {
       "name": "Invoice Management",
-      "icon": "menu-icon tf-icons ti ti-file-invoice",
+      "icon": "menu-icon tf-icons ti tabler-file-invoice",
       "slug": "invoice-management",
-      "roles": ["super-admin", "finance-manager", "finance-readonly"],
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ],
       "submenu": [
         {
           "url": "invoicing/invoices",
@@ -348,9 +411,12 @@
     },
     {
       "name": "Invoice Settings",
-      "icon": "menu-icon tf-icons ti ti-settings",
+      "icon": "menu-icon tf-icons ti tabler-settings",
       "slug": "invoice-settings",
-      "roles": ["super-admin", "finance-manager"],
+      "roles": [
+        "super-admin",
+        "finance-manager"
+      ],
       "submenu": [
         {
           "url": "invoicing/admin/sequences",
@@ -366,13 +432,17 @@
     },
     {
       "menuHeader": "Administration",
-      "roles": ["super-admin"]
+      "roles": [
+        "super-admin"
+      ]
     },
     {
       "name": "User Management",
-      "icon": "menu-icon tf-icons ti ti-users-group",
+      "icon": "menu-icon tf-icons ti tabler-users-group",
       "slug": "administration-users",
-      "roles": ["super-admin"],
+      "roles": [
+        "super-admin"
+      ],
       "submenu": [
         {
           "url": "administration/users",
@@ -388,9 +458,11 @@
     },
     {
       "name": "Roles & Permissions",
-      "icon": "menu-icon tf-icons ti ti-shield-check",
+      "icon": "menu-icon tf-icons ti tabler-shield-check",
       "slug": "administration-roles",
-      "roles": ["super-admin"],
+      "roles": [
+        "super-admin"
+      ],
       "submenu": [
         {
           "url": "administration/roles",
@@ -406,16 +478,21 @@
     },
     {
       "name": "Customers",
-      "icon": "menu-icon tf-icons ti ti-users",
+      "icon": "menu-icon tf-icons ti tabler-users",
       "slug": "administration-customers-index",
       "url": "administration/customers",
-      "roles": ["super-admin", "finance-manager"]
+      "roles": [
+        "super-admin",
+        "finance-manager"
+      ]
     },
     {
       "name": "Settings",
-      "icon": "menu-icon tf-icons ti ti-settings",
+      "icon": "menu-icon tf-icons ti tabler-settings",
       "slug": "settings",
-      "roles": ["super-admin"],
+      "roles": [
+        "super-admin"
+      ],
       "submenu": [
         {
           "url": "settings/company",

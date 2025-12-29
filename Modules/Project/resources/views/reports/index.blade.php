@@ -9,10 +9,10 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-report me-2"></i>Project Reports
+            <i class="ti tabler-report me-2"></i>Project Reports
           </h5>
           <a href="{{ route('projects.reports.create') }}" class="btn btn-primary btn-sm">
-            <i class="ti ti-plus me-1"></i>Generate New Report
+            <i class="ti tabler-plus me-1"></i>Generate New Report
           </a>
         </div>
         <div class="card-body">
@@ -37,10 +37,10 @@
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                   <button type="submit" class="btn btn-primary me-2">
-                    <i class="ti ti-filter me-1"></i>Filter
+                    <i class="ti tabler-filter me-1"></i>Filter
                   </button>
                   <a href="{{ route('projects.reports.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-x me-1"></i>Clear
+                    <i class="ti tabler-x me-1"></i>Clear
                   </a>
                 </div>
               </form>
@@ -83,17 +83,17 @@
                     <td>
                       <div class="dropdown">
                         <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                          <i class="ti ti-dots-vertical"></i>
+                          <i class="ti tabler-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu">
                           <a class="dropdown-item" href="{{ route('projects.reports.show', $report) }}">
-                            <i class="ti ti-eye me-1"></i> View
+                            <i class="ti tabler-eye me-1"></i> View
                           </a>
                           <a class="dropdown-item" href="{{ route('projects.reports.export-pdf', $report) }}" target="_blank">
-                            <i class="ti ti-file-type-pdf me-1"></i> Export PDF
+                            <i class="ti tabler-file-type-pdf me-1"></i> Export PDF
                           </a>
                           <a class="dropdown-item" href="{{ route('projects.reports.export-excel', $report) }}">
-                            <i class="ti ti-file-spreadsheet me-1"></i> Export Excel
+                            <i class="ti tabler-file-spreadsheet me-1"></i> Export Excel
                           </a>
                           <div class="dropdown-divider"></div>
                           <form action="{{ route('projects.reports.destroy', $report) }}" method="POST" class="d-inline"
@@ -101,7 +101,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">
-                              <i class="ti ti-trash me-1"></i> Delete
+                              <i class="ti tabler-trash me-1"></i> Delete
                             </button>
                           </form>
                         </div>
@@ -111,7 +111,7 @@
                 @empty
                   <tr>
                     <td colspan="7" class="text-center text-muted py-4">
-                      <i class="ti ti-report-off me-2"></i>No reports found.
+                      <i class="ti tabler-report-off me-2"></i>No reports found.
                       <a href="{{ route('projects.reports.create') }}">Generate one</a>
                     </td>
                   </tr>

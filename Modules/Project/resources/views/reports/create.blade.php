@@ -9,10 +9,10 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-report-analytics me-2"></i>Generate Project Report
+            <i class="ti tabler-report-analytics me-2"></i>Generate Project Report
           </h5>
           <a href="{{ route('projects.reports.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Back to Reports
+            <i class="ti tabler-arrow-left me-1"></i>Back to Reports
           </a>
         </div>
         <div class="card-body">
@@ -29,7 +29,7 @@
 
           <!-- Reportable Projects Info -->
           <div class="alert alert-info mb-4">
-            <h6 class="alert-heading mb-2"><i class="ti ti-info-circle me-1"></i>Projects to be included:</h6>
+            <h6 class="alert-heading mb-2"><i class="ti tabler-info-circle me-1"></i>Projects to be included:</h6>
             @if($reportableProjects->count() > 0)
               <div class="d-flex flex-wrap gap-2">
                 @foreach($reportableProjects as $project)
@@ -67,7 +67,7 @@
             </div>
 
             <div class="alert alert-secondary mb-4">
-              <h6 class="alert-heading mb-2"><i class="ti ti-calendar me-1"></i>Quick Date Ranges</h6>
+              <h6 class="alert-heading mb-2"><i class="ti tabler-calendar me-1"></i>Quick Date Ranges</h6>
               <div class="d-flex flex-wrap gap-2">
                 <button type="button" class="btn btn-sm btn-outline-primary quick-date"
                         data-start="{{ now()->subMonth()->startOfMonth()->format('Y-m-d') }}"
@@ -96,10 +96,10 @@
 
             <div class="d-flex justify-content-end gap-2">
               <a href="{{ route('projects.reports.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-x me-1"></i>Cancel
+                <i class="ti tabler-x me-1"></i>Cancel
               </a>
               <button type="submit" class="btn btn-primary" @if($reportableProjects->count() == 0) disabled @endif>
-                <i class="ti ti-report-analytics me-1"></i>Generate Report Preview
+                <i class="ti tabler-report-analytics me-1"></i>Generate Report Preview
               </button>
             </div>
           </form>

@@ -42,7 +42,7 @@
     <div class="col app-calendar-sidebar border-end" id="app-calendar-sidebar">
       <div class="border-bottom p-6 my-sm-0 mb-4">
         <button class="btn btn-primary btn-toggle-sidebar w-100" data-bs-toggle="offcanvas" data-bs-target="#addEventSidebar" aria-controls="addEventSidebar">
-          <i class="ti ti-plus ti-16px me-2"></i>
+          <i class="ti tabler-plus ti-16px me-2"></i>
           <span class="align-middle">Add Event</span>
         </button>
       </div>

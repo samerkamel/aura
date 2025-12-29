@@ -22,7 +22,7 @@
     <div class="card drag-item cursor-move mb-lg-0 mb-6">
       <div class="card-body text-center">
         <h2>
-          <i class="ti ti-shopping-cart text-success display-6"></i>
+          <i class="ti tabler-shopping-cart text-success display-6"></i>
         </h2>
         <h4>Monthly Sales</h4>
         <h5>2362</h5>
@@ -33,7 +33,7 @@
     <div class="card drag-item cursor-move mb-lg-0 mb-6">
       <div class="card-body text-center">
         <h2>
-          <i class="ti ti-world text-info display-6"></i>
+          <i class="ti tabler-world text-info display-6"></i>
         </h2>
         <h4>Monthly Visits</h4>
         <h5>687,123</h5>
@@ -44,7 +44,7 @@
     <div class="card drag-item cursor-move mb-lg-0 mb-6">
       <div class="card-body text-center">
         <h2>
-          <i class="ti ti-gift text-danger display-6"></i>
+          <i class="ti tabler-gift text-danger display-6"></i>
         </h2>
         <h4>Products</h4>
         <h5>985</h5>
@@ -55,7 +55,7 @@
     <div class="card drag-item cursor-move mb-lg-0 mb-6">
       <div class="card-body text-center">
         <h2>
-          <i class="ti ti-user text-primary display-6"></i>
+          <i class="ti tabler-user text-primary display-6"></i>
         </h2>
         <h4>Users</h4>
         <h5>105,652</h5>
@@ -233,35 +233,35 @@
             <ul class="list-group list-group-flush" id="handle-list-1">
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Buy products</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/1.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Reply to emails</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/2.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Write blog post</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/3.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Update packages</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/4.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>New blog layout</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/5.png')}}" alt="avatar" height="32" width="32" />
@@ -273,35 +273,35 @@
             <ul class="list-group list-group-flush" id="handle-list-2">
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>New icons set for an iOS app</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/1.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Fix validation bugs and commit</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/2.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Help Web developers with HTML integration</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/3.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Buy antivirus</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/4.png')}}" alt="avatar" height="32" width="32" />
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="d-flex justify-content-between align-items-center">
-                  <i class="drag-handle cursor-move ti ti-menu-2 align-text-bottom me-2"></i>
+                  <i class="drag-handle cursor-move ti tabler-menu-2 align-text-bottom me-2"></i>
                   <span>Answer support tickets</span>
                 </span>
                 <img class="rounded-circle" src="{{asset('assets/img/avatars/5.png')}}" alt="avatar" height="32" width="32" />

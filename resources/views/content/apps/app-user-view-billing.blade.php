@@ -57,7 +57,7 @@
           <div class="d-flex align-items-center me-5 gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti ti-checkbox ti-lg'></i>
+                <i class='ti tabler-checkbox ti-lg'></i>
               </div>
             </div>
             <div>
@@ -68,7 +68,7 @@
           <div class="d-flex align-items-center gap-4">
             <div class="avatar">
               <div class="avatar-initial bg-label-primary rounded">
-                <i class='ti ti-briefcase ti-lg'></i>
+                <i class='ti tabler-briefcase ti-lg'></i>
               </div>
             </div>
             <div>
@@ -133,9 +133,9 @@
           </div>
         </div>
         <ul class="list-unstyled g-2 my-6">
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
-          <li class="mb-2 d-flex align-items-center"><i class="ti ti-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>10 Users</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Up to 10 GB storage</span></li>
+          <li class="mb-2 d-flex align-items-center"><i class="ti tabler-circle-filled ti-10px text-secondary me-2"></i><span>Basic Support</span></li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mb-1">
           <span class="h6 mb-0">Days</span>
@@ -160,11 +160,11 @@
     <!-- User Pills -->
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 row-gap-2">
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/account')}}"><i class="ti ti-user-check me-1_5 ti-sm"></i>Account</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/security')}}"><i class="ti ti-lock me-1_5 ti-sm"></i>Security</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti ti-bookmark me-1_5 ti-sm"></i>Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti ti-bell me-1_5 ti-sm"></i>Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti ti-link me-1_5 ti-sm"></i>Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/account')}}"><i class="ti tabler-user-check me-1_5 ti-sm"></i>Account</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/security')}}"><i class="ti tabler-lock me-1_5 ti-sm"></i>Security</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti tabler-bookmark me-1_5 ti-sm"></i>Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/notifications')}}"><i class="ti tabler-bell me-1_5 ti-sm"></i>Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('app/user/view/connections')}}"><i class="ti tabler-link me-1_5 ti-sm"></i>Connections</a></li>
       </ul>
     </div>
     <!--/ User Pills -->
@@ -218,7 +218,7 @@
       <div class="card-header align-items-center">
         <h5 class="card-action-title mb-0">Payment Methods</h5>
         <div class="card-action-element">
-          <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addNewCCModal"><i class="ti ti-plus ti-14px me-1_5"></i>Add Card</button>
+          <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addNewCCModal"><i class="ti tabler-plus ti-14px me-1_5"></i>Add Card</button>
         </div>
       </div>
       <div class="card-body">
@@ -287,7 +287,7 @@
       <div class="card-header align-items-center flex-wrap gap-2">
         <h5 class="card-action-title mb-0">Billing Address</h5>
         <div class="card-action-element">
-          <button class="btn btn-sm btn-primary edit-address" type="button" data-bs-toggle="modal" data-bs-target="#addNewAddress"><i class='ti ti-plus ti-14px me-1_5'></i>Edit address</button>
+          <button class="btn btn-sm btn-primary edit-address" type="button" data-bs-toggle="modal" data-bs-target="#addNewAddress"><i class='ti tabler-plus ti-14px me-1_5'></i>Edit address</button>
         </div>
       </div>
       <div class="card-body">

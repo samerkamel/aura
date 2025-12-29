@@ -242,22 +242,22 @@
           <div class="text-light small fw-medium mb-2">Default</div>
           <div class="demo-inline-spacing">
             <p>
-              <span class="badge badge-center rounded-pill bg-primary"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center rounded-pill bg-secondary"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center rounded-pill bg-success"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center rounded-pill bg-danger"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center rounded-pill bg-warning"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center rounded-pill bg-info"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center rounded-pill bg-dark"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center rounded-pill bg-primary"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center rounded-pill bg-secondary"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center rounded-pill bg-success"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center rounded-pill bg-danger"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center rounded-pill bg-warning"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center rounded-pill bg-info"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center rounded-pill bg-dark"><i class="ti tabler-headphones"></i></span>
             </p>
             <p>
-              <span class="badge badge-center bg-primary"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center bg-secondary"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center bg-success"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center bg-danger"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center bg-warning"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center bg-info"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center bg-dark"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center bg-primary"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center bg-secondary"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center bg-success"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center bg-danger"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center bg-warning"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center bg-info"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center bg-dark"><i class="ti tabler-headphones"></i></span>
             </p>
           </div>
         </div>
@@ -266,22 +266,22 @@
           <div class="text-light small fw-medium mb-2">Default</div>
           <div class="demo-inline-spacing">
             <p>
-              <span class="badge badge-center rounded-pill bg-label-primary"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-secondary"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-success"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-danger"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-warning"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-info"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center rounded-pill bg-label-dark"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-primary"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-secondary"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-success"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-danger"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-warning"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-info"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center rounded-pill bg-label-dark"><i class="ti tabler-headphones"></i></span>
             </p>
             <p>
-              <span class="badge badge-center bg-label-primary"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center bg-label-secondary"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center bg-label-success"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center bg-label-danger"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center bg-label-warning"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center bg-label-info"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center bg-label-dark"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center bg-label-primary"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center bg-label-secondary"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center bg-label-success"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center bg-label-danger"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center bg-label-warning"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center bg-label-info"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center bg-label-dark"><i class="ti tabler-headphones"></i></span>
             </p>
           </div>
         </div>
@@ -290,22 +290,22 @@
           <div class="text-light small fw-medium mb-2">Default</div>
           <div class="demo-inline-spacing">
             <p>
-              <span class="badge badge-center rounded-pill bg-primary bg-glow"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center rounded-pill bg-secondary bg-glow"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center rounded-pill bg-success bg-glow"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center rounded-pill bg-danger bg-glow"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center rounded-pill bg-warning bg-glow"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center rounded-pill bg-info bg-glow"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center rounded-pill bg-dark bg-glow"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center rounded-pill bg-primary bg-glow"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center rounded-pill bg-secondary bg-glow"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center rounded-pill bg-success bg-glow"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center rounded-pill bg-danger bg-glow"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center rounded-pill bg-warning bg-glow"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center rounded-pill bg-info bg-glow"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center rounded-pill bg-dark bg-glow"><i class="ti tabler-headphones"></i></span>
             </p>
             <p>
-              <span class="badge badge-center bg-primary bg-glow"><i class="ti ti-star"></i></span>
-              <span class="badge badge-center bg-secondary bg-glow"><i class="ti ti-sun"></i></span>
-              <span class="badge badge-center bg-success bg-glow"><i class="ti ti-check"></i></span>
-              <span class="badge badge-center bg-danger bg-glow"><i class="ti ti-clock"></i></span>
-              <span class="badge badge-center bg-warning bg-glow"><i class="ti ti-cloud"></i></span>
-              <span class="badge badge-center bg-info bg-glow"><i class="ti ti-folder"></i></span>
-              <span class="badge badge-center bg-dark bg-glow"><i class="ti ti-headphones"></i></span>
+              <span class="badge badge-center bg-primary bg-glow"><i class="ti tabler-star"></i></span>
+              <span class="badge badge-center bg-secondary bg-glow"><i class="ti tabler-sun"></i></span>
+              <span class="badge badge-center bg-success bg-glow"><i class="ti tabler-check"></i></span>
+              <span class="badge badge-center bg-danger bg-glow"><i class="ti tabler-clock"></i></span>
+              <span class="badge badge-center bg-warning bg-glow"><i class="ti tabler-cloud"></i></span>
+              <span class="badge badge-center bg-info bg-glow"><i class="ti tabler-folder"></i></span>
+              <span class="badge badge-center bg-dark bg-glow"><i class="ti tabler-headphones"></i></span>
             </p>
           </div>
         </div>
@@ -334,19 +334,19 @@
           <span class="position-absolute top-0 start-100 translate-middle badge badge-dot border border-2 p-2 bg-danger"></span>
         </button>
         <button type="button" class="btn text-nowrap d-inline-block">
-          <span class="tf-icons ti-sm ti ti-mail"></span>
+          <span class="tf-icons ti-sm ti tabler-mail"></span>
           <span class="badge bg-primary text-white badge-notifications">6</span>
         </button>
         <button type="button" class="btn text-nowrap d-inline-block">
-          <span class="tf-icons ti-sm ti ti-clock"></span>
+          <span class="tf-icons ti-sm ti tabler-clock"></span>
           <span class="badge rounded-pill bg-label-danger badge-notifications">5</span>
         </button>
         <button type="button" class="btn text-nowrap d-inline-block">
-          <span class="tf-icons ti-sm ti ti-bell"></span>
+          <span class="tf-icons ti-sm ti tabler-bell"></span>
           <span class="badge rounded-pill bg-danger text-white badge-notifications">10</span>
         </button>
         <button type="button" class="btn text-nowrap d-inline-block">
-          <span class="tf-icons ti-sm ti ti-brand-facebook"></span>
+          <span class="tf-icons ti-sm ti tabler-brand-facebook"></span>
           <span class="badge rounded-pill bg-danger badge-dot badge-notifications"></span>
         </button>
       </div>

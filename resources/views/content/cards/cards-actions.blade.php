@@ -30,16 +30,16 @@
     <div class="card-action-element">
       <ul class="list-inline mb-0">
         <li class="list-inline-item">
-          <a href="javascript:void(0);" class="card-collapsible"><i class="tf-icons ti ti-chevron-down scaleX-n1-rtl ti-sm"></i></a>
+          <a href="javascript:void(0);" class="card-collapsible"><i class="tf-icons ti tabler-chevron-down scaleX-n1-rtl ti-sm"></i></a>
         </li>
         <li class="list-inline-item">
-          <a href="javascript:void(0);" class="card-reload"><i class="tf-icons ti ti-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i></a>
+          <a href="javascript:void(0);" class="card-reload"><i class="tf-icons ti tabler-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i></a>
         </li>
         <li class="list-inline-item">
-          <a href="javascript:void(0);" class="card-expand"><i class="tf-icons ti ti-arrows-maximize ti-sm"></i></a>
+          <a href="javascript:void(0);" class="card-expand"><i class="tf-icons ti tabler-arrows-maximize ti-sm"></i></a>
         </li>
         <li class="list-inline-item">
-          <a href="javascript:void(0);" class="card-close"><i class="tf-icons ti ti-x ti-sm"></i></a>
+          <a href="javascript:void(0);" class="card-close"><i class="tf-icons ti tabler-x ti-sm"></i></a>
         </li>
       </ul>
     </div>
@@ -57,28 +57,28 @@
         <tr>
           <td>Collapse</td>
           <td class="text-center">
-            <i class="tf-icons ti ti-chevron-right scaleX-n1-rtl ti-sm"></i>
+            <i class="tf-icons ti tabler-chevron-right scaleX-n1-rtl ti-sm"></i>
           </td>
           <td>Collapse card content using collapse action.</td>
         </tr>
         <tr>
           <td>Refresh Content</td>
           <td class="text-center">
-            <i class="tf-icons ti ti-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i>
+            <i class="tf-icons ti tabler-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i>
           </td>
           <td>Refresh your card content using refresh action.</td>
         </tr>
         <tr>
           <td>Expand Card</td>
           <td class="text-center">
-            <i class="tf-icons ti ti-arrows-maximize ti-sm"></i>
+            <i class="tf-icons ti tabler-arrows-maximize ti-sm"></i>
           </td>
           <td>Maximize your card using expand action</td>
         </tr>
         <tr>
           <td>Remove Card</td>
           <td class="text-center">
-            <i class="tf-icons ti ti-x ti-sm"></i>
+            <i class="tf-icons ti tabler-x ti-sm"></i>
           </td>
           <td>Remove card from page using remove card action</td>
         </tr>
@@ -97,7 +97,7 @@
         <div class="card-action-element">
           <ul class="list-inline mb-0">
             <li class="list-inline-item">
-              <a href="javascript:void(0);" class="card-collapsible"><i class="tf-icons ti ti-chevron-down scaleX-n1-rtl ti-sm"></i></a>
+              <a href="javascript:void(0);" class="card-collapsible"><i class="tf-icons ti tabler-chevron-down scaleX-n1-rtl ti-sm"></i></a>
             </li>
           </ul>
         </div>
@@ -105,7 +105,7 @@
       <div class="collapse show">
         <div class="card-body">
           <p class="card-text">To create a collapsible card, use <code>.card-collapsible</code> class with action item. To show the collapsible content default use <code>.show</code> class with <code>.collapse</code>.</p>
-          <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti ti-chevron-right scaleX-n1-rtl"></i> to see card collapse in action.</p>
+          <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti tabler-chevron-right scaleX-n1-rtl"></i> to see card collapse in action.</p>
         </div>
       </div>
     </div>
@@ -118,7 +118,7 @@
         <div class="card-action-element">
           <ul class="list-inline mb-0">
             <li class="list-inline-item">
-              <a href="javascript:void(0);" class="card-reload d-flex"><i class="tf-icons ti ti-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i></a>
+              <a href="javascript:void(0);" class="card-reload d-flex"><i class="tf-icons ti tabler-rotate-clockwise-2 scaleX-n1-rtl ti-sm"></i></a>
             </li>
           </ul>
         </div>
@@ -126,7 +126,7 @@
 
       <div class="card-body">
         <p class="card-text">To create a card with refresh action, use <code>.card-reload</code> class with action item. Use <code>.card-alert</code> class to show custom response message.</p>
-        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti ti-rotate-clockwise-2 scaleX-n1-rtl"></i> icon to see refresh card content in action.</p>
+        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti tabler-rotate-clockwise-2 scaleX-n1-rtl"></i> icon to see refresh card content in action.</p>
       </div>
     </div>
   </div>
@@ -138,7 +138,7 @@
         <div class="card-action-element">
           <ul class="list-inline mb-0">
             <li class="list-inline-item">
-              <a href="javascript:void(0);" class="card-expand"><i class="tf-icons ti ti-arrows-maximize ti-sm"></i></a>
+              <a href="javascript:void(0);" class="card-expand"><i class="tf-icons ti tabler-arrows-maximize ti-sm"></i></a>
             </li>
           </ul>
         </div>
@@ -146,7 +146,7 @@
 
       <div class="card-body">
         <p class="card-text">To create a card with expand(fullscreen) action, use <code>.card-expand</code> class with action item. Use <kbd>ESC</kbd> key to exit from the fullscreen mode.</p>
-        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti ti-arrows-maximize"></i> icon to see expand card in action.</p>
+        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti tabler-arrows-maximize"></i> icon to see expand card in action.</p>
       </div>
     </div>
   </div>
@@ -158,7 +158,7 @@
         <div class="card-action-element">
           <ul class="list-inline mb-0">
             <li class="list-inline-item">
-              <a href="javascript:void(0);" class="card-close"><i class="tf-icons ti ti-x ti-sm"></i></a>
+              <a href="javascript:void(0);" class="card-close"><i class="tf-icons ti tabler-x ti-sm"></i></a>
             </li>
           </ul>
         </div>
@@ -166,7 +166,7 @@
       <div class="card-body">
         <p class="card-text">Remove card action hide the card, use <code>.card-close</code> class with action item.</p>
         <br />
-        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti ti-x"></i> icon to see remove card in action.</p>
+        <p class="card-text d-flex align-items-center gap-1">Click on <i class="tf-icons ti tabler-x"></i> icon to see remove card in action.</p>
       </div>
     </div>
   </div>
@@ -210,7 +210,7 @@
         <h5 class="mb-0 me-2">Card Header</h5>
 
         <div class="card-header-elements ms-auto">
-          <button type="button" class="btn btn-xs btn-primary"><span class="tf-icon ti ti-plus ti-xs me-1"></span>Button</button>
+          <button type="button" class="btn btn-xs btn-primary"><span class="tf-icon ti tabler-plus ti-xs me-1"></span>Button</button>
         </div>
       </div>
       <div class="card-body">
@@ -226,7 +226,7 @@
           <h5 class="m-0 me-2">Card Title</h5>
           <div class="card-title-elements ms-auto">
             <button type="button" class="btn btn-icon btn-sm btn-primary">
-              <span class="tf-icon ti-xs ti ti-brand-shopee"></span>
+              <span class="tf-icon ti-xs ti tabler-brand-shopee"></span>
             </button>
           </div>
         </div>
@@ -271,7 +271,7 @@
       <div class="card-header header-elements">
         <h5 class="mb-0 me-2">Card Header</h5>
         <div class="card-header-elements ms-auto">
-          <span class="tf-icon ti-xs ti ti-bell"></span>
+          <span class="tf-icon ti-xs ti tabler-bell"></span>
           <span class="text text-muted d-flex">
             <small>Sample Text</small>
           </span>
@@ -288,7 +288,7 @@
         <div class="card-title header-elements">
           <h5 class="m-0 me-2">Card Title</h5>
           <div class="card-header-elements ms-auto">
-            <span class="tf-icon ti-xs ti ti-bell"></span>
+            <span class="tf-icon ti-xs ti tabler-bell"></span>
             <span class="text text-muted d-flex">
               <small>Sample Text</small>
             </span>

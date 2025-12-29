@@ -7,7 +7,7 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Edit Employee</h5>
     <a href="{{ route('hr.employees.index') }}" class="btn btn-outline-secondary">
-      <i class="ti ti-arrow-left me-1"></i>Back to List
+      <i class="ti tabler-arrow-left me-1"></i>Back to List
     </a>
   </div>
 
@@ -20,7 +20,7 @@
         <!-- Personal Information Section -->
         <div class="col-md-6">
           <h6 class="text-muted mb-3">
-            <i class="ti ti-id me-2"></i>Personal Information
+            <i class="ti tabler-id me-2"></i>Personal Information
           </h6>
 
           <!-- Name Field -->
@@ -176,7 +176,7 @@
 
           <!-- Position Field -->
           <h6 class="text-muted mb-3 mt-4">
-            <i class="ti ti-briefcase me-2"></i>Position & Employment
+            <i class="ti tabler-briefcase me-2"></i>Position & Employment
           </h6>
 
           <div class="mb-3">
@@ -253,7 +253,7 @@
                 value="{{ old('termination_date', $employee->termination_date?->format('Y-m-d')) }}">
               @if($lastSignInDate)
               <button type="button" class="btn btn-outline-secondary" onclick="setLastSignInDate()" title="Use last sign-in date">
-                <i class="ti ti-calendar-event"></i>
+                <i class="ti tabler-calendar-event"></i>
               </button>
               @endif
             </div>
@@ -262,12 +262,12 @@
             @enderror
             @if($lastSignInDate)
             <small class="form-text text-info">
-              <i class="ti ti-info-circle me-1"></i>Last sign-in: <strong>{{ $lastSignInDate->format('M d, Y') }}</strong> ({{ $lastSignInDate->format('l') }})
+              <i class="ti tabler-info-circle me-1"></i>Last sign-in: <strong>{{ $lastSignInDate->format('M d, Y') }}</strong> ({{ $lastSignInDate->format('l') }})
               <a href="javascript:void(0)" onclick="setLastSignInDate()" class="ms-2">Use this date</a>
             </small>
             @else
             <small class="form-text text-warning">
-              <i class="ti ti-alert-triangle me-1"></i>No attendance records found for this employee
+              <i class="ti tabler-alert-triangle me-1"></i>No attendance records found for this employee
             </small>
             @endif
           </div>
@@ -275,7 +275,7 @@
           @if($canEditSalary)
           <!-- Salary Information (Permission Protected) -->
           <h6 class="text-muted mb-3 mt-4">
-            <i class="ti ti-currency-dollar me-2"></i>Salary Information
+            <i class="ti tabler-currency-dollar me-2"></i>Salary Information
           </h6>
 
           <div class="mb-3">
@@ -331,7 +331,7 @@
         <div class="col-md-6">
           <!-- Contact Information -->
           <h6 class="text-muted mb-3">
-            <i class="ti ti-phone me-2"></i>Contact Information
+            <i class="ti tabler-phone me-2"></i>Contact Information
           </h6>
 
           <!-- Mobile Number Field -->
@@ -394,7 +394,7 @@
 
           <!-- Bank Information -->
           <h6 class="text-muted mb-3 mt-4">
-            <i class="ti ti-building-bank me-2"></i>Bank Information
+            <i class="ti tabler-building-bank me-2"></i>Bank Information
           </h6>
 
           <!-- Bank Name Field -->
@@ -456,13 +456,13 @@
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
             <div class="form-text">
-              <i class="ti ti-shield-lock me-1"></i>Bank information is encrypted for security
+              <i class="ti tabler-shield-lock me-1"></i>Bank information is encrypted for security
             </div>
           </div>
 
           <!-- Emergency Contact -->
           <h6 class="text-muted mb-3 mt-4">
-            <i class="ti ti-urgent me-2"></i>Emergency Contact
+            <i class="ti tabler-urgent me-2"></i>Emergency Contact
           </h6>
 
           <!-- Emergency Contact Name -->
@@ -518,16 +518,16 @@
           <div class="d-flex justify-content-between">
             <div>
               <button type="submit" class="btn btn-primary me-2">
-                <i class="ti ti-device-floppy me-1"></i>Update Employee
+                <i class="ti tabler-device-floppy me-1"></i>Update Employee
               </button>
               <a href="{{ route('hr.employees.show', $employee) }}" class="btn btn-outline-secondary">
-                <i class="ti ti-x me-1"></i>Cancel
+                <i class="ti tabler-x me-1"></i>Cancel
               </a>
             </div>
             <div>
               <!-- Delete form will be moved outside the update form -->
               <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
-                <i class="ti ti-trash me-1"></i>Delete Employee
+                <i class="ti tabler-trash me-1"></i>Delete Employee
               </button>
             </div>
           </div>

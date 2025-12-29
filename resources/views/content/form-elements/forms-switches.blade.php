@@ -40,10 +40,10 @@
             <input type="checkbox" class="switch-input" />
             <span class="switch-toggle-slider">
               <span class="switch-on">
-                <i class="ti ti-check"></i>
+                <i class="ti tabler-check"></i>
               </span>
               <span class="switch-off">
-                <i class="ti ti-x"></i>
+                <i class="ti tabler-x"></i>
               </span>
             </span>
             <span class="switch-label">With icon</span>
@@ -54,8 +54,8 @@
           <label class="switch switch-square">
             <input type="checkbox" class="switch-input" />
             <span class="switch-toggle-slider">
-              <span class="switch-on"><i class="ti ti-check"></i></span>
-              <span class="switch-off"><i class="ti ti-x"></i></span>
+              <span class="switch-on"><i class="ti tabler-check"></i></span>
+              <span class="switch-off"><i class="ti tabler-x"></i></span>
             </span>
             <span class="switch-label">With icon</span>
           </label>
@@ -77,10 +77,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Primary</span>
@@ -90,10 +90,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Secondary</span>
@@ -103,10 +103,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Success</span>
@@ -116,10 +116,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Danger</span>
@@ -129,10 +129,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Warning</span>
@@ -142,10 +142,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Info</span>
@@ -155,10 +155,10 @@
               <input type="checkbox" class="switch-input" checked />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Dark</span>
@@ -182,10 +182,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Small</span>
@@ -197,10 +197,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Default</span>
@@ -212,10 +212,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Large</span>
@@ -229,10 +229,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Small</span>
@@ -244,10 +244,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Default</span>
@@ -259,10 +259,10 @@
               <input type="checkbox" class="switch-input" />
               <span class="switch-toggle-slider">
                 <span class="switch-on">
-                  <i class="ti ti-check"></i>
+                  <i class="ti tabler-check"></i>
                 </span>
                 <span class="switch-off">
-                  <i class="ti ti-x"></i>
+                  <i class="ti tabler-x"></i>
                 </span>
               </span>
               <span class="switch-label">Large</span>

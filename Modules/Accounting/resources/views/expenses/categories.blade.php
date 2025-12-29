@@ -21,19 +21,19 @@
                         </select>
                     </form>
                     <a href="{{ route('accounting.expenses.categories.budgets', ['year' => $currentYear]) }}" class="btn btn-warning">
-                        <i class="ti ti-percentage me-1"></i>Manage Budgets
+                        <i class="ti tabler-percentage me-1"></i>Manage Budgets
                     </a>
                     <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-info">
-                        <i class="ti ti-receipt me-1"></i>Paid Expenses
+                        <i class="ti tabler-receipt me-1"></i>Paid Expenses
                     </a>
                     <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Expenses
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Expenses
                     </a>
                     <a href="{{ route('accounting.expenses.categories.import') }}" class="btn btn-outline-info btn-sm" title="Import Categories from CSV">
-                        <i class="ti ti-upload"></i>
+                        <i class="ti tabler-upload"></i>
                     </a>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                        <i class="ti ti-plus me-1"></i>New Category
+                        <i class="ti tabler-plus me-1"></i>New Category
                     </button>
                 </div>
             </div>
@@ -185,7 +185,7 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti ti-dots-vertical"></i>
+                                            <i class="ti tabler-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="#" data-bs-toggle="modal"
@@ -198,14 +198,14 @@
                                                data-parent-id="{{ $category->parent_id }}"
                                                data-expense-type-id="{{ $category->expense_type_id }}"
                                                data-sort-order="{{ $category->sort_order ?? 0 }}">
-                                                <i class="ti ti-edit me-2"></i>Edit
+                                                <i class="ti tabler-edit me-2"></i>Edit
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('accounting.expenses.categories.toggle-status', $category) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti ti-{{ $category->is_active ? 'pause' : 'play' }} me-2"></i>
+                                                    <i class="ti tabler-{{ $category->is_active ? 'pause' : 'play' }} me-2"></i>
                                                     {{ $category->is_active ? 'Deactivate' : 'Activate' }}
                                                 </button>
                                             </form>
@@ -213,7 +213,7 @@
                                                 <div class="dropdown-divider"></div>
                                                 <button type="button" class="dropdown-item text-danger"
                                                         onclick="confirmDelete('{{ $category->id }}', '{{ $category->name }}')">
-                                                    <i class="ti ti-trash me-2"></i>Delete
+                                                    <i class="ti tabler-trash me-2"></i>Delete
                                                 </button>
                                             @endif
                                         </div>
@@ -224,11 +224,11 @@
                             <tr>
                                 <td colspan="7" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti tabler-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No categories found</h5>
                                         <p class="text-muted">Create your first expense category to organize your expenses</p>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                            <i class="ti ti-plus me-1"></i>Create Category
+                                            <i class="ti tabler-plus me-1"></i>Create Category
                                         </button>
                                     </div>
                                 </td>
@@ -389,14 +389,14 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-3">
-                    <i class="ti ti-alert-triangle text-warning" style="font-size: 3rem;"></i>
+                    <i class="ti tabler-alert-triangle text-warning" style="font-size: 3rem;"></i>
                 </div>
                 <h6 class="text-center">Are you sure you want to delete this category?</h6>
                 <p class="text-center text-muted">
                     Category: <strong id="deleteCategoryName"></strong>
                 </p>
                 <div class="alert alert-warning">
-                    <i class="ti ti-info-circle me-2"></i>
+                    <i class="ti tabler-info-circle me-2"></i>
                     This action cannot be undone. Only categories with no associated expense schedules can be deleted.
                 </div>
             </div>
@@ -406,7 +406,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="ti ti-trash me-1"></i>Delete Category
+                        <i class="ti tabler-trash me-1"></i>Delete Category
                     </button>
                 </form>
             </div>

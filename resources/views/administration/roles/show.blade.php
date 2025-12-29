@@ -18,10 +18,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.roles.edit', $role) }}" class="btn btn-primary">
-                <i class="ti ti-edit me-2"></i>Edit Role
+                <i class="ti tabler-edit me-2"></i>Edit Role
             </a>
             <a href="{{ route('administration.roles.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-2"></i>Back to Roles
+                <i class="ti tabler-arrow-left me-2"></i>Back to Roles
             </a>
         </div>
     </div>
@@ -79,7 +79,7 @@
                                 <button type="submit"
                                         class="btn {{ $role->is_active ? 'btn-warning' : 'btn-success' }} w-100"
                                         onclick="return confirm('Are you sure you want to {{ $role->is_active ? 'deactivate' : 'activate' }} this role?')">
-                                    <i class="ti ti-{{ $role->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
+                                    <i class="ti tabler-{{ $role->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
                                     {{ $role->is_active ? 'Deactivate Role' : 'Activate Role' }}
                                 </button>
                             </form>
@@ -90,12 +90,12 @@
                                 <button type="submit"
                                         class="btn btn-danger w-100"
                                         onclick="return confirm('Are you sure you want to delete this role? This action cannot be undone.')">
-                                    <i class="ti ti-trash me-2"></i>Delete Role
+                                    <i class="ti tabler-trash me-2"></i>Delete Role
                                 </button>
                             </form>
                             @else
                             <div class="alert alert-info">
-                                <i class="ti ti-info-circle me-2"></i>
+                                <i class="ti tabler-info-circle me-2"></i>
                                 Cannot delete role with assigned users.
                             </div>
                             @endif
@@ -111,7 +111,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti ti-users me-2"></i>Assigned Users
+                        <i class="ti tabler-users me-2"></i>Assigned Users
                     </h5>
                     <span class="badge bg-label-primary">{{ $role->users->count() }} {{ $role->users->count() === 1 ? 'User' : 'Users' }}</span>
                 </div>
@@ -134,7 +134,7 @@
                                         </div>
                                     </div>
                                     <a href="{{ route('administration.users.show', $user) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="ti ti-eye"></i>
+                                        <i class="ti tabler-eye"></i>
                                     </a>
                                 </div>
                             </div>
@@ -142,7 +142,7 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <i class="ti ti-users-off ti-3x text-muted mb-3"></i>
+                            <i class="ti tabler-users-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Users Assigned</h5>
                             <p class="text-muted mb-0">This role has not been assigned to any users yet.</p>
                         </div>
@@ -154,7 +154,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti ti-key me-2"></i>Role Permissions
+                        <i class="ti tabler-key me-2"></i>Role Permissions
                     </h5>
                     <span class="badge bg-label-info">{{ $role->permissions->count() }} {{ $role->permissions->count() === 1 ? 'Permission' : 'Permissions' }}</span>
                 </div>
@@ -163,14 +163,14 @@
                         @foreach($permissionsByCategory as $category => $permissions)
                         <div class="mb-4">
                             <h6 class="text-primary mb-3">
-                                <i class="ti ti-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
+                                <i class="ti tabler-folder me-2"></i>{{ ucfirst(str_replace('-', ' ', $category)) }}
                                 <span class="badge bg-label-primary ms-2">{{ $permissions->count() }}</span>
                             </h6>
                             <div class="row">
                                 @foreach($permissions as $permission)
                                 <div class="col-lg-6 col-md-12 mb-2">
                                     <div class="d-flex align-items-center">
-                                        <i class="ti ti-check text-success me-2"></i>
+                                        <i class="ti tabler-check text-success me-2"></i>
                                         <div>
                                             <span class="fw-medium">{{ $permission->display_name }}</span>
                                             @if($permission->description)
@@ -185,7 +185,7 @@
                         @endforeach
                     @else
                         <div class="text-center py-4">
-                            <i class="ti ti-key-off ti-3x text-muted mb-3"></i>
+                            <i class="ti tabler-key-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Permissions</h5>
                             <p class="text-muted mb-0">This role has no permissions assigned.</p>
                         </div>

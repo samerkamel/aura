@@ -11,11 +11,11 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center">
             <a href="{{ route('self-service.approvals.index') }}" class="btn btn-icon btn-outline-secondary me-3">
-              <i class="ti ti-arrow-left"></i>
+              <i class="ti tabler-arrow-left"></i>
             </a>
             <div>
               <h5 class="mb-0">
-                <i class="ti ti-checklist me-2"></i>Review Request
+                <i class="ti tabler-checklist me-2"></i>Review Request
               </h5>
               <small class="text-muted">Request #{{ $selfServiceRequest->id }}</small>
             </div>
@@ -37,14 +37,14 @@
 
     @if(session('success'))
       <div class="alert alert-success alert-dismissible fade show">
-        <i class="ti ti-check me-2"></i>{{ session('success') }}
+        <i class="ti tabler-check me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
 
     @if(session('error'))
       <div class="alert alert-danger alert-dismissible fade show">
-        <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+        <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     @endif
@@ -52,7 +52,7 @@
     <!-- Employee Info -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-user me-2"></i>Employee Information</h6>
+        <h6 class="mb-0"><i class="ti tabler-user me-2"></i>Employee Information</h6>
       </div>
       <div class="card-body">
         <div class="d-flex align-items-center">
@@ -77,7 +77,7 @@
     <!-- Request Details -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-info-circle me-2"></i>Request Details</h6>
+        <h6 class="mb-0"><i class="ti tabler-info-circle me-2"></i>Request Details</h6>
       </div>
       <div class="card-body">
         <div class="row">
@@ -132,14 +132,14 @@
     <!-- Approval Timeline -->
     <div class="card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-list-check me-2"></i>Approval Timeline</h6>
+        <h6 class="mb-0"><i class="ti tabler-list-check me-2"></i>Approval Timeline</h6>
       </div>
       <div class="card-body">
         <ul class="timeline">
           <!-- Submitted -->
           <li class="timeline-item">
             <span class="timeline-indicator timeline-indicator-success">
-              <i class="ti ti-send"></i>
+              <i class="ti tabler-send"></i>
             </span>
             <div class="timeline-event">
               <div class="timeline-header">
@@ -156,7 +156,7 @@
           <li class="timeline-item">
             @if($selfServiceRequest->manager_approved_at)
               <span class="timeline-indicator timeline-indicator-success">
-                <i class="ti ti-check"></i>
+                <i class="ti tabler-check"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -169,7 +169,7 @@
               </div>
             @elseif($selfServiceRequest->status === 'pending_manager')
               <span class="timeline-indicator timeline-indicator-warning">
-                <i class="ti ti-clock"></i>
+                <i class="ti tabler-clock"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -187,7 +187,7 @@
           <li class="timeline-item">
             @if($selfServiceRequest->admin_approved_at)
               <span class="timeline-indicator timeline-indicator-success">
-                <i class="ti ti-check"></i>
+                <i class="ti tabler-check"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -200,7 +200,7 @@
               </div>
             @elseif($selfServiceRequest->status === 'pending_admin')
               <span class="timeline-indicator timeline-indicator-warning">
-                <i class="ti ti-clock"></i>
+                <i class="ti tabler-clock"></i>
               </span>
               <div class="timeline-event">
                 <div class="timeline-header">
@@ -220,7 +220,7 @@
     @if($selfServiceRequest->isPending())
     <div class="card">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-settings me-2"></i>Actions</h6>
+        <h6 class="mb-0"><i class="ti tabler-settings me-2"></i>Actions</h6>
       </div>
       <div class="card-body">
         @if($canApproveAsManager || $canApproveAsAdmin)
@@ -229,7 +229,7 @@
             <form action="{{ route('self-service.approvals.approve', $selfServiceRequest) }}" method="POST" onsubmit="return confirm('Are you sure you want to approve this request?')">
               @csrf
               <button type="submit" class="btn btn-success w-100 btn-lg">
-                <i class="ti ti-check me-2"></i>
+                <i class="ti tabler-check me-2"></i>
                 @if($canApproveAsManager && !$isSuperAdmin)
                   Approve (Forward to Admin)
                 @else
@@ -247,7 +247,7 @@
           </div>
           <div class="col-md-6 mb-3">
             <button type="button" class="btn btn-danger w-100 btn-lg" data-bs-toggle="modal" data-bs-target="#rejectModal">
-              <i class="ti ti-x me-2"></i>Reject
+              <i class="ti tabler-x me-2"></i>Reject
             </button>
             <small class="text-muted d-block mt-2">
               Reject this request with a reason.
@@ -256,7 +256,7 @@
         </div>
         @else
         <div class="alert alert-warning mb-0">
-          <i class="ti ti-alert-circle me-2"></i>
+          <i class="ti tabler-alert-circle me-2"></i>
           You do not have permission to approve or reject this request at its current status.
         </div>
         @endif
@@ -267,7 +267,7 @@
     <!-- Back Button -->
     <div class="mt-4">
       <a href="{{ route('self-service.approvals.index') }}" class="btn btn-outline-secondary">
-        <i class="ti ti-arrow-left me-1"></i>Back to Approvals
+        <i class="ti tabler-arrow-left me-1"></i>Back to Approvals
       </a>
     </div>
   </div>
@@ -281,7 +281,7 @@
         @csrf
         <div class="modal-header">
           <h5 class="modal-title" id="rejectModalLabel">
-            <i class="ti ti-x me-2 text-danger"></i>Reject Request
+            <i class="ti tabler-x me-2 text-danger"></i>Reject Request
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -295,7 +295,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-danger">
-            <i class="ti ti-x me-1"></i>Reject Request
+            <i class="ti tabler-x me-1"></i>Reject Request
           </button>
         </div>
       </form>

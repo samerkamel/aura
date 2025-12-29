@@ -9,7 +9,7 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-settings me-2"></i>Payroll Settings
+            <i class="ti tabler-settings me-2"></i>Payroll Settings
           </h5>
           <small class="text-muted">
             Configure calculation weights
@@ -32,7 +32,7 @@
 
           @if ($errors->any())
             <div class="alert alert-danger">
-              <h6><i class="ti ti-alert-circle me-2"></i>Validation Errors</h6>
+              <h6><i class="ti tabler-alert-circle me-2"></i>Validation Errors</h6>
               <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                   <li>{{ $error }}</li>
@@ -47,7 +47,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="alert alert-info">
-                  <i class="ti ti-info-circle me-2"></i>
+                  <i class="ti tabler-info-circle me-2"></i>
                   Configure how much each component contributes to the final payroll calculation. The total must equal exactly 100%.
                 </div>
               </div>
@@ -101,12 +101,12 @@
               <div class="col-md-12">
                 <div class="alert alert-secondary d-flex justify-content-between align-items-center">
                   <span>
-                    <i class="ti ti-calculator me-2"></i>Total Weight:
+                    <i class="ti tabler-calculator me-2"></i>Total Weight:
                   </span>
                   <span id="totalWeight" class="fw-bold">{{ $attendanceWeight + $billableHoursWeight }}%</span>
                 </div>
                 <div id="weightValidationMessage" class="alert alert-warning d-none">
-                  <i class="ti ti-alert-triangle me-2"></i>
+                  <i class="ti tabler-alert-triangle me-2"></i>
                   The total weight must equal exactly 100%.
                 </div>
               </div>
@@ -115,10 +115,10 @@
             <div class="row">
               <div class="col-md-12">
                 <button type="submit" class="btn btn-primary me-2" id="saveButton">
-                  <i class="ti ti-device-floppy me-2"></i>Save Settings
+                  <i class="ti tabler-device-floppy me-2"></i>Save Settings
                 </button>
                 <a href="{{ route('payroll.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti ti-arrow-left me-2"></i>Back to Payroll
+                  <i class="ti tabler-arrow-left me-2"></i>Back to Payroll
                 </a>
               </div>
             </div>
@@ -131,7 +131,7 @@
       <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-target me-2"></i>Target Billable Hours
+            <i class="ti tabler-target me-2"></i>Target Billable Hours
           </h5>
           <small class="text-muted">
             Set monthly targets (default: 6 hrs/day, max 120)
@@ -139,7 +139,7 @@
         </div>
         <div class="card-body">
           <div class="alert alert-info mb-4">
-            <i class="ti ti-info-circle me-2"></i>
+            <i class="ti tabler-info-circle me-2"></i>
             Override the default target billable hours for specific months. Leave empty to use the calculated default (6 hours × working days, capped at 120).
           </div>
 
@@ -168,7 +168,7 @@
                                value="{{ $setting['target_billable_hours'] }}" placeholder="{{ $setting['default_target'] }}"
                                min="0" max="999" step="0.01">
                         <button type="submit" class="btn btn-sm btn-primary">
-                          <i class="ti ti-check"></i>
+                          <i class="ti tabler-check"></i>
                         </button>
                       </form>
                     </td>
@@ -191,7 +191,7 @@
       <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-brand-jira me-2"></i>Jira Integration Settings
+            <i class="ti tabler-brand-jira me-2"></i>Jira Integration Settings
           </h5>
           <small class="text-muted">
             Configure Jira API connection
@@ -199,7 +199,7 @@
         </div>
         <div class="card-body">
           <div class="alert alert-info">
-            <i class="ti ti-info-circle me-2"></i>
+            <i class="ti tabler-info-circle me-2"></i>
             Configure your Jira connection to automatically sync billable hours from worklogs.
           </div>
 
@@ -260,7 +260,7 @@
                   @enderror
                   @if($jiraSettings->api_token)
                     <small class="form-text text-success">
-                      <i class="ti ti-check me-1"></i>API token is saved. Leave empty to keep current token.
+                      <i class="ti tabler-check me-1"></i>API token is saved. Leave empty to keep current token.
                     </small>
                   @else
                     <small class="form-text text-muted">
@@ -335,14 +335,14 @@
             <div class="row">
               <div class="col-md-12">
                 <button type="button" class="btn btn-outline-info me-2" onclick="testJiraConnection()">
-                  <i class="ti ti-plug me-2"></i>Test Connection
+                  <i class="ti tabler-plug me-2"></i>Test Connection
                 </button>
                 <button type="submit" class="btn btn-primary me-2">
-                  <i class="ti ti-device-floppy me-2"></i>Save Jira Settings
+                  <i class="ti tabler-device-floppy me-2"></i>Save Jira Settings
                 </button>
                 @if($jiraSettings->isConfigured())
                   <span class="badge bg-success ms-2">
-                    <i class="ti ti-check me-1"></i>Configured
+                    <i class="ti tabler-check me-1"></i>Configured
                   </span>
                 @endif
               </div>

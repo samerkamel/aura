@@ -13,10 +13,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.accounts.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Accounts
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Accounts
                     </a>
                     <a href="{{ route('accounting.accounts.edit', $account) }}" class="btn btn-primary">
-                        <i class="ti ti-edit me-1"></i>Edit Account
+                        <i class="ti tabler-edit me-1"></i>Edit Account
                     </a>
                 </div>
             </div>
@@ -109,11 +109,11 @@
                                                     <td>
                                                         @if($transaction->type === 'expense')
                                                             <span class="badge bg-label-danger">
-                                                                <i class="ti ti-arrow-down me-1"></i>Expense
+                                                                <i class="ti tabler-arrow-down me-1"></i>Expense
                                                             </span>
                                                         @else
                                                             <span class="badge bg-label-success">
-                                                                <i class="ti ti-arrow-up me-1"></i>Income
+                                                                <i class="ti tabler-arrow-up me-1"></i>Income
                                                             </span>
                                                         @endif
                                                     </td>
@@ -145,7 +145,7 @@
                                 </div>
                             @else
                                 <div class="card-body text-center py-5">
-                                    <i class="ti ti-receipt text-muted mb-3" style="font-size: 3rem;"></i>
+                                    <i class="ti tabler-receipt text-muted mb-3" style="font-size: 3rem;"></i>
                                     <h6 class="text-muted">No transactions</h6>
                                     <p class="text-muted mb-0">No transactions have been recorded for this account yet.</p>
                                 </div>
@@ -248,13 +248,13 @@
                             <div class="card-body">
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('accounting.accounts.edit', $account) }}" class="btn btn-outline-primary">
-                                        <i class="ti ti-edit me-2"></i>Edit Account Details
+                                        <i class="ti tabler-edit me-2"></i>Edit Account Details
                                     </a>
                                     <form action="{{ route('accounting.accounts.toggle-status', $account) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-outline-{{ $account->is_active ? 'warning' : 'success' }} w-100">
-                                            <i class="ti ti-{{ $account->is_active ? 'pause' : 'play' }} me-2"></i>
+                                            <i class="ti tabler-{{ $account->is_active ? 'pause' : 'play' }} me-2"></i>
                                             {{ $account->is_active ? 'Deactivate' : 'Activate' }} Account
                                         </button>
                                     </form>
@@ -264,7 +264,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-danger w-100">
-                                                <i class="ti ti-trash me-2"></i>Delete Account
+                                                <i class="ti tabler-trash me-2"></i>Delete Account
                                             </button>
                                         </form>
                                     @endif

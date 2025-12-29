@@ -41,7 +41,7 @@
   <div class="bs-stepper-header border-end">
     <div class="step" data-target="#personal-details">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-users ti-md"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-users ti-md"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Personal Details</span>
           <span class="bs-stepper-subtitle">Your Name/Email</span>
@@ -51,7 +51,7 @@
     <div class="line"></div>
     <div class="step" data-target="#property-details">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-home ti-md"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-home ti-md"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Property Details</span>
           <span class="bs-stepper-subtitle">Property Type</span>
@@ -61,7 +61,7 @@
     <div class="line"></div>
     <div class="step" data-target="#property-features">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-bookmarks ti-md"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-bookmarks ti-md"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Property Features</span>
           <span class="bs-stepper-subtitle">Bedrooms/Floor No</span>
@@ -71,7 +71,7 @@
     <div class="line"></div>
     <div class="step" data-target="#property-area">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-map-pin ti-md"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-map-pin ti-md"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Property Area</span>
           <span class="bs-stepper-subtitle">Covered Area</span>
@@ -81,7 +81,7 @@
     <div class="line"></div>
     <div class="step" data-target="#price-details">
       <button type="button" class="step-trigger">
-        <span class="bs-stepper-circle"><i class="ti ti-currency-dollar ti-md"></i></span>
+        <span class="bs-stepper-circle"><i class="ti tabler-currency-dollar ti-md"></i></span>
         <span class="bs-stepper-label">
           <span class="bs-stepper-title">Price Details</span>
           <span class="bs-stepper-subtitle">Expected Price</span>
@@ -163,7 +163,7 @@
             <label class="form-label" for="plPassWord">Password</label>
             <div class="input-group input-group-merge">
               <input type="password" id="plPassWord" class="form-control" name="plPassWord" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="passwordToggler" />
-              <span id="passwordToggler" class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+              <span id="passwordToggler" class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
             </div>
           </div>
           <div class="col-sm-6">
@@ -178,10 +178,10 @@
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+            <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
               <span class="align-middle d-sm-inline-block d-none">Previous</span>
             </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -290,8 +290,8 @@
             <textarea id="plAddress" name="plAddress" class="form-control" rows="2" placeholder="12, Business Park"></textarea>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -348,8 +348,8 @@
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -427,8 +427,8 @@
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+            <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
           </div>
         </div>
       </div>
@@ -510,8 +510,8 @@
             </div>
           </div>
           <div class="col-12 d-flex justify-content-between">
-            <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
-            <button class="btn btn-success btn-submit btn-next"><span class="align-middle d-sm-inline-block d-none me-sm-2">Submit</span><i class="ti ti-check ti-xs"></i></button>
+            <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i> <span class="align-middle d-sm-inline-block d-none">Previous</span> </button>
+            <button class="btn btn-success btn-submit btn-next"><span class="align-middle d-sm-inline-block d-none me-sm-2">Submit</span><i class="ti tabler-check ti-xs"></i></button>
           </div>
         </div>
       </div>

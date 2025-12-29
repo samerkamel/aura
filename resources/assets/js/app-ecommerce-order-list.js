@@ -156,7 +156,7 @@ $(function () {
                 '<h6 class="mb-0 align-items-center d-flex w-px-100 ' +
                 $paymentObj.class +
                 '">' +
-                '<i class="ti ti-circle-filled fs-tiny me-1"></i>' +
+                '<i class="ti tabler-circle-filled fs-tiny me-1"></i>' +
                 $paymentObj.title +
                 '</h6>'
               );
@@ -198,7 +198,7 @@ $(function () {
               '.png" alt="' +
               $method +
               '" width="29">' +
-              '<span><i class="ti ti-dots me-1 mt-1"></i>' +
+              '<span><i class="ti tabler-dots me-1 mt-1"></i>' +
               $method_number +
               '</span>' +
               '</div>'
@@ -214,7 +214,7 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex justify-content-sm-start align-items-sm-center">' +
-              '<button class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
+              '<button class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href=" ' +
               baseUrl +
@@ -243,8 +243,8 @@ $(function () {
         searchPlaceholder: 'Search Order',
         info: 'Displaying _START_ to _END_ of _TOTAL_ entries',
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
@@ -252,11 +252,11 @@ $(function () {
         {
           extend: 'collection',
           className: 'btn btn-label-secondary dropdown-toggle waves-effect waves-light',
-          text: '<i class="ti ti-upload ti-xs me-2"></i>Export',
+          text: '<i class="ti tabler-upload ti-xs me-2"></i>Export',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ti ti-printer me-2"></i>Print',
+              text: '<i class="ti tabler-printer me-2"></i>Print',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [2, 3, 4, 5, 6, 7],
@@ -292,7 +292,7 @@ $(function () {
             },
             {
               extend: 'csv',
-              text: '<i class="ti ti-file me-2"></i>Csv',
+              text: '<i class="ti tabler-file me-2"></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [2, 3, 4, 5, 6, 7],
@@ -315,7 +315,7 @@ $(function () {
             },
             {
               extend: 'excel',
-              text: '<i class="ti ti-file-export me-2"></i>Excel',
+              text: '<i class="ti tabler-file-export me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [2, 3, 4, 5, 6, 7],
@@ -338,7 +338,7 @@ $(function () {
             },
             {
               extend: 'pdf',
-              text: '<i class="ti ti-file-text me-2"></i>Pdf',
+              text: '<i class="ti tabler-file-text me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [2, 3, 4, 5, 6, 7],
@@ -361,7 +361,7 @@ $(function () {
             },
             {
               extend: 'copy',
-              text: '<i class="ti ti-copy me-2"></i>Copy',
+              text: '<i class="ti tabler-copy me-2"></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [2, 3, 4, 5, 6, 7],

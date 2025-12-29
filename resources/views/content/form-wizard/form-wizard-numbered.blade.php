@@ -54,7 +54,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#personal-info">
           <button type="button" class="step-trigger">
@@ -67,7 +67,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#social-links">
           <button type="button" class="step-trigger">
@@ -100,21 +100,21 @@
                 <label class="form-label" for="password">Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2" />
-                  <span class="input-group-text cursor-pointer" id="password2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="password2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-sm-6 form-password-toggle">
                 <label class="form-label" for="confirm-password">Confirm Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="confirm-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="confirm-password2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -154,10 +154,10 @@
                 </select>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -185,7 +185,7 @@
                 <input type="text" id="linkedin" class="form-control" placeholder="https://linkedin.com/abc" />
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
                 <button class="btn btn-success btn-submit">Submit</button>
@@ -213,7 +213,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#personal-info-validation">
           <button type="button" class="step-trigger">
@@ -225,7 +225,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#social-links-validation">
           <button type="button" class="step-trigger">
@@ -258,21 +258,21 @@
                 <label class="form-label" for="formValidationPass">Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="formValidationPass" name="formValidationPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formValidationPass2" />
-                  <span class="input-group-text cursor-pointer" id="formValidationPass2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="formValidationPass2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-sm-6 form-password-toggle">
                 <label class="form-label" for="formValidationConfirmPass">Confirm Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="formValidationConfirmPass" name="formValidationConfirmPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formValidationConfirmPass2" />
-                  <span class="input-group-text cursor-pointer" id="formValidationConfirmPass2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="formValidationConfirmPass2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -312,10 +312,10 @@
                 </select>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -343,7 +343,7 @@
                 <input type="text" name="formValidationLinkedIn" id="formValidationLinkedIn" class="form-control" placeholder="https://linkedin.com/abc" />
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
                 <button class="btn btn-success btn-next btn-submit">Submit</button>
@@ -412,21 +412,21 @@
                 <label class="form-label" for="password-vertical">Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="password-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2-vertical" />
-                  <span class="input-group-text cursor-pointer" id="password2-vertical"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="password2-vertical"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-sm-6 form-password-toggle">
                 <label class="form-label" for="confirm-password-vertical">Confirm Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="confirm-password-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password-vertical2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password-vertical2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="confirm-password-vertical2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -466,10 +466,10 @@
                 </select>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -497,7 +497,7 @@
                 <input type="text" id="linkedin-vertical" class="form-control" placeholder="https://linkedin.com/abc" />
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
                 <button class="btn btn-success btn-submit">Submit</button>
@@ -533,7 +533,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#personal-info-modern">
           <button type="button" class="step-trigger">
@@ -545,7 +545,7 @@
           </button>
         </div>
         <div class="line">
-          <i class="ti ti-chevron-right"></i>
+          <i class="ti tabler-chevron-right"></i>
         </div>
         <div class="step" data-target="#social-links-modern">
           <button type="button" class="step-trigger">
@@ -578,21 +578,21 @@
                 <label class="form-label" for="password-modern">Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="password-modern" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2-modern" />
-                  <span class="input-group-text cursor-pointer" id="password2-modern"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="password2-modern"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-sm-6 form-password-toggle">
                 <label class="form-label" for="confirm-password-modern">Confirm Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="confirm-password-modern" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password-modern2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password-modern2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="confirm-password-modern2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -632,10 +632,10 @@
                 </select>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -663,7 +663,7 @@
                 <input type="text" id="linkedin-modern" class="form-control" placeholder="https://linkedin.com/abc" />
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
                 <button class="btn btn-success btn-submit">Submit</button>
@@ -732,21 +732,21 @@
                 <label class="form-label" for="password-modern-vertical">Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="password-modern-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2-modern-vertical" />
-                  <span class="input-group-text cursor-pointer" id="password2-modern-vertical"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="password2-modern-vertical"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-sm-6 form-password-toggle">
                 <label class="form-label" for="confirm-password-modern-vertical">Confirm Password</label>
                 <div class="input-group input-group-merge">
                   <input type="password" id="confirm-password-modern-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password-modern-vertical2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password-modern-vertical2"><i class="ti ti-eye-off"></i></span>
+                  <span class="input-group-text cursor-pointer" id="confirm-password-modern-vertical2"><i class="ti tabler-eye-off"></i></span>
                 </div>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -786,10 +786,10 @@
                 </select>
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-2">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
               </div>
             </div>
           </div>
@@ -817,7 +817,7 @@
                 <input type="text" id="linkedin-modern-vertical" class="form-control" placeholder="https://linkedin.com/abc" />
               </div>
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
                 <button class="btn btn-success btn-submit">Submit</button>

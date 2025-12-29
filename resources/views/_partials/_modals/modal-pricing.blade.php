@@ -23,7 +23,7 @@
               <span class="switch-label fs-6 text-body">Annually</span>
             </label>
             <div class="mt-n5 ms-n10 ml-2 mb-10 d-none d-sm-flex align-items-center gap-2">
-              <i class="ti ti-corner-left-down ti-lg text-muted scaleX-n1-rtl"></i>
+              <i class="ti tabler-corner-left-down ti-lg text-muted scaleX-n1-rtl"></i>
               <span class="badge badge-sm bg-label-primary rounded-1 mb-2 ">Save up to 10%</span>
             </div>
           </div>

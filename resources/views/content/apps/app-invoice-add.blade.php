@@ -154,9 +154,9 @@
                   </div>
                 </div>
                 <div class="d-flex flex-column align-items-center justify-content-between border-start p-2">
-                  <i class="ti ti-x ti-lg cursor-pointer" data-repeater-delete></i>
+                  <i class="ti tabler-x ti-lg cursor-pointer" data-repeater-delete></i>
                   <div class="dropdown">
-                    <i class="ti ti-settings ti-lg cursor-pointer more-options-dropdown" role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                    <i class="ti tabler-settings ti-lg cursor-pointer more-options-dropdown" role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     </i>
                     <div class="dropdown-menu dropdown-menu-end w-px-300 p-4" aria-labelledby="dropdownMenuButton">
 
@@ -196,7 +196,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <button type="button" class="btn btn-sm btn-primary" data-repeater-create><i class='ti ti-plus ti-14px me-1_5'></i>Add Item</button>
+              <button type="button" class="btn btn-sm btn-primary" data-repeater-create><i class='ti tabler-plus ti-14px me-1_5'></i>Add Item</button>
             </div>
           </div>
         </form>
@@ -257,7 +257,7 @@
     <div class="card mb-6">
       <div class="card-body">
         <button class="btn btn-primary d-grid w-100 mb-4" data-bs-toggle="offcanvas" data-bs-target="#sendInvoiceOffcanvas">
-          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti ti-send ti-xs me-2"></i>Send Invoice</span>
+          <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="ti tabler-send ti-xs me-2"></i>Send Invoice</span>
         </button>
         <a href="{{url('app/invoice/preview')}}" class="btn btn-label-secondary d-grid w-100 mb-4">Preview</a>
         <button type="button" class="btn btn-label-secondary d-grid w-100">Save</button>

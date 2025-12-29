@@ -43,12 +43,12 @@
           <div class="d-flex gap-2">
             @can('manage-business-units')
               <a href="{{ route('administration.business-units.edit', $businessUnit) }}" class="btn btn-primary">
-                <i class="ti ti-edit me-1"></i>Edit
+                <i class="ti tabler-edit me-1"></i>Edit
               </a>
             @endcan
             @can('assign-users-to-business-units')
               <a href="{{ route('administration.business-units.manage-users', $businessUnit) }}" class="btn btn-outline-primary">
-                <i class="ti ti-users me-1"></i>Manage Users
+                <i class="ti tabler-users me-1"></i>Manage Users
               </a>
             @endcan
           </div>
@@ -65,7 +65,7 @@
           <div class="card-body text-center">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-primary">
-                <i class="ti ti-users ti-lg"></i>
+                <i class="ti tabler-users ti-lg"></i>
               </span>
             </div>
             <span class="d-block text-nowrap">Total Users</span>
@@ -78,7 +78,7 @@
           <div class="card-body text-center">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-success">
-                <i class="ti ti-building-store ti-lg"></i>
+                <i class="ti tabler-building-store ti-lg"></i>
               </span>
             </div>
             <span class="d-block text-nowrap">Products</span>
@@ -91,7 +91,7 @@
           <div class="card-body text-center">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-info">
-                <i class="ti ti-currency ti-lg"></i>
+                <i class="ti tabler-currency ti-lg"></i>
               </span>
             </div>
             <span class="d-block text-nowrap">Total Budget</span>
@@ -104,7 +104,7 @@
           <div class="card-body text-center">
             <div class="avatar mx-auto mb-2">
               <span class="avatar-initial rounded-circle bg-warning">
-                <i class="ti ti-file-text ti-lg"></i>
+                <i class="ti tabler-file-text ti-lg"></i>
               </span>
             </div>
             <span class="d-block text-nowrap">Active Contracts</span>
@@ -121,17 +121,17 @@
       <ul class="nav nav-pills mb-6" role="tablist">
         <li class="nav-item">
           <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#users" aria-controls="users" aria-selected="true">
-            <i class="ti ti-users me-1"></i>Users ({{ $businessUnit->users->count() }})
+            <i class="ti tabler-users me-1"></i>Users ({{ $businessUnit->users->count() }})
           </button>
         </li>
         <li class="nav-item">
           <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#products" aria-controls="products" aria-selected="false">
-            <i class="ti ti-building-store me-1"></i>Products ({{ $businessUnit->departments->count() }})
+            <i class="ti tabler-building-store me-1"></i>Products ({{ $businessUnit->departments->count() }})
           </button>
         </li>
         <li class="nav-item">
           <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#contracts" aria-controls="contracts" aria-selected="false">
-            <i class="ti ti-file-text me-1"></i>Contracts ({{ $businessUnit->contracts->count() }})
+            <i class="ti tabler-file-text me-1"></i>Contracts ({{ $businessUnit->contracts->count() }})
           </button>
         </li>
       </ul>
@@ -145,7 +145,7 @@
               <h5 class="card-title mb-0">Assigned Users</h5>
               @can('assign-users-to-business-units')
                 <a href="{{ route('administration.business-units.manage-users', $businessUnit) }}" class="btn btn-sm btn-primary">
-                  <i class="ti ti-user-plus me-1"></i>Manage Users
+                  <i class="ti tabler-user-plus me-1"></i>Manage Users
                 </a>
               @endcan
             </div>
@@ -191,11 +191,11 @@
                 </div>
               @else
                 <div class="text-center py-4">
-                  <i class="ti ti-users ti-lg text-muted mb-2"></i>
+                  <i class="ti tabler-users ti-lg text-muted mb-2"></i>
                   <p class="text-muted">No users assigned to this business unit yet.</p>
                   @can('assign-users-to-business-units')
                     <a href="{{ route('administration.business-units.manage-users', $businessUnit) }}" class="btn btn-sm btn-primary">
-                      <i class="ti ti-user-plus me-1"></i>Assign Users
+                      <i class="ti tabler-user-plus me-1"></i>Assign Users
                     </a>
                   @endcan
                 </div>
@@ -211,7 +211,7 @@
               <h5 class="card-title mb-0">Products</h5>
               @can('manage-products')
                 <a href="{{ route('administration.products.create') }}" class="btn btn-sm btn-primary">
-                  <i class="ti ti-plus me-1"></i>Add Product
+                  <i class="ti tabler-plus me-1"></i>Add Product
                 </a>
               @endcan
             </div>
@@ -246,7 +246,7 @@
                           </td>
                           <td>
                             <a href="{{ route('administration.products.show', $department) }}" class="btn btn-sm btn-icon btn-outline-primary">
-                              <i class="ti ti-eye"></i>
+                              <i class="ti tabler-eye"></i>
                             </a>
                           </td>
                         </tr>
@@ -256,11 +256,11 @@
                 </div>
               @else
                 <div class="text-center py-4">
-                  <i class="ti ti-building-store ti-lg text-muted mb-2"></i>
+                  <i class="ti tabler-building-store ti-lg text-muted mb-2"></i>
                   <p class="text-muted">No products created for this business unit yet.</p>
                   @can('manage-products')
                     <a href="{{ route('administration.products.create') }}" class="btn btn-sm btn-primary">
-                      <i class="ti ti-plus me-1"></i>Create Product
+                      <i class="ti tabler-plus me-1"></i>Create Product
                     </a>
                   @endcan
                 </div>
@@ -314,7 +314,7 @@
                 </div>
               @else
                 <div class="text-center py-4">
-                  <i class="ti ti-file-text ti-lg text-muted mb-2"></i>
+                  <i class="ti tabler-file-text ti-lg text-muted mb-2"></i>
                   <p class="text-muted">No contracts assigned to this business unit yet.</p>
                 </div>
               @endif
@@ -329,7 +329,7 @@
 @if(session('success'))
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-success show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
     <div class="toast-header">
-      <i class="ti ti-check text-success me-2"></i>
+      <i class="ti tabler-check text-success me-2"></i>
       <div class="me-auto fw-medium">Success!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

@@ -26,7 +26,7 @@
           @csrf
 
           <!-- Basic Information -->
-          <h6 class="mb-3"><i class="ti ti-briefcase me-2"></i>Basic Information</h6>
+          <h6 class="mb-3"><i class="ti tabler-briefcase me-2"></i>Basic Information</h6>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label" for="title">Position Title <span class="text-danger">*</span></label>
@@ -73,7 +73,7 @@
 
           @if($canEditSalary)
           <!-- Salary Range -->
-          <h6 class="mt-4 mb-3"><i class="ti ti-currency-dollar me-2"></i>Salary Range</h6>
+          <h6 class="mt-4 mb-3"><i class="ti tabler-currency-dollar me-2"></i>Salary Range</h6>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label" for="min_salary">Minimum Salary (EGP)</label>
@@ -96,7 +96,7 @@
           @endif
 
           <!-- Description & Requirements -->
-          <h6 class="mt-4 mb-3"><i class="ti ti-file-description me-2"></i>Description & Requirements</h6>
+          <h6 class="mt-4 mb-3"><i class="ti tabler-file-description me-2"></i>Description & Requirements</h6>
           <div class="mb-3">
             <label class="form-label" for="description">Job Description</label>
             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"

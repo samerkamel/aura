@@ -76,11 +76,11 @@
   function renderBoardDropdown() {
     return (
       "<div class='dropdown'>" +
-      "<i class='dropdown-toggle ti ti-dots-vertical cursor-pointer' id='board-dropdown' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></i>" +
+      "<i class='dropdown-toggle ti tabler-dots-vertical cursor-pointer' id='board-dropdown' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></i>" +
       "<div class='dropdown-menu dropdown-menu-end' aria-labelledby='board-dropdown'>" +
-      "<a class='dropdown-item delete-board' href='javascript:void(0)'> <i class='ti ti-trash ti-xs' me-1></i> <span class='align-middle'>Delete</span></a>" +
-      "<a class='dropdown-item' href='javascript:void(0)'><i class='ti ti-edit ti-xs' me-1></i> <span class='align-middle'>Rename</span></a>" +
-      "<a class='dropdown-item' href='javascript:void(0)'><i class='ti ti-archive ti-xs' me-1></i> <span class='align-middle'>Archive</span></a>" +
+      "<a class='dropdown-item delete-board' href='javascript:void(0)'> <i class='ti tabler-trash ti-xs' me-1></i> <span class='align-middle'>Delete</span></a>" +
+      "<a class='dropdown-item' href='javascript:void(0)'><i class='ti tabler-edit ti-xs' me-1></i> <span class='align-middle'>Rename</span></a>" +
+      "<a class='dropdown-item' href='javascript:void(0)'><i class='ti tabler-archive ti-xs' me-1></i> <span class='align-middle'>Archive</span></a>" +
       '</div>' +
       '</div>'
     );
@@ -89,7 +89,7 @@
   function renderDropdown() {
     return (
       "<div class='dropdown kanban-tasks-item-dropdown'>" +
-      "<i class='dropdown-toggle ti ti-dots-vertical' id='kanban-tasks-item-dropdown' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></i>" +
+      "<i class='dropdown-toggle ti tabler-dots-vertical' id='kanban-tasks-item-dropdown' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></i>" +
       "<div class='dropdown-menu dropdown-menu-end' aria-labelledby='kanban-tasks-item-dropdown'>" +
       "<a class='dropdown-item' href='javascript:void(0)'>Copy task link</a>" +
       "<a class='dropdown-item' href='javascript:void(0)'>Duplicate task</a>" +
@@ -154,11 +154,11 @@
   function renderFooter(attachments, comments, assigned, members) {
     return (
       "<div class='d-flex justify-content-between align-items-center flex-wrap mt-2'>" +
-      "<div class='d-flex'> <span class='d-flex align-items-center me-2'><i class='ti ti-paperclip me-1'></i>" +
+      "<div class='d-flex'> <span class='d-flex align-items-center me-2'><i class='ti tabler-paperclip me-1'></i>" +
       "<span class='attachments'>" +
       attachments +
       '</span>' +
-      "</span> <span class='d-flex align-items-center ms-2'><i class='ti ti-message-2 me-1'></i>" +
+      "</span> <span class='d-flex align-items-center ms-2'><i class='ti tabler-message-2 me-1'></i>" +
       '<span> ' +
       comments +
       ' </span>' +
@@ -217,7 +217,7 @@
           'afterbegin',
           renderAvatar(avatars, false, 'xs', '1', el.getAttribute('data-members')) +
             "<div class='avatar avatar-xs ms-1'>" +
-            "<span class='avatar-initial rounded-circle bg-label-secondary'><i class='ti ti-plus ti-xs text-heading'></i></span>" +
+            "<span class='avatar-initial rounded-circle bg-label-secondary'><i class='ti tabler-plus ti-xs text-heading'></i></span>" +
             '</div>'
         );
     },

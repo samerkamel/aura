@@ -10,13 +10,13 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <h5 class="mb-0">
-                        <i class="ti ti-eye-check me-2"></i>Preview Import
+                        <i class="ti tabler-eye-check me-2"></i>Preview Import
                     </h5>
                     <small class="text-muted">Review what will be created before executing</small>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('accounting.expense-imports.show', $expenseImport) }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Edit
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Edit
                     </a>
                 </div>
             </div>
@@ -39,7 +39,7 @@
         @if(session('import_results'))
             @php $results = session('import_results'); @endphp
             <div class="alert alert-info">
-                <h6><i class="ti ti-info-circle me-2"></i>Import Results</h6>
+                <h6><i class="ti tabler-info-circle me-2"></i>Import Results</h6>
                 <ul class="mb-0">
                     <li>Expenses Created: {{ $results['expenses_created'] ?? 0 }}</li>
                     <li>Income Created: {{ $results['income_created'] ?? 0 }}</li>
@@ -55,7 +55,7 @@
         <!-- Errors/Warnings -->
         @if($errorRows->count() > 0)
             <div class="alert alert-danger">
-                <h6><i class="ti ti-alert-circle me-2"></i>{{ $errorRows->count() }} Rows with Errors</h6>
+                <h6><i class="ti tabler-alert-circle me-2"></i>{{ $errorRows->count() }} Rows with Errors</h6>
                 <p class="mb-2">These rows will not be imported. Please go back and fix them.</p>
                 <ul class="mb-0">
                     @foreach($errorRows->take(5) as $row)
@@ -70,7 +70,7 @@
 
         @if($warningRows->count() > 0)
             <div class="alert alert-warning">
-                <h6><i class="ti ti-alert-triangle me-2"></i>{{ $warningRows->count() }} Rows with Warnings</h6>
+                <h6><i class="ti tabler-alert-triangle me-2"></i>{{ $warningRows->count() }} Rows with Warnings</h6>
                 <p class="mb-0">These rows will be imported but may have incomplete data.</p>
             </div>
         @endif
@@ -82,7 +82,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-danger">
-                                <i class="ti ti-receipt-2 ti-md text-white"></i>
+                                <i class="ti tabler-receipt-2 ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['expenses_to_create'] }}</h3>
@@ -99,7 +99,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-success">
-                                <i class="ti ti-cash ti-md text-white"></i>
+                                <i class="ti tabler-cash ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['income_to_create'] }}</h3>
@@ -116,7 +116,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-info">
-                                <i class="ti ti-file-invoice ti-md text-white"></i>
+                                <i class="ti tabler-file-invoice ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['invoices_to_link'] }}</h3>
@@ -133,7 +133,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-primary">
-                                <i class="ti ti-users ti-md text-white"></i>
+                                <i class="ti tabler-users ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['customers_to_create'] }}</h3>
@@ -149,7 +149,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-warning">
-                                <i class="ti ti-arrows-exchange ti-md text-white"></i>
+                                <i class="ti tabler-arrows-exchange ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['balance_swaps'] }}</h3>
@@ -165,7 +165,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="avatar avatar-md me-3 bg-secondary">
-                                <i class="ti ti-ban ti-md text-white"></i>
+                                <i class="ti tabler-ban ti-md text-white"></i>
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['skipped'] }}</h3>
@@ -181,7 +181,7 @@
         @if($rowsByAction->has('create_expense') && $rowsByAction->get('create_expense')->count() > 0)
         <div class="card mb-4">
             <div class="card-header bg-danger bg-opacity-10">
-                <h6 class="mb-0 text-danger"><i class="ti ti-receipt-2 me-2"></i>Expenses to Create ({{ $rowsByAction->get('create_expense')->count() }})</h6>
+                <h6 class="mb-0 text-danger"><i class="ti tabler-receipt-2 me-2"></i>Expenses to Create ({{ $rowsByAction->get('create_expense')->count() }})</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -227,7 +227,7 @@
         @if($rowsByAction->has('create_income') && $rowsByAction->get('create_income')->count() > 0)
         <div class="card mb-4">
             <div class="card-header bg-success bg-opacity-10">
-                <h6 class="mb-0 text-success"><i class="ti ti-cash me-2"></i>Income to Create ({{ $rowsByAction->get('create_income')->count() }})</h6>
+                <h6 class="mb-0 text-success"><i class="ti tabler-cash me-2"></i>Income to Create ({{ $rowsByAction->get('create_income')->count() }})</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -262,7 +262,7 @@
         @if($rowsByAction->has('link_invoice') && $rowsByAction->get('link_invoice')->count() > 0)
         <div class="card mb-4">
             <div class="card-header bg-info bg-opacity-10">
-                <h6 class="mb-0 text-info"><i class="ti ti-file-invoice me-2"></i>Invoice Payments to Create ({{ $rowsByAction->get('link_invoice')->count() }})</h6>
+                <h6 class="mb-0 text-info"><i class="ti tabler-file-invoice me-2"></i>Invoice Payments to Create ({{ $rowsByAction->get('link_invoice')->count() }})</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -314,7 +314,7 @@
                             @csrf
                             <input type="hidden" name="dry_run" value="1">
                             <button type="submit" class="btn btn-outline-primary">
-                                <i class="ti ti-test-pipe me-1"></i>Dry Run
+                                <i class="ti tabler-test-pipe me-1"></i>Dry Run
                             </button>
                         </form>
 
@@ -322,7 +322,7 @@
                             @csrf
                             <input type="hidden" name="dry_run" value="0">
                             <button type="submit" class="btn btn-success" {{ $errorRows->count() > 0 ? 'disabled' : '' }}>
-                                <i class="ti ti-check me-1"></i>Commit Changes
+                                <i class="ti tabler-check me-1"></i>Commit Changes
                             </button>
                         </form>
                     </div>

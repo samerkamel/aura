@@ -9,7 +9,7 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-fingerprint me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-fingerprint me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">ZKTeco Import Results</h5>
             <small class="text-muted">{{ $filename }}</small>
@@ -17,10 +17,10 @@
         </div>
         <div class="d-flex gap-2">
           <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-outline-primary">
-            <i class="ti ti-upload me-1"></i>Import Another File
+            <i class="ti tabler-upload me-1"></i>Import Another File
           </a>
           <a href="{{ route('attendance.index') }}" class="btn btn-secondary">
-            <i class="ti ti-list me-1"></i>View Attendance
+            <i class="ti tabler-list me-1"></i>View Attendance
           </a>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-list-numbers text-info mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-list-numbers text-info mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Raw Punches</h6>
             <p class="mb-0 fw-bold fs-5">{{ number_format($results['total_records']) }}</p>
           </div>
@@ -41,7 +41,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100 border-warning">
           <div class="card-body text-center">
-            <i class="ti ti-clock-off text-warning mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-clock-off text-warning mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Skipped (Old)</h6>
             <p class="mb-0 fw-bold fs-5 text-warning">{{ number_format($results['skipped_old']) }}</p>
           </div>
@@ -51,7 +51,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-calendar-event text-primary mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-calendar-event text-primary mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Work Days</h6>
             <p class="mb-0 fw-bold fs-5">{{ number_format($results['work_days_processed'] ?? 0) }}</p>
           </div>
@@ -60,7 +60,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-plus text-success mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-plus text-success mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">New Records</h6>
             <p class="mb-0 fw-bold fs-5 text-success">{{ number_format($results['imported']) }}</p>
           </div>
@@ -69,7 +69,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-refresh text-info mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-refresh text-info mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Updated</h6>
             <p class="mb-0 fw-bold fs-5 text-info">{{ number_format($results['updated'] ?? 0) }}</p>
           </div>
@@ -78,7 +78,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-copy text-warning mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-copy text-warning mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Duplicates</h6>
             <p class="mb-0 fw-bold fs-5 text-warning">{{ number_format($results['duplicates']) }}</p>
           </div>
@@ -87,7 +87,7 @@
       <div class="col-md-2 col-sm-4 col-6 mb-3">
         <div class="card h-100">
           <div class="card-body text-center">
-            <i class="ti ti-player-skip-forward text-secondary mb-2" style="font-size: 2rem;"></i>
+            <i class="ti tabler-player-skip-forward text-secondary mb-2" style="font-size: 2rem;"></i>
             <h6 class="mb-1">Skipped</h6>
             <p class="mb-0 fw-bold fs-5 text-secondary">{{ number_format($results['skipped']) }}</p>
           </div>
@@ -99,7 +99,7 @@
     @if(($results['skipped_old'] ?? 0) > 0 && isset($results['latest_existing_record']))
     <div class="alert alert-info mb-4">
       <div class="d-flex align-items-start">
-        <i class="ti ti-database me-2 mt-1" style="font-size: 1.2rem;"></i>
+        <i class="ti tabler-database me-2 mt-1" style="font-size: 1.2rem;"></i>
         <div>
           <h6 class="mb-1">Incremental Import</h6>
           <p class="mb-0 small">
@@ -115,7 +115,7 @@
     @if($results['imported'] > 0 || ($results['updated'] ?? 0) > 0)
       <div class="alert alert-success mb-4">
         <div class="d-flex align-items-center">
-          <i class="ti ti-circle-check me-2" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-circle-check me-2" style="font-size: 1.5rem;"></i>
           <div>
             <h6 class="mb-0">Import Completed Successfully</h6>
             <p class="mb-0">
@@ -133,7 +133,7 @@
     @elseif($results['duplicates'] > 0)
       <div class="alert alert-info mb-4">
         <div class="d-flex align-items-center">
-          <i class="ti ti-info-circle me-2" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-info-circle me-2" style="font-size: 1.5rem;"></i>
           <div>
             <h6 class="mb-0">File Already Imported</h6>
             <p class="mb-0">All {{ number_format($results['duplicates']) }} records in this file already exist in the system. No changes were made.</p>
@@ -143,7 +143,7 @@
     @else
       <div class="alert alert-warning mb-4">
         <div class="d-flex align-items-center">
-          <i class="ti ti-alert-triangle me-2" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-alert-triangle me-2" style="font-size: 1.5rem;"></i>
           <div>
             <h6 class="mb-0">No Records Imported</h6>
             <p class="mb-0">
@@ -165,7 +165,7 @@
       <div class="card mb-4">
         <div class="card-header bg-warning bg-opacity-10">
           <h6 class="mb-0 text-warning">
-            <i class="ti ti-users me-2"></i>Unmapped Attendance IDs ({{ count($results['unmapped_users']) }})
+            <i class="ti tabler-users me-2"></i>Unmapped Attendance IDs ({{ count($results['unmapped_users']) }})
           </h6>
         </div>
         <div class="card-body">
@@ -176,7 +176,7 @@
             @endforeach
           </div>
           <div class="alert alert-info mb-0">
-            <i class="ti ti-info-circle me-2"></i>
+            <i class="ti tabler-info-circle me-2"></i>
             To import records for these users, update the corresponding employees' <strong>Attendance ID</strong> field in their profile and re-import the file.
             <a href="{{ route('hr.employees.index') }}" class="alert-link">Go to Employee Management</a>
           </div>
@@ -189,7 +189,7 @@
       <div class="card mb-4">
         <div class="card-header bg-danger bg-opacity-10">
           <h6 class="mb-0 text-danger">
-            <i class="ti ti-alert-circle me-2"></i>Errors ({{ count($results['errors']) }})
+            <i class="ti tabler-alert-circle me-2"></i>Errors ({{ count($results['errors']) }})
           </h6>
         </div>
         <div class="card-body">
@@ -208,16 +208,16 @@
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <p class="mb-0 text-muted">
-              <i class="ti ti-clock me-1"></i>
+              <i class="ti tabler-clock me-1"></i>
               Import completed at {{ now()->format('M d, Y h:i A') }}
             </p>
           </div>
           <div class="d-flex gap-2">
             <a href="{{ route('attendance.import.zkteco') }}" class="btn btn-outline-primary">
-              <i class="ti ti-upload me-1"></i>Import Another File
+              <i class="ti tabler-upload me-1"></i>Import Another File
             </a>
             <a href="{{ route('attendance.index') }}" class="btn btn-primary">
-              <i class="ti ti-list me-1"></i>View Attendance Records
+              <i class="ti tabler-list me-1"></i>View Attendance Records
             </a>
           </div>
         </div>

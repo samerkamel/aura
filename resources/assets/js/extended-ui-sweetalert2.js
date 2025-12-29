@@ -90,9 +90,9 @@
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
-        confirmButtonText: '<i class="ti ti-thumb-up"></i> Great!',
+        confirmButtonText: '<i class="ti tabler-thumb-up"></i> Great!',
         confirmButtonAriaLabel: 'Thumbs up, great!',
-        cancelButtonText: '<i class="ti ti-thumb-down"></i>',
+        cancelButtonText: '<i class="ti tabler-thumb-down"></i>',
         cancelButtonAriaLabel: 'Thumbs down',
         customClass: {
           confirmButton: 'btn btn-primary me-3 waves-effect waves-light',

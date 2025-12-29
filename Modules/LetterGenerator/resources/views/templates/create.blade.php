@@ -172,10 +172,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
           <div class="d-flex justify-content-between">
             <a href="{{ route('letter-templates.index') }}" class="btn btn-outline-secondary">
-              <i class="ti ti-arrow-left me-1"></i>Back to Templates
+              <i class="ti tabler-arrow-left me-1"></i>Back to Templates
             </a>
             <button type="submit" class="btn btn-primary">
-              <i class="ti ti-device-floppy me-1"></i>Save Template
+              <i class="ti tabler-device-floppy me-1"></i>Save Template
             </button>
           </div>
 

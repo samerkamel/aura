@@ -65,7 +65,7 @@ $configData = Helper::appClasses();
           <div class="bs-stepper-header border-none pt-12 px-0">
             <div class="step" data-target="#accountDetailsValidation">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti ti-file-analytics ti-md"></i></span>
+                <span class="bs-stepper-circle"><i class="ti tabler-file-analytics ti-md"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title">Account</span>
                   <span class="bs-stepper-subtitle">Account Details</span>
@@ -73,11 +73,11 @@ $configData = Helper::appClasses();
               </button>
             </div>
             <div class="line">
-              <i class="ti ti-chevron-right"></i>
+              <i class="ti tabler-chevron-right"></i>
             </div>
             <div class="step" data-target="#personalInfoValidation">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti ti-user ti-md"></i></span>
+                <span class="bs-stepper-circle"><i class="ti tabler-user ti-md"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title">Personal</span>
                   <span class="bs-stepper-subtitle">Enter Information</span>
@@ -85,11 +85,11 @@ $configData = Helper::appClasses();
               </button>
             </div>
             <div class="line">
-              <i class="ti ti-chevron-right"></i>
+              <i class="ti tabler-chevron-right"></i>
             </div>
             <div class="step" data-target="#billingLinksValidation">
               <button type="button" class="step-trigger">
-                <span class="bs-stepper-circle"><i class="ti ti-credit-card ti-md"></i></span>
+                <span class="bs-stepper-circle"><i class="ti tabler-credit-card ti-md"></i></span>
                 <span class="bs-stepper-label">
                   <span class="bs-stepper-title">Billing</span>
                   <span class="bs-stepper-subtitle">Payment Details</span>
@@ -118,14 +118,14 @@ $configData = Helper::appClasses();
                     <label class="form-label" for="multiStepsPass">Password</label>
                     <div class="input-group input-group-merge">
                       <input type="password" id="multiStepsPass" name="multiStepsPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multiStepsPass2" />
-                      <span class="input-group-text cursor-pointer" id="multiStepsPass2"><i class="ti ti-eye-off"></i></span>
+                      <span class="input-group-text cursor-pointer" id="multiStepsPass2"><i class="ti tabler-eye-off"></i></span>
                     </div>
                   </div>
                   <div class="col-sm-6 form-password-toggle">
                     <label class="form-label" for="multiStepsConfirmPass">Confirm Password</label>
                     <div class="input-group input-group-merge">
                       <input type="password" id="multiStepsConfirmPass" name="multiStepsConfirmPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="multiStepsConfirmPass2" />
-                      <span class="input-group-text cursor-pointer" id="multiStepsConfirmPass2"><i class="ti ti-eye-off"></i></span>
+                      <span class="input-group-text cursor-pointer" id="multiStepsConfirmPass2"><i class="ti tabler-eye-off"></i></span>
                     </div>
                   </div>
                   <div class="col-md-12">
@@ -133,10 +133,10 @@ $configData = Helper::appClasses();
                     <input type="text" name="multiStepsURL" id="multiStepsURL" class="form-control" placeholder="johndoe/profile" aria-label="johndoe" />
                   </div>
                   <div class="col-12 d-flex justify-content-between">
-                    <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                    <button class="btn btn-label-secondary btn-prev" disabled> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                       <span class="align-middle d-sm-inline-block d-none">Previous</span>
                     </button>
-                    <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                    <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
                   </div>
                 </div>
               </div>
@@ -236,10 +236,10 @@ $configData = Helper::appClasses();
                     </select>
                   </div>
                   <div class="col-12 d-flex justify-content-between">
-                    <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                    <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                       <span class="align-middle d-sm-inline-block d-none">Previous</span>
                     </button>
-                    <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span> <i class="ti ti-arrow-right ti-xs"></i></button>
+                    <button class="btn btn-primary btn-next"> <span class="align-middle d-sm-inline-block d-none me-sm-1 me-0">Next</span> <i class="ti tabler-arrow-right ti-xs"></i></button>
                   </div>
                 </div>
               </div>
@@ -326,11 +326,11 @@ $configData = Helper::appClasses();
                     <label class="form-label" for="multiStepsCvv">CVV Code</label>
                     <div class="input-group input-group-merge">
                       <input type="text" id="multiStepsCvv" class="form-control multi-steps-cvv" name="multiStepsCvv" maxlength="3" placeholder="654" />
-                      <span class="input-group-text cursor-pointer" id="multiStepsCvvHelp"><i class="ti ti-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                      <span class="input-group-text cursor-pointer" id="multiStepsCvvHelp"><i class="ti tabler-help text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                     </div>
                   </div>
                   <div class="col-12 d-flex justify-content-between">
-                    <button class="btn btn-label-secondary btn-prev"> <i class="ti ti-arrow-left ti-xs me-sm-2 me-0"></i>
+                    <button class="btn btn-label-secondary btn-prev"> <i class="ti tabler-arrow-left ti-xs me-sm-2 me-0"></i>
                       <span class="align-middle d-sm-inline-block d-none">Previous</span>
                     </button>
                     <button type="submit" class="btn btn-success btn-next btn-submit">Submit</button>

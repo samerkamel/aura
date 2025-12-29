@@ -49,30 +49,30 @@
           <span class="badge bg-secondary ms-2">Inactive</span>
         @endif
         @if($project->needs_monthly_report)
-          <span class="badge bg-info ms-2"><i class="ti ti-report me-1"></i>Monthly Report</span>
+          <span class="badge bg-info ms-2"><i class="ti tabler-report me-1"></i>Monthly Report</span>
         @endif
       </div>
       <div>
         <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-users me-1"></i>Manage Team
+          <i class="ti tabler-users me-1"></i>Manage Team
         </a>
         <a href="{{ route('accounting.estimates.create', ['project_id' => $project->id]) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-file-invoice me-1"></i>Create Estimate
+          <i class="ti tabler-file-invoice me-1"></i>Create Estimate
         </a>
         @can('view-financial-reports')
         <a href="{{ route('projects.edit', $project) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-pencil me-1"></i>Edit
+          <i class="ti tabler-pencil me-1"></i>Edit
         </a>
         @endcan
         <a href="{{ route('projects.index') }}" class="btn btn-outline-light btn-sm">
-          <i class="ti ti-arrow-left me-1"></i>Back
+          <i class="ti tabler-arrow-left me-1"></i>Back
         </a>
       </div>
     </div>
     <h2 class="mb-2">{{ $project->name }}</h2>
     @if($project->customer)
       <p class="mb-0 opacity-75">
-        <i class="ti ti-building me-1"></i>{{ $project->customer->display_name }}
+        <i class="ti tabler-building me-1"></i>{{ $project->customer->display_name }}
       </p>
     @endif
     @if($project->description)
@@ -141,11 +141,11 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-file-text me-2 text-success"></i>Contracts
+            <i class="ti tabler-file-text me-2 text-success"></i>Contracts
             <span class="badge bg-success ms-2">{{ $project->contracts->count() }}</span>
           </h5>
           <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
-            <i class="ti ti-plus me-1"></i>Create Contract
+            <i class="ti tabler-plus me-1"></i>Create Contract
           </a>
         </div>
         <div class="card-body">
@@ -191,17 +191,17 @@
                       <td class="text-center">
                         <div class="dropdown">
                           <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
+                            <i class="ti tabler-dots-vertical"></i>
                           </button>
                           <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}">
-                              <i class="ti ti-eye me-1"></i> View Contract
+                              <i class="ti tabler-eye me-1"></i> View Contract
                             </a>
                             <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}#payments">
-                              <i class="ti ti-cash me-1"></i> Log Payment
+                              <i class="ti tabler-cash me-1"></i> Log Payment
                             </a>
                             <a class="dropdown-item" href="{{ route('accounting.income.contracts.edit', $contract) }}">
-                              <i class="ti ti-pencil me-1"></i> Edit Contract
+                              <i class="ti tabler-pencil me-1"></i> Edit Contract
                             </a>
                           </div>
                         </div>
@@ -211,7 +211,7 @@
                       @foreach($contract->payments->take(3) as $payment)
                         <tr class="table-light">
                           <td colspan="3" class="ps-4 text-muted small">
-                            <i class="ti ti-receipt me-1"></i>{{ $payment->name ?? 'Payment' }} - {{ $payment->due_date?->format('M d, Y') ?? '-' }}
+                            <i class="ti tabler-receipt me-1"></i>{{ $payment->name ?? 'Payment' }} - {{ $payment->due_date?->format('M d, Y') ?? '-' }}
                           </td>
                           <td class="text-end small">EGP {{ number_format($payment->amount, 0) }}</td>
                           <td class="text-end {{ $payment->status === 'paid' ? 'text-success' : '' }} small">
@@ -245,10 +245,10 @@
             </div>
           @else
             <div class="text-center py-4">
-              <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
+              <i class="ti tabler-file-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted mb-3">No contracts linked to this project yet.</p>
               <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
-                <i class="ti ti-plus me-1"></i>Create Contract
+                <i class="ti tabler-plus me-1"></i>Create Contract
               </a>
             </div>
           @endif
@@ -264,11 +264,11 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-users me-2 text-info"></i>Team Members
+            <i class="ti tabler-users me-2 text-info"></i>Team Members
             <span class="badge bg-info ms-2">{{ $project->employees->count() }}</span>
           </h5>
           <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
-            <i class="ti ti-settings me-1"></i>Manage Team
+            <i class="ti tabler-settings me-1"></i>Manage Team
           </a>
         </div>
         <div class="card-body">
@@ -293,10 +293,10 @@
             </div>
           @else
             <div class="text-center py-4">
-              <i class="ti ti-users-group display-6 text-muted mb-3 d-block"></i>
+              <i class="ti tabler-users-group display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted mb-3">No team members assigned yet.</p>
               <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
-                <i class="ti ti-user-plus me-1"></i>Add Team Members
+                <i class="ti tabler-user-plus me-1"></i>Add Team Members
               </a>
             </div>
           @endif
@@ -312,11 +312,11 @@
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-file-invoice me-2 text-primary"></i>Invoices
+            <i class="ti tabler-file-invoice me-2 text-primary"></i>Invoices
             <span class="badge bg-primary ms-2">{{ $project->invoices->count() }}</span>
           </h5>
           <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
-            <i class="ti ti-plus me-1"></i>Create Invoice
+            <i class="ti tabler-plus me-1"></i>Create Invoice
           </a>
         </div>
         <div class="card-body">
@@ -352,20 +352,20 @@
                       <td class="text-center">
                         <div class="dropdown">
                           <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
+                            <i class="ti tabler-dots-vertical"></i>
                           </button>
                           <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}">
-                              <i class="ti ti-eye me-1"></i> View Invoice
+                              <i class="ti tabler-eye me-1"></i> View Invoice
                             </a>
                             @if($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
                               <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}#payments">
-                                <i class="ti ti-cash me-1"></i> Log Payment
+                                <i class="ti tabler-cash me-1"></i> Log Payment
                               </a>
                             @endif
                             @if($invoice->status === 'draft')
                               <a class="dropdown-item" href="{{ route('invoicing.invoices.edit', $invoice) }}">
-                                <i class="ti ti-pencil me-1"></i> Edit Invoice
+                                <i class="ti tabler-pencil me-1"></i> Edit Invoice
                               </a>
                             @endif
                           </div>
@@ -376,7 +376,7 @@
                       @foreach($invoice->payments as $payment)
                         <tr class="table-light">
                           <td colspan="2" class="ps-4 text-muted small">
-                            <i class="ti ti-receipt me-1"></i>Payment - {{ $payment->payment_date->format('M d, Y') }}
+                            <i class="ti tabler-receipt me-1"></i>Payment - {{ $payment->payment_date->format('M d, Y') }}
                           </td>
                           <td></td>
                           <td class="text-end text-success small">+EGP {{ number_format($payment->amount, 0) }}</td>
@@ -393,10 +393,10 @@
             </div>
           @else
             <div class="text-center py-4">
-              <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
+              <i class="ti tabler-file-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted mb-3">No invoices linked to this project yet.</p>
               <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
-                <i class="ti ti-plus me-1"></i>Create Invoice
+                <i class="ti tabler-plus me-1"></i>Create Invoice
               </a>
             </div>
           @endif
@@ -411,7 +411,7 @@
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
-              <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
+              <i class="ti tabler-clock me-2 text-info"></i>Hours by Employee
             </h5>
             <span class="badge bg-info">
               {{ number_format($totalHours, 1) }}h
@@ -433,11 +433,11 @@
             <div class="col-4">
               <div class="btn-group w-100">
                 <button type="submit" class="btn btn-sm btn-primary">
-                  <i class="ti ti-filter"></i>
+                  <i class="ti tabler-filter"></i>
                 </button>
                 @if($startDate && $endDate)
                   <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="ti ti-x"></i>
+                    <i class="ti tabler-x"></i>
                   </a>
                 @endif
               </div>
@@ -483,7 +483,7 @@
             </div>
           @else
             <div class="text-center py-4">
-              <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
+              <i class="ti tabler-clock-off display-6 text-muted mb-3 d-block"></i>
               <p class="text-muted">No hours logged for this period.</p>
             </div>
           @endif
@@ -496,12 +496,12 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">
-        <i class="ti ti-list me-2 text-warning"></i>Recent Work Entries
+        <i class="ti tabler-list me-2 text-warning"></i>Recent Work Entries
       </h5>
       <div>
         <span class="badge bg-secondary me-2">{{ $worklogs->count() }} entries</span>
         <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-sm btn-outline-primary">
-          <i class="ti ti-eye me-1"></i>View All
+          <i class="ti tabler-eye me-1"></i>View All
         </a>
       </div>
     </div>
@@ -542,13 +542,13 @@
         @if($worklogs->count() > 20)
           <div class="text-center mt-3">
             <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-outline-primary btn-sm">
-              <i class="ti ti-eye me-1"></i>View all {{ $worklogs->count() }} entries
+              <i class="ti tabler-eye me-1"></i>View all {{ $worklogs->count() }} entries
             </a>
           </div>
         @endif
       @else
         <div class="text-center py-4">
-          <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
+          <i class="ti tabler-clock-off display-6 text-muted mb-3 d-block"></i>
           <p class="text-muted">No work entries found for this period.</p>
         </div>
       @endif

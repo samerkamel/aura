@@ -38,7 +38,7 @@
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-calendar-event me-2"></i>PTO Policy Configuration
+          <i class="ti tabler-calendar-event me-2"></i>PTO Policy Configuration
         </h5>
       </div>
       <div class="card-body">
@@ -93,7 +93,7 @@
                       </div>
                       <div class="col-md-1">
                         <button type="button" class="btn btn-sm btn-danger remove-tier">
-                          <i class="ti ti-trash"></i>
+                          <i class="ti tabler-trash"></i>
                         </button>
                       </div>
                     </div>
@@ -120,7 +120,7 @@
                     </div>
                     <div class="col-md-1">
                       <button type="button" class="btn btn-sm btn-danger remove-tier">
-                        <i class="ti ti-trash"></i>
+                        <i class="ti tabler-trash"></i>
                       </button>
                     </div>
                   </div>
@@ -128,12 +128,12 @@
               @endif
             </div>
             <button type="button" class="btn btn-sm btn-secondary" id="addTier">
-              <i class="ti ti-plus me-1"></i>Add Tier
+              <i class="ti tabler-plus me-1"></i>Add Tier
             </button>
           </div>
 
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-device-floppy me-1"></i>Save PTO Policy
+            <i class="ti tabler-device-floppy me-1"></i>Save PTO Policy
           </button>
         </form>
       </div>
@@ -145,7 +145,7 @@
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-medical-cross me-2"></i>Sick Leave Policy Configuration
+          <i class="ti tabler-medical-cross me-2"></i>Sick Leave Policy Configuration
         </h5>
       </div>
       <div class="card-body">
@@ -179,7 +179,7 @@
 
           <div class="mb-3">
             <div class="alert alert-info">
-              <i class="ti ti-info-circle me-2"></i>
+              <i class="ti tabler-info-circle me-2"></i>
               <strong>Current Policy:</strong>
               <span id="sickLeavePreview">
                 {{ $sickLeavePolicies->first()->config['days'] ?? 60 }} days every
@@ -189,7 +189,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-device-floppy me-1"></i>Save Sick Leave Policy
+            <i class="ti tabler-device-floppy me-1"></i>Save Sick Leave Policy
           </button>
         </form>
       </div>
@@ -199,7 +199,7 @@
     <div class="card mt-4">
       <div class="card-header">
         <h5 class="card-title mb-0">
-          <i class="ti ti-urgent me-2"></i>Emergency Leave Policy Configuration
+          <i class="ti tabler-urgent me-2"></i>Emergency Leave Policy Configuration
         </h5>
       </div>
       <div class="card-body">
@@ -227,7 +227,7 @@
 
           <div class="mb-3">
             <div class="alert alert-warning">
-              <i class="ti ti-alert-triangle me-2"></i>
+              <i class="ti tabler-alert-triangle me-2"></i>
               <strong>Current Policy:</strong>
               <span id="emergencyLeavePreview">
                 {{ $emergencyLeavePolicies->first()->initial_days ?? 6 }} days per year
@@ -236,7 +236,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary">
-            <i class="ti ti-device-floppy me-1"></i>Save Emergency Leave Policy
+            <i class="ti tabler-device-floppy me-1"></i>Save Emergency Leave Policy
           </button>
         </form>
       </div>
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
           <div class="col-md-1">
             <button type="button" class="btn btn-sm btn-danger remove-tier">
-              <i class="ti ti-trash"></i>
+              <i class="ti tabler-trash"></i>
             </button>
           </div>
         </div>

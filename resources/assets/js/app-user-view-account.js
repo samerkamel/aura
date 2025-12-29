@@ -50,16 +50,16 @@ $(function () {
               $due_date = full['due_date'],
               $balance = full['balance'];
             var roleBadgeObj = {
-              Sent: '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-secondary w-px-30 h-px-30"><i class="ti ti-circle-check ti-xs"></i></span>',
+              Sent: '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-secondary w-px-30 h-px-30"><i class="ti tabler-circle-check ti-xs"></i></span>',
               Draft:
-                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-primary w-px-30 h-px-30"><i class="ti ti-device-floppy ti-xs"></i></span>',
+                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-primary w-px-30 h-px-30"><i class="ti tabler-device-floppy ti-xs"></i></span>',
               'Past Due':
-                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-danger w-px-30 h-px-30"><i class="ti ti-info-circle ti-xs"></i></span>',
+                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-danger w-px-30 h-px-30"><i class="ti tabler-info-circle ti-xs"></i></span>',
               'Partial Payment':
-                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-success w-px-30 h-px-30"><i class="ti ti-circle-half-2 ti-xs"></i></span>',
-              Paid: '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-warning w-px-30 h-px-30"><i class="ti ti-chart-pie ti-xs"></i></span>',
+                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-success w-px-30 h-px-30"><i class="ti tabler-circle-half-2 ti-xs"></i></span>',
+              Paid: '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-warning w-px-30 h-px-30"><i class="ti tabler-chart-pie ti-xs"></i></span>',
               Downloaded:
-                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-info w-px-30 h-px-30"><i class="ti ti-arrow-down-circle ti-xs"></i></span>'
+                '<span class="badge badge-center d-flex align-items-center justify-content-center rounded-pill bg-label-info w-px-30 h-px-30"><i class="ti tabler-arrow-down-circle ti-xs"></i></span>'
             };
             return (
               "<span class='d-inline-block' data-bs-toggle='tooltip' data-bs-html='true' title='<span>" +
@@ -90,10 +90,10 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center">' +
-              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record" data-bs-toggle="tooltip" title="Delete record"><i class="ti ti-trash ti-md"></i></a>' +
-              '<a href="app-invoice-preview.html" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-toggle="tooltip" title="Preview"><i class="ti ti-eye ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record" data-bs-toggle="tooltip" title="Delete record"><i class="ti tabler-trash ti-md"></i></a>' +
+              '<a href="app-invoice-preview.html" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-toggle="tooltip" title="Preview"><i class="ti tabler-eye ti-md"></i></a>' +
               '<div class="d-inline-block">' +
-              '<a href="javascript:;" class="btn btn-sm btn-icon dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn btn-sm btn-icon dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical ti-md"></i></a>' +
               '<ul class="dropdown-menu dropdown-menu-end m-0">' +
               '<li><a href="javascript:;" class="dropdown-item">Details</a></li>' +
               '<li><a href="javascript:;" class="dropdown-item">Archive</a></li>' +
@@ -119,8 +119,8 @@ $(function () {
         search: '',
         searchPlaceholder: 'Search Invoice',
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
@@ -128,35 +128,35 @@ $(function () {
         {
           extend: 'collection',
           className: 'btn btn-label-secondary dropdown-toggle float-sm-end mb-3 mb-sm-0 waves-effect waves-light',
-          text: '<i class="ti ti-upload ti-xs me-2"></i>Export',
+          text: '<i class="ti tabler-upload ti-xs me-2"></i>Export',
           buttons: [
             {
               extend: 'print',
-              text: '<i class="ti ti-printer me-2" ></i>Print',
+              text: '<i class="ti tabler-printer me-2" ></i>Print',
               className: 'dropdown-item',
               exportOptions: { columns: [1, 2, 3, 4] }
             },
             {
               extend: 'csv',
-              text: '<i class="ti ti-file-text me-2" ></i>Csv',
+              text: '<i class="ti tabler-file-text me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: { columns: [1, 2, 3, 4] }
             },
             {
               extend: 'excel',
-              text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
+              text: '<i class="ti tabler-file-spreadsheet me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: { columns: [1, 2, 3, 4] }
             },
             {
               extend: 'pdf',
-              text: '<i class="ti ti-file-description me-2"></i>Pdf',
+              text: '<i class="ti tabler-file-description me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: { columns: [1, 2, 3, 4] }
             },
             {
               extend: 'copy',
-              text: '<i class="ti ti-copy me-2" ></i>Copy',
+              text: '<i class="ti tabler-copy me-2" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: { columns: [1, 2, 3, 4] }
             }

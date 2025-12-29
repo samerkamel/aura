@@ -17,7 +17,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-primary">
-                                    <i class="ti ti-file-invoice ti-md"></i>
+                                    <i class="ti tabler-file-invoice ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-secondary">
-                                    <i class="ti ti-pencil ti-md"></i>
+                                    <i class="ti tabler-pencil ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-info">
-                                    <i class="ti ti-send ti-md"></i>
+                                    <i class="ti tabler-send ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-success">
-                                    <i class="ti ti-check ti-md"></i>
+                                    <i class="ti tabler-check ti-md"></i>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                     <small class="text-muted">Create and manage client estimates and quotations</small>
                 </div>
                 <a href="{{ route('accounting.estimates.create') }}" class="btn btn-primary">
-                    <i class="ti ti-plus me-1"></i>New Estimate
+                    <i class="ti tabler-plus me-1"></i>New Estimate
                 </a>
             </div>
 
@@ -141,10 +141,10 @@
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-outline-primary">
-                            <i class="ti ti-filter me-1"></i>Filter
+                            <i class="ti tabler-filter me-1"></i>Filter
                         </button>
                         <a href="{{ route('accounting.estimates.index') }}" class="btn btn-outline-secondary">
-                            <i class="ti ti-x"></i>
+                            <i class="ti tabler-x"></i>
                         </a>
                     </div>
                 </form>
@@ -201,24 +201,24 @@
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="ti ti-dots-vertical"></i>
+                                            <i class="ti tabler-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="{{ route('accounting.estimates.show', $estimate) }}">
-                                                <i class="ti ti-eye me-1"></i> View
+                                                <i class="ti tabler-eye me-1"></i> View
                                             </a>
                                             @if($estimate->canBeEdited())
                                                 <a class="dropdown-item" href="{{ route('accounting.estimates.edit', $estimate) }}">
-                                                    <i class="ti ti-pencil me-1"></i> Edit
+                                                    <i class="ti tabler-pencil me-1"></i> Edit
                                                 </a>
                                             @endif
                                             <a class="dropdown-item" href="{{ route('accounting.estimates.pdf', $estimate) }}">
-                                                <i class="ti ti-file-download me-1"></i> Download PDF
+                                                <i class="ti tabler-file-download me-1"></i> Download PDF
                                             </a>
                                             <form action="{{ route('accounting.estimates.duplicate', $estimate) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="ti ti-copy me-1"></i> Duplicate
+                                                    <i class="ti tabler-copy me-1"></i> Duplicate
                                                 </button>
                                             </form>
                                             <div class="dropdown-divider"></div>
@@ -226,7 +226,7 @@
                                                 <form action="{{ route('accounting.estimates.send', $estimate) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item">
-                                                        <i class="ti ti-send me-1"></i> Mark as Sent
+                                                        <i class="ti tabler-send me-1"></i> Mark as Sent
                                                     </button>
                                                 </form>
                                             @endif
@@ -234,13 +234,13 @@
                                                 <form action="{{ route('accounting.estimates.approve', $estimate) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item text-success">
-                                                        <i class="ti ti-check me-1"></i> Approve
+                                                        <i class="ti tabler-check me-1"></i> Approve
                                                     </button>
                                                 </form>
                                                 <form action="{{ route('accounting.estimates.reject', $estimate) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="ti ti-x me-1"></i> Reject
+                                                        <i class="ti tabler-x me-1"></i> Reject
                                                     </button>
                                                 </form>
                                             @endif
@@ -248,7 +248,7 @@
                                                 <form action="{{ route('accounting.estimates.convert', $estimate) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item text-primary">
-                                                        <i class="ti ti-transform me-1"></i> Convert to Contract
+                                                        <i class="ti tabler-transform me-1"></i> Convert to Contract
                                                     </button>
                                                 </form>
                                             @endif
@@ -259,7 +259,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="ti ti-trash me-1"></i> Delete
+                                                        <i class="ti tabler-trash me-1"></i> Delete
                                                     </button>
                                                 </form>
                                             @endif
@@ -271,7 +271,7 @@
                             <tr>
                                 <td colspan="8" class="text-center py-4">
                                     <div class="text-muted">
-                                        <i class="ti ti-file-off" style="font-size: 3rem;"></i>
+                                        <i class="ti tabler-file-off" style="font-size: 3rem;"></i>
                                         <p class="mt-2 mb-0">No estimates found</p>
                                     </div>
                                 </td>

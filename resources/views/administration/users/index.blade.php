@@ -42,7 +42,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold py-3 mb-0">User Management</h4>
         <a href="{{ route('administration.users.create') }}" class="btn btn-primary">
-            <i class="ti ti-plus me-2"></i>Create User
+            <i class="ti tabler-plus me-2"></i>Create User
         </a>
     </div>
 
@@ -54,7 +54,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti ti-users ti-sm"></i>
+                                <i class="ti tabler-users ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -73,7 +73,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti ti-user-check ti-sm"></i>
+                                <i class="ti tabler-user-check ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -92,7 +92,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-danger">
-                                <i class="ti ti-user-x ti-sm"></i>
+                                <i class="ti tabler-user-x ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -111,7 +111,7 @@
                     <div class="d-flex align-items-center">
                         <div class="avatar flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti ti-shield-check ti-sm"></i>
+                                <i class="ti tabler-shield-check ti-sm"></i>
                             </span>
                         </div>
                         <div>
@@ -222,12 +222,12 @@
                                 <a href="{{ route('administration.users.show', $user) }}"
                                    class="btn btn-sm btn-icon btn-outline-primary"
                                    data-bs-toggle="tooltip" title="View Details">
-                                    <i class="ti ti-eye"></i>
+                                    <i class="ti tabler-eye"></i>
                                 </a>
                                 <a href="{{ route('administration.users.edit', $user) }}"
                                    class="btn btn-sm btn-icon btn-outline-info"
                                    data-bs-toggle="tooltip" title="Edit User">
-                                    <i class="ti ti-edit"></i>
+                                    <i class="ti tabler-edit"></i>
                                 </a>
                                 @if($user->id !== auth()->id())
                                 <form method="POST" action="{{ route('administration.users.toggle-status', $user) }}" class="d-inline">
@@ -238,7 +238,7 @@
                                             data-bs-toggle="tooltip"
                                             title="{{ $user->is_active ? 'Deactivate' : 'Activate' }} User"
                                             onclick="return confirm('Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} this user?')">
-                                        <i class="ti ti-{{ $user->is_active ? 'user-x' : 'user-check' }}"></i>
+                                        <i class="ti tabler-{{ $user->is_active ? 'user-x' : 'user-check' }}"></i>
                                     </button>
                                 </form>
                                 <form method="POST" action="{{ route('administration.users.destroy', $user) }}" class="d-inline">
@@ -248,7 +248,7 @@
                                             class="btn btn-sm btn-icon btn-outline-danger"
                                             data-bs-toggle="tooltip" title="Delete User"
                                             onclick="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
-                                        <i class="ti ti-trash"></i>
+                                        <i class="ti tabler-trash"></i>
                                     </button>
                                 </form>
                                 @endif
@@ -259,7 +259,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-4">
                             <div class="text-muted">
-                                <i class="ti ti-users ti-3x mb-3 d-block"></i>
+                                <i class="ti tabler-users ti-3x mb-3 d-block"></i>
                                 <h5>No users found</h5>
                                 <p class="mb-0">No users match your current filters.</p>
                             </div>

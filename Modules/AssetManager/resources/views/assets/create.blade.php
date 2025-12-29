@@ -9,14 +9,14 @@
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <i class="ti ti-plus me-2 text-primary" style="font-size: 1.5rem;"></i>
+          <i class="ti tabler-plus me-2 text-primary" style="font-size: 1.5rem;"></i>
           <div>
             <h5 class="mb-0">Create New Asset</h5>
             <small class="text-muted">Add a new asset to the company inventory</small>
           </div>
         </div>
         <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-          <i class="ti ti-arrow-left me-1"></i>Back to Assets
+          <i class="ti tabler-arrow-left me-1"></i>Back to Assets
         </a>
       </div>
     </div>
@@ -25,7 +25,7 @@
     <div class="card">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="ti ti-info-circle me-2"></i>Asset Information
+          <i class="ti tabler-info-circle me-2"></i>Asset Information
         </h6>
       </div>
       <div class="card-body">
@@ -128,10 +128,10 @@
               <hr class="my-4">
               <div class="d-flex justify-content-between">
                 <a href="{{ route('assetmanager.assets.index') }}" class="btn btn-outline-secondary">
-                  <i class="ti ti-x me-1"></i>Cancel
+                  <i class="ti tabler-x me-1"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="ti ti-check me-1"></i>Create Asset
+                  <i class="ti tabler-check me-1"></i>Create Asset
                 </button>
               </div>
             </div>

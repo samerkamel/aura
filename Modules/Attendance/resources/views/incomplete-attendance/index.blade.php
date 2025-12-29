@@ -18,7 +18,7 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
                 <h5 class="mb-0">
-                    <i class="ti ti-user-exclamation me-2"></i>Incomplete Attendance
+                    <i class="ti tabler-user-exclamation me-2"></i>Incomplete Attendance
                 </h5>
                 <small class="text-muted">Employees with missing check-in or check-out on working days</small>
             </div>
@@ -51,12 +51,12 @@
                 </div>
 
                 <button type="button" class="btn btn-primary" onclick="applyFilters()">
-                    <i class="ti ti-filter me-1"></i>Filter
+                    <i class="ti tabler-filter me-1"></i>Filter
                 </button>
 
                 @if(!empty($selectedEmployeeIds))
                 <button type="button" class="btn btn-outline-secondary" onclick="clearEmployeeFilter()">
-                    <i class="ti ti-x me-1"></i>Clear
+                    <i class="ti tabler-x me-1"></i>Clear
                 </button>
                 @endif
             </div>
@@ -66,14 +66,14 @@
     <!-- Alerts -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="ti ti-check me-2"></i>{{ session('success') }}
+            <i class="ti tabler-check me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+            <i class="ti tabler-alert-circle me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -96,7 +96,7 @@
                     </select>
                     <input type="text" name="notes" class="form-control" style="width: 200px;" placeholder="Notes (optional)">
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-check me-1"></i>Apply Leave to Selected
+                        <i class="ti tabler-check me-1"></i>Apply Leave to Selected
                     </button>
                 </div>
             </form>
@@ -108,7 +108,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">
-                <i class="ti ti-list me-2"></i>
+                <i class="ti tabler-list me-2"></i>
                 @if(count($incompleteRecords) > 0)
                     Found {{ count($incompleteRecords) }} incomplete record(s)
                 @else
@@ -205,7 +205,7 @@
                                     <td class="text-end">
                                         <div class="dropdown">
                                             <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="ti ti-dots-vertical"></i>
+                                                <i class="ti tabler-dots-vertical"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><h6 class="dropdown-header">Add Leave</h6></li>
@@ -214,11 +214,11 @@
                                                     <a class="dropdown-item" href="#"
                                                        onclick="addLeave({{ $record['employee']->id }}, '{{ $record['date']->format('Y-m-d') }}', {{ $policy->id }}, '{{ $policy->name }}', '{{ $record['employee']->name }}', '{{ $record['date_formatted'] }}')">
                                                         @if($policy->type === 'pto')
-                                                            <i class="ti ti-beach me-2 text-info"></i>
+                                                            <i class="ti tabler-beach me-2 text-info"></i>
                                                         @elseif($policy->type === 'sick_leave')
-                                                            <i class="ti ti-medical-cross me-2 text-danger"></i>
+                                                            <i class="ti tabler-medical-cross me-2 text-danger"></i>
                                                         @else
-                                                            <i class="ti ti-calendar-event me-2 text-warning"></i>
+                                                            <i class="ti tabler-calendar-event me-2 text-warning"></i>
                                                         @endif
                                                         {{ $policy->name }}
                                                     </a>
@@ -228,7 +228,7 @@
                                                 <li>
                                                     <a class="dropdown-item" href="#"
                                                        onclick="addWfh({{ $record['employee']->id }}, '{{ $record['date']->format('Y-m-d') }}', '{{ $record['employee']->name }}', '{{ $record['date_formatted'] }}')">
-                                                        <i class="ti ti-home me-2 text-primary"></i>Work From Home
+                                                        <i class="ti tabler-home me-2 text-primary"></i>Work From Home
                                                     </a>
                                                 </li>
                                             </ul>
@@ -243,7 +243,7 @@
                 <div class="text-center py-5">
                     <div class="avatar avatar-lg mb-3 bg-label-success">
                         <span class="avatar-initial rounded-circle">
-                            <i class="ti ti-check fs-3"></i>
+                            <i class="ti tabler-check fs-3"></i>
                         </span>
                     </div>
                     <h6>All Clear!</h6>
@@ -261,7 +261,7 @@
             <div class="d-flex align-items-start">
                 <div class="avatar avatar-sm me-3 bg-label-info">
                     <span class="avatar-initial rounded-circle">
-                        <i class="ti ti-info-circle"></i>
+                        <i class="ti tabler-info-circle"></i>
                     </span>
                 </div>
                 <div>
@@ -294,7 +294,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="ti ti-calendar-plus me-2"></i>Add <span id="leave-type-name">Leave</span>
+                        <i class="ti tabler-calendar-plus me-2"></i>Add <span id="leave-type-name">Leave</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -317,7 +317,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-check me-1"></i>Add Leave
+                        <i class="ti tabler-check me-1"></i>Add Leave
                     </button>
                 </div>
             </form>
@@ -336,7 +336,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="ti ti-home me-2"></i>Add Work From Home
+                        <i class="ti tabler-home me-2"></i>Add Work From Home
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -359,7 +359,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-home me-1"></i>Add WFH
+                        <i class="ti tabler-home me-1"></i>Add WFH
                     </button>
                 </div>
             </form>

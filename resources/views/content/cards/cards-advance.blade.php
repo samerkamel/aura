@@ -40,7 +40,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="MonthlyCampaign" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="MonthlyCampaign">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -52,7 +52,7 @@ $configData = Helper::appClasses();
       <div class="card-body">
         <ul class="p-0 m-0">
           <li class="mb-6 d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-success rounded p-1_5"><i class="ti ti-mail ti-md"></i></div>
+            <div class="badge bg-label-success rounded p-1_5"><i class="ti tabler-mail ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Emails</h6>
               <div class="d-flex">
@@ -62,7 +62,7 @@ $configData = Helper::appClasses();
             </div>
           </li>
           <li class="mb-6 d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-info rounded p-1_5"><i class="ti ti-link ti-md"></i></div>
+            <div class="badge bg-label-info rounded p-1_5"><i class="ti tabler-link ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Opened</h6>
               <div class="d-flex">
@@ -72,7 +72,7 @@ $configData = Helper::appClasses();
             </div>
           </li>
           <li class="mb-6 d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-warning rounded p-1_5"><i class="ti ti-mouse ti-md"></i></div>
+            <div class="badge bg-label-warning rounded p-1_5"><i class="ti tabler-mouse ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Clicked</h6>
               <div class="d-flex">
@@ -82,7 +82,7 @@ $configData = Helper::appClasses();
             </div>
           </li>
           <li class="mb-6 d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-primary rounded p-1_5"><i class="ti ti-users ti-md"></i></div>
+            <div class="badge bg-label-primary rounded p-1_5"><i class="ti tabler-users ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Subscribe</h6>
               <div class="d-flex">
@@ -92,7 +92,7 @@ $configData = Helper::appClasses();
             </div>
           </li>
           <li class="mb-6 d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-secondary rounded p-1_5"><i class="ti ti-alert-triangle ti-md"></i></div>
+            <div class="badge bg-label-secondary rounded p-1_5"><i class="ti tabler-alert-triangle ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Complaints</h6>
               <div class="d-flex">
@@ -102,7 +102,7 @@ $configData = Helper::appClasses();
             </div>
           </li>
           <li class="d-flex justify-content-between align-items-center">
-            <div class="badge bg-label-danger rounded p-1_5"><i class="ti ti-ban ti-md"></i></div>
+            <div class="badge bg-label-danger rounded p-1_5"><i class="ti tabler-ban ti-md"></i></div>
             <div class="d-flex justify-content-between w-100 flex-wrap">
               <h6 class="mb-0 ms-4">Unsubscribe</h6>
               <div class="d-flex">
@@ -127,7 +127,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="activeProjects" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="activeProjects">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -250,7 +250,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="sourceVisits" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sourceVisits">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -263,7 +263,7 @@ $configData = Helper::appClasses();
         <ul class="list-unstyled mb-0">
           <li class="mb-4">
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-shadow ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-shadow ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">Direct Source</h6>
@@ -278,7 +278,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="mb-4">
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-globe ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-globe ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">Social Network</h6>
@@ -293,7 +293,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="mb-4">
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-mail ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-mail ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">Email Newsletter</h6>
@@ -308,7 +308,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="mb-4">
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-external-link ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-external-link ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">Referrals</h6>
@@ -323,7 +323,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="mb-4">
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-ad ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-ad ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">ADVT</h6>
@@ -338,7 +338,7 @@ $configData = Helper::appClasses();
           </li>
           <li>
             <div class="d-flex align-items-center">
-              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti ti-star ti-md"></i></div>
+              <div class="badge bg-label-secondary text-body p-2 me-4 rounded"><i class="ti tabler-star ti-md"></i></div>
               <div class="d-flex justify-content-between w-100 flex-wrap gap-2">
                 <div class="me-2">
                   <h6 class="mb-0">Other</h6>
@@ -367,7 +367,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="salesByCountry" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="salesByCountry">
             <a class="dropdown-item" href="javascript:void(0);">Download</a>
@@ -392,7 +392,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-success fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up'></i>
+                  <i class='ti tabler-chevron-up'></i>
                   25.8%
                 </p>
               </div>
@@ -411,7 +411,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-danger fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-down'></i>
+                  <i class='ti tabler-chevron-down'></i>
                   6.2%
                 </p>
               </div>
@@ -430,7 +430,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-success fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up'></i>
+                  <i class='ti tabler-chevron-up'></i>
                   12.4%
                 </p>
               </div>
@@ -449,7 +449,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-danger fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-down'></i>
+                  <i class='ti tabler-chevron-down'></i>
                   11.9%
                 </p>
               </div>
@@ -468,7 +468,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-success fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up'></i>
+                  <i class='ti tabler-chevron-up'></i>
                   16.2%
                 </p>
               </div>
@@ -487,7 +487,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="user-progress">
                 <p class="text-success fw-medium mb-0 d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up'></i>
+                  <i class='ti tabler-chevron-up'></i>
                   14.8%
                 </p>
               </div>
@@ -509,7 +509,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="earningReports" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReports">
             <a class="dropdown-item" href="javascript:void(0);">Download</a>
@@ -522,7 +522,7 @@ $configData = Helper::appClasses();
         <ul class="p-0 m-0">
           <li class="d-flex align-items-center mb-4">
             <div class="me-4">
-              <span class="badge bg-label-primary rounded p-1_5"><i class='ti ti-chart-pie-2 ti-md'></i></span>
+              <span class="badge bg-label-primary rounded p-1_5"><i class='ti tabler-chart-pie-2 ti-md'></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -532,7 +532,7 @@ $configData = Helper::appClasses();
               <div class="user-progress d-flex align-items-center gap-4">
                 <small>$1,619</small>
                 <div class="d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up text-success'></i>
+                  <i class='ti tabler-chevron-up text-success'></i>
                   <small class="text-muted">18.6%</small>
                 </div>
               </div>
@@ -540,7 +540,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex align-items-center mb-4">
             <div class="me-4">
-              <span class="badge bg-label-success rounded p-1_5"><i class='ti ti-currency-dollar ti-md'></i></span>
+              <span class="badge bg-label-success rounded p-1_5"><i class='ti tabler-currency-dollar ti-md'></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -550,7 +550,7 @@ $configData = Helper::appClasses();
               <div class="user-progress d-flex align-items-center gap-4">
                 <small>$3,571</small>
                 <div class="d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up text-success'></i>
+                  <i class='ti tabler-chevron-up text-success'></i>
                   <small class="text-muted">39.6%</small>
                 </div>
               </div>
@@ -558,7 +558,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex align-items-center mb-4">
             <div class="me-4">
-              <span class="badge bg-label-secondary text-body rounded p-1_5"><i class='ti ti-credit-card ti-md'></i></span>
+              <span class="badge bg-label-secondary text-body rounded p-1_5"><i class='ti tabler-credit-card ti-md'></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -568,7 +568,7 @@ $configData = Helper::appClasses();
               <div class="user-progress d-flex align-items-center gap-4">
                 <small>$430</small>
                 <div class="d-flex align-items-center gap-1">
-                  <i class='ti ti-chevron-up text-success'></i>
+                  <i class='ti tabler-chevron-up text-success'></i>
                   <small class="text-muted">52.8%</small>
                 </div>
               </div>
@@ -591,7 +591,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="employeeList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="employeeList">
             <a class="dropdown-item" href="javascript:void(0);">Download</a>
@@ -703,7 +703,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="salesByCountryTabs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="salesByCountryTabs">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -730,7 +730,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -742,7 +742,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -757,7 +757,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -769,7 +769,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -786,7 +786,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -798,7 +798,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -813,7 +813,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -825,7 +825,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -841,7 +841,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -853,7 +853,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -868,7 +868,7 @@ $configData = Helper::appClasses();
               <ul class="timeline mb-0">
                 <li class="timeline-item ps-6 border-left-dashed">
                   <span class="timeline-indicator-advanced timeline-indicator-success border-0 shadow-none">
-                    <i class='ti ti-circle-check'></i>
+                    <i class='ti tabler-circle-check'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -880,7 +880,7 @@ $configData = Helper::appClasses();
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
                   <span class="timeline-indicator-advanced timeline-indicator-primary border-0 shadow-none">
-                    <i class='ti ti-map-pin'></i>
+                    <i class='ti tabler-map-pin'></i>
                   </span>
                   <div class="timeline-event ps-1">
                     <div class="timeline-header">
@@ -909,7 +909,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="transactionID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
             <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
@@ -922,7 +922,7 @@ $configData = Helper::appClasses();
         <ul class="p-0 m-0">
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-primary me-4 rounded p-1_5">
-              <i class="ti ti-wallet ti-md"></i>
+              <i class="ti tabler-wallet ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -936,7 +936,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-success me-4 rounded p-1_5">
-              <i class="ti ti-browser-check ti-md"></i>
+              <i class="ti tabler-browser-check ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -950,7 +950,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-danger me-4 rounded p-1_5">
-              <i class="ti ti-brand-paypal ti-md"></i>
+              <i class="ti tabler-brand-paypal ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -964,7 +964,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-secondary me-4 rounded p-1_5">
-              <i class="ti ti-credit-card ti-md"></i>
+              <i class="ti tabler-credit-card ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -978,7 +978,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-info me-4 rounded p-1_5">
-              <i class="ti ti-currency-dollar ti-md"></i>
+              <i class="ti tabler-currency-dollar ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -992,7 +992,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-3 pb-1 align-items-center">
             <div class="badge bg-label-danger me-4 rounded p-1_5">
-              <i class="ti ti-brand-paypal ti-md"></i>
+              <i class="ti tabler-brand-paypal ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -1006,7 +1006,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex align-items-center">
             <div class="badge bg-label-success me-4 rounded p-1_5">
-              <i class="ti ti-building-bank ti-md"></i>
+              <i class="ti tabler-building-bank ti-md"></i>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
@@ -1034,7 +1034,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="popularProduct" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="popularProduct">
             <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
@@ -1141,7 +1141,7 @@ $configData = Helper::appClasses();
         <h5 class="card-title m-0 me-2">Top Courses</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="topCourses" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topCourses">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -1154,7 +1154,7 @@ $configData = Helper::appClasses();
         <ul class="list-unstyled mb-0">
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-video ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-video ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 col-lg-12 col-xxl-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -1167,7 +1167,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-info"><i class="ti ti-code ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-info"><i class="ti tabler-code ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 col-lg-12 col-xxl-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -1180,7 +1180,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-success"><i class="ti ti-camera ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-success"><i class="ti tabler-camera ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 col-lg-12 col-xxl-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -1193,7 +1193,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6 align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-warning"><i class="ti ti-brand-dribbble ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-warning"><i class="ti tabler-brand-dribbble ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 col-lg-12 col-xxl-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -1206,7 +1206,7 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex align-items-center">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-danger"><i class="ti ti-microphone-2 ti-lg"></i></span>
+              <span class="avatar-initial rounded bg-label-danger"><i class="ti tabler-microphone-2 ti-lg"></i></span>
             </div>
             <div class="row w-100 align-items-center">
               <div class="col-sm-8 col-lg-12 col-xxl-8 mb-1 mb-sm-0 mb-lg-1 mb-xxl-0">
@@ -1235,7 +1235,7 @@ $configData = Helper::appClasses();
           <div class="col-6">
             <div class="d-flex">
               <div class="avatar flex-shrink-0 me-3">
-                <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-calendar-event ti-28px"></i></span>
+                <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-calendar-event ti-28px"></i></span>
               </div>
               <div>
                 <h6 class="mb-0 text-nowrap">17 Nov 23</h6>
@@ -1246,7 +1246,7 @@ $configData = Helper::appClasses();
           <div class="col-6">
             <div class="d-flex">
               <div class="avatar flex-shrink-0 me-3">
-                <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-clock ti-28px"></i></span>
+                <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-clock ti-28px"></i></span>
               </div>
               <div>
                 <h6 class="mb-0 text-nowrap">32 minutes</h6>
@@ -1267,7 +1267,7 @@ $configData = Helper::appClasses();
         <h5 class="card-title m-0 me-2">Assignment Progress</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="assignmentProgress" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="assignmentProgress">
             <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
@@ -1289,7 +1289,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -1305,7 +1305,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -1321,7 +1321,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -1337,7 +1337,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="col-3 text-end">
                 <button type="button" class="btn btn-sm btn-icon btn-label-secondary">
-                  <i class="ti ti-chevron-right scaleX-n1-rtl"></i>
+                  <i class="ti tabler-chevron-right scaleX-n1-rtl"></i>
                 </button>
               </div>
             </div>
@@ -1357,7 +1357,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="deliveryPerformance" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryPerformance">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -1370,13 +1370,13 @@ $configData = Helper::appClasses();
         <ul class="p-0 m-0">
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-primary"><i class="ti ti-package ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class="ti tabler-package ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages in transit</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   25.8%
                 </small>
               </div>
@@ -1387,13 +1387,13 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-info"><i class="ti ti-truck ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-info"><i class="ti tabler-truck ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages out for delivery</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   4.3%
                 </small>
               </div>
@@ -1404,13 +1404,13 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-success"><i class="ti ti-circle-check ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-success"><i class="ti tabler-circle-check ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Packages delivered</h6>
                 <small class="text-danger fw-normal d-block">
-                  <i class="ti ti-chevron-down mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-down mb-1 me-1"></i>
                   12.5%
                 </small>
               </div>
@@ -1421,13 +1421,13 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-warning"><i class="ti ti-percentage ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-warning"><i class="ti tabler-percentage ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Delivery success rate</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   35.6%
                 </small>
               </div>
@@ -1438,13 +1438,13 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex mb-6">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-secondary"><i class="ti ti-clock ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-secondary"><i class="ti tabler-clock ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Average delivery time</h6>
                 <small class="text-danger fw-normal d-block">
-                  <i class="ti ti-chevron-down mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-down mb-1 me-1"></i>
                   2.15%
                 </small>
               </div>
@@ -1455,13 +1455,13 @@ $configData = Helper::appClasses();
           </li>
           <li class="d-flex">
             <div class="avatar flex-shrink-0 me-4">
-              <span class="avatar-initial rounded bg-label-danger"><i class="ti ti-users ti-26px"></i></span>
+              <span class="avatar-initial rounded bg-label-danger"><i class="ti tabler-users ti-26px"></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
                 <h6 class="mb-0 fw-normal">Customer satisfaction</h6>
                 <small class="text-success fw-normal d-block">
-                  <i class="ti ti-chevron-up mb-1 me-1"></i>
+                  <i class="ti tabler-chevron-up mb-1 me-1"></i>
                   5.7%
                 </small>
               </div>
@@ -1484,7 +1484,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="vehiclesCondition" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesCondition">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -1579,7 +1579,7 @@ $configData = Helper::appClasses();
         </div>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="popularInstructors" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="popularInstructors">
             <a class="dropdown-item" href="javascript:void(0);">Select All</a>
@@ -1686,7 +1686,7 @@ $configData = Helper::appClasses();
         <h5 class="card-title m-0 me-2">Last Transaction</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="teamMemberList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="teamMemberList">
             <a class="dropdown-item" href="javascript:void(0);">Download</a>
@@ -1827,10 +1827,10 @@ $configData = Helper::appClasses();
   <div class="col-xxl-6 mb-6 order-2 order-xl-0">
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between">
-        <h5 class="card-title m-0 me-2 pt-1 mb-2 d-flex align-items-center"><i class="ti ti-list-details me-3"></i> Activity Timeline</h5>
+        <h5 class="card-title m-0 me-2 pt-1 mb-2 d-flex align-items-center"><i class="ti tabler-list-details me-3"></i> Activity Timeline</h5>
         <div class="dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="timelineWapper" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="timelineWapper">
             <a class="dropdown-item" href="javascript:void(0);">Download</a>

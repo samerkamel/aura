@@ -20,7 +20,7 @@
                     <small class="text-muted">Set up a new client contract for income tracking</small>
                 </div>
                 <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left me-1"></i>Back to Contracts
+                    <i class="ti tabler-arrow-left me-1"></i>Back to Contracts
                 </a>
             </div>
 
@@ -48,7 +48,7 @@
                                                 <button type="button" class="btn btn-outline-primary ms-2"
                                                         data-bs-toggle="modal" data-bs-target="#addCustomerModal"
                                                         title="Add New Customer">
-                                                    <i class="ti ti-plus"></i>
+                                                    <i class="ti tabler-plus"></i>
                                                 </button>
                                             </div>
                                             @error('customer_id')
@@ -167,7 +167,7 @@
                                             </div>
 
                                             <button type="button" class="btn btn-outline-primary btn-sm" id="add-product">
-                                                <i class="ti ti-plus me-1"></i>Add Product
+                                                <i class="ti tabler-plus me-1"></i>Add Product
                                             </button>
                                         </div>
 
@@ -280,7 +280,7 @@
                                     <div class="d-grid gap-2">
                                         <a href="{{ route('accounting.accounts.index') }}"
                                            class="btn btn-outline-info" target="_blank">
-                                            <i class="ti ti-credit-card me-2"></i>Manage Accounts
+                                            <i class="ti tabler-credit-card me-2"></i>Manage Accounts
                                         </a>
                                     </div>
                                 </div>
@@ -315,10 +315,10 @@
                             <div class="card">
                                 <div class="card-footer d-flex justify-content-between">
                                     <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
-                                        <i class="ti ti-x me-1"></i>Cancel
+                                        <i class="ti tabler-x me-1"></i>Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="ti ti-device-floppy me-1"></i>Create Contract
+                                        <i class="ti tabler-device-floppy me-1"></i>Create Contract
                                     </button>
                                 </div>
                             </div>
@@ -367,7 +367,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="saveCustomerBtn">
-                    <i class="ti ti-check me-1"></i>Add Customer
+                    <i class="ti tabler-check me-1"></i>Add Customer
                 </button>
             </div>
         </div>
@@ -412,7 +412,7 @@
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="button" class="btn btn-outline-danger remove-allocation w-100">
-                            <i class="ti ti-trash"></i>
+                            <i class="ti tabler-trash"></i>
                         </button>
                     </div>
                     <div class="col-md-8">
@@ -556,13 +556,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
+            saveBtn.innerHTML = '<i class="ti tabler-check me-1"></i>Add Customer';
         })
         .catch(error => {
             console.error('Error:', error);
             showToast('error', 'Network error occurred');
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
+            saveBtn.innerHTML = '<i class="ti tabler-check me-1"></i>Add Customer';
         });
     });
 
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div id="${toastId}" class="bs-toast toast position-fixed top-0 end-0 m-3 fade bg-${type === 'success' ? 'success' : 'danger'} show"
                  role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
                 <div class="toast-header">
-                    <i class="ti ti-${type === 'success' ? 'check' : 'x'} text-${type === 'success' ? 'success' : 'danger'} me-2"></i>
+                    <i class="ti tabler-${type === 'success' ? 'check' : 'x'} text-${type === 'success' ? 'success' : 'danger'} me-2"></i>
                     <div class="me-auto fw-medium">${type === 'success' ? 'Success!' : 'Error!'}</div>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>

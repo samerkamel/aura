@@ -18,10 +18,10 @@
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('administration.products.edit', $product) }}" class="btn btn-primary">
-                <i class="ti ti-edit me-2"></i>Edit Product
+                <i class="ti tabler-edit me-2"></i>Edit Product
             </a>
             <a href="{{ route('administration.products.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-arrow-left me-2"></i>Back to Products
+                <i class="ti tabler-arrow-left me-2"></i>Back to Products
             </a>
         </div>
     </div>
@@ -113,7 +113,7 @@
                                 <button type="submit"
                                         class="btn {{ $product->is_active ? 'btn-warning' : 'btn-success' }} w-100"
                                         onclick="return confirm('Are you sure you want to {{ $product->is_active ? 'deactivate' : 'activate' }} this product?')">
-                                    <i class="ti ti-{{ $product->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
+                                    <i class="ti tabler-{{ $product->is_active ? 'toggle-right' : 'toggle-left' }} me-2"></i>
                                     {{ $product->is_active ? 'Deactivate Product' : 'Activate Product' }}
                                 </button>
                             </form>
@@ -124,12 +124,12 @@
                                 <button type="submit"
                                         class="btn btn-danger w-100"
                                         onclick="return confirm('Are you sure you want to delete this product? This action cannot be undone.')">
-                                    <i class="ti ti-trash me-2"></i>Delete Product
+                                    <i class="ti tabler-trash me-2"></i>Delete Product
                                 </button>
                             </form>
                             @else
                             <div class="alert alert-info">
-                                <i class="ti ti-info-circle me-2"></i>
+                                <i class="ti tabler-info-circle me-2"></i>
                                 Cannot delete product with assigned contracts.
                             </div>
                             @endif
@@ -148,7 +148,7 @@
                         <div class="card-body text-center">
                             <div class="avatar mx-auto mb-2">
                                 <span class="avatar-initial rounded bg-label-primary">
-                                    <i class="ti ti-file-text"></i>
+                                    <i class="ti tabler-file-text"></i>
                                 </span>
                             </div>
                             <h5 class="mb-1">{{ $product->contracts->count() }}</h5>
@@ -161,7 +161,7 @@
                         <div class="card-body text-center">
                             <div class="avatar mx-auto mb-2">
                                 <span class="avatar-initial rounded bg-label-success">
-                                    <i class="ti ti-currency"></i>
+                                    <i class="ti tabler-currency"></i>
                                 </span>
                             </div>
                             <h5 class="mb-1">{{ number_format($product->total_contract_allocations, 0) }} EGP</h5>
@@ -174,7 +174,7 @@
                         <div class="card-body text-center">
                             <div class="avatar mx-auto mb-2">
                                 <span class="avatar-initial rounded bg-label-warning">
-                                    <i class="ti ti-percentage"></i>
+                                    <i class="ti tabler-percentage"></i>
                                 </span>
                             </div>
                             @if($product->budget_allocation > 0)
@@ -193,7 +193,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti ti-file-text me-2"></i>Assigned Contracts
+                        <i class="ti tabler-file-text me-2"></i>Assigned Contracts
                     </h5>
                     <span class="badge bg-label-primary">{{ $product->contracts->count() }} {{ $product->contracts->count() === 1 ? 'Contract' : 'Contracts' }}</span>
                 </div>
@@ -256,7 +256,7 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <i class="ti ti-file-off ti-3x text-muted mb-3"></i>
+                            <i class="ti tabler-file-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Assigned Contracts</h5>
                             <p class="text-muted mb-0">This product has no contracts assigned yet.</p>
                         </div>
@@ -268,7 +268,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="ti ti-calendar-dollar me-2"></i>Annual Budget History
+                        <i class="ti tabler-calendar-dollar me-2"></i>Annual Budget History
                     </h5>
                     <span class="badge bg-label-info">{{ $product->budgets->count() }} {{ $product->budgets->count() === 1 ? 'Year' : 'Years' }}</span>
                 </div>
@@ -307,11 +307,11 @@
                         </div>
                     @else
                         <div class="text-center py-4">
-                            <i class="ti ti-calendar-off ti-3x text-muted mb-3"></i>
+                            <i class="ti tabler-calendar-off ti-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No Budget History</h5>
                             <p class="text-muted mb-0">No annual budgets have been set for this product.</p>
                             <a href="{{ route('administration.products.edit', $product) }}" class="btn btn-primary mt-3">
-                                <i class="ti ti-plus me-1"></i>Add Budget
+                                <i class="ti tabler-plus me-1"></i>Add Budget
                             </a>
                         </div>
                     @endif

@@ -44,11 +44,11 @@ $configData = Helper::appClasses();
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti ti-users me-1_5"></i> Account</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti ti-lock me-1_5"></i> Security</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti ti-bookmark me-1_5"></i> Billing & Plans</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti ti-bell me-1_5"></i> Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti ti-link me-1_5"></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-account')}}"><i class="ti-sm ti tabler-users me-1_5"></i> Account</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="ti-sm ti tabler-lock me-1_5"></i> Security</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-billing')}}"><i class="ti-sm ti tabler-bookmark me-1_5"></i> Billing & Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-notifications')}}"><i class="ti-sm ti tabler-bell me-1_5"></i> Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/account-settings-connections')}}"><i class="ti-sm ti tabler-link me-1_5"></i> Connections</a></li>
       </ul>
     </div>
     <!-- Change Password -->
@@ -61,7 +61,7 @@ $configData = Helper::appClasses();
               <label class="form-label" for="currentPassword">Current Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" name="currentPassword" id="currentPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
           </div>
@@ -70,7 +70,7 @@ $configData = Helper::appClasses();
               <label class="form-label" for="newPassword">New Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" id="newPassword" name="newPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
 
@@ -78,7 +78,7 @@ $configData = Helper::appClasses();
               <label class="form-label" for="confirmPassword">Confirm New Password</label>
               <div class="input-group input-group-merge">
                 <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="d-flex align-items-center mb-2">
                 <p class="me-3 mb-0 fw-medium">23eaf7f0-f4f7-495e-8b86-fad3261282ac</p>
-                <span class="cursor-pointer"><i class="ti ti-copy"></i></span>
+                <span class="cursor-pointer"><i class="ti tabler-copy"></i></span>
               </div>
               <span class="text-muted">Created on 28 Apr 2021, 18:20 GTM+4:10</span>
             </div>
@@ -179,7 +179,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="d-flex align-items-center mb-2">
                 <p class="me-3 mb-0 fw-medium">bb98e571-a2e2-4de8-90a9-2e231b5e99</p>
-                <span class="cursor-pointer"><i class="ti ti-copy"></i></span>
+                <span class="cursor-pointer"><i class="ti tabler-copy"></i></span>
               </div>
               <span class="text-muted">Created on 12 Feb 2021, 10:30 GTM+2:30</span>
             </div>
@@ -190,7 +190,7 @@ $configData = Helper::appClasses();
               </div>
               <div class="d-flex align-items-center mb-2">
                 <p class="me-3 mb-0 fw-medium">2e915e59-3105-47f2-8838-6e46bf83b711</p>
-                <span class="cursor-pointer"><i class="ti ti-copy"></i></span>
+                <span class="cursor-pointer"><i class="ti tabler-copy"></i></span>
               </div>
               <span class="text-muted">Created on 28 Dec 2020, 12:21 GTM+4:10</span>
             </div>
@@ -215,37 +215,37 @@ $configData = Helper::appClasses();
           </thead>
           <tbody>
             <tr>
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-brand-windows ti-md align-top text-info me-2'></i>Chrome on Windows</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-brand-windows ti-md align-top text-info me-2'></i>Chrome on Windows</td>
               <td class="text-truncate">HP Spectre 360</td>
               <td class="text-truncate">Switzerland</td>
               <td class="text-truncate">10, July 2021 20:07</td>
             </tr>
             <tr>
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-device-mobile  ti-md align-top text-danger text-success me-2'></i>Chrome on iPhone</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-device-mobile  ti-md align-top text-danger text-success me-2'></i>Chrome on iPhone</td>
               <td class="text-truncate">iPhone 12x</td>
               <td class="text-truncate">Australia</td>
               <td class="text-truncate">13, July 2021 10:10</td>
             </tr>
             <tr>
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-brand-android ti-md align-top text-success me-2'></i>Chrome on Android</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-brand-android ti-md align-top text-success me-2'></i>Chrome on Android</td>
               <td class="text-truncate">Oneplus 9 Pro</td>
               <td class="text-truncate">Dubai</td>
               <td class="text-truncate">14, July 2021 15:15</td>
             </tr>
             <tr>
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-brand-apple ti-md align-top me-2'></i>Chrome on MacOS</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-brand-apple ti-md align-top me-2'></i>Chrome on MacOS</td>
               <td class="text-truncate">Apple iMac</td>
               <td class="text-truncate">India</td>
               <td class="text-truncate">16, July 2021 16:17</td>
             </tr>
             <tr>
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-brand-windows ti-md align-top text-warning me-2'></i>Chrome on Windows</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-brand-windows ti-md align-top text-warning me-2'></i>Chrome on Windows</td>
               <td class="text-truncate">HP Spectre 360</td>
               <td class="text-truncate">Switzerland</td>
               <td class="text-truncate">20, July 2021 21:01</td>
             </tr>
             <tr class="border-transparent">
-              <td class="text-truncate text-heading fw-medium"><i class='ti ti-brand-android ti-md align-top text-success me-2'></i>Chrome on Android</td>
+              <td class="text-truncate text-heading fw-medium"><i class='ti tabler-brand-android ti-md align-top text-success me-2'></i>Chrome on Android</td>
               <td class="text-truncate">Oneplus 9 Pro</td>
               <td class="text-truncate">Dubai</td>
               <td class="text-truncate">21, July 2021 12:22</td>

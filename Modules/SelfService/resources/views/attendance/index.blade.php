@@ -63,13 +63,13 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0">
-            <i class="ti ti-calendar-stats me-2"></i>My Attendance
+            <i class="ti tabler-calendar-stats me-2"></i>My Attendance
           </h5>
           <small class="text-muted">View your attendance records</small>
         </div>
         <div class="d-flex align-items-center gap-2">
           <span class="badge bg-label-primary">
-            <i class="ti ti-user me-1"></i>{{ $employee->name }}
+            <i class="ti tabler-user me-1"></i>{{ $employee->name }}
           </span>
         </div>
       </div>
@@ -78,7 +78,7 @@
     <!-- Filter Card -->
     <div class="card filter-card mb-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-filter me-2"></i>Filters</h6>
+        <h6 class="mb-0"><i class="ti tabler-filter me-2"></i>Filters</h6>
       </div>
       <div class="card-body">
         <form method="GET" action="{{ route('self-service.attendance') }}" id="filterForm">
@@ -89,13 +89,13 @@
                 <input type="radio" class="btn-check" name="filter_type" id="filterMonth" value="month"
                        {{ $filterType === 'month' ? 'checked' : '' }} onchange="toggleFilterType()">
                 <label class="btn btn-outline-primary" for="filterMonth">
-                  <i class="ti ti-calendar-month me-1"></i>By Month
+                  <i class="ti tabler-calendar-month me-1"></i>By Month
                 </label>
 
                 <input type="radio" class="btn-check" name="filter_type" id="filterRange" value="range"
                        {{ $filterType === 'range' ? 'checked' : '' }} onchange="toggleFilterType()">
                 <label class="btn btn-outline-primary" for="filterRange">
-                  <i class="ti ti-calendar-event me-1"></i>Date Range
+                  <i class="ti tabler-calendar-event me-1"></i>Date Range
                 </label>
               </div>
             </div>
@@ -139,7 +139,7 @@
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                   <button type="submit" class="btn btn-primary w-100">
-                    <i class="ti ti-search me-1"></i>Apply
+                    <i class="ti tabler-search me-1"></i>Apply
                   </button>
                 </div>
               </div>
@@ -155,7 +155,7 @@
       <div class="col-md-2">
         <div class="card summary-card bg-label-primary">
           <div class="card-body text-center py-3">
-            <i class="ti ti-calendar-check mb-2" style="font-size: 1.5rem;"></i>
+            <i class="ti tabler-calendar-check mb-2" style="font-size: 1.5rem;"></i>
             <h6 class="mb-1 small">Work Days</h6>
             <h4 class="mb-0">{{ number_format($employeeSummary['work_days']) }}</h4>
           </div>
@@ -164,7 +164,7 @@
       <div class="col-md-2">
         <div class="card summary-card bg-label-info">
           <div class="card-body text-center py-3">
-            <i class="ti ti-clock-hour-4 mb-2" style="font-size: 1.5rem;"></i>
+            <i class="ti tabler-clock-hour-4 mb-2" style="font-size: 1.5rem;"></i>
             <h6 class="mb-1 small">Expected Hours</h6>
             <h4 class="mb-0">{{ number_format($employeeSummary['expected_work_hours'], 1) }}h</h4>
           </div>
@@ -173,7 +173,7 @@
       <div class="col-md-2">
         <div class="card summary-card bg-label-success">
           <div class="card-body text-center py-3">
-            <i class="ti ti-clock-check mb-2" style="font-size: 1.5rem;"></i>
+            <i class="ti tabler-clock-check mb-2" style="font-size: 1.5rem;"></i>
             <h6 class="mb-1 small">Total Hours</h6>
             <h4 class="mb-0">{{ number_format($employeeSummary['total_work_hours'], 1) }}h</h4>
           </div>
@@ -182,7 +182,7 @@
       <div class="col-md-2">
         <div class="card summary-card {{ $employeeSummary['percentage'] >= 100 ? 'bg-label-success' : ($employeeSummary['percentage'] >= 90 ? 'bg-label-warning' : 'bg-label-danger') }}">
           <div class="card-body text-center py-3">
-            <i class="ti ti-percentage mb-2" style="font-size: 1.5rem;"></i>
+            <i class="ti tabler-percentage mb-2" style="font-size: 1.5rem;"></i>
             <h6 class="mb-1 small">Completion</h6>
             <h4 class="mb-0">{{ number_format($employeeSummary['percentage'], 1) }}%</h4>
           </div>
@@ -191,7 +191,7 @@
       <div class="col-md-4">
         <div class="card summary-card bg-label-warning">
           <div class="card-body text-center py-3">
-            <i class="ti ti-brand-asana mb-2" style="font-size: 1.5rem;"></i>
+            <i class="ti tabler-brand-asana mb-2" style="font-size: 1.5rem;"></i>
             <h6 class="mb-1 small">Jira Worklogs</h6>
             <h4 class="mb-0">{{ number_format($employeeSummary['total_worklog_hours'], 1) }}h</h4>
           </div>
@@ -272,7 +272,7 @@
               <td>
                 @if($record['time_in'])
                   <span class="badge bg-{{ ($record['late_minutes'] ?? 0) > 0 ? 'danger' : 'success' }}">
-                    <i class="ti ti-login me-1"></i>{{ $record['time_in']->format('h:i:s A') }}
+                    <i class="ti tabler-login me-1"></i>{{ $record['time_in']->format('h:i:s A') }}
                   </span>
                 @elseif(($record['is_weekend'] ?? false) || ($record['is_holiday'] ?? false) || ($record['is_on_leave'] ?? false) || ($record['is_wfh'] ?? false))
                   <span class="text-muted">-</span>
@@ -283,7 +283,7 @@
               <td>
                 @if($record['time_out'])
                   <span class="badge bg-success">
-                    <i class="ti ti-logout me-1"></i>{{ $record['time_out']->format('h:i:s A') }}
+                    <i class="ti tabler-logout me-1"></i>{{ $record['time_out']->format('h:i:s A') }}
                   </span>
                 @elseif(($record['is_weekend'] ?? false) || ($record['is_holiday'] ?? false) || ($record['is_on_leave'] ?? false) || ($record['is_wfh'] ?? false))
                   <span class="text-muted">-</span>
@@ -312,7 +312,7 @@
                     $tooltipContent = collect($worklogEntries)->map(fn($e) => $e->issue_key . ': ' . number_format($e->time_spent_hours, 1) . 'h')->join("\n");
                   @endphp
                   <span class="badge bg-warning text-dark" title="{{ $tooltipContent }}" style="cursor: help;">
-                    <i class="ti ti-brand-asana me-1"></i>{{ number_format($record['worklog_hours'], 1) }}h
+                    <i class="ti tabler-brand-asana me-1"></i>{{ number_format($record['worklog_hours'], 1) }}h
                   </span>
                 @else
                   <span class="text-muted">-</span>
@@ -321,7 +321,7 @@
               <td>
                 @if($record['has_permission'] ?? false)
                   <span class="badge bg-info" title="{{ $record['permission_usage']->reason ?? 'Permission used' }}">
-                    <i class="ti ti-clock-pause me-1"></i>{{ $record['permission_usage']->minutes_used ?? $minutesPerPermission }}m
+                    <i class="ti tabler-clock-pause me-1"></i>{{ $record['permission_usage']->minutes_used ?? $minutesPerPermission }}m
                   </span>
                 @else
                   <span class="text-muted">-</span>
@@ -330,11 +330,11 @@
               <td>
                 @if(($record['late_penalty'] ?? 0) > 0)
                   <span class="badge bg-warning text-dark" title="Late by {{ round($record['late_minutes'] ?? 0) }} minutes">
-                    <i class="ti ti-clock-exclamation me-1"></i>{{ $record['late_penalty'] }}m
+                    <i class="ti tabler-clock-exclamation me-1"></i>{{ $record['late_penalty'] }}m
                   </span>
                 @elseif($record['time_in'])
                   <span class="badge bg-label-success">
-                    <i class="ti ti-check me-1"></i>On time
+                    <i class="ti tabler-check me-1"></i>On time
                   </span>
                 @else
                   <span class="text-muted">-</span>
@@ -345,7 +345,7 @@
             <tr>
               <td colspan="7" class="text-center py-5">
                 <div class="d-flex flex-column align-items-center">
-                  <i class="ti ti-calendar-off text-muted" style="font-size: 3rem;"></i>
+                  <i class="ti tabler-calendar-off text-muted" style="font-size: 3rem;"></i>
                   <h6 class="mt-2">No attendance records found</h6>
                   <p class="text-muted">No records available for the selected period.</p>
                 </div>
@@ -362,7 +362,7 @@
     <div class="card mt-4">
       <div class="card-header bg-label-primary">
         <h6 class="mb-0">
-          <i class="ti ti-chart-bar me-2"></i>Detailed Breakdown
+          <i class="ti tabler-chart-bar me-2"></i>Detailed Breakdown
         </h6>
       </div>
       <div class="card-body">
@@ -426,7 +426,7 @@
     @if(!empty($latePenaltyRules))
     <div class="card mt-4">
       <div class="card-header">
-        <h6 class="mb-0"><i class="ti ti-info-circle me-2"></i>Late Penalty Rules</h6>
+        <h6 class="mb-0"><i class="ti tabler-info-circle me-2"></i>Late Penalty Rules</h6>
       </div>
       <div class="card-body">
         <div class="table-responsive">

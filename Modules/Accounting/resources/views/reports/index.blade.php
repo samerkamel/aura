@@ -21,23 +21,23 @@
                         @can('export-financial-reports')
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="ti ti-download me-1"></i>Export Reports
+                                    <i class="ti tabler-download me-1"></i>Export Reports
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="#" onclick="exportReport('pdf')">
-                                        <i class="ti ti-file-type-pdf me-2"></i>Export as PDF
+                                        <i class="ti tabler-file-type-pdf me-2"></i>Export as PDF
                                     </a></li>
                                     <li><a class="dropdown-item" href="#" onclick="exportReport('excel')">
-                                        <i class="ti ti-file-spreadsheet me-2"></i>Export as Excel
+                                        <i class="ti tabler-file-spreadsheet me-2"></i>Export as Excel
                                     </a></li>
                                     <li><a class="dropdown-item" href="#" onclick="exportReport('csv')">
-                                        <i class="ti ti-file-type-csv me-2"></i>Export as CSV
+                                        <i class="ti tabler-file-type-csv me-2"></i>Export as CSV
                                     </a></li>
                                 </ul>
                             </div>
                         @else
                             <span class="badge bg-secondary">
-                                <i class="ti ti-lock me-1"></i>Export Restricted
+                                <i class="ti tabler-lock me-1"></i>Export Restricted
                             </span>
                         @endcan
                     </div>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="ti ti-refresh me-1"></i>Generate
+                            <i class="ti tabler-refresh me-1"></i>Generate
                         </button>
                     </div>
                 </form>
@@ -92,22 +92,22 @@
             <ul class="nav nav-pills mb-3" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" role="tab">
-                        <i class="ti ti-chart-line me-1"></i>Overview
+                        <i class="ti tabler-chart-line me-1"></i>Overview
                     </button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="projections-tab" data-bs-toggle="pill" data-bs-target="#projections" role="tab">
-                        <i class="ti ti-crystal-ball me-1"></i>Projections
+                        <i class="ti tabler-crystal-ball me-1"></i>Projections
                     </button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="schedule-tab" data-bs-toggle="pill" data-bs-target="#schedule" role="tab">
-                        <i class="ti ti-calendar-stats me-1"></i>Payment Schedule
+                        <i class="ti tabler-calendar-stats me-1"></i>Payment Schedule
                     </button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="deficit-tab" data-bs-toggle="pill" data-bs-target="#deficit" role="tab">
-                        <i class="ti ti-alert-triangle me-1"></i>Deficit Analysis
+                        <i class="ti tabler-alert-triangle me-1"></i>Deficit Analysis
                         @if(count($deficitPeriods) > 0)
                             <span class="badge bg-danger ms-1">{{ count($deficitPeriods) }}</span>
                         @endif
@@ -131,7 +131,7 @@
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded bg-success">
-                                                <i class="ti ti-trending-up ti-sm"></i>
+                                                <i class="ti tabler-trending-up ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -150,7 +150,7 @@
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded bg-danger">
-                                                <i class="ti ti-trending-down ti-sm"></i>
+                                                <i class="ti tabler-trending-down ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded {{ $summaryData['netCashFlow'] >= 0 ? 'bg-primary' : 'bg-warning' }}">
-                                                <i class="ti ti-wallet ti-sm"></i>
+                                                <i class="ti tabler-wallet ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -192,7 +192,7 @@
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded bg-info">
-                                                <i class="ti ti-chart-bar ti-sm"></i>
+                                                <i class="ti tabler-chart-bar ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -325,7 +325,7 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-{{ $payment['type'] === 'income' ? 'success' : 'danger' }}">
-                                                    <i class="ti ti-arrow-{{ $payment['type'] === 'income' ? 'up' : 'down' }} me-1"></i>
+                                                    <i class="ti tabler-arrow-{{ $payment['type'] === 'income' ? 'up' : 'down' }} me-1"></i>
                                                     {{ ucfirst($payment['type']) }}
                                                 </span>
                                             </td>
@@ -366,7 +366,7 @@
                         @if(count($deficitPeriods) > 0)
                             <div class="col-12 mb-4">
                                 <div class="alert alert-warning">
-                                    <i class="ti ti-alert-triangle me-2"></i>
+                                    <i class="ti tabler-alert-triangle me-2"></i>
                                     <strong>Cash Flow Warning:</strong> {{ count($deficitPeriods) }} periods with potential deficits detected.
                                 </div>
                             </div>
@@ -434,11 +434,11 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body text-center py-5">
-                                        <i class="ti ti-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+                                        <i class="ti tabler-check-circle text-success mb-3" style="font-size: 4rem;"></i>
                                         <h5 class="text-success">No Deficits Detected</h5>
                                         <p class="text-muted">Your cash flow projections look healthy for the selected period.</p>
                                         <div class="alert alert-success">
-                                            <i class="ti ti-thumb-up me-2"></i>
+                                            <i class="ti tabler-thumb-up me-2"></i>
                                             Your projected cash flow maintains positive balances throughout the analysis period.
                                         </div>
                                     </div>

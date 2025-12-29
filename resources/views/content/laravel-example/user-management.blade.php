@@ -52,7 +52,7 @@
           </div>
           <div class="avatar">
             <span class="avatar-initial rounded bg-label-primary">
-              <i class="ti ti-user ti-26px"></i>
+              <i class="ti tabler-user ti-26px"></i>
             </span>
           </div>
         </div>
@@ -73,7 +73,7 @@
           </div>
           <div class="avatar">
             <span class="avatar-initial rounded bg-label-success">
-              <i class="ti ti-user-check ti-26px"></i>
+              <i class="ti tabler-user-check ti-26px"></i>
             </span>
           </div>
         </div>
@@ -94,7 +94,7 @@
           </div>
           <div class="avatar">
             <span class="avatar-initial rounded bg-label-danger">
-              <i class="ti ti-users ti-26px"></i>
+              <i class="ti tabler-users ti-26px"></i>
             </span>
           </div>
         </div>
@@ -115,7 +115,7 @@
           </div>
           <div class="avatar">
             <span class="avatar-initial rounded bg-label-warning">
-              <i class="ti ti-user-search ti-26px"></i>
+              <i class="ti tabler-user-search ti-26px"></i>
             </span>
           </div>
         </div>

@@ -16,7 +16,7 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('budgets.index', $budget->businessUnit) }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Budgets
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Budgets
                     </a>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                     <div class="col-md-3">
                         <div class="card border border-primary">
                             <div class="card-body text-center p-3">
-                                <i class="ti ti-wallet text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                <i class="ti tabler-wallet text-primary mb-2" style="font-size: 1.5rem;"></i>
                                 <h6 class="card-title text-primary mb-1">Budget Amount</h6>
                                 <h5 class="mb-0">{{ number_format($budget->budget_amount, 0) }}</h5>
                             </div>
@@ -36,7 +36,7 @@
                     <div class="col-md-3">
                         <div class="card border border-warning">
                             <div class="card-body text-center p-3">
-                                <i class="ti ti-credit-card text-warning mb-2" style="font-size: 1.5rem;"></i>
+                                <i class="ti tabler-credit-card text-warning mb-2" style="font-size: 1.5rem;"></i>
                                 <h6 class="card-title text-warning mb-1">Allocated</h6>
                                 <h5 class="mb-0">{{ number_format($budget->allocated_amount, 0) }}</h5>
                                 <small class="text-muted">{{ $budget->allocation_percentage }}%</small>
@@ -46,7 +46,7 @@
                     <div class="col-md-3">
                         <div class="card border border-danger">
                             <div class="card-body text-center p-3">
-                                <i class="ti ti-minus text-danger mb-2" style="font-size: 1.5rem;"></i>
+                                <i class="ti tabler-minus text-danger mb-2" style="font-size: 1.5rem;"></i>
                                 <h6 class="card-title text-danger mb-1">Spent</h6>
                                 <h5 class="mb-0">{{ number_format($budget->spent_amount, 0) }}</h5>
                                 <small class="text-muted">{{ $budget->utilization_percentage }}%</small>
@@ -56,7 +56,7 @@
                     <div class="col-md-3">
                         <div class="card border border-{{ $budget->remaining_amount >= 0 ? 'success' : 'danger' }}">
                             <div class="card-body text-center p-3">
-                                <i class="ti ti-{{ $budget->remaining_amount >= 0 ? 'check' : 'alert-triangle' }} text-{{ $budget->remaining_amount >= 0 ? 'success' : 'danger' }} mb-2" style="font-size: 1.5rem;"></i>
+                                <i class="ti tabler-{{ $budget->remaining_amount >= 0 ? 'check' : 'alert-triangle' }} text-{{ $budget->remaining_amount >= 0 ? 'success' : 'danger' }} mb-2" style="font-size: 1.5rem;"></i>
                                 <h6 class="card-title text-{{ $budget->remaining_amount >= 0 ? 'success' : 'danger' }} mb-1">Remaining</h6>
                                 <h5 class="mb-0">{{ number_format($budget->remaining_amount, 0) }}</h5>
                                 @if($budget->remaining_amount < 0)
@@ -171,7 +171,7 @@
                             @endif
                         @else
                             <div class="text-center py-5">
-                                <i class="ti ti-history text-muted mb-3" style="font-size: 4rem;"></i>
+                                <i class="ti tabler-history text-muted mb-3" style="font-size: 4rem;"></i>
                                 <h5>No History Found</h5>
                                 <p class="text-muted">No budget activities have been recorded yet.</p>
                             </div>

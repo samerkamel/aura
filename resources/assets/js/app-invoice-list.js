@@ -66,16 +66,16 @@ $(function () {
               $due_date = full['due_date'],
               $balance = full['balance'];
             var roleBadgeObj = {
-              Sent: '<span class="badge badge-center rounded-pill bg-label-secondary w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-circle-check ti-xs"></i></span>',
+              Sent: '<span class="badge badge-center rounded-pill bg-label-secondary w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-circle-check ti-xs"></i></span>',
               Draft:
-                '<span class="badge badge-center rounded-pill bg-label-primary w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-device-floppy ti-xs"></i></span>',
+                '<span class="badge badge-center rounded-pill bg-label-primary w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-device-floppy ti-xs"></i></span>',
               'Past Due':
-                '<span class="badge badge-center rounded-pill bg-label-danger w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-info-circle ti-xs"></i></span>',
+                '<span class="badge badge-center rounded-pill bg-label-danger w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-info-circle ti-xs"></i></span>',
               'Partial Payment':
-                '<span class="badge badge-center rounded-pill bg-label-success w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-circle-half-2 ti-xs"></i></span>',
-              Paid: '<span class="badge badge-center rounded-pill bg-label-warning w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-chart-pie ti-xs"></i></span>',
+                '<span class="badge badge-center rounded-pill bg-label-success w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-circle-half-2 ti-xs"></i></span>',
+              Paid: '<span class="badge badge-center rounded-pill bg-label-warning w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-chart-pie ti-xs"></i></span>',
               Downloaded:
-                '<span class="badge badge-center rounded-pill bg-label-info w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti ti-arrow-down-circle ti-xs"></i></span>'
+                '<span class="badge badge-center rounded-pill bg-label-info w-px-30 h-px-30 d-flex align-items-center justify-content-center"><i class="ti tabler-arrow-down-circle ti-xs"></i></span>'
             };
             return (
               "<span class='d-inline-block' data-bs-toggle='tooltip' data-bs-html='true' title='<span>" +
@@ -188,12 +188,12 @@ $(function () {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center">' +
-              '<a href="javascript:;" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Delete"><i class="ti ti-trash mx-2 ti-md"></i></a>' +
+              '<a href="javascript:;" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Delete"><i class="ti tabler-trash mx-2 ti-md"></i></a>' +
               '<a href="' +
               baseUrl +
-              'app/invoice/preview" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Preview Invoice"><i class="ti ti-eye mx-2 ti-md"></i></a>' +
+              'app/invoice/preview" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Preview Invoice"><i class="ti tabler-eye mx-2 ti-md"></i></a>' +
               '<div class="dropdown">' +
-              '<a href="javascript:;" class="btn dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill p-0" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill p-0" data-bs-toggle="dropdown"><i class="ti tabler-dots-vertical ti-md"></i></a>' +
               '<div class="dropdown-menu dropdown-menu-end">' +
               '<a href="javascript:;" class="dropdown-item">Download</a>' +
               '<a href="' +
@@ -221,14 +221,14 @@ $(function () {
         search: '',
         searchPlaceholder: 'Search Invoice',
         paginate: {
-          next: '<i class="ti ti-chevron-right ti-sm"></i>',
-          previous: '<i class="ti ti-chevron-left ti-sm"></i>'
+          next: '<i class="ti tabler-chevron-right ti-sm"></i>',
+          previous: '<i class="ti tabler-chevron-left ti-sm"></i>'
         }
       },
       // Buttons with Dropdown
       buttons: [
         {
-          text: '<i class="ti ti-plus ti-xs me-md-2"></i><span class="d-md-inline-block d-none">Create Invoice</span>',
+          text: '<i class="ti tabler-plus ti-xs me-md-2"></i><span class="d-md-inline-block d-none">Create Invoice</span>',
           className: 'btn btn-primary waves-effect waves-light',
           action: function (e, dt, button, config) {
             window.location = baseUrl + 'app/invoice/add';

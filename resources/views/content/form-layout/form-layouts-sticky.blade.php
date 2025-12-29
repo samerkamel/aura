@@ -164,7 +164,7 @@
                 <div class="form-check custom-option custom-option-icon">
                   <label class="form-check-label custom-option-content" for="customRadioIcon1">
                     <span class="custom-option-body">
-                      <i class='ti ti-briefcase'></i>
+                      <i class='ti tabler-briefcase'></i>
                       <span class="custom-option-title mb-2"> Standard </span>
                       <small> Delivery in 3-5 days. </small>
                     </span>
@@ -176,7 +176,7 @@
                 <div class="form-check custom-option custom-option-icon">
                   <label class="form-check-label custom-option-content" for="customRadioIcon2">
                     <span class="custom-option-body">
-                      <i class='ti ti-send'></i>
+                      <i class='ti tabler-send'></i>
                       <span class="custom-option-title mb-2"> Express </span>
                       <small>Delivery within 2 days.</small>
                     </span>
@@ -188,7 +188,7 @@
                 <div class="form-check custom-option custom-option-icon">
                   <label class="form-check-label custom-option-content" for="customRadioIcon3">
                     <span class="custom-option-body">
-                      <i class='ti ti-crown'></i>
+                      <i class='ti tabler-crown'></i>
                       <span class="custom-option-title mb-2"> Overnight </span>
                       <small> Delivery within a days. </small>
                     </span>
@@ -247,14 +247,14 @@
                 <div class="form-check form-check-inline">
                   <input name="collapsible-payment" class="form-check-input form-check-input-payment" type="radio" value="credit-card" id="collapsible-payment-cc" checked="" />
                   <label class="form-check-label d-flex gap-1" for="collapsible-payment-cc">
-                    Credit/Debit/ATM Card <i class="ti ti-credit-card"></i>
+                    Credit/Debit/ATM Card <i class="ti tabler-credit-card"></i>
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
                   <input name="collapsible-payment" class="form-check-input form-check-input-payment" type="radio" value="cash" id="collapsible-payment-cash" />
                   <label class="form-check-label d-flex gap-1" for="collapsible-payment-cash">
                     Cash On Delivery
-                    <i class="ti ti-help" data-bs-toggle="tooltip" data-bs-placement="top" title="You can pay once you receive the product."></i>
+                    <i class="ti tabler-help" data-bs-toggle="tooltip" data-bs-placement="top" title="You can pay once you receive the product."></i>
                   </label>
                 </div>
               </div>
@@ -285,7 +285,7 @@
                         <label class="form-label" for="collapsible-payment-cvv">CVV Code</label>
                         <div class="input-group input-group-merge">
                           <input type="text" id="collapsible-payment-cvv" class="form-control cvv-code-mask" maxlength="3" placeholder="654" />
-                          <span class="input-group-text cursor-pointer" id="collapsible-payment-cvv2"><i class="ti ti-help ti-xs" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
+                          <span class="input-group-text cursor-pointer" id="collapsible-payment-cvv2"><i class="ti tabler-help ti-xs" data-bs-toggle="tooltip" data-bs-placement="top" title="Card Verification Value"></i></span>
                         </div>
                       </div>
                     </div>

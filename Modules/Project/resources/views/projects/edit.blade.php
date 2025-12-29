@@ -9,10 +9,10 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
-            <i class="ti ti-folder-cog me-2"></i>Edit Project: {{ $project->name }}
+            <i class="ti tabler-folder-cog me-2"></i>Edit Project: {{ $project->name }}
           </h5>
           <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Back to Projects
+            <i class="ti tabler-arrow-left me-1"></i>Back to Projects
           </a>
         </div>
         <div class="card-body">
@@ -121,10 +121,10 @@
 
             <div class="d-flex justify-content-end gap-2">
               <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary">
-                <i class="ti ti-x me-1"></i>Cancel
+                <i class="ti tabler-x me-1"></i>Cancel
               </a>
               <button type="submit" class="btn btn-primary">
-                <i class="ti ti-check me-1"></i>Update Project
+                <i class="ti tabler-check me-1"></i>Update Project
               </button>
             </div>
           </form>
@@ -136,7 +136,7 @@
               @csrf
               @method('DELETE')
               <button type="submit" class="btn btn-outline-danger">
-                <i class="ti ti-trash me-1"></i>Delete Project
+                <i class="ti tabler-trash me-1"></i>Delete Project
               </button>
             </form>
           </div>

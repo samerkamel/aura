@@ -50,7 +50,7 @@
           </div>
           <div class="d-none d-md-block">
             <span class="badge bg-label-info fs-6">
-              <i class="ti ti-calendar me-1"></i>
+              <i class="ti tabler-calendar me-1"></i>
               {{ now()->format('l, F j, Y') }}
             </span>
           </div>
@@ -75,7 +75,7 @@
               </div>
               <div class="avatar bg-label-primary">
                 <span class="avatar-initial rounded">
-                  <i class="ti ti-calendar-off"></i>
+                  <i class="ti tabler-calendar-off"></i>
                 </span>
               </div>
             </div>
@@ -107,7 +107,7 @@
               </div>
               <div class="avatar bg-label-success">
                 <span class="avatar-initial rounded">
-                  <i class="ti ti-home"></i>
+                  <i class="ti tabler-home"></i>
                 </span>
               </div>
             </div>
@@ -141,7 +141,7 @@
               </div>
               <div class="avatar bg-label-warning">
                 <span class="avatar-initial rounded">
-                  <i class="ti ti-clock-pause"></i>
+                  <i class="ti tabler-clock-pause"></i>
                 </span>
               </div>
             </div>
@@ -165,7 +165,7 @@
     <!-- Quick Actions -->
     <div class="row mb-4">
       <div class="col-12">
-        <h5 class="mb-3"><i class="ti ti-bolt me-2"></i>Quick Actions</h5>
+        <h5 class="mb-3"><i class="ti tabler-bolt me-2"></i>Quick Actions</h5>
       </div>
       <div class="col-md-3 col-sm-6 mb-3">
         <a href="{{ route('self-service.leave-requests.create') }}" class="text-decoration-none">
@@ -173,7 +173,7 @@
             <div class="card-body text-center py-4">
               <div class="avatar avatar-lg mb-3 bg-primary">
                 <span class="avatar-initial rounded-circle">
-                  <i class="ti ti-calendar-plus"></i>
+                  <i class="ti tabler-calendar-plus"></i>
                 </span>
               </div>
               <h6 class="mb-1">Request Leave</h6>
@@ -188,7 +188,7 @@
             <div class="card-body text-center py-4">
               <div class="avatar avatar-lg mb-3 bg-success">
                 <span class="avatar-initial rounded-circle">
-                  <i class="ti ti-home-plus"></i>
+                  <i class="ti tabler-home-plus"></i>
                 </span>
               </div>
               <h6 class="mb-1">Request WFH</h6>
@@ -203,7 +203,7 @@
             <div class="card-body text-center py-4">
               <div class="avatar avatar-lg mb-3 bg-warning">
                 <span class="avatar-initial rounded-circle">
-                  <i class="ti ti-clock-plus"></i>
+                  <i class="ti tabler-clock-plus"></i>
                 </span>
               </div>
               <h6 class="mb-1">Request Permission</h6>
@@ -218,7 +218,7 @@
             <div class="card-body text-center py-4">
               <div class="avatar avatar-lg mb-3 bg-info">
                 <span class="avatar-initial rounded-circle">
-                  <i class="ti ti-calendar-stats"></i>
+                  <i class="ti tabler-calendar-stats"></i>
                 </span>
               </div>
               <h6 class="mb-1">My Attendance</h6>
@@ -234,7 +234,7 @@
       <div class="col-lg-8 mb-4">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="ti ti-list me-2"></i>Recent Requests</h5>
+            <h5 class="mb-0"><i class="ti tabler-list me-2"></i>Recent Requests</h5>
             <div class="dropdown">
               <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                 View All
@@ -301,7 +301,7 @@
                 @empty
                 <tr>
                   <td colspan="4" class="text-center py-4">
-                    <i class="ti ti-inbox text-muted" style="font-size: 2rem;"></i>
+                    <i class="ti tabler-inbox text-muted" style="font-size: 2rem;"></i>
                     <p class="text-muted mt-2 mb-0">No recent requests</p>
                   </td>
                 </tr>
@@ -319,7 +319,7 @@
       <div class="col-lg-4 mb-4">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="ti ti-checklist me-2"></i>Pending Approvals</h5>
+            <h5 class="mb-0"><i class="ti tabler-checklist me-2"></i>Pending Approvals</h5>
             @if($pendingApprovalCount > 0)
               <span class="badge bg-danger">{{ $pendingApprovalCount }}</span>
             @endif
@@ -327,17 +327,17 @@
           <div class="card-body">
             @if($pendingApprovalCount > 0)
               <div class="alert alert-warning d-flex align-items-center">
-                <i class="ti ti-alert-circle me-2"></i>
+                <i class="ti tabler-alert-circle me-2"></i>
                 <div>
                   You have <strong>{{ $pendingApprovalCount }}</strong> request(s) waiting for your approval.
                 </div>
               </div>
               <a href="{{ route('self-service.approvals.index') }}" class="btn btn-primary w-100">
-                <i class="ti ti-eye me-1"></i>View Pending Requests
+                <i class="ti tabler-eye me-1"></i>View Pending Requests
               </a>
             @else
               <div class="text-center py-4">
-                <i class="ti ti-check text-success" style="font-size: 2rem;"></i>
+                <i class="ti tabler-check text-success" style="font-size: 2rem;"></i>
                 <p class="text-muted mt-2 mb-0">No pending approvals</p>
               </div>
             @endif
@@ -348,7 +348,7 @@
         @if($employee->manager)
         <div class="card mt-4">
           <div class="card-header">
-            <h6 class="mb-0"><i class="ti ti-user-check me-2"></i>Your Manager</h6>
+            <h6 class="mb-0"><i class="ti tabler-user-check me-2"></i>Your Manager</h6>
           </div>
           <div class="card-body">
             <div class="d-flex align-items-center">
@@ -363,7 +363,7 @@
               </div>
             </div>
             <small class="text-muted d-block mt-3">
-              <i class="ti ti-info-circle me-1"></i>
+              <i class="ti tabler-info-circle me-1"></i>
               Your requests will be sent to your manager for initial approval.
             </small>
           </div>
@@ -372,7 +372,7 @@
         <div class="card mt-4">
           <div class="card-body">
             <small class="text-muted">
-              <i class="ti ti-info-circle me-1"></i>
+              <i class="ti tabler-info-circle me-1"></i>
               Your requests will be sent directly to admin for approval.
             </small>
           </div>

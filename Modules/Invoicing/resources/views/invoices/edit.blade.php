@@ -13,17 +13,17 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('invoicing.invoices.show', $invoice) }}" class="btn btn-outline-info">
-                        <i class="ti ti-eye me-1"></i>View Invoice
+                        <i class="ti tabler-eye me-1"></i>View Invoice
                     </a>
                     <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Invoices
+                        <i class="ti tabler-arrow-left me-1"></i>Back to Invoices
                     </a>
                 </div>
             </div>
 
             @if($invoice->status !== 'draft')
                 <div class="alert alert-warning mx-4 mt-3" role="alert">
-                    <i class="ti ti-alert-triangle me-2"></i>
+                    <i class="ti tabler-alert-triangle me-2"></i>
                     This invoice has status "{{ $invoice->status_display }}". Changes may affect accounting records.
                 </div>
             @endif
@@ -143,7 +143,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="mb-0">Invoice Items</h6>
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="addInvoiceItem()">
-                                <i class="ti ti-plus me-1"></i>Add Item
+                                <i class="ti tabler-plus me-1"></i>Add Item
                             </button>
                         </div>
 
@@ -189,7 +189,7 @@
                                             <span class="input-group-text">EGP</span>
                                             <input type="text" class="form-control item-total" readonly value="{{ number_format($item->total_amount, 2) }}">
                                             <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
-                                                <i class="ti ti-trash"></i>
+                                                <i class="ti tabler-trash"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -243,15 +243,15 @@
 
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('invoicing.invoices.show', $invoice) }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-x me-1"></i>Cancel
+                        <i class="ti tabler-x me-1"></i>Cancel
                     </a>
                     <div>
                         <button type="submit" name="action" value="draft" class="btn btn-outline-primary me-2">
-                            <i class="ti ti-device-floppy me-1"></i>Save Changes
+                            <i class="ti tabler-device-floppy me-1"></i>Save Changes
                         </button>
                         @if($invoice->status === 'draft')
                             <button type="submit" name="action" value="send" class="btn btn-primary">
-                                <i class="ti ti-send me-1"></i>Save & Send
+                                <i class="ti tabler-send me-1"></i>Save & Send
                             </button>
                         @endif
                     </div>
@@ -297,7 +297,7 @@ function addInvoiceItem() {
                     <span class="input-group-text">$</span>
                     <input type="text" class="form-control item-total" readonly value="0.00">
                     <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
-                        <i class="ti ti-trash"></i>
+                        <i class="ti tabler-trash"></i>
                     </button>
                 </div>
             </div>

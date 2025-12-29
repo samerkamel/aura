@@ -246,10 +246,10 @@
         </li>
       </ul>
       <div class="d-flex align-items-start mt-6 align-items-sm-center mx-4 mx-md-0 mb-4 mb-md-0">
-        <i class="ti ti-users me-2 text-heading"></i>
+        <i class="ti tabler-users me-2 text-heading"></i>
         <div class="d-flex justify-content-between flex-grow-1 align-items-center flex-wrap gap-2">
           <h6 class="mb-0">Public to {{ config('variables.templateName') }} - {{ config('variables.creatorName') }}</h6>
-          <button class="btn btn-primary"><i class="ti ti-link ti-xs me-2"></i>Copy Project Link</button>
+          <button class="btn btn-primary"><i class="ti tabler-link ti-xs me-2"></i>Copy Project Link</button>
         </div>
       </div>
     </div>

@@ -25,17 +25,17 @@
               <h4 class="mb-2 mt-lg-6">John Doe</h4>
               <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4 my-2">
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-palette ti-lg'></i><span class="fw-medium">UX Designer</span>
+                  <i class='ti tabler-palette ti-lg'></i><span class="fw-medium">UX Designer</span>
                 </li>
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-map-pin ti-lg'></i><span class="fw-medium">Vatican City</span>
+                  <i class='ti tabler-map-pin ti-lg'></i><span class="fw-medium">Vatican City</span>
                 </li>
                 <li class="list-inline-item d-flex gap-2 align-items-center">
-                  <i class='ti ti-calendar ti-lg'></i><span class="fw-medium"> Joined April 2021</span></li>
+                  <i class='ti tabler-calendar ti-lg'></i><span class="fw-medium"> Joined April 2021</span></li>
               </ul>
             </div>
             <a href="javascript:void(0)" class="btn btn-primary mb-1">
-              <i class='ti ti-user-check ti-xs me-2'></i>Connected
+              <i class='ti tabler-user-check ti-xs me-2'></i>Connected
             </a>
           </div>
         </div>
@@ -50,10 +50,10 @@
   <div class="col-md-12">
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-user')}}"><i class='ti ti-user-check ti-sm me-1_5'></i> Profile</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-teams')}}"><i class='ti ti-users ti-sm me-1_5'></i> Teams</a></li>
-        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class='ti ti-layout-grid ti-sm me-1_5'></i> Projects</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-connections')}}"><i class='ti ti-link ti-sm me-1_5'></i> Connections</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-user')}}"><i class='ti tabler-user-check ti-sm me-1_5'></i> Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-teams')}}"><i class='ti tabler-users ti-sm me-1_5'></i> Teams</a></li>
+        <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class='ti tabler-layout-grid ti-sm me-1_5'></i> Projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url('pages/profile-connections')}}"><i class='ti tabler-link ti-sm me-1_5'></i> Connections</a></li>
       </ul>
     </div>
   </div>
@@ -77,7 +77,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -132,7 +132,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-1"></i> 15</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-1"></i> 15</a>
           </div>
         </div>
       </div>
@@ -153,7 +153,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -208,7 +208,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-2"></i> 236</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-2"></i> 236</a>
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -284,7 +284,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-1"></i> 98</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-1"></i> 98</a>
           </div>
         </div>
       </div>
@@ -305,7 +305,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -360,7 +360,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-1"></i> 120</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-1"></i> 120</a>
           </div>
         </div>
       </div>
@@ -381,7 +381,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -436,7 +436,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-1"></i> 20</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-1"></i> 20</a>
           </div>
         </div>
       </div>
@@ -457,7 +457,7 @@
           </div>
           <div class="ms-auto">
             <div class="dropdown z-2">
-              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-dots-vertical ti-md text-muted"></i></button>
+              <button type="button" class="btn btn-icon btn-text-secondary rounded-pill dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-dots-vertical ti-md text-muted"></i></button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="javascript:void(0);">Rename project</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);">View details</a></li>
@@ -512,7 +512,7 @@
             </ul>
           </div>
           <div class="ms-auto">
-            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti ti-message-dots ti-lg me-1"></i> 37</a>
+            <a href="javascript:void(0);" class="text-muted d-flex align-items-center"><i class="ti tabler-message-dots ti-lg me-1"></i> 37</a>
           </div>
         </div>
       </div>

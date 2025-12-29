@@ -19,7 +19,7 @@
         <h5 class="card-title mb-0">Latest Statistics</h5>
         <div class="card-action-element ms-auto py-0">
           <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+            <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -51,7 +51,7 @@
         </div>
         <div class="card-action-element ms-auto py-0">
           <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+            <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
@@ -84,7 +84,7 @@
         <div class="card-header-elements ms-auto py-0">
           <h5 class="mb-0 me-4">$ 78,000</h5>
           <span class="badge bg-label-secondary">
-            <i class='ti ti-arrow-up ti-xs text-success'></i>
+            <i class='ti tabler-arrow-up ti-xs text-success'></i>
             <span class="align-middle">37%</span>
           </span>
         </div>
@@ -116,7 +116,7 @@
         <h5 class="card-title mb-0">Average Skills</h5>
         <div class="card-header-elements ms-auto py-0 dropdown">
           <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button" id="heat-chart-dd" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+            <i class="ti tabler-dots-vertical ti-md text-muted"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd">
             <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
@@ -140,7 +140,7 @@
         <div class="card-header-elements ms-auto py-0">
           <h5 class="mb-0 me-4">$ 100,000</h5>
           <span class="badge bg-label-secondary">
-            <i class='ti ti-arrow-big-down ti-xs text-danger'></i>
+            <i class='ti tabler-arrow-big-down ti-xs text-danger'></i>
             <span class="align-middle">20%</span>
           </span>
         </div>
@@ -159,7 +159,7 @@
         <h5 class="card-title mb-0">Data Science</h5>
         <div class="card-header-elements py-0 ms-auto">
           <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-calendar"></i></button>
+            <button type="button" class="btn dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti tabler-calendar"></i></button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
               <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>

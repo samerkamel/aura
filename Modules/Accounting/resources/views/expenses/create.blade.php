@@ -12,7 +12,7 @@
                     <small class="text-muted">Add a recurring expense schedule or one-time expense</small>
                 </div>
                 <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
-                    <i class="ti ti-arrow-left me-1"></i>Back to Expenses
+                    <i class="ti tabler-arrow-left me-1"></i>Back to Expenses
                 </a>
             </div>
 
@@ -212,7 +212,7 @@
                                         <div class="col-md-6">
                                             <label for="frequency_value" class="form-label">
                                                 Frequency Interval <span class="text-danger">*</span>
-                                                <i class="ti ti-info-circle" data-bs-toggle="tooltip"
+                                                <i class="ti tabler-info-circle" data-bs-toggle="tooltip"
                                                    title="How often the frequency occurs (e.g., every 2 weeks, every 3 months)"></i>
                                             </label>
                                             <input type="number" class="form-control @error('frequency_value') is-invalid @enderror"
@@ -314,11 +314,11 @@
                                     <div class="d-grid gap-2">
                                         <a href="{{ route('accounting.expenses.categories') }}"
                                            class="btn btn-outline-primary" target="_blank">
-                                            <i class="ti ti-category me-2"></i>Manage Categories
+                                            <i class="ti tabler-category me-2"></i>Manage Categories
                                         </a>
                                         <a href="{{ route('accounting.accounts.index') }}"
                                            class="btn btn-outline-info" target="_blank">
-                                            <i class="ti ti-credit-card me-2"></i>Manage Accounts
+                                            <i class="ti tabler-credit-card me-2"></i>Manage Accounts
                                         </a>
                                     </div>
                                 </div>
@@ -353,10 +353,10 @@
                             <div class="card">
                                 <div class="card-footer d-flex justify-content-between">
                                     <a href="{{ route('accounting.expenses.index') }}" class="btn btn-outline-secondary">
-                                        <i class="ti ti-x me-1"></i>Cancel
+                                        <i class="ti tabler-x me-1"></i>Cancel
                                     </a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="ti ti-device-floppy me-1"></i>Create Expense
+                                        <i class="ti tabler-device-floppy me-1"></i>Create Expense
                                     </button>
                                 </div>
                             </div>

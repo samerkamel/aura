@@ -46,14 +46,14 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
-          <i class="ti ti-edit me-2"></i>Edit Customer: {{ $customer->display_name }}
+          <i class="ti tabler-edit me-2"></i>Edit Customer: {{ $customer->display_name }}
         </h5>
         <div>
           <a href="{{ route('administration.customers.show', $customer) }}" class="btn btn-outline-primary btn-sm">
-            <i class="ti ti-eye me-1"></i>View Details
+            <i class="ti tabler-eye me-1"></i>View Details
           </a>
           <a href="{{ route('administration.customers.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="ti ti-arrow-left me-1"></i>Back to Customers
+            <i class="ti tabler-arrow-left me-1"></i>Back to Customers
           </a>
         </div>
       </div>
@@ -184,10 +184,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
           <div class="d-flex justify-content-end gap-3">
             <a href="{{ route('administration.customers.show', $customer) }}" class="btn btn-outline-secondary">
-              <i class="ti ti-x me-1"></i>Cancel
+              <i class="ti tabler-x me-1"></i>Cancel
             </a>
             <button type="submit" class="btn btn-primary">
-              <i class="ti ti-check me-1"></i>Update Customer
+              <i class="ti tabler-check me-1"></i>Update Customer
             </button>
           </div>
         </form>
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
 @if($errors->any())
   <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger show top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
     <div class="toast-header">
-      <i class="ti ti-x text-danger me-2"></i>
+      <i class="ti tabler-x text-danger me-2"></i>
       <div class="me-auto fw-medium">Validation Error!</div>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
