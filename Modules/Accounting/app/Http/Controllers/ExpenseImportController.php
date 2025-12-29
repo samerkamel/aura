@@ -555,6 +555,8 @@ class ExpenseImportController extends Controller
 
         $rawField = $data['field'] . '_raw';
         $idField = $data['field'] . '_id';
+        $entityName = null;
+        $createNew = false;
 
         if ($data['field'] === 'customer' && $data['create_new']) {
             // Flag rows to create new customer
@@ -564,27 +566,83 @@ class ExpenseImportController extends Controller
                     'create_customer' => true,
                     $idField => null,
                 ]);
+            $createNew = true;
+            $entityName = 'Create: ' . $data['raw_value'];
         } else {
             // Map to existing entity
             ExpenseImportRow::where('expense_import_id', $expenseImport->id)
                 ->where($rawField, $data['raw_value'])
-                ->update([$idField => $data['mapped_id']]);
+                ->update([
+                    $idField => $data['mapped_id'],
+                    'create_customer' => false,
+                ]);
+
+            // Get entity name for UI update
+            if ($data['mapped_id']) {
+                switch ($data['field']) {
+                    case 'expense_type':
+                        $entityName = ExpenseType::find($data['mapped_id'])?->name;
+                        break;
+                    case 'category':
+                    case 'subcategory':
+                        $entityName = ExpenseCategory::find($data['mapped_id'])?->name;
+                        break;
+                    case 'customer':
+                        $customer = Customer::find($data['mapped_id']);
+                        $entityName = $customer?->company_name ?: $customer?->name;
+                        break;
+                }
+            }
         }
 
-        // Re-validate affected rows
+        // Re-validate affected rows and collect their IDs
         $rows = ExpenseImportRow::where('expense_import_id', $expenseImport->id)
             ->where($rawField, $data['raw_value'])
             ->get();
 
+        $rowIds = [];
+        $rowStatuses = [];
         foreach ($rows as $row) {
             $row->validate();
+            $rowIds[] = $row->id;
+            $rowStatuses[$row->id] = [
+                'status' => $row->status,
+                'status_badge_class' => $row->status_badge_class,
+            ];
         }
 
         $expenseImport->updateRowCounts();
 
+        // Get updated mapping counts
+        $mappingCounts = [
+            'types' => [
+                'unmapped' => count($expenseImport->getUnmappedValues('expense_type_raw', 'expense_type_id')),
+                'total' => count($expenseImport->getUniqueValues('expense_type_raw')),
+            ],
+            'categories' => [
+                'unmapped' => count($expenseImport->getUnmappedValues('category_raw', 'category_id')),
+                'total' => count($expenseImport->getUniqueValues('category_raw')),
+            ],
+            'customers' => [
+                'unmapped' => count($expenseImport->getUnmappedValues('customer_raw', 'customer_id')),
+                'total' => count($expenseImport->getUniqueValues('customer_raw')),
+            ],
+        ];
+
         return response()->json([
             'success' => true,
             'message' => 'Mapping updated for ' . count($rows) . ' rows',
+            'entity_name' => $entityName,
+            'create_new' => $createNew,
+            'row_ids' => $rowIds,
+            'row_statuses' => $rowStatuses,
+            'mapping_counts' => $mappingCounts,
+            'row_counts' => [
+                'total' => $expenseImport->total_rows,
+                'valid' => $expenseImport->valid_rows,
+                'warning' => $expenseImport->warning_rows,
+                'error' => $expenseImport->error_rows,
+            ],
         ]);
     }
 

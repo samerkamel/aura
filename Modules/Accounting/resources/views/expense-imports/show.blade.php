@@ -424,12 +424,128 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 
+    // Toast notification helper
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+                <div class="toast align-items-center text-bg-${type} border-0 show" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+        const toastContainer = document.createElement('div');
+        toastContainer.innerHTML = toastHtml;
+        document.body.appendChild(toastContainer);
+        setTimeout(() => toastContainer.remove(), 3000);
+    }
+
+    // Update stat cards
+    function updateStatCards(rowCounts) {
+        document.querySelector('.bg-label-primary h4').textContent = rowCounts.total;
+        document.querySelector('.bg-label-success h4').textContent = rowCounts.valid;
+        document.querySelector('.bg-label-warning h4').textContent = rowCounts.warning;
+        document.querySelector('.bg-label-danger h4').textContent = rowCounts.error;
+    }
+
+    // Update mapping counts badges
+    function updateMappingCounts(counts) {
+        document.getElementById('typesCount').textContent = `${counts.types.unmapped}/${counts.types.total}`;
+        document.getElementById('categoriesCount').textContent = `${counts.categories.unmapped}/${counts.categories.total}`;
+        document.getElementById('customersCount').textContent = `${counts.customers.unmapped}/${counts.customers.total}`;
+
+        // Check if all mapped
+        const allMapped = counts.types.unmapped === 0 && counts.categories.unmapped === 0 && counts.customers.unmapped === 0;
+        const alertEl = document.getElementById('allMappedAlert');
+        if (allMapped && !alertEl) {
+            const mappingSection = document.getElementById('mappingSection');
+            const newAlert = document.createElement('div');
+            newAlert.className = 'alert alert-success mb-3';
+            newAlert.id = 'allMappedAlert';
+            newAlert.innerHTML = '<i class="ti ti-check me-2"></i>All values have been mapped! Toggle "Show All" to review or change mappings.';
+            mappingSection.parentNode.insertBefore(newAlert, mappingSection);
+        } else if (!allMapped && alertEl) {
+            alertEl.remove();
+        }
+    }
+
+    // Update table row after mapping
+    function updateTableRow(rowId, field, entityName, createNew, status) {
+        const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+        if (!row) return;
+
+        // Update status badge
+        const statusCell = row.querySelector('td:nth-child(3) .badge');
+        if (statusCell && status) {
+            statusCell.className = `badge ${status.status_badge_class}`;
+            statusCell.textContent = status.status.charAt(0).toUpperCase() + status.status.slice(1);
+        }
+
+        // Update row class based on status
+        row.classList.remove('table-danger', 'table-warning');
+        if (status && status.status === 'error') {
+            row.classList.add('table-danger');
+        } else if (status && status.status === 'warning') {
+            row.classList.add('table-warning');
+        }
+
+        // Update the specific field cell
+        let cellIndex;
+        let badgeClass;
+        switch (field) {
+            case 'expense_type':
+                cellIndex = 6;
+                badgeClass = 'bg-label-primary';
+                break;
+            case 'category':
+                cellIndex = 7;
+                badgeClass = 'bg-label-info';
+                break;
+            case 'customer':
+                cellIndex = 8;
+                badgeClass = createNew ? 'bg-label-warning' : 'bg-label-success';
+                break;
+        }
+
+        if (cellIndex && entityName) {
+            const cell = row.querySelector(`td:nth-child(${cellIndex})`);
+            if (cell) {
+                cell.innerHTML = `<span class="badge ${badgeClass}">${entityName}</span>`;
+            }
+        }
+    }
+
+    // Move mapping item from unmapped to mapped section
+    function moveMappingItem(selectEl, entityName) {
+        const inputGroup = selectEl.closest('.input-group');
+        if (!inputGroup) return;
+
+        // Update styling to show as mapped
+        const label = inputGroup.querySelector('.input-group-text');
+        if (label) {
+            label.classList.add('bg-success-subtle');
+        }
+
+        // Move from unmapped to mapped section
+        inputGroup.classList.remove('unmapped-item');
+        inputGroup.classList.add('mapped-item');
+
+        // Hide if "show all" is not checked
+        const showAllToggle = document.getElementById('showAllMappings');
+        if (!showAllToggle.checked) {
+            inputGroup.style.display = 'none';
+        }
+    }
+
     // Toggle show all mappings
     const showAllToggle = document.getElementById('showAllMappings');
-    const mappedItems = document.querySelectorAll('.mapped-item');
-    const allMappedAlert = document.getElementById('allMappedAlert');
 
     showAllToggle.addEventListener('change', function() {
+        const mappedItems = document.querySelectorAll('.mapped-item');
+        const allMappedAlert = document.getElementById('allMappedAlert');
+
         mappedItems.forEach(item => {
             item.style.display = this.checked ? 'flex' : 'none';
         });
@@ -463,9 +579,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mapping selects
     document.querySelectorAll('.mapping-select').forEach(select => {
         select.addEventListener('change', function() {
+            const selectEl = this;
             const field = this.dataset.field;
             const rawValue = this.dataset.raw;
             const mappedId = this.value;
+
+            // Show loading state
+            selectEl.disabled = true;
 
             fetch(`/accounting/expense-imports/${importId}/map-value`, {
                 method: 'POST',
@@ -482,9 +602,35 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                selectEl.disabled = false;
+
                 if (data.success) {
-                    location.reload();
+                    // Update UI without reload
+                    showToast(data.message, 'success');
+
+                    // Update table rows
+                    data.row_ids.forEach(rowId => {
+                        updateTableRow(rowId, field, data.entity_name, data.create_new, data.row_statuses[rowId]);
+                    });
+
+                    // Update stat cards
+                    updateStatCards(data.row_counts);
+
+                    // Update mapping counts
+                    updateMappingCounts(data.mapping_counts);
+
+                    // Move mapping item to mapped section if mapped
+                    if (mappedId || data.create_new) {
+                        moveMappingItem(selectEl, data.entity_name);
+                    }
+                } else {
+                    showToast('Failed to update mapping', 'danger');
                 }
+            })
+            .catch(error => {
+                selectEl.disabled = false;
+                showToast('Error updating mapping', 'danger');
+                console.error(error);
             });
         });
     });
@@ -575,8 +721,41 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    showToast(data.message, 'success');
+
+                    // Update stat cards
+                    if (data.counts) {
+                        updateStatCards(data.counts);
+                    }
+
+                    // Update row styles based on action
+                    if (field === 'action') {
+                        selectedIds.forEach(rowId => {
+                            const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+                            if (row) {
+                                const actionSelect = row.querySelector('.row-action-select');
+                                if (actionSelect) actionSelect.value = value;
+
+                                if (value === 'skip') {
+                                    row.classList.add('table-secondary');
+                                } else {
+                                    row.classList.remove('table-secondary');
+                                }
+                            }
+                        });
+                    }
+
+                    // Deselect all after bulk action
+                    document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
+                    selectAllCheckbox.checked = false;
+                    updateBulkActionBtn();
+                } else {
+                    showToast('Failed to update rows', 'danger');
                 }
+            })
+            .catch(error => {
+                showToast('Error updating rows', 'danger');
+                console.error(error);
             });
         });
     });
@@ -600,6 +779,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveLinkInvoice').addEventListener('click', function() {
         const rowId = document.getElementById('linkInvoiceRowId').value;
         const invoiceId = $('#invoiceSelect').val();
+        const invoiceText = $('#invoiceSelect option:selected').text();
         const withoutInvoice = document.getElementById('incomeWithoutInvoice').checked;
 
         fetch(`/accounting/expense-imports/rows/${rowId}`, {
@@ -618,8 +798,34 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 bootstrap.Modal.getInstance(document.getElementById('linkInvoiceModal')).hide();
-                location.reload();
+
+                // Update row in table
+                const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+                if (row) {
+                    const invoiceCell = row.querySelector('td:last-child');
+                    if (invoiceId) {
+                        // Extract invoice number from select text
+                        const invoiceNum = invoiceText.split(' - ')[0] || 'Linked';
+                        invoiceCell.innerHTML = `<span class="badge bg-success">${invoiceNum}</span>`;
+                    } else if (withoutInvoice) {
+                        invoiceCell.innerHTML = '<span class="badge bg-secondary">No Invoice</span>';
+                    }
+
+                    // Update action select
+                    const actionSelect = row.querySelector('.row-action-select');
+                    if (actionSelect) {
+                        actionSelect.value = invoiceId ? 'link_invoice' : 'create_income';
+                    }
+                }
+
+                showToast('Invoice link updated', 'success');
+            } else {
+                showToast('Failed to update invoice link', 'danger');
             }
+        })
+        .catch(error => {
+            showToast('Error updating invoice link', 'danger');
+            console.error(error);
         });
     });
 });
