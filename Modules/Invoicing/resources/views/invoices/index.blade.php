@@ -159,7 +159,9 @@
                                                 </span>
                                             </div>
                                             <div>
-                                                <span class="fw-medium">{{ $invoice->customer->display_name }}</span>
+                                                <a href="{{ route('administration.customers.show', $invoice->customer) }}" class="fw-medium text-body">
+                                                    {{ $invoice->customer->display_name }}
+                                                </a>
                                             </div>
                                         </div>
                                     </td>
