@@ -46,15 +46,21 @@ class PayrollRunController extends Controller
         $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
 
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+
         if ($selectedPeriod) {
+            // When selecting a month (e.g., December), show the period that determines that month's salary
+            // If cycle starts on 26th, December salary = Nov 26 to Dec 25
             $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
-            $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
-            $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
         } else {
-            // Default to current payroll period
-            $periodStart = $companySettings->getCurrentPeriodStart();
-            $periodEnd = $companySettings->getCurrentPeriodEnd();
+            // Default to current month
+            $periodMonth = Carbon::now()->startOfMonth();
         }
+
+        // Period for selected month ends on (cycleDay - 1) of that month
+        // and starts on cycleDay of the previous month
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
 
         // Calculate payroll summaries for all employees
         $employeeSummaries = $this->payrollCalculationService->calculatePayrollSummary($periodStart, $periodEnd);
@@ -98,9 +104,11 @@ class PayrollRunController extends Controller
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        // Get period dates from company settings
-        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
-        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        // When selecting a month (e.g., December), use the period that determines that month's salary
+        // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
 
         try {
             // Finalize payroll run (atomic transaction in service)
@@ -145,9 +153,11 @@ class PayrollRunController extends Controller
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        // Get period dates from company settings
-        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
-        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        // When selecting a month (e.g., December), use the period that determines that month's salary
+        // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
 
         // Get or create preliminary payroll runs for all employees
         $payrollRuns = $this->getOrCreatePreliminaryRuns($periodStart, $periodEnd);
@@ -338,8 +348,11 @@ class PayrollRunController extends Controller
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
-        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        // When selecting a month (e.g., December), use the period that determines that month's salary
+        // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
 
         try {
             // Update all pending payroll runs to finalized status
@@ -396,8 +409,11 @@ class PayrollRunController extends Controller
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
-        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        // When selecting a month (e.g., December), use the period that determines that month's salary
+        // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
 
         // Delete existing runs for this period (only if not finalized)
         $deletedCount = PayrollRun::forPeriod($periodStart->toDateString(), $periodEnd->toDateString())

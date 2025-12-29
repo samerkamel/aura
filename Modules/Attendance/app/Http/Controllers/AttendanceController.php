@@ -56,11 +56,15 @@ class AttendanceController extends Controller
             $periodEndDate = Carbon::parse($dateTo);
         } else {
             // Default to month filter - use company settings for payroll period
+            // When selecting a month (e.g., December), show the period that determines that month's salary
+            // If cycle starts on 26th, December salary = Nov 26 to Dec 25
             $companySettings = CompanySetting::getSettings();
             $cycleDay = $companySettings->cycle_start_day ?? 1;
-            $selectedDate = Carbon::create($year, $month, $cycleDay);
-            $periodStartDate = $companySettings->getPeriodStartForDate($selectedDate);
-            $periodEndDate = $companySettings->getPeriodEndForDate($selectedDate);
+
+            // Period for selected month ends on (cycleDay - 1) of that month
+            // and starts on cycleDay of the previous month
+            $periodEndDate = Carbon::create($year, $month, $cycleDay)->subDay()->endOfDay();
+            $periodStartDate = Carbon::create($year, $month, 1)->subMonth()->day($cycleDay)->startOfDay();
             $query->whereBetween('timestamp', [$periodStartDate, $periodEndDate]);
         }
 
@@ -659,12 +663,15 @@ class AttendanceController extends Controller
             ];
 
             $companySettings = CompanySetting::getSettings();
+            $cycleDay = $companySettings->cycle_start_day ?? 1;
             for ($month = 1; $month <= 12; $month++) {
                 // Calculate payroll period for this month using company settings
-                $cycleDay = $companySettings->cycle_start_day ?? 1;
-                $selectedDate = Carbon::create($year, $month, $cycleDay);
-                $periodStartDate = $companySettings->getPeriodStartForDate($selectedDate);
-                $periodEndDate = $companySettings->getPeriodEndForDate($selectedDate);
+                // When selecting a month (e.g., December), show the period that determines that month's salary
+                // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+                // Period for selected month ends on (cycleDay - 1) of that month
+                // and starts on cycleDay of the previous month
+                $periodEndDate = Carbon::create($year, $month, $cycleDay)->subDay()->endOfDay();
+                $periodStartDate = Carbon::create($year, $month, 1)->subMonth()->day($cycleDay)->startOfDay();
 
                 // Check if this period is entirely in the future
                 $today = Carbon::today();

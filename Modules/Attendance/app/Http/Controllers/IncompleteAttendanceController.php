@@ -56,9 +56,12 @@ class IncompleteAttendanceController extends Controller
         } else {
             if ($usePayrollCycle) {
                 // Payroll cycle from company settings
-                $selectedDate = Carbon::create($year, $month, $cycleDay);
-                $startDate = $companySettings->getPeriodStartForDate($selectedDate);
-                $endDate = $companySettings->getPeriodEndForDate($selectedDate);
+                // When selecting a month (e.g., December), show the period that determines that month's salary
+                // If cycle starts on 26th, December salary = Nov 26 to Dec 25
+                // Period for selected month ends on (cycleDay - 1) of that month
+                // and starts on cycleDay of the previous month
+                $endDate = Carbon::create($year, $month, $cycleDay)->subDay()->endOfDay();
+                $startDate = Carbon::create($year, $month, 1)->subMonth()->day($cycleDay)->startOfDay();
             } else {
                 // Calendar month
                 $startDate = Carbon::create($year, $month, 1)->startOfDay();
