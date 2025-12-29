@@ -13,6 +13,7 @@ use Modules\Payroll\Services\BillableHoursImportService;
 use Modules\Payroll\Services\JiraBillableHoursService;
 use Modules\Payroll\Services\JiraWorklogImportService;
 use Modules\HR\Models\Employee;
+use Modules\Settings\Models\CompanySetting;
 use Carbon\Carbon;
 
 /**
@@ -37,17 +38,10 @@ class BillableHoursController extends Controller
      */
     public function index(): View
     {
-        // Payroll period: 26th of previous month to 25th of current month
-        $today = Carbon::now();
-        if ($today->day >= 26) {
-            // We're in next month's payroll period
-            $periodMonth = $today->copy()->addMonth();
-        } else {
-            $periodMonth = $today->copy();
-        }
-
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
+        // Get payroll period from company settings
+        $companySettings = CompanySetting::getSettings();
+        $periodStart = $companySettings->getCurrentPeriodStart();
+        $periodEnd = $companySettings->getCurrentPeriodEnd();
 
         // Get active employees with billable hours applicable
         $employees = Employee::active()
@@ -113,14 +107,9 @@ class BillableHoursController extends Controller
             'hours.*' => 'numeric|min:0|max:999.99',
         ]);
 
-        // Payroll period: 26th of previous month to 25th of current month
-        $today = Carbon::now();
-        if ($today->day >= 26) {
-            $periodMonth = $today->copy()->addMonth();
-        } else {
-            $periodMonth = $today->copy();
-        }
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
+        // Get payroll period from company settings
+        $companySettings = CompanySetting::getSettings();
+        $periodStart = $companySettings->getCurrentPeriodStart();
 
         $updateCount = 0;
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Modules\Payroll\Services\PayrollCalculationService;
 use Modules\Payroll\Models\PayrollRun;
+use Modules\Settings\Models\CompanySetting;
 use Carbon\Carbon;
 
 /**
@@ -34,7 +35,7 @@ class PayrollRunController extends Controller
     /**
      * Display the payroll review page with calculation summaries.
      *
-     * Payroll period runs from 26th of previous month to 25th of current month.
+     * Payroll period is determined by company settings (cycle_start_day).
      *
      * @param Request $request
      * @return View
@@ -42,27 +43,18 @@ class PayrollRunController extends Controller
      */
     public function review(Request $request): View
     {
-        // Get the selected period or default to current month
-        // Period format: Y-m represents the month being paid (e.g., 2025-12 = Dec 2025 payroll)
-        // Actual dates: 26th of previous month to 25th of selected month
+        $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
 
         if ($selectedPeriod) {
             $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
+            $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+            $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
         } else {
-            // Default to current payroll period based on today's date
-            // If today is 26th or later, we're in next month's payroll period
-            $today = Carbon::now();
-            if ($today->day >= 26) {
-                $periodMonth = $today->copy()->addMonth();
-            } else {
-                $periodMonth = $today->copy();
-            }
+            // Default to current payroll period
+            $periodStart = $companySettings->getCurrentPeriodStart();
+            $periodEnd = $companySettings->getCurrentPeriodEnd();
         }
-
-        // Period runs from 26th of previous month to 25th of current month
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
 
         // Calculate payroll summaries for all employees
         $employeeSummaries = $this->payrollCalculationService->calculatePayrollSummary($periodStart, $periodEnd);
@@ -89,7 +81,7 @@ class PayrollRunController extends Controller
     /**
      * Finalize payroll run and export bank sheet for the selected period.
      *
-     * Payroll period runs from 26th of previous month to 25th of current month.
+     * Payroll period is determined by company settings (cycle_start_day).
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
@@ -102,12 +94,13 @@ class PayrollRunController extends Controller
             'period' => 'required|date_format:Y-m',
         ]);
 
+        $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        // Period runs from 26th of previous month to 25th of current month
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
+        // Get period dates from company settings
+        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
 
         try {
             // Finalize payroll run (atomic transaction in service)
@@ -148,12 +141,13 @@ class PayrollRunController extends Controller
             'period' => 'required|date_format:Y-m',
         ]);
 
+        $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        // Period runs from 26th of previous month to 25th of current month
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
+        // Get period dates from company settings
+        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
 
         // Get or create preliminary payroll runs for all employees
         $payrollRuns = $this->getOrCreatePreliminaryRuns($periodStart, $periodEnd);
@@ -340,11 +334,12 @@ class PayrollRunController extends Controller
             'period' => 'required|date_format:Y-m',
         ]);
 
+        $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
+        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
 
         try {
             // Update all pending payroll runs to finalized status
@@ -397,11 +392,12 @@ class PayrollRunController extends Controller
             'period' => 'required|date_format:Y-m',
         ]);
 
+        $companySettings = CompanySetting::getSettings();
         $selectedPeriod = $request->get('period');
         $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
 
-        $periodStart = $periodMonth->copy()->subMonth()->setDay(26)->startOfDay();
-        $periodEnd = $periodMonth->copy()->setDay(25)->endOfDay();
+        $periodStart = $companySettings->getPeriodStartForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
+        $periodEnd = $companySettings->getPeriodEndForDate($periodMonth->copy()->day($companySettings->cycle_start_day));
 
         // Delete existing runs for this period (only if not finalized)
         $deletedCount = PayrollRun::forPeriod($periodStart->toDateString(), $periodEnd->toDateString())

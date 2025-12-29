@@ -14,6 +14,7 @@ use Modules\HR\Models\Employee;
 use Modules\Leave\Models\LeaveRecord;
 use Modules\Leave\Models\LeavePolicy;
 use Modules\Payroll\Models\JiraWorklog;
+use Modules\Settings\Models\CompanySetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -40,20 +41,24 @@ class IncompleteAttendanceController extends Controller
         $usePayrollCycle = $request->boolean('payroll_cycle', true);
 
         // Build date range based on payroll cycle or calendar month
+        $companySettings = CompanySetting::getSettings();
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+
         if ($month === 0) {
-            // All months in the year - use full year payroll cycle (Jan 26 prev year to Dec 25)
+            // All months in the year - use full fiscal year from company settings
             if ($usePayrollCycle) {
-                $startDate = Carbon::create($year - 1, 12, 26)->startOfDay();
-                $endDate = Carbon::create($year, 12, 25)->endOfDay();
+                $startDate = $companySettings->getFiscalYearStartForYear($year);
+                $endDate = $companySettings->getFiscalYearEndForYear($year);
             } else {
                 $startDate = Carbon::create($year, 1, 1)->startOfDay();
                 $endDate = Carbon::create($year, 12, 31)->endOfDay();
             }
         } else {
             if ($usePayrollCycle) {
-                // Payroll cycle: 26th of previous month to 25th of current month
-                $startDate = Carbon::create($year, $month, 1)->subMonth()->setDay(26)->startOfDay();
-                $endDate = Carbon::create($year, $month, 25)->endOfDay();
+                // Payroll cycle from company settings
+                $selectedDate = Carbon::create($year, $month, $cycleDay);
+                $startDate = $companySettings->getPeriodStartForDate($selectedDate);
+                $endDate = $companySettings->getPeriodEndForDate($selectedDate);
             } else {
                 // Calendar month
                 $startDate = Carbon::create($year, $month, 1)->startOfDay();

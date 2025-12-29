@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Modules\Attendance\Models\PermissionOverride;
+use Modules\Settings\Models\CompanySetting;
 
 /**
  * Permission Override Controller
@@ -35,8 +36,9 @@ class PermissionOverrideController extends Controller
             'reason' => 'nullable|string|max:500',
         ]);
 
-        // Get current payroll month start date
-        $payrollPeriodStart = now()->startOfMonth();
+        // Get current payroll period start date from company settings
+        $companySettings = CompanySetting::getSettings();
+        $payrollPeriodStart = $companySettings->getCurrentPeriodStart();
 
         // Check if override already exists for this employee and period
         $existingOverride = PermissionOverride::where('employee_id', $validated['employee_id'])
@@ -77,10 +79,11 @@ class PermissionOverrideController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $currentMonthStart = now()->startOfMonth();
+        $companySettings = CompanySetting::getSettings();
+        $currentPeriodStart = $companySettings->getCurrentPeriodStart();
 
         $overrides = PermissionOverride::where('employee_id', $employeeId)
-            ->where('payroll_period_start_date', $currentMonthStart)
+            ->where('payroll_period_start_date', $currentPeriodStart)
             ->with('grantedBy')
             ->get();
 

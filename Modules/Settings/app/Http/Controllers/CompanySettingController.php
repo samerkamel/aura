@@ -40,6 +40,8 @@ class CompanySettingController extends Controller
             'commercial_register' => 'nullable|string|max:100',
             'default_vat_rate' => 'required|numeric|min:0|max:100',
             'currency' => 'required|string|size:3',
+            'cycle_start_day' => 'required|integer|min:1|max:28',
+            'fiscal_year_start_month' => 'required|integer|min:1|max:12',
             'bank_name' => 'nullable|string|max:255',
             'account_name' => 'nullable|string|max:255',
             'account_number' => 'nullable|string|max:100',
@@ -97,6 +99,8 @@ class CompanySettingController extends Controller
         $settings->commercial_register = $validated['commercial_register'];
         $settings->default_vat_rate = $validated['default_vat_rate'];
         $settings->currency = $validated['currency'];
+        $settings->cycle_start_day = $validated['cycle_start_day'];
+        $settings->fiscal_year_start_month = $validated['fiscal_year_start_month'];
 
         // Bank details as JSON
         $settings->bank_details = [

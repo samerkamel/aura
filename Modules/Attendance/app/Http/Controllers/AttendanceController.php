@@ -14,6 +14,7 @@ use Modules\HR\Models\Employee;
 use Modules\Leave\Models\LeaveRecord;
 use Modules\Leave\Models\LeavePolicy;
 use Modules\Payroll\Models\JiraWorklog;
+use Modules\Settings\Models\CompanySetting;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -54,10 +55,12 @@ class AttendanceController extends Controller
             $periodStartDate = Carbon::parse($dateFrom);
             $periodEndDate = Carbon::parse($dateTo);
         } else {
-            // Default to month filter - Payroll period: 26th of previous month to 25th of selected month
-            // Example: December 2025 = November 26, 2025 to December 25, 2025
-            $periodEndDate = Carbon::create($year, $month, 25)->endOfDay();
-            $periodStartDate = Carbon::create($year, $month, 1)->subMonth()->setDay(26)->startOfDay();
+            // Default to month filter - use company settings for payroll period
+            $companySettings = CompanySetting::getSettings();
+            $cycleDay = $companySettings->cycle_start_day ?? 1;
+            $selectedDate = Carbon::create($year, $month, $cycleDay);
+            $periodStartDate = $companySettings->getPeriodStartForDate($selectedDate);
+            $periodEndDate = $companySettings->getPeriodEndForDate($selectedDate);
             $query->whereBetween('timestamp', [$periodStartDate, $periodEndDate]);
         }
 
@@ -655,10 +658,13 @@ class AttendanceController extends Controller
                 'months' => [],
             ];
 
+            $companySettings = CompanySetting::getSettings();
             for ($month = 1; $month <= 12; $month++) {
-                // Calculate payroll period for this month (26th of prev month to 25th of this month)
-                $periodEndDate = Carbon::create($year, $month, 25)->endOfDay();
-                $periodStartDate = Carbon::create($year, $month, 1)->subMonth()->setDay(26)->startOfDay();
+                // Calculate payroll period for this month using company settings
+                $cycleDay = $companySettings->cycle_start_day ?? 1;
+                $selectedDate = Carbon::create($year, $month, $cycleDay);
+                $periodStartDate = $companySettings->getPeriodStartForDate($selectedDate);
+                $periodEndDate = $companySettings->getPeriodEndForDate($selectedDate);
 
                 // Check if this period is entirely in the future
                 $today = Carbon::today();

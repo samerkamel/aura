@@ -170,6 +170,64 @@
                         </div>
                     </div>
 
+                    <!-- Fiscal & Cycle Settings -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="ti ti-calendar-stats me-2"></i>Fiscal & Payroll Cycle Settings
+                            </h5>
+                            <small class="text-muted">Configure your fiscal year and payroll cycle periods</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="cycle_start_day" class="form-label">Cycle Start Day <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('cycle_start_day') is-invalid @enderror"
+                                            id="cycle_start_day" name="cycle_start_day">
+                                        @for($day = 1; $day <= 28; $day++)
+                                            <option value="{{ $day }}" {{ old('cycle_start_day', $settings->cycle_start_day ?? 1) == $day ? 'selected' : '' }}>
+                                                {{ $day }}{{ $day == 1 ? 'st' : ($day == 2 ? 'nd' : ($day == 3 ? 'rd' : 'th')) }} of each month
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    @error('cycle_start_day')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">Day when payroll/fiscal periods begin (e.g., 26 means 26th to 25th)</small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fiscal_year_start_month" class="form-label">Fiscal Year Start Month <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('fiscal_year_start_month') is-invalid @enderror"
+                                            id="fiscal_year_start_month" name="fiscal_year_start_month">
+                                        @php
+                                            $months = ['January', 'February', 'March', 'April', 'May', 'June',
+                                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                                        @endphp
+                                        @foreach($months as $index => $month)
+                                            <option value="{{ $index + 1 }}" {{ old('fiscal_year_start_month', $settings->fiscal_year_start_month ?? 1) == ($index + 1) ? 'selected' : '' }}>
+                                                {{ $month }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('fiscal_year_start_month')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">Month when your fiscal year begins</small>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="ti ti-info-circle me-2"></i>
+                                        <strong>Current Period:</strong> {{ $settings->getPeriodLabel() ?? 'Not configured' }}<br>
+                                        <strong>Fiscal Year:</strong> {{ $settings->getFiscalYearLabel() ?? 'Not configured' }}
+                                        ({{ $settings->getFiscalYearStart()?->format('M d, Y') }} - {{ $settings->getFiscalYearEnd()?->format('M d, Y') }})
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Bank Details -->
                     <div class="card mb-4">
                         <div class="card-header">
@@ -339,7 +397,9 @@
                                 <li class="mb-2"><strong>Dashboard logo:</strong> Appears in the sidebar navigation</li>
                                 <li class="mb-2"><strong>Document logo:</strong> Used on estimates, invoices, and PDFs</li>
                                 <li class="mb-2">VAT rate is used as default for new estimates</li>
-                                <li class="mb-0">Bank details appear on document footers</li>
+                                <li class="mb-2">Bank details appear on document footers</li>
+                                <li class="mb-2"><strong>Cycle Start Day:</strong> All payroll periods and reports will use this day as the start of each month</li>
+                                <li class="mb-0"><strong>Fiscal Year:</strong> Used for annual reports and income/expense tracking</li>
                             </ul>
                         </div>
                     </div>

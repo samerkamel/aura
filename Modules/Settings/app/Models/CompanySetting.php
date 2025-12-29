@@ -2,6 +2,7 @@
 
 namespace Modules\Settings\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -22,12 +23,16 @@ class CompanySetting extends Model
         'commercial_register',
         'default_vat_rate',
         'currency',
+        'cycle_start_day',
+        'fiscal_year_start_month',
         'bank_details',
     ];
 
     protected $casts = [
         'bank_details' => 'array',
         'default_vat_rate' => 'decimal:2',
+        'cycle_start_day' => 'integer',
+        'fiscal_year_start_month' => 'integer',
     ];
 
     /**
@@ -151,5 +156,163 @@ class CompanySetting extends Model
         static::saved(function () {
             static::clearCache();
         });
+    }
+
+    /**
+     * Get the current fiscal/payroll period start date.
+     * If cycle_start_day is 26, period runs from 26th to 25th of next month.
+     */
+    public function getCurrentPeriodStart(): Carbon
+    {
+        $today = Carbon::today();
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        // If we're before the cycle start day, the period started last month
+        if ($today->day < $cycleDay) {
+            return $today->copy()->subMonth()->day($cycleDay)->startOfDay();
+        }
+
+        return $today->copy()->day($cycleDay)->startOfDay();
+    }
+
+    /**
+     * Get the current fiscal/payroll period end date.
+     */
+    public function getCurrentPeriodEnd(): Carbon
+    {
+        $periodStart = $this->getCurrentPeriodStart();
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        // Period ends the day before the next cycle start
+        return $periodStart->copy()->addMonth()->day($cycleDay)->subDay()->endOfDay();
+    }
+
+    /**
+     * Get the period start date for a given date.
+     */
+    public function getPeriodStartForDate(Carbon $date): Carbon
+    {
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        if ($date->day < $cycleDay) {
+            return $date->copy()->subMonth()->day($cycleDay)->startOfDay();
+        }
+
+        return $date->copy()->day($cycleDay)->startOfDay();
+    }
+
+    /**
+     * Get the period end date for a given date.
+     */
+    public function getPeriodEndForDate(Carbon $date): Carbon
+    {
+        $periodStart = $this->getPeriodStartForDate($date);
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        return $periodStart->copy()->addMonth()->day($cycleDay)->subDay()->endOfDay();
+    }
+
+    /**
+     * Get the current fiscal year start date.
+     */
+    public function getFiscalYearStart(): Carbon
+    {
+        $today = Carbon::today();
+        $cycleDay = $this->cycle_start_day ?? 1;
+        $fiscalMonth = $this->fiscal_year_start_month ?? 1;
+
+        // Create the fiscal year start for this calendar year
+        $fiscalYearStart = Carbon::create($today->year, $fiscalMonth, $cycleDay)->startOfDay();
+
+        // If we're before the fiscal year start, use previous year
+        if ($today->lt($fiscalYearStart)) {
+            $fiscalYearStart->subYear();
+        }
+
+        return $fiscalYearStart;
+    }
+
+    /**
+     * Get the current fiscal year end date.
+     */
+    public function getFiscalYearEnd(): Carbon
+    {
+        $fiscalYearStart = $this->getFiscalYearStart();
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        // Fiscal year ends the day before the next fiscal year starts
+        return $fiscalYearStart->copy()->addYear()->day($cycleDay)->subDay()->endOfDay();
+    }
+
+    /**
+     * Get the fiscal year start for a specific year.
+     */
+    public function getFiscalYearStartForYear(int $year): Carbon
+    {
+        $cycleDay = $this->cycle_start_day ?? 1;
+        $fiscalMonth = $this->fiscal_year_start_month ?? 1;
+
+        return Carbon::create($year, $fiscalMonth, $cycleDay)->startOfDay();
+    }
+
+    /**
+     * Get the fiscal year end for a specific year.
+     */
+    public function getFiscalYearEndForYear(int $year): Carbon
+    {
+        $fiscalYearStart = $this->getFiscalYearStartForYear($year);
+        $cycleDay = $this->cycle_start_day ?? 1;
+
+        return $fiscalYearStart->copy()->addYear()->day($cycleDay)->subDay()->endOfDay();
+    }
+
+    /**
+     * Get the period label for a given date (e.g., "Dec 26 - Jan 25, 2025").
+     */
+    public function getPeriodLabel(?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::today();
+        $start = $this->getPeriodStartForDate($date);
+        $end = $this->getPeriodEndForDate($date);
+
+        if ($start->year === $end->year) {
+            return $start->format('M d') . ' - ' . $end->format('M d, Y');
+        }
+
+        return $start->format('M d, Y') . ' - ' . $end->format('M d, Y');
+    }
+
+    /**
+     * Get the fiscal year label (e.g., "FY 2024-2025").
+     */
+    public function getFiscalYearLabel(?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::today();
+        $fiscalStart = $this->getFiscalYearStart();
+        $fiscalEnd = $this->getFiscalYearEnd();
+
+        return 'FY ' . $fiscalStart->year . '-' . $fiscalEnd->year;
+    }
+
+    /**
+     * Check if a date falls within the current period.
+     */
+    public function isInCurrentPeriod(Carbon $date): bool
+    {
+        $start = $this->getCurrentPeriodStart();
+        $end = $this->getCurrentPeriodEnd();
+
+        return $date->between($start, $end);
+    }
+
+    /**
+     * Check if a date falls within the current fiscal year.
+     */
+    public function isInCurrentFiscalYear(Carbon $date): bool
+    {
+        $start = $this->getFiscalYearStart();
+        $end = $this->getFiscalYearEnd();
+
+        return $date->between($start, $end);
     }
 }

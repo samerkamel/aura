@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\HR\Models\Employee;
+use Modules\Settings\Models\CompanySetting;
 
 /**
  * Permission Override Model
@@ -59,14 +60,15 @@ class PermissionOverride extends Model
     }
 
     /**
-     * Get overrides for current payroll month
+     * Get overrides for current payroll period
      */
     public static function getCurrentMonthOverrides(int $employeeId): int
     {
-        $currentMonthStart = now()->startOfMonth();
+        $companySettings = CompanySetting::getSettings();
+        $currentPeriodStart = $companySettings->getCurrentPeriodStart();
 
         return static::where('employee_id', $employeeId)
-            ->where('payroll_period_start_date', $currentMonthStart)
+            ->where('payroll_period_start_date', $currentPeriodStart)
             ->sum('extra_permissions_granted');
     }
 }
