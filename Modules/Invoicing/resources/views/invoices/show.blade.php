@@ -146,6 +146,9 @@
                                 <tr>
                                     <td>
                                         <div class="fw-semibold">{{ $item->description }}</div>
+                                        @if($item->long_description)
+                                            <div class="text-muted small">{!! nl2br(e($item->long_description)) !!}</div>
+                                        @endif
                                         @if($item->contract_payment_id)
                                             <small class="text-muted">
                                                 <i class="ti ti-link me-1"></i>
@@ -155,9 +158,9 @@
                                     </td>
                                     <td class="text-center">{{ number_format($item->quantity, 2) }}</td>
                                     <td class="text-end">{{ number_format($item->unit_price, 2) }} EGP</td>
-                                    <td class="text-center">{{ number_format($item->tax_rate, 2) }}%</td>
-                                    <td class="text-end">{{ number_format($item->tax_amount, 2) }} EGP</td>
-                                    <td class="text-end fw-semibold">{{ number_format($item->total_amount, 2) }} EGP</td>
+                                    <td class="text-center">{{ number_format($item->tax_rate ?? 0, 2) }}%</td>
+                                    <td class="text-end">{{ number_format($item->tax_amount ?? 0, 2) }} EGP</td>
+                                    <td class="text-end fw-semibold">{{ number_format($item->total ?? 0, 2) }} EGP</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -211,11 +214,11 @@
                                 <table class="table table-borderless table-sm mb-0">
                                     <tr>
                                         <td>Subtotal:</td>
-                                        <td class="text-end">{{ number_format($invoice->subtotal_amount, 2) }} EGP</td>
+                                        <td class="text-end">{{ number_format($invoice->subtotal ?? 0, 2) }} EGP</td>
                                     </tr>
                                     <tr>
                                         <td>Tax:</td>
-                                        <td class="text-end">{{ number_format($invoice->tax_amount, 2) }} EGP</td>
+                                        <td class="text-end">{{ number_format($invoice->tax_amount ?? 0, 2) }} EGP</td>
                                     </tr>
                                     <tr class="border-top">
                                         <td><strong>Total:</strong></td>
