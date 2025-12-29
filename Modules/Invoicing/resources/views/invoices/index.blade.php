@@ -155,14 +155,11 @@
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-sm me-2">
                                                 <span class="avatar-initial rounded-circle bg-label-primary">
-                                                    {{ substr($invoice->customer->name, 0, 2) }}
+                                                    {{ mb_substr($invoice->customer->display_name, 0, 2) }}
                                                 </span>
                                             </div>
                                             <div>
-                                                <span class="fw-medium">{{ $invoice->customer->name }}</span>
-                                                @if($invoice->customer->email)
-                                                    <br><small class="text-muted">{{ $invoice->customer->email }}</small>
-                                                @endif
+                                                <span class="fw-medium">{{ $invoice->customer->display_name }}</span>
                                             </div>
                                         </div>
                                     </td>
