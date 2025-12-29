@@ -89,6 +89,14 @@ class ExpenseSchedule extends Model
     }
 
     /**
+     * Get the attachments for this expense.
+     */
+    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ExpenseAttachment::class);
+    }
+
+    /**
      * Scope to get only active schedules.
      */
     public function scopeActive(Builder $query): Builder

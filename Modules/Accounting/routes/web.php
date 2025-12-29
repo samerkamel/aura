@@ -65,6 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{expenseSchedule}/mark-as-paid', [ExpenseController::class, 'markAsPaid'])->name('mark-as-paid');
             Route::get('/{expenseSchedule}/payment-attachment', [ExpenseController::class, 'downloadPaymentAttachment'])->name('payment-attachment');
             Route::post('/bulk-action', [ExpenseController::class, 'bulkAction'])->name('bulk-action');
+
+            // Attachment management
+            Route::post('/{expenseSchedule}/attachments', [ExpenseController::class, 'uploadAttachment'])->name('attachments.upload');
+            Route::delete('/{expenseSchedule}/attachments/{attachment}', [ExpenseController::class, 'deleteAttachment'])->name('attachments.delete');
+            Route::get('/{expenseSchedule}/attachments/{attachment}/download', [ExpenseController::class, 'downloadAttachment'])->name('attachments.download');
         });
 
         // Expense Type Management Routes

@@ -9,10 +9,13 @@ use Illuminate\View\View;
 use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\ExpenseCategory;
 use Modules\Accounting\Models\ExpenseCategoryBudget;
+use Modules\Accounting\Models\ExpenseAttachment;
 use Modules\Accounting\Models\Account;
 use Modules\Accounting\Http\Requests\StoreExpenseScheduleRequest;
 use Modules\Accounting\Http\Requests\UpdateExpenseScheduleRequest;
 use Modules\Accounting\Services\ScheduleCalculatorService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\JsonResponse;
 
 /**
  * ExpenseController
@@ -276,12 +279,14 @@ class ExpenseController extends Controller
      */
     public function edit(ExpenseSchedule $expenseSchedule): View
     {
-        $categories = ExpenseCategory::active()->orderBy('name')->get();
+        $categories = ExpenseCategory::getFlatTree(activeOnly: true);
+        $accounts = Account::active()->orderBy('name')->get();
         $frequencyOptions = $this->scheduleCalculator->getFrequencyOptions();
 
         return view('accounting::expenses.edit', compact(
             'expenseSchedule',
             'categories',
+            'accounts',
             'frequencyOptions'
         ));
     }
@@ -1478,5 +1483,81 @@ class ExpenseController extends Controller
             ->where('paid_date', '>=', $yearStart)
             ->where('paid_date', '<=', $endDate)
             ->sum('paid_amount');
+    }
+
+    /**
+     * Upload attachment(s) for an expense.
+     */
+    public function uploadAttachment(Request $request, ExpenseSchedule $expenseSchedule): JsonResponse
+    {
+        $request->validate([
+            'attachments' => 'required|array',
+            'attachments.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,gif,doc,docx,xls,xlsx',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $uploaded = [];
+
+        foreach ($request->file('attachments') as $file) {
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('expense-attachments/' . $expenseSchedule->id, $fileName, 'public');
+
+            $attachment = ExpenseAttachment::create([
+                'expense_schedule_id' => $expenseSchedule->id,
+                'file_name' => $fileName,
+                'original_name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'mime_type' => $file->getMimeType(),
+                'file_size' => $file->getSize(),
+                'description' => $request->description,
+                'uploaded_by' => auth()->id(),
+            ]);
+
+            $uploaded[] = [
+                'id' => $attachment->id,
+                'name' => $attachment->original_name,
+                'size' => $attachment->human_file_size,
+                'url' => $attachment->url,
+                'icon' => $attachment->icon_class,
+                'is_image' => $attachment->is_image,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => count($uploaded) . ' file(s) uploaded successfully',
+            'attachments' => $uploaded,
+        ]);
+    }
+
+    /**
+     * Delete an attachment.
+     */
+    public function deleteAttachment(ExpenseSchedule $expenseSchedule, ExpenseAttachment $attachment): JsonResponse
+    {
+        // Ensure attachment belongs to this expense
+        if ($attachment->expense_schedule_id !== $expenseSchedule->id) {
+            return response()->json(['success' => false, 'message' => 'Attachment not found'], 404);
+        }
+
+        $attachment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attachment deleted successfully',
+        ]);
+    }
+
+    /**
+     * Download an attachment.
+     */
+    public function downloadAttachment(ExpenseSchedule $expenseSchedule, ExpenseAttachment $attachment)
+    {
+        // Ensure attachment belongs to this expense
+        if ($attachment->expense_schedule_id !== $expenseSchedule->id) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($attachment->file_path, $attachment->original_name);
     }
 }
