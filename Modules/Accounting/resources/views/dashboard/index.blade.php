@@ -83,7 +83,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="card-info">
-                        <p class="card-text">Monthly Income</p>
+                        <p class="card-text">Period Income</p>
                         <div class="d-flex align-items-end mb-2">
                             <h4 class="card-title mb-0 me-2">{{ number_format($monthlyIncome, 2) }} EGP</h4>
                             @if($incomeGrowth != 0)
@@ -94,7 +94,7 @@
                                 @endif
                             @endif
                         </div>
-                        <small class="text-muted">This month (vs last month)</small>
+                        <small class="text-muted">{{ $currentPeriodLabel ?? 'This month' }}</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-success rounded">
@@ -111,7 +111,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="card-info">
-                        <p class="card-text">Monthly Expenses</p>
+                        <p class="card-text">Period Expenses</p>
                         <div class="d-flex align-items-end mb-2">
                             <h4 class="card-title mb-0 me-2">{{ number_format($monthlyExpenses, 2) }} EGP</h4>
                             @if($expenseGrowth != 0)
@@ -122,7 +122,7 @@
                                 @endif
                             @endif
                         </div>
-                        <small class="text-muted">Actual paid this month</small>
+                        <small class="text-muted">{{ $currentPeriodLabel ?? 'This month' }}</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-danger rounded">
@@ -179,14 +179,17 @@
     </div>
 </div>
 
-<!-- YTD Summary -->
+<!-- Fiscal Year Summary -->
 <div class="row mb-4">
+    <div class="col-12 mb-2">
+        <small class="text-muted"><i class="ti ti-calendar me-1"></i>{{ $fiscalYearLabel ?? 'Year to Date' }}</small>
+    </div>
     <div class="col-md-4">
         <div class="card bg-primary text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-white mb-1">YTD Income</h6>
+                        <h6 class="text-white mb-1">FY Income</h6>
                         <h4 class="mb-0">{{ number_format($ytdIncome, 2) }} EGP</h4>
                     </div>
                     <i class="ti ti-cash ti-lg"></i>
@@ -199,7 +202,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-white mb-1">YTD Expenses</h6>
+                        <h6 class="text-white mb-1">FY Expenses</h6>
                         <h4 class="mb-0">{{ number_format($ytdExpenses, 2) }} EGP</h4>
                     </div>
                     <i class="ti ti-shopping-cart ti-lg"></i>
@@ -212,7 +215,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-white mb-1">YTD Net</h6>
+                        <h6 class="text-white mb-1">FY Net</h6>
                         <h4 class="mb-0">{{ number_format($ytdIncome - $ytdExpenses, 2) }} EGP</h4>
                     </div>
                     <i class="ti ti-chart-line ti-lg"></i>

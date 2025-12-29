@@ -12,6 +12,7 @@ use Modules\Accounting\Models\Contract;
 use Modules\Accounting\Models\ContractPayment;
 use Modules\Accounting\Models\ExpenseCategory;
 use Modules\Accounting\Models\Account;
+use Modules\Settings\Models\CompanySetting;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -42,12 +43,19 @@ class AccountingController extends Controller
             abort(403, 'Unauthorized to access accounting dashboard.');
         }
 
-        // Current month date range
-        $currentMonthStart = now()->startOfMonth();
-        $currentMonthEnd = now()->endOfMonth();
-        $previousMonthStart = now()->subMonth()->startOfMonth();
-        $previousMonthEnd = now()->subMonth()->endOfMonth();
-        $yearStart = now()->startOfYear();
+        // Get company settings for fiscal cycle
+        $companySettings = CompanySetting::getSettings();
+
+        // Current period date range (respects cycle_start_day setting)
+        $currentMonthStart = $companySettings->getCurrentPeriodStart();
+        $currentMonthEnd = $companySettings->getCurrentPeriodEnd();
+
+        // Previous period for growth calculations
+        $previousMonthStart = $companySettings->getPeriodStartForDate(now()->subMonth());
+        $previousMonthEnd = $companySettings->getPeriodEndForDate(now()->subMonth());
+
+        // Fiscal year start (respects fiscal_year_start_month and cycle_start_day)
+        $yearStart = $companySettings->getFiscalYearStart();
 
         // Get starting balance from accounts
         $totalAccountBalance = Account::active()->sum('current_balance');
@@ -232,6 +240,8 @@ class AccountingController extends Controller
 
         // Additional dashboard variables
         $selectedPeriod = 'monthly';
+        $currentPeriodLabel = $companySettings->getPeriodLabel();
+        $fiscalYearLabel = $companySettings->getFiscalYearLabel();
 
         return view('accounting::dashboard.index', compact(
             'monthlyIncome',
@@ -250,7 +260,9 @@ class AccountingController extends Controller
             'expenseGrowth',
             'ytdExpenses',
             'ytdIncome',
-            'accountsSummary'
+            'accountsSummary',
+            'currentPeriodLabel',
+            'fiscalYearLabel'
         ));
     }
 
