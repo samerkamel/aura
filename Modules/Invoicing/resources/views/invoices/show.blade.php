@@ -101,6 +101,9 @@
                     <div class="col-md-6">
                         <div class="text-md-end">
                             <span class="badge {{ $invoice->status_badge_class }} fs-6 mb-3">{{ $invoice->status_display }}</span>
+                            @if($invoice->currency !== 'EGP')
+                                <span class="badge bg-label-info fs-6 mb-3 ms-2">{{ $invoice->currency }}</span>
+                            @endif
 
                             <table class="table table-borderless table-sm">
                                 <tr>
@@ -160,10 +163,10 @@
                                         @endif
                                     </td>
                                     <td class="text-center">{{ number_format($item->quantity, 2) }}</td>
-                                    <td class="text-end">{{ number_format($item->unit_price, 2) }} EGP</td>
+                                    <td class="text-end">{{ number_format($item->unit_price, 2) }} {{ $invoice->currency }}</td>
                                     <td class="text-center">{{ number_format($item->tax_rate ?? 0, 2) }}%</td>
-                                    <td class="text-end">{{ number_format($item->tax_amount ?? 0, 2) }} EGP</td>
-                                    <td class="text-end fw-semibold">{{ number_format($item->total ?? 0, 2) }} EGP</td>
+                                    <td class="text-end">{{ number_format($item->tax_amount ?? 0, 2) }} {{ $invoice->currency }}</td>
+                                    <td class="text-end fw-semibold">{{ number_format($item->total ?? 0, 2) }} {{ $invoice->currency }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -191,7 +194,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <strong>Amount Paid:</strong>
-                                        <span class="text-success">{{ number_format($invoice->paid_amount, 2) }} EGP</span>
+                                        <span class="text-success">{{ number_format($invoice->paid_amount, 2) }} {{ $invoice->currency }}</span>
                                     </div>
                                     @if($invoice->paid_date)
                                     <div class="col-sm-6">
@@ -203,7 +206,7 @@
                                 @if($invoice->total_amount > $invoice->paid_amount)
                                 <div class="mt-2">
                                     <strong>Remaining Balance:</strong>
-                                    <span class="text-danger">{{ number_format($invoice->total_amount - $invoice->paid_amount, 2) }} EGP</span>
+                                    <span class="text-danger">{{ number_format($invoice->total_amount - $invoice->paid_amount, 2) }} {{ $invoice->currency }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -217,24 +220,30 @@
                                 <table class="table table-borderless table-sm mb-0">
                                     <tr>
                                         <td>Subtotal:</td>
-                                        <td class="text-end">{{ number_format($invoice->subtotal ?? 0, 2) }} EGP</td>
+                                        <td class="text-end">{{ number_format($invoice->subtotal ?? 0, 2) }} {{ $invoice->currency }}</td>
                                     </tr>
                                     <tr>
                                         <td>Tax:</td>
-                                        <td class="text-end">{{ number_format($invoice->tax_amount ?? 0, 2) }} EGP</td>
+                                        <td class="text-end">{{ number_format($invoice->tax_amount ?? 0, 2) }} {{ $invoice->currency }}</td>
                                     </tr>
                                     <tr class="border-top">
                                         <td><strong>Total:</strong></td>
-                                        <td class="text-end"><strong>{{ number_format($invoice->total_amount, 2) }} EGP</strong></td>
+                                        <td class="text-end"><strong>{{ number_format($invoice->total_amount, 2) }} {{ $invoice->currency }}</strong></td>
                                     </tr>
+                                    @if($invoice->currency !== 'EGP' && $invoice->exchange_rate > 0)
+                                    <tr>
+                                        <td class="text-muted"><small>EGP Equivalent:</small></td>
+                                        <td class="text-end text-muted"><small>{{ number_format($invoice->total_in_base ?? $invoice->total_amount * $invoice->exchange_rate, 2) }} EGP</small></td>
+                                    </tr>
+                                    @endif
                                     @if($invoice->paid_amount > 0)
                                     <tr>
                                         <td class="text-success">Paid:</td>
-                                        <td class="text-end text-success">-{{ number_format($invoice->paid_amount, 2) }} EGP</td>
+                                        <td class="text-end text-success">-{{ number_format($invoice->paid_amount, 2) }} {{ $invoice->currency }}</td>
                                     </tr>
                                     <tr class="border-top">
                                         <td><strong>Balance Due:</strong></td>
-                                        <td class="text-end"><strong class="{{ $invoice->status === 'paid' ? 'text-success' : 'text-danger' }}">{{ number_format($invoice->total_amount - $invoice->paid_amount, 2) }} EGP</strong></td>
+                                        <td class="text-end"><strong class="{{ $invoice->status === 'paid' ? 'text-success' : 'text-danger' }}">{{ number_format($invoice->total_amount - $invoice->paid_amount, 2) }} {{ $invoice->currency }}</strong></td>
                                     </tr>
                                     @endif
                                 </table>
@@ -274,7 +283,7 @@
                                             <span class="text-muted">Not scheduled</span>
                                         @endif
                                     </td>
-                                    <td>{{ number_format($item->contractPayment->amount, 2) }} EGP</td>
+                                    <td>{{ number_format($item->contractPayment->amount, 2) }} {{ $invoice->currency }}</td>
                                 </tr>
                                 @endif
                                 @endforeach
@@ -318,7 +327,7 @@
                                     </div>
                                     <div class="text-end">
                                         <h5 class="mb-0">{{ number_format($invoice->total_amount, 2) }}</h5>
-                                        <small>Total Amount (EGP)</small>
+                                        <small>Total Amount ({{ $invoice->currency }})</small>
                                     </div>
                                 </div>
                             </div>
@@ -335,7 +344,7 @@
                                     </div>
                                     <div class="text-end">
                                         <h5 class="mb-0">{{ number_format($invoice->paid_amount, 2) }}</h5>
-                                        <small>Paid Amount (EGP)</small>
+                                        <small>Paid Amount ({{ $invoice->currency }})</small>
                                     </div>
                                 </div>
                             </div>
@@ -352,7 +361,7 @@
                                     </div>
                                     <div class="text-end">
                                         <h5 class="mb-0">{{ number_format($invoice->remaining_amount, 2) }}</h5>
-                                        <small>Remaining (EGP)</small>
+                                        <small>Remaining ({{ $invoice->currency }})</small>
                                     </div>
                                 </div>
                             </div>
@@ -400,7 +409,7 @@
                                 <tr>
                                     <td>{{ $payment->payment_date->format('M j, Y') }}</td>
                                     <td>
-                                        <span class="fw-semibold text-success">{{ number_format($payment->amount, 2) }} EGP</span>
+                                        <span class="fw-semibold text-success">{{ number_format($payment->amount, 2) }} {{ $invoice->currency }}</span>
                                     </td>
                                     <td>
                                         @if($payment->payment_method)
@@ -491,12 +500,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label required">Amount (EGP)</label>
+                                <label class="form-label required">Amount ({{ $invoice->currency }})</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">EGP</span>
+                                    <span class="input-group-text">{{ $invoice->currency }}</span>
                                     <input type="number" name="amount" class="form-control" step="0.01" min="0.01" max="{{ $invoice->remaining_amount }}" required>
                                 </div>
-                                <small class="text-muted">Maximum: {{ number_format($invoice->remaining_amount, 2) }} EGP</small>
+                                <small class="text-muted">Maximum: {{ number_format($invoice->remaining_amount, 2) }} {{ $invoice->currency }}</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -579,9 +588,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label required">Amount (EGP)</label>
+                                <label class="form-label required">Amount ({{ $invoice->currency }})</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">EGP</span>
+                                    <span class="input-group-text">{{ $invoice->currency }}</span>
                                     <input type="number" name="amount" id="edit_amount" class="form-control" step="0.01" min="0.01" required>
                                 </div>
                                 <small class="text-muted" id="edit_max_amount_hint"></small>
@@ -659,7 +668,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="paid_amount" class="form-label">Amount Paid (EGP) <span class="text-danger">*</span></label>
+                            <label for="paid_amount" class="form-label">Amount Paid ({{ $invoice->currency }}) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" class="form-control" id="paid_amount" name="paid_amount" required>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -784,7 +793,7 @@ function editPayment(paymentId) {
             document.getElementById('editPaymentForm').action = `/invoicing/invoices/payments/${paymentId}`;
             document.getElementById('edit_amount').value = payment.amount;
             document.getElementById('edit_amount').max = payment.max_amount;
-            document.getElementById('edit_max_amount_hint').textContent = `Maximum: ${parseFloat(payment.max_amount).toLocaleString('en-US', {minimumFractionDigits: 2})} EGP`;
+            document.getElementById('edit_max_amount_hint').textContent = `Maximum: ${parseFloat(payment.max_amount).toLocaleString('en-US', {minimumFractionDigits: 2})} {{ $invoice->currency }}`;
             document.getElementById('edit_payment_date').value = payment.payment_date;
             document.getElementById('edit_account_id').value = payment.account_id || '';
             document.getElementById('edit_payment_method').value = payment.payment_method || '';
