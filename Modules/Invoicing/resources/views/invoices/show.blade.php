@@ -12,7 +12,7 @@
                     <small class="text-muted">Created {{ $invoice->created_at->format('M j, Y \a\t g:i A') }}</small>
                 </div>
                 <div class="d-flex gap-2">
-                    @if($invoice->status === 'draft')
+                    @if($invoice->status === 'draft' || auth()->user()->hasRole('super-admin'))
                         <a href="{{ route('invoicing.invoices.edit', $invoice) }}" class="btn btn-outline-primary">
                             <i class="ti ti-edit me-1"></i>Edit
                         </a>
@@ -83,7 +83,10 @@
                     <div class="col-md-6">
                         <h6 class="mb-3">Bill To:</h6>
                         <div class="ms-3">
-                            <h6 class="mb-1">{{ $invoice->customer->name }}</h6>
+                            <h6 class="mb-1">{{ $invoice->customer->display_name }}</h6>
+                            @if($invoice->customer->company_name && $invoice->customer->type === 'company' && $invoice->customer->name)
+                                <p class="mb-1 text-muted">Attn: {{ $invoice->customer->name }}</p>
+                            @endif
                             @if($invoice->customer->email)
                                 <p class="mb-1 text-muted">{{ $invoice->customer->email }}</p>
                             @endif
