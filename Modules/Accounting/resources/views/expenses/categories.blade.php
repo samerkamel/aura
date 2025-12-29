@@ -95,9 +95,12 @@
                             <th>Category</th>
                             <th class="text-center">Budget %</th>
                             <th class="text-end">Plan (Monthly)</th>
-                            <th class="text-end">Plan (YTD)</th>
-                            <th class="text-end">Actual YTD</th>
-                            <th class="text-end">Avg/Month YTD</th>
+                            <th class="text-end">Plan ({{ $fiscalYearLabel ?? 'YTD' }})</th>
+                            <th class="text-end">
+                                Actual {{ $fiscalYearLabel ?? 'YTD' }}
+                                <i class="ti ti-info-circle text-muted" data-bs-toggle="tooltip" title="Parent categories include all expenses from their subcategories"></i>
+                            </th>
+                            <th class="text-end">Avg/Month</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -169,8 +172,12 @@
                                         @php
                                             $variance = $category->planned_ytd > 0 ? (($category->ytd_total - $category->planned_ytd) / $category->planned_ytd) * 100 : 0;
                                             $varianceClass = $category->ytd_total > $category->planned_ytd ? 'text-danger' : 'text-success';
+                                            $hasSubcategories = $category->subcategories && $category->subcategories->count() > 0;
                                         @endphp
                                         <strong class="{{ $category->planned_ytd > 0 ? $varianceClass : 'text-warning' }}">{{ number_format($category->ytd_total, 0) }}</strong>
+                                        @if($hasSubcategories)
+                                            <i class="ti ti-hierarchy-2 text-info ms-1" data-bs-toggle="tooltip" title="Includes expenses from {{ $category->subcategories->count() }} subcategories"></i>
+                                        @endif
                                         @if($category->planned_ytd > 0)
                                             <br><small class="{{ $varianceClass }}">({{ $variance >= 0 ? '+' : '' }}{{ number_format($variance, 1) }}%)</small>
                                         @endif
