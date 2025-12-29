@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="card-body">
-                @if($mappingCounts['types']['unmapped'] == 0 && $mappingCounts['categories']['unmapped'] == 0 && $mappingCounts['customers']['unmapped'] == 0)
+                @if($mappingCounts['types']['unmapped'] == 0 && $mappingCounts['categories']['unmapped'] == 0 && $mappingCounts['products']['unmapped'] == 0 && $mappingCounts['customers']['unmapped'] == 0)
                     <div class="alert alert-success mb-0" id="allMappedAlert">
                         <i class="ti ti-check me-2"></i>All values have been mapped! Toggle "Show All" to review or change mappings.
                     </div>
@@ -212,6 +212,47 @@
                             @endif
                         @endforeach
                     </div>
+
+                    <!-- Products Mapping (for Income items) -->
+                    @if($mappingCounts['products']['total'] > 0)
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <label class="form-label">
+                            Products <small class="text-muted">(Income)</small>
+                            <span class="badge bg-label-warning ms-1" id="productsCount">{{ $mappingCounts['products']['unmapped'] }}/{{ $mappingCounts['products']['total'] }}</span>
+                        </label>
+                        {{-- Unmapped products (shown by default) --}}
+                        @foreach($unmappedProducts as $rawProduct)
+                            @if($rawProduct)
+                            <div class="input-group input-group-sm mb-2 mapping-item unmapped-item" data-field="product">
+                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawProduct }}">{{ \Illuminate\Support\Str::limit($rawProduct, 12) }}</span>
+                                <select class="form-select form-select-sm mapping-select" data-field="product" data-raw="{{ $rawProduct }}">
+                                    <option value="">-- Select --</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                        @endforeach
+                        {{-- Mapped products (hidden by default) --}}
+                        @foreach(array_diff($allProducts, $unmappedProducts) as $rawProduct)
+                            @if($rawProduct)
+                            <div class="input-group input-group-sm mb-2 mapping-item mapped-item" data-field="product" style="display: none;">
+                                <span class="input-group-text text-truncate bg-success-subtle" style="max-width: 120px;" title="{{ $rawProduct }}">{{ \Illuminate\Support\Str::limit($rawProduct, 12) }}</span>
+                                <select class="form-select form-select-sm mapping-select" data-field="product" data-raw="{{ $rawProduct }}">
+                                    <option value="">-- Select --</option>
+                                    @foreach($products as $product)
+                                        @php
+                                            $isSelected = $expenseImport->rows()->where('category_raw', $rawProduct)->where('is_income', true)->whereNotNull('product_id')->value('product_id') == $product->id;
+                                        @endphp
+                                        <option value="{{ $product->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
 
                     <!-- Customer Mapping -->
                     <div class="col-md-6 col-lg-3 mb-3">
@@ -300,7 +341,7 @@
                                 <th>Date</th>
                                 <th>Item</th>
                                 <th>Type</th>
-                                <th>Category</th>
+                                <th>Category/Product</th>
                                 <th>Customer</th>
                                 <th>Amount</th>
                                 <th>Action</th>
@@ -334,10 +375,20 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($row->category_id)
-                                        <span class="badge bg-label-info">{{ $row->category->name ?? 'Mapped' }}</span>
+                                    @if($row->is_income)
+                                        {{-- For income items, show Product --}}
+                                        @if($row->product_id)
+                                            <span class="badge bg-label-warning">{{ $row->product->name ?? 'Mapped' }}</span>
+                                        @else
+                                            <span class="text-muted">{{ \Illuminate\Support\Str::limit($row->category_raw, 15) }}</span>
+                                        @endif
                                     @else
-                                        <span class="text-muted">{{ \Illuminate\Support\Str::limit($row->category_raw, 15) }}</span>
+                                        {{-- For expense items, show Category --}}
+                                        @if($row->category_id)
+                                            <span class="badge bg-label-info">{{ $row->category->name ?? 'Mapped' }}</span>
+                                        @else
+                                            <span class="text-muted">{{ \Illuminate\Support\Str::limit($row->category_raw, 15) }}</span>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -454,10 +505,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateMappingCounts(counts) {
         document.getElementById('typesCount').textContent = `${counts.types.unmapped}/${counts.types.total}`;
         document.getElementById('categoriesCount').textContent = `${counts.categories.unmapped}/${counts.categories.total}`;
+        const productsCountEl = document.getElementById('productsCount');
+        if (productsCountEl && counts.products) {
+            productsCountEl.textContent = `${counts.products.unmapped}/${counts.products.total}`;
+        }
         document.getElementById('customersCount').textContent = `${counts.customers.unmapped}/${counts.customers.total}`;
 
-        // Check if all mapped
-        const allMapped = counts.types.unmapped === 0 && counts.categories.unmapped === 0 && counts.customers.unmapped === 0;
+        // Check if all mapped (include products if they exist)
+        const productsUnmapped = counts.products ? counts.products.unmapped : 0;
+        const allMapped = counts.types.unmapped === 0 && counts.categories.unmapped === 0 && productsUnmapped === 0 && counts.customers.unmapped === 0;
         const alertEl = document.getElementById('allMappedAlert');
         if (allMapped && !alertEl) {
             const mappingSection = document.getElementById('mappingSection');
@@ -502,6 +558,10 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'category':
                 cellIndex = 7;
                 badgeClass = 'bg-label-info';
+                break;
+            case 'product':
+                cellIndex = 7; // Same column as category (for income rows)
+                badgeClass = 'bg-label-warning';
                 break;
             case 'customer':
                 cellIndex = 8;

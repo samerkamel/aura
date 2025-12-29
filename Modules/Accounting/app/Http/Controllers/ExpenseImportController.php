@@ -15,6 +15,7 @@ use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\Account;
 use Modules\Invoicing\Models\Invoice;
 use App\Models\Customer;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -420,23 +421,27 @@ class ExpenseImportController extends Controller
         // Get lookup data for dropdowns
         $expenseTypes = ExpenseType::active()->orderBy('sort_order')->get();
         $categories = ExpenseCategory::getFlatTree(activeOnly: true);
+        $products = Product::where('is_active', true)->orderBy('name')->get();
         $accounts = Account::active()->orderBy('name')->get();
         $customers = Customer::orderBy('company_name')->get();
 
         // Get unique unmapped values for mapping UI (only show items that need mapping)
         $unmappedTypes = $expenseImport->getUnmappedValues('expense_type_raw', 'expense_type_id');
-        $unmappedCategories = $expenseImport->getUnmappedValues('category_raw', 'category_id');
+        $unmappedCategories = $expenseImport->getUnmappedExpenseCategories(); // Only expense items
+        $unmappedProducts = $expenseImport->getUnmappedIncomeProducts(); // Only income items
         $unmappedCustomers = $expenseImport->getUnmappedValues('customer_raw', 'customer_id');
 
         // Get all unique values for "show all" toggle
         $allTypes = $expenseImport->getUniqueValues('expense_type_raw');
-        $allCategories = $expenseImport->getUniqueValues('category_raw');
+        $allCategories = $expenseImport->getExpenseCategoryValues(); // Only expense items
+        $allProducts = $expenseImport->getIncomeProductValues(); // Only income items
         $allCustomers = $expenseImport->getUniqueValues('customer_raw');
 
         // Count totals for display
         $mappingCounts = [
             'types' => ['unmapped' => count($unmappedTypes), 'total' => count($allTypes)],
             'categories' => ['unmapped' => count($unmappedCategories), 'total' => count($allCategories)],
+            'products' => ['unmapped' => count($unmappedProducts), 'total' => count($allProducts)],
             'customers' => ['unmapped' => count($unmappedCustomers), 'total' => count($allCustomers)],
         ];
 
@@ -444,13 +449,16 @@ class ExpenseImportController extends Controller
             'expenseImport',
             'expenseTypes',
             'categories',
+            'products',
             'accounts',
             'customers',
             'unmappedTypes',
             'unmappedCategories',
+            'unmappedProducts',
             'unmappedCustomers',
             'allTypes',
             'allCategories',
+            'allProducts',
             'allCustomers',
             'mappingCounts'
         ));
@@ -464,6 +472,7 @@ class ExpenseImportController extends Controller
         $data = $request->validate([
             'expense_type_id' => 'nullable|exists:expense_types,id',
             'category_id' => 'nullable|exists:expense_categories,id',
+            'product_id' => 'nullable|exists:products,id',
             'subcategory_id' => 'nullable|exists:expense_categories,id',
             'customer_id' => 'nullable|exists:customers,id',
             'invoice_id' => 'nullable|exists:invoices,id',
@@ -503,6 +512,7 @@ class ExpenseImportController extends Controller
         $allowedFields = [
             'expense_type_id',
             'category_id',
+            'product_id',
             'subcategory_id',
             'customer_id',
             'invoice_id',
@@ -547,16 +557,23 @@ class ExpenseImportController extends Controller
     public function mapValue(Request $request, ExpenseImport $expenseImport): JsonResponse
     {
         $data = $request->validate([
-            'field' => 'required|string|in:expense_type,category,subcategory,customer',
+            'field' => 'required|string|in:expense_type,category,subcategory,customer,product',
             'raw_value' => 'required|string',
             'mapped_id' => 'nullable|integer',
             'create_new' => 'nullable|boolean',
         ]);
 
-        $rawField = $data['field'] . '_raw';
-        $idField = $data['field'] . '_id';
         $entityName = null;
         $createNew = false;
+
+        // Product field maps category_raw to product_id (for income items)
+        if ($data['field'] === 'product') {
+            $rawField = 'category_raw'; // Use category_raw as the source for income items
+            $idField = 'product_id';
+        } else {
+            $rawField = $data['field'] . '_raw';
+            $idField = $data['field'] . '_id';
+        }
 
         if ($data['field'] === 'customer' && $data['create_new']) {
             // Flag rows to create new customer
@@ -591,6 +608,9 @@ class ExpenseImportController extends Controller
                         $customer = Customer::find($data['mapped_id']);
                         $entityName = $customer?->company_name ?: $customer?->name;
                         break;
+                    case 'product':
+                        $entityName = Product::find($data['mapped_id'])?->name;
+                        break;
                 }
             }
         }
@@ -620,8 +640,12 @@ class ExpenseImportController extends Controller
                 'total' => count($expenseImport->getUniqueValues('expense_type_raw')),
             ],
             'categories' => [
-                'unmapped' => count($expenseImport->getUnmappedValues('category_raw', 'category_id')),
-                'total' => count($expenseImport->getUniqueValues('category_raw')),
+                'unmapped' => count($expenseImport->getUnmappedExpenseCategories()),
+                'total' => count($expenseImport->getExpenseCategoryValues()),
+            ],
+            'products' => [
+                'unmapped' => count($expenseImport->getUnmappedIncomeProducts()),
+                'total' => count($expenseImport->getIncomeProductValues()),
             ],
             'customers' => [
                 'unmapped' => count($expenseImport->getUnmappedValues('customer_raw', 'customer_id')),

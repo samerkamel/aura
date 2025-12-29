@@ -128,6 +128,64 @@ class ExpenseImport extends Model
     }
 
     /**
+     * Get unique category values for expense items only (is_income = false).
+     */
+    public function getExpenseCategoryValues(): array
+    {
+        return $this->rows()
+            ->whereNotNull('category_raw')
+            ->where('category_raw', '!=', '')
+            ->where('is_income', false)
+            ->distinct()
+            ->pluck('category_raw')
+            ->toArray();
+    }
+
+    /**
+     * Get unmapped expense category values.
+     */
+    public function getUnmappedExpenseCategories(): array
+    {
+        return $this->rows()
+            ->whereNotNull('category_raw')
+            ->where('category_raw', '!=', '')
+            ->where('is_income', false)
+            ->whereNull('category_id')
+            ->distinct()
+            ->pluck('category_raw')
+            ->toArray();
+    }
+
+    /**
+     * Get unique category values for income items (for product mapping).
+     */
+    public function getIncomeProductValues(): array
+    {
+        return $this->rows()
+            ->whereNotNull('category_raw')
+            ->where('category_raw', '!=', '')
+            ->where('is_income', true)
+            ->distinct()
+            ->pluck('category_raw')
+            ->toArray();
+    }
+
+    /**
+     * Get unmapped income product values (is_income = true and product_id is null).
+     */
+    public function getUnmappedIncomeProducts(): array
+    {
+        return $this->rows()
+            ->whereNotNull('category_raw')
+            ->where('category_raw', '!=', '')
+            ->where('is_income', true)
+            ->whereNull('product_id')
+            ->distinct()
+            ->pluck('category_raw')
+            ->toArray();
+    }
+
+    /**
      * Get rows grouped by a raw value.
      */
     public function getRowsGroupedBy(string $column): array

@@ -27,6 +27,7 @@ class ExpenseImportRow extends Model
         'expense_type_id',
         'category_raw',
         'category_id',
+        'product_id',
         'subcategory_raw',
         'subcategory_id',
         'customer_raw',
@@ -105,6 +106,14 @@ class ExpenseImportRow extends Model
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
+     * Get the mapped product (for income rows).
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Product::class);
     }
 
     /**
@@ -225,10 +234,19 @@ class ExpenseImportRow extends Model
             }
         }
 
-        // Check category mapping
-        if (!$this->category_id && $this->category_raw) {
-            $messages[] = ['type' => 'warning', 'message' => "Category '{$this->category_raw}' not mapped"];
-            $hasWarning = true;
+        // Check category/product mapping based on income type
+        if ($this->is_income) {
+            // For income items, check product mapping
+            if (!$this->product_id && $this->category_raw) {
+                $messages[] = ['type' => 'warning', 'message' => "Product line not selected for income item"];
+                $hasWarning = true;
+            }
+        } else {
+            // For expense items, check category mapping
+            if (!$this->category_id && $this->category_raw) {
+                $messages[] = ['type' => 'warning', 'message' => "Category '{$this->category_raw}' not mapped"];
+                $hasWarning = true;
+            }
         }
 
         // Check customer mapping
