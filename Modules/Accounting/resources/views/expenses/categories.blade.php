@@ -95,12 +95,12 @@
                             <th>Category</th>
                             <th class="text-center">Budget %</th>
                             <th class="text-end">Plan (Monthly)</th>
-                            <th class="text-end">Plan ({{ $fiscalYearLabel ?? 'YTD' }})</th>
+                            <th class="text-end">Plan (YTD)</th>
                             <th class="text-end">
-                                Actual {{ $fiscalYearLabel ?? 'YTD' }}
+                                Actual YTD
                                 <i class="ti ti-info-circle text-muted" data-bs-toggle="tooltip" title="Parent categories include all expenses from their subcategories"></i>
                             </th>
-                            <th class="text-end">Avg/Month</th>
+                            <th class="text-end">Avg/Month YTD</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

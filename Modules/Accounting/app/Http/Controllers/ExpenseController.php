@@ -406,12 +406,6 @@ class ExpenseController extends Controller
         $currentYear = (int) $request->get('year', date('Y'));
         $availableYears = range(date('Y') - 2, date('Y') + 2);
 
-        // Get fiscal cycle settings
-        $companySettings = \Modules\Settings\Models\CompanySetting::getSettings();
-        $fiscalYearStart = $companySettings->getFiscalYearStartForYear($currentYear);
-        $fiscalYearEnd = $companySettings->getFiscalYearEndForYear($currentYear);
-        $fiscalYearLabel = 'FY ' . $fiscalYearStart->year . '-' . $fiscalYearEnd->year;
-
         // Get total projected revenue from all products for current year
         $totalYearlyRevenue = \App\Models\Budget::where('budget_year', $currentYear)
             ->sum('projected_revenue');
@@ -441,18 +435,14 @@ class ExpenseController extends Controller
             ->mainCategories()
             ->get();
 
-        // Calculate YTD values using fiscal cycle
-        $isCurrentYear = now()->between($fiscalYearStart, $fiscalYearEnd);
-        $isFutureYear = now()->lt($fiscalYearStart);
+        // Calculate YTD values for each category (calendar year based)
+        $isCurrentYear = $currentYear == (int) date('Y');
+        $isFutureYear = $currentYear > (int) date('Y');
 
-        // For current fiscal year: months elapsed since fiscal year start
-        // For past/future years: full 12 months
-        if ($isCurrentYear) {
-            $monthsElapsed = (int) ceil($fiscalYearStart->diffInMonths(now()) + 1);
-            $monthsElapsed = min($monthsElapsed, 12); // Cap at 12
-        } else {
-            $monthsElapsed = 12;
-        }
+        // For current year: use current month number (1-12)
+        // For past years: full 12 months
+        // For future years: full 12 months (projection)
+        $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
 
         // Add tier and budget info to main categories for sorting
         foreach ($mainCategories as $mainCategory) {
@@ -546,7 +536,7 @@ class ExpenseController extends Controller
             'is_future_year' => $isFutureYear,
         ];
 
-        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary', 'currentYear', 'availableYears', 'fiscalYearLabel'));
+        return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary', 'currentYear', 'availableYears'));
     }
 
     /**
@@ -1481,17 +1471,12 @@ class ExpenseController extends Controller
     private function calculateYtdTotal(ExpenseCategory $category, ?int $year = null, bool $includeDescendants = true): float
     {
         $year = $year ?? (int) date('Y');
-
-        // Use fiscal cycle settings from CompanySetting
-        $companySettings = \Modules\Settings\Models\CompanySetting::getSettings();
-        $fiscalYearStart = $companySettings->getFiscalYearStartForYear($year);
-        $fiscalYearEnd = $companySettings->getFiscalYearEndForYear($year);
-
-        $isCurrentYear = now()->between($fiscalYearStart, $fiscalYearEnd);
+        $yearStart = now()->setYear($year)->startOfYear();
+        $isCurrentYear = $year == (int) date('Y');
 
         // For current year: up to now
-        // For past/future years: full fiscal year
-        $endDate = $isCurrentYear ? now() : $fiscalYearEnd;
+        // For past/future years: full year
+        $endDate = $isCurrentYear ? now() : now()->setYear($year)->endOfYear();
 
         // Get category IDs to include (this category + all descendants if requested)
         $categoryIds = [$category->id];
@@ -1504,7 +1489,7 @@ class ExpenseController extends Controller
 
         return ExpenseSchedule::whereIn('category_id', $categoryIds)
             ->where('payment_status', 'paid')
-            ->where('paid_date', '>=', $fiscalYearStart)
+            ->where('paid_date', '>=', $yearStart)
             ->where('paid_date', '<=', $endDate)
             ->sum('paid_amount');
     }
