@@ -208,7 +208,8 @@ class ExpenseImportRow extends Model
         foreach ($this->account_amounts as $accountId => $amount) {
             if (abs($amount) > $maxAmount) {
                 $maxAmount = abs($amount);
-                $maxAccount = ['id' => $accountId, 'amount' => $amount];
+                // Cast to int since JSON decode returns string keys
+                $maxAccount = ['id' => (int) $accountId, 'amount' => $amount];
             }
         }
 
@@ -227,7 +228,8 @@ class ExpenseImportRow extends Model
         $fromAccounts = [];
         foreach ($this->account_amounts as $accountId => $amount) {
             if ($amount < 0) {
-                $fromAccounts[$accountId] = abs($amount);
+                // Cast to int since JSON decode returns string keys
+                $fromAccounts[(int) $accountId] = abs($amount);
             }
         }
 
@@ -246,7 +248,8 @@ class ExpenseImportRow extends Model
         $toAccounts = [];
         foreach ($this->account_amounts as $accountId => $amount) {
             if ($amount > 0) {
-                $toAccounts[$accountId] = $amount;
+                // Cast to int since JSON decode returns string keys
+                $toAccounts[(int) $accountId] = $amount;
             }
         }
 

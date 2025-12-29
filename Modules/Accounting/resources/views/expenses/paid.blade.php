@@ -200,7 +200,7 @@
                                         @if($expense->description)
                                             <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($expense->description, 50) }}</small>
                                         @endif
-                                        @if($expense->payment_notes)
+                                        @if($expense->payment_notes && !str_starts_with($expense->payment_notes, 'Imported from'))
                                             <br><small class="text-info"><i class="ti ti-note me-1"></i>{{ \Illuminate\Support\Str::limit($expense->payment_notes, 40) }}</small>
                                         @endif
                                     </div>
@@ -257,9 +257,9 @@
                                             <a class="dropdown-item" href="{{ route('accounting.expenses.show', $expense) }}">
                                                 <i class="ti ti-eye me-2"></i>View Details
                                             </a>
-                                            @if($expense->expense_type === 'recurring')
+                                            @if(auth()->user()->hasRole('super-admin') || $expense->expense_type === 'recurring')
                                                 <a class="dropdown-item" href="{{ route('accounting.expenses.edit', $expense) }}">
-                                                    <i class="ti ti-edit me-2"></i>Edit Schedule
+                                                    <i class="ti ti-edit me-2"></i>Edit Expense
                                                 </a>
                                             @endif
                                         </div>
