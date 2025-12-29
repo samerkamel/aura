@@ -64,6 +64,30 @@
         </a>
     </div>
 
+    <!-- Fiscal Year Header -->
+    <div class="alert alert-{{ $selectedFiscalYear == $currentFiscalYear ? 'success' : 'warning' }} mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="ti ti-calendar-event ti-lg me-2"></i>
+                <div>
+                    <h6 class="mb-0">Fiscal Year {{ $selectedFiscalYear }}</h6>
+                    <small>{{ $statistics['fiscal_year_start']->format('M d, Y') }} - {{ $statistics['fiscal_year_end']->format('M d, Y') }}</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-{{ $selectedFiscalYear == $currentFiscalYear ? 'success' : 'secondary' }} me-2">
+                    {{ number_format($statistics['fiscal_year_progress'], 1) }}% of year
+                </span>
+                @if($selectedFiscalYear != $currentFiscalYear)
+                    <a href="{{ route('administration.products.index', array_merge(request()->except('fiscal_year'), ['fiscal_year' => $currentFiscalYear])) }}"
+                       class="btn btn-sm btn-success">
+                        <i class="ti ti-arrow-back me-1"></i>Current FY
+                    </a>
+                @endif
+            </div>
+        </div>
+    </div>
+
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
@@ -114,7 +138,7 @@
                             </span>
                         </div>
                         <div>
-                            <small class="text-muted d-block">{{ date('Y') }} YTD Budget</small>
+                            <small class="text-muted d-block">FY{{ $selectedFiscalYear }} YTD Budget</small>
                             <div class="d-flex align-items-center">
                                 <h6 class="mb-0 me-1">{{ number_format($statistics['total_ytd_budget'], 0) }} EGP</h6>
                             </div>
@@ -133,7 +157,7 @@
                             </span>
                         </div>
                         <div>
-                            <small class="text-muted d-block">{{ date('Y') }} Total Budget</small>
+                            <small class="text-muted d-block">FY{{ $selectedFiscalYear }} Total Budget</small>
                             <div class="d-flex align-items-center">
                                 <h6 class="mb-0 me-1">{{ number_format($statistics['total_budget'], 0) }} EGP</h6>
                             </div>
@@ -149,12 +173,22 @@
         <div class="card-body">
             <form method="GET" action="{{ route('administration.products.index') }}">
                 <div class="row g-3">
+                    <div class="col-md-2">
+                        <label class="form-label">Fiscal Year</label>
+                        <select class="form-select" name="fiscal_year" onchange="this.form.submit()">
+                            @foreach($fiscalYearOptions as $year => $label)
+                                <option value="{{ $year }}" {{ $selectedFiscalYear == $year ? 'selected' : '' }}>
+                                    FY {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-3">
                         <label class="form-label">Search</label>
                         <input type="text" class="form-control" name="search" value="{{ request('search') }}"
                                placeholder="Product name, code, or head...">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Business Unit</label>
                         <select class="form-select" name="business_unit_id">
                             <option value="">All Business Units</option>
@@ -165,7 +199,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Status</label>
                         <select class="form-select" name="status">
                             <option value="">All Status</option>
@@ -194,8 +228,8 @@
                         <th>Product</th>
                         <th>Business Unit</th>
                         <th>Contracts</th>
-                        <th>YTD Budget</th>
-                        <th>{{ date('Y') }} Budget</th>
+                        <th>FY{{ $selectedFiscalYear }} YTD</th>
+                        <th>FY{{ $selectedFiscalYear }} Budget</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -246,7 +280,7 @@
                         <td>
                             <span class="fw-medium">{{ number_format($product->ytd_budget, 0) }} EGP</span>
                             <small class="d-block text-muted">
-                                {{ number_format((now()->dayOfYear / (now()->isLeapYear() ? 366 : 365)) * 100, 0) }}% of year
+                                {{ number_format($statistics['fiscal_year_progress'], 0) }}% of FY{{ $selectedFiscalYear }}
                             </small>
                         </td>
                         <td>
@@ -256,10 +290,10 @@
                                     <span class="badge bg-label-info">{{ number_format($product->budget_percentage, 1) }}%</span>
                                 </div>
                                 <small class="text-muted d-block">
-                                    {{ date('Y') }} budget ({{ number_format($product->budget_percentage, 1) }}% of total)
+                                    FY{{ $selectedFiscalYear }} budget ({{ number_format($product->budget_percentage, 1) }}% of total)
                                 </small>
                             @else
-                                <span class="text-muted">No {{ date('Y') }} budget</span>
+                                <span class="text-muted">No FY{{ $selectedFiscalYear }} budget</span>
                             @endif
                         </td>
                         <td>

@@ -10,6 +10,8 @@ use App\Models\Product;
 use App\Models\Budget;
 use App\Models\BusinessUnit;
 use App\Helpers\BusinessUnitHelper;
+use Modules\Settings\Models\CompanySetting;
+use Carbon\Carbon;
 
 class ProductController extends Controller
 {
@@ -36,6 +38,35 @@ class ProductController extends Controller
         if (!auth()->user()->can('view-products') && !auth()->user()->can('manage-products')) {
             abort(403, 'Unauthorized to view products.');
         }
+
+        // Get company settings for fiscal year calculation
+        $companySettings = CompanySetting::getSettings();
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $fiscalYearStartMonth = $companySettings->fiscal_year_start_month ?? 1;
+
+        // Calculate current fiscal year based on company settings
+        // If we're past the fiscal year start date, we're in the next fiscal year
+        $today = Carbon::today();
+        $currentCalendarYear = $today->year;
+
+        // Determine fiscal year start for current calendar year
+        $fiscalYearStartThisYear = Carbon::create($currentCalendarYear, $fiscalYearStartMonth, $cycleDay);
+
+        // If today is on or after the fiscal year start, current fiscal year = calendar year + 1
+        // (e.g., Dec 26, 2025 is in fiscal year 2026)
+        if ($today->gte($fiscalYearStartThisYear)) {
+            $currentFiscalYear = $currentCalendarYear + 1;
+        } else {
+            $currentFiscalYear = $currentCalendarYear;
+        }
+
+        // Get selected fiscal year from request, default to current fiscal year
+        $selectedFiscalYear = (int) $request->get('fiscal_year', $currentFiscalYear);
+
+        // Calculate fiscal year date range
+        // Fiscal year X runs from (fiscal_year_start_month/cycle_day of year X-1) to (fiscal_year_start_month/cycle_day - 1 of year X)
+        $fiscalYearStart = Carbon::create($selectedFiscalYear - 1, $fiscalYearStartMonth, $cycleDay)->startOfDay();
+        $fiscalYearEnd = Carbon::create($selectedFiscalYear, $fiscalYearStartMonth, $cycleDay)->subDay()->endOfDay();
 
         $query = Product::query();
 
@@ -64,20 +95,37 @@ class ProductController extends Controller
             $q->where('status', 'active');
         }, 'businessUnit', 'budgets'])->orderBy('name')->paginate(15);
 
+        // Calculate days in fiscal year and days passed
+        $totalDaysInFiscalYear = $fiscalYearStart->diffInDays($fiscalYearEnd) + 1;
+
+        // For YTD calculation, use either today or fiscal year end (whichever is earlier)
+        $ytdEndDate = $today->lt($fiscalYearEnd) ? $today : $fiscalYearEnd;
+        $ytdStartDate = $today->lt($fiscalYearStart) ? $today : $fiscalYearStart;
+
+        // Calculate days passed in fiscal year (only if we're in or past this fiscal year)
+        if ($today->lt($fiscalYearStart)) {
+            // Fiscal year hasn't started yet
+            $daysPassed = 0;
+        } elseif ($today->gt($fiscalYearEnd)) {
+            // Fiscal year has ended
+            $daysPassed = $totalDaysInFiscalYear;
+        } else {
+            // We're in the middle of the fiscal year
+            $daysPassed = $fiscalYearStart->diffInDays($today) + 1;
+        }
+
+        $fiscalYearProgress = $totalDaysInFiscalYear > 0 ? ($daysPassed / $totalDaysInFiscalYear) * 100 : 0;
+
         // Calculate YTD budget and contract values for each product
-        $currentYear = (int) date('Y');
         foreach ($products as $product) {
-            // Get current year's budget from budgets table
-            $currentYearBudget = $product->budgets->where('budget_year', $currentYear)->first();
-            $budgetAmount = $currentYearBudget ? $currentYearBudget->projected_revenue : 0;
+            // Get selected fiscal year's budget from budgets table
+            $fiscalYearBudget = $product->budgets->where('budget_year', $selectedFiscalYear)->first();
+            $budgetAmount = $fiscalYearBudget ? $fiscalYearBudget->projected_revenue : 0;
 
-            // Calculate YTD budget (pro-rated based on how much of the year has passed)
-            $currentDate = now();
-            $yearStart = $currentDate->copy()->startOfYear();
-            $daysInYear = $yearStart->daysInYear;
-            $daysPassed = $yearStart->diffInDays($currentDate) + 1;
-
-            $product->ytd_budget = ($budgetAmount * $daysPassed) / $daysInYear;
+            // Calculate YTD budget (pro-rated based on how much of the fiscal year has passed)
+            $product->ytd_budget = $totalDaysInFiscalYear > 0
+                ? ($budgetAmount * $daysPassed) / $totalDaysInFiscalYear
+                : 0;
             $product->current_year_budget = $budgetAmount;
 
             // Calculate total contract allocations for this product
@@ -98,13 +146,13 @@ class ProductController extends Controller
                 : 0;
         }
 
-        // Calculate total budget for percentage calculations using current year budgets
+        // Calculate total budget for percentage calculations using selected fiscal year budgets
         $totalActiveBudget = 0;
         foreach ($products as $product) {
             $totalActiveBudget += $product->current_year_budget;
         }
 
-        // Add budget percentage to each product (based on current year budget)
+        // Add budget percentage to each product (based on selected fiscal year budget)
         foreach ($products as $product) {
             $product->budget_percentage = $totalActiveBudget > 0 && $product->current_year_budget > 0
                 ? ($product->current_year_budget / $totalActiveBudget) * 100
@@ -126,6 +174,14 @@ class ProductController extends Controller
         $currentBusinessUnit = BusinessUnitHelper::getCurrentBusinessUnit($request);
         $accessibleBusinessUnits = BusinessUnitHelper::getAccessibleBusinessUnits();
 
+        // Generate fiscal year options (current fiscal year + 2 years forward and 3 years back)
+        $fiscalYearOptions = [];
+        for ($year = $currentFiscalYear + 2; $year >= $currentFiscalYear - 3; $year--) {
+            $fiscalYearOptions[$year] = 'FY ' . $year . ' (' .
+                Carbon::create($year - 1, $fiscalYearStartMonth, $cycleDay)->format('M d, Y') . ' - ' .
+                Carbon::create($year, $fiscalYearStartMonth, $cycleDay)->subDay()->format('M d, Y') . ')';
+        }
+
         $statistics = [
             'total_contracts' => $totalContractValue,
             'active_products' => $activeProductsQuery->count(),
@@ -134,9 +190,20 @@ class ProductController extends Controller
             'current_business_unit' => $currentBusinessUnit,
             'accessible_business_units' => $accessibleBusinessUnits,
             'can_access_multiple_bus' => BusinessUnitHelper::canAccessMultipleBusinessUnits(),
+            'fiscal_year_progress' => $fiscalYearProgress,
+            'fiscal_year_start' => $fiscalYearStart,
+            'fiscal_year_end' => $fiscalYearEnd,
         ];
 
-        return view('administration.products.index', compact('products', 'statistics', 'currentBusinessUnit', 'accessibleBusinessUnits'));
+        return view('administration.products.index', compact(
+            'products',
+            'statistics',
+            'currentBusinessUnit',
+            'accessibleBusinessUnits',
+            'selectedFiscalYear',
+            'currentFiscalYear',
+            'fiscalYearOptions'
+        ));
     }
 
     /**
