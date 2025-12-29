@@ -174,7 +174,21 @@ class ExpenseImportController extends Controller
             if ($rowData) {
                 $rowData['expense_import_id'] = $import->id;
                 $rowData['row_number'] = $rowNumber;
-                $rowData['raw_data'] = array_combine($headerRow ?? array_keys($row), $row);
+
+                // Safely combine header and row data (handle mismatched lengths)
+                $headers = $headerRow ?? array_keys($row);
+                $headerCount = count($headers);
+                $rowCount = count($row);
+
+                if ($rowCount < $headerCount) {
+                    // Pad row with empty values
+                    $row = array_pad($row, $headerCount, '');
+                } elseif ($rowCount > $headerCount) {
+                    // Trim excess columns
+                    $row = array_slice($row, 0, $headerCount);
+                }
+
+                $rowData['raw_data'] = array_combine($headers, $row);
 
                 ExpenseImportRow::create($rowData);
             }

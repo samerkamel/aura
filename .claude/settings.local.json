@@ -72,7 +72,13 @@
       "Bash(Modules/Invoicing/database/migrations/2025_12_29_160000_make_invoice_sequence_id_nullable.php )",
       "Bash(app/Console/Commands/MigratePerfexData.php )",
       "Bash(docs/perfex-crm-database-migration-guide.md)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(Modules/Accounting/app/Models/ExpenseImport.php )",
+      "Bash(Modules/Accounting/app/Models/ExpenseImportRow.php )",
+      "Bash(Modules/Accounting/database/migrations/2025_12_29_190000_create_expense_imports_table.php )",
+      "Bash(Modules/Accounting/database/seeders/ImportAccountSeeder.php )",
+      "Bash(Modules/Accounting/resources/views/expense-imports/ )",
+      "Bash(resources/menu/verticalMenu.json)"
     ],
     "deny": []
   }
