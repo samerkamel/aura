@@ -200,7 +200,7 @@
                             @foreach($rowsByAction->get('create_expense')->take(20) as $row)
                             <tr>
                                 <td>{{ $row->expense_date?->format('d/m/Y') }}</td>
-                                <td>{{ Str::limit($row->item_description, 40) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($row->item_description, 40) }}</td>
                                 <td>{{ $row->expenseType->name ?? $row->expense_type_raw }}</td>
                                 <td>{{ $row->category->name ?? $row->category_raw }}</td>
                                 <td>{{ $row->customer->display_name ?? $row->customer_raw }}</td>
@@ -245,7 +245,7 @@
                             @foreach($rowsByAction->get('create_income')->take(20) as $row)
                             <tr>
                                 <td>{{ $row->expense_date?->format('d/m/Y') }}</td>
-                                <td>{{ Str::limit($row->item_description, 40) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($row->item_description, 40) }}</td>
                                 <td>{{ $row->category->name ?? $row->category_raw }}</td>
                                 <td>{{ $row->customer->display_name ?? $row->customer_raw }}</td>
                                 <td class="text-end text-success">{{ number_format(abs($row->total_amount), 2) }}</td>
@@ -280,7 +280,7 @@
                             @foreach($rowsByAction->get('link_invoice')->take(20) as $row)
                             <tr>
                                 <td>{{ $row->expense_date?->format('d/m/Y') }}</td>
-                                <td>{{ Str::limit($row->item_description, 40) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($row->item_description, 40) }}</td>
                                 <td>
                                     @if($row->invoice)
                                         <a href="{{ route('invoicing.invoices.show', $row->invoice) }}" target="_blank">

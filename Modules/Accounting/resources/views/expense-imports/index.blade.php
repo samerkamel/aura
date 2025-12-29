@@ -52,7 +52,7 @@
                                     <td>
                                         <strong>{{ $import->file_name }}</strong>
                                         @if($import->notes)
-                                            <br><small class="text-muted">{{ Str::limit($import->notes, 50) }}</small>
+                                            <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($import->notes, 50) }}</small>
                                         @endif
                                     </td>
                                     <td>

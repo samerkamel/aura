@@ -130,7 +130,7 @@
                         @foreach($uniqueTypes as $rawType)
                             @if($rawType && !in_array($rawType, ['Income', 'Investment']))
                             <div class="input-group input-group-sm mb-2">
-                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawType }}">{{ Str::limit($rawType, 12) }}</span>
+                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawType }}">{{ \Illuminate\Support\Str::limit($rawType, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="expense_type" data-raw="{{ $rawType }}">
                                     <option value="">-- Select --</option>
                                     @foreach($expenseTypes as $type)
@@ -148,7 +148,7 @@
                         @foreach(array_slice($uniqueCategories, 0, 10) as $rawCategory)
                             @if($rawCategory)
                             <div class="input-group input-group-sm mb-2">
-                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCategory }}">{{ Str::limit($rawCategory, 12) }}</span>
+                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCategory }}">{{ \Illuminate\Support\Str::limit($rawCategory, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="category" data-raw="{{ $rawCategory }}">
                                     <option value="">-- Select --</option>
                                     @foreach($categories as $category)
@@ -169,7 +169,7 @@
                         @foreach(array_slice($uniqueCustomers, 0, 10) as $rawCustomer)
                             @if($rawCustomer)
                             <div class="input-group input-group-sm mb-2">
-                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCustomer }}">{{ Str::limit($rawCustomer, 12) }}</span>
+                                <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCustomer }}">{{ \Illuminate\Support\Str::limit($rawCustomer, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="customer" data-raw="{{ $rawCustomer }}">
                                     <option value="">-- Create New --</option>
                                     @foreach($customers as $customer)
@@ -269,16 +269,16 @@
                                     @if($row->category_id)
                                         <span class="badge bg-label-info">{{ $row->category->name ?? 'Mapped' }}</span>
                                     @else
-                                        <span class="text-muted">{{ Str::limit($row->category_raw, 15) }}</span>
+                                        <span class="text-muted">{{ \Illuminate\Support\Str::limit($row->category_raw, 15) }}</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($row->customer_id)
                                         <span class="badge bg-label-success">{{ $row->customer->display_name ?? 'Mapped' }}</span>
                                     @elseif($row->create_customer)
-                                        <span class="badge bg-label-warning">Create: {{ Str::limit($row->customer_raw, 15) }}</span>
+                                        <span class="badge bg-label-warning">Create: {{ \Illuminate\Support\Str::limit($row->customer_raw, 15) }}</span>
                                     @else
-                                        <span class="text-muted">{{ Str::limit($row->customer_raw, 15) }}</span>
+                                        <span class="text-muted">{{ \Illuminate\Support\Str::limit($row->customer_raw, 15) }}</span>
                                     @endif
                                 </td>
                                 <td class="{{ $row->is_income ? 'text-success' : 'text-danger' }}">
