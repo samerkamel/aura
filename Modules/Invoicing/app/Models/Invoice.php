@@ -199,6 +199,17 @@ class Invoice extends Model
     }
 
     /**
+     * Get number of days the invoice is overdue.
+     */
+    public function getDaysOverdueAttribute(): int
+    {
+        if (!$this->is_overdue || !$this->due_date) {
+            return 0;
+        }
+        return $this->due_date->diffInDays(now());
+    }
+
+    /**
      * Get remaining amount to be paid.
      */
     public function getRemainingAmountAttribute(): float
