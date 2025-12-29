@@ -188,7 +188,7 @@
                                 <select class="form-select form-select-sm mapping-select" data-field="category" data-raw="{{ $rawCategory }}">
                                     <option value="">-- Select --</option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}">{{ str_repeat('│  ', $category->tree_depth) }}{{ $category->tree_depth > 0 ? '├─ ' : '' }}{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -205,7 +205,7 @@
                                         @php
                                             $isSelected = $expenseImport->rows()->where('category_raw', $rawCategory)->whereNotNull('category_id')->value('category_id') == $category->id;
                                         @endphp
-                                        <option value="{{ $category->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" {{ $isSelected ? 'selected' : '' }}>{{ str_repeat('│  ', $category->tree_depth) }}{{ $category->tree_depth > 0 ? '├─ ' : '' }}{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

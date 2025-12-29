@@ -419,11 +419,7 @@ class ExpenseImportController extends Controller
 
         // Get lookup data for dropdowns
         $expenseTypes = ExpenseType::active()->orderBy('sort_order')->get();
-        $categories = ExpenseCategory::with('subcategories')
-            ->whereNull('parent_id')
-            ->active()
-            ->orderBy('name')
-            ->get();
+        $categories = ExpenseCategory::getFlatTree(activeOnly: true);
         $accounts = Account::active()->orderBy('name')->get();
         $customers = Customer::orderBy('company_name')->get();
 
