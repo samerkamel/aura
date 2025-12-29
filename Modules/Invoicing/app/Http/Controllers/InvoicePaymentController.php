@@ -156,9 +156,41 @@ class InvoicePaymentController extends Controller
     }
 
     /**
+     * Get payment data for editing.
+     */
+    public function show(InvoicePayment $invoicePayment)
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            abort(403, 'Unauthorized to view payment details.');
+        }
+
+        // Verify business unit access
+        if (!BusinessUnitHelper::isSuperAdmin() &&
+            !in_array($invoicePayment->invoice->business_unit_id, BusinessUnitHelper::getAccessibleBusinessUnitIds())) {
+            abort(403, 'Unauthorized to view this payment.');
+        }
+
+        $maxAmount = $invoicePayment->invoice->total_amount - $invoicePayment->invoice->payments->where('id', '!=', $invoicePayment->id)->sum('amount');
+
+        return response()->json([
+            'success' => true,
+            'payment' => [
+                'id' => $invoicePayment->id,
+                'amount' => $invoicePayment->amount,
+                'payment_date' => $invoicePayment->payment_date->format('Y-m-d'),
+                'payment_method' => $invoicePayment->payment_method,
+                'reference_number' => $invoicePayment->reference_number,
+                'notes' => $invoicePayment->notes,
+                'account_id' => $invoicePayment->account_id,
+                'max_amount' => $maxAmount,
+            ],
+        ]);
+    }
+
+    /**
      * Update the specified payment.
      */
-    public function update(Request $request, InvoicePayment $invoicePayment): RedirectResponse
+    public function update(Request $request, InvoicePayment $invoicePayment)
     {
         if (!auth()->user()->can('manage-invoices')) {
             abort(403, 'Unauthorized to edit payments.');
@@ -178,15 +210,44 @@ class InvoicePaymentController extends Controller
             'payment_method' => 'nullable|string|in:cash,bank_transfer,check,card,online,other',
             'reference_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
+            'account_id' => 'required|exists:accounts,id',
         ]);
 
+        $oldAmount = $invoicePayment->amount;
+        $oldAccountId = $invoicePayment->account_id;
+        $newAccountId = $request->account_id;
+        $newAmount = $request->amount;
+
+        // Update account balances if account or amount changed
+        if ($oldAccountId != $newAccountId || $oldAmount != $newAmount) {
+            // Reverse old account balance
+            if ($oldAccountId) {
+                $oldAccount = \Modules\Accounting\Models\Account::find($oldAccountId);
+                if ($oldAccount) {
+                    $oldAccount->updateBalance($oldAmount, 'subtract');
+                }
+            }
+
+            // Add to new account
+            $newAccount = \Modules\Accounting\Models\Account::find($newAccountId);
+            if ($newAccount) {
+                $newAccount->updateBalance($newAmount, 'add');
+            }
+        }
+
         $invoicePayment->update([
-            'amount' => $request->amount,
+            'amount' => $newAmount,
             'payment_date' => $request->payment_date,
             'payment_method' => $request->payment_method,
             'reference_number' => $request->reference_number,
             'notes' => $request->notes,
+            'account_id' => $newAccountId,
         ]);
+
+        // Return JSON response for AJAX requests
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Payment updated successfully.']);
+        }
 
         return redirect()
             ->back()

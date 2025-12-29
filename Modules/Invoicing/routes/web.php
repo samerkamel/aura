@@ -41,6 +41,7 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
 
         // Invoice payment management
         Route::post('/{invoice}/payments', [InvoicePaymentController::class, 'store'])->name('payments.store');
+        Route::get('/payments/{invoicePayment}', [InvoicePaymentController::class, 'show'])->name('payments.show');
         Route::put('/payments/{invoicePayment}', [InvoicePaymentController::class, 'update'])->name('payments.update');
         Route::delete('/payments/{invoicePayment}', [InvoicePaymentController::class, 'destroy'])->name('payments.destroy');
         Route::get('/payments/{invoicePayment}/attachment', [InvoicePaymentController::class, 'downloadAttachment'])->name('payments.attachment');

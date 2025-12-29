@@ -52,7 +52,27 @@
       "Bash(ssh root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")",
       "Bash(ssh-keygen:*)",
       "Bash(ssh -o StrictHostKeyChecking=accept-new root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -200 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''Jira sync''\")",
+      "Bash(composer require:*)",
+      "Bash(cut:*)",
+      "Bash(xxd:*)",
+      "Bash(php:*)",
+      "Bash(Modules/Accounting/app/Models/Estimate.php )",
+      "Bash(Modules/Accounting/app/Models/ExpenseSchedule.php )",
+      "Bash(Modules/Invoicing/app/Models/Invoice.php )",
+      "Bash(app/Models/Customer.php )",
+      "Bash(resources/menu/verticalMenu.json )",
+      "Bash(Modules/Accounting/app/Http/Controllers/CreditNoteController.php )",
+      "Bash(Modules/Accounting/app/Models/CreditNote.php )",
+      "Bash(Modules/Accounting/app/Models/CreditNoteApplication.php )",
+      "Bash(Modules/Accounting/app/Models/CreditNoteItem.php )",
+      "Bash(Modules/Accounting/database/migrations/2025_12_29_124655_create_credit_notes_table.php )",
+      "Bash(Modules/Accounting/database/migrations/2025_12_29_150000_add_perfex_id_to_migration_tables.php )",
+      "Bash(Modules/Accounting/resources/views/credit-notes/ )",
+      "Bash(Modules/Invoicing/database/migrations/2025_12_29_160000_make_invoice_sequence_id_nullable.php )",
+      "Bash(app/Console/Commands/MigratePerfexData.php )",
+      "Bash(docs/perfex-crm-database-migration-guide.md)",
+      "Bash(git restore:*)"
     ],
     "deny": []
   }

@@ -202,8 +202,8 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to edit invoices.');
         }
 
-        // Only allow editing of draft invoices
-        if ($invoice->status !== 'draft') {
+        // Only allow editing of draft invoices (super-admin can edit any)
+        if ($invoice->status !== 'draft' && !auth()->user()->hasRole('super-admin')) {
             abort(403, 'Only draft invoices can be edited.');
         }
 
@@ -225,8 +225,8 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to edit invoices.');
         }
 
-        // Only allow editing of draft invoices
-        if ($invoice->status !== 'draft') {
+        // Only allow editing of draft invoices (super-admin can edit any)
+        if ($invoice->status !== 'draft' && !auth()->user()->hasRole('super-admin')) {
             abort(403, 'Only draft invoices can be edited.');
         }
 

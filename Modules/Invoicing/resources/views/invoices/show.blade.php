@@ -563,6 +563,89 @@
 </div>
 @endif
 
+<!-- Edit Payment Modal -->
+@if(auth()->user()->can('manage-invoices'))
+<div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editPaymentForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPaymentModalLabel">Edit Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Amount (EGP)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">EGP</span>
+                                    <input type="number" name="amount" id="edit_amount" class="form-control" step="0.01" min="0.01" required>
+                                </div>
+                                <small class="text-muted" id="edit_max_amount_hint"></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required">Payment Date</label>
+                                <input type="date" name="payment_date" id="edit_payment_date" class="form-control" max="{{ now()->format('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label required">Account</label>
+                                <select name="account_id" id="edit_account_id" class="form-select" required>
+                                    <option value="">Select Account</option>
+                                    @foreach($accounts as $account)
+                                        <option value="{{ $account->id }}">
+                                            {{ $account->name }} ({{ $account->account_number }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method</label>
+                                <select name="payment_method" id="edit_payment_method" class="form-select">
+                                    <option value="">Select method</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="check">Check</option>
+                                    <option value="card">Credit/Debit Card</option>
+                                    <option value="online">Online Payment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Reference Number</label>
+                                <input type="text" name="reference_number" id="edit_reference_number" class="form-control" placeholder="Transaction/Check number">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" id="edit_notes" class="form-control" rows="3" placeholder="Optional payment notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Mark as Paid Modal -->
 <div class="modal fade" id="markAsPaidModal" tabindex="-1" aria-labelledby="markAsPaidModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -684,8 +767,40 @@ function downloadPDF() {
 }
 
 function editPayment(paymentId) {
-    // TODO: Implement edit payment modal
-    alert('Edit payment functionality would be implemented here');
+    // Fetch payment data
+    fetch(`/invoicing/invoices/payments/${paymentId}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const payment = data.payment;
+
+            // Populate the form
+            document.getElementById('editPaymentForm').action = `/invoicing/invoices/payments/${paymentId}`;
+            document.getElementById('edit_amount').value = payment.amount;
+            document.getElementById('edit_amount').max = payment.max_amount;
+            document.getElementById('edit_max_amount_hint').textContent = `Maximum: ${parseFloat(payment.max_amount).toLocaleString('en-US', {minimumFractionDigits: 2})} EGP`;
+            document.getElementById('edit_payment_date').value = payment.payment_date;
+            document.getElementById('edit_account_id').value = payment.account_id || '';
+            document.getElementById('edit_payment_method').value = payment.payment_method || '';
+            document.getElementById('edit_reference_number').value = payment.reference_number || '';
+            document.getElementById('edit_notes').value = payment.notes || '';
+
+            // Show the modal
+            new bootstrap.Modal(document.getElementById('editPaymentModal')).show();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to load payment data'));
+        }
+    })
+    .catch(error => {
+        alert('An error occurred while loading payment data');
+        console.error('Error:', error);
+    });
 }
 
 function deletePayment(paymentId) {
