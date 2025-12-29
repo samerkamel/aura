@@ -44,6 +44,7 @@
                     <li>Expenses Created: {{ $results['expenses_created'] ?? 0 }}</li>
                     <li>Income Created: {{ $results['income_created'] ?? 0 }}</li>
                     <li>Invoices Linked: {{ $results['invoices_linked'] ?? 0 }}</li>
+                    <li>Transfers Created: {{ $results['transfers_created'] ?? 0 }}</li>
                     <li>Customers Created: {{ $results['customers_created'] ?? 0 }}</li>
                     @if(!empty($results['errors']))
                         <li class="text-danger">Errors: {{ count($results['errors']) }}</li>
@@ -153,7 +154,7 @@
                             </div>
                             <div>
                                 <h3 class="mb-0">{{ $summary['balance_swaps'] }}</h3>
-                                <small class="text-muted">Balance Swaps (Skip)</small>
+                                <small class="text-muted">Account Transfers</small>
                             </div>
                         </div>
                     </div>
@@ -295,6 +296,61 @@
                             </tr>
                             @endforeach
                         </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Balance Swaps / Account Transfers -->
+        @if($rowsByAction->has('balance_swap') && $rowsByAction->get('balance_swap')->count() > 0)
+        <div class="card mb-4">
+            <div class="card-header bg-warning bg-opacity-10">
+                <h6 class="mb-0 text-warning"><i class="ti ti-arrows-exchange me-2"></i>Account Transfers to Create ({{ $rowsByAction->get('balance_swap')->count() }})</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>From Account(s)</th>
+                                <th>To Account(s)</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($rowsByAction->get('balance_swap')->take(20) as $row)
+                            @php
+                                $accounts = \Modules\Accounting\Models\Account::whereIn('id', array_keys($row->account_amounts ?? []))->pluck('name', 'id');
+                            @endphp
+                            <tr>
+                                <td>{{ $row->expense_date?->format('d/m/Y') }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($row->item_description, 40) }}</td>
+                                <td>
+                                    @foreach($row->transfer_from_accounts as $accId => $amt)
+                                        <span class="badge bg-danger">{{ $accounts[$accId] ?? 'Unknown' }}: {{ number_format($amt, 2) }}</span>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach($row->transfer_to_accounts as $accId => $amt)
+                                        <span class="badge bg-success">{{ $accounts[$accId] ?? 'Unknown' }}: {{ number_format($amt, 2) }}</span>
+                                    @endforeach
+                                </td>
+                                <td class="text-end text-warning">{{ number_format(abs($row->absolute_total), 2) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        @if($rowsByAction->get('balance_swap')->count() > 20)
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    ... and {{ $rowsByAction->get('balance_swap')->count() - 20 }} more transfers
+                                </td>
+                            </tr>
+                        </tfoot>
+                        @endif
                     </table>
                 </div>
             </div>

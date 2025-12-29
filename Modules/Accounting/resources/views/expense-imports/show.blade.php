@@ -375,7 +375,23 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($row->is_income)
+                                    @if($row->action === 'balance_swap')
+                                        {{-- For balance swaps, show transfer info --}}
+                                        @php
+                                            $fromAccounts = $row->transfer_from_accounts;
+                                            $toAccounts = $row->transfer_to_accounts;
+                                            $accountNames = \Modules\Accounting\Models\Account::whereIn('id', array_keys($row->account_amounts ?? []))->pluck('name', 'id');
+                                        @endphp
+                                        <small>
+                                            @foreach($fromAccounts as $accId => $amt)
+                                                <span class="badge bg-danger">{{ $accountNames[$accId] ?? '?' }}</span>
+                                            @endforeach
+                                            →
+                                            @foreach($toAccounts as $accId => $amt)
+                                                <span class="badge bg-success">{{ $accountNames[$accId] ?? '?' }}</span>
+                                            @endforeach
+                                        </small>
+                                    @elseif($row->is_income)
                                         {{-- For income items, show Product --}}
                                         @if($row->product_id)
                                             <span class="badge bg-label-warning">{{ $row->product->name ?? 'Mapped' }}</span>

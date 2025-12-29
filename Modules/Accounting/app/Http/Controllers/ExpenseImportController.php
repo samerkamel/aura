@@ -13,6 +13,7 @@ use Modules\Accounting\Models\ExpenseType;
 use Modules\Accounting\Models\ExpenseCategory;
 use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\Account;
+use Modules\Accounting\Models\AccountTransfer;
 use Modules\Invoicing\Models\Invoice;
 use App\Models\Customer;
 use App\Models\Product;
@@ -722,6 +723,7 @@ class ExpenseImportController extends Controller
             'expenses_created' => 0,
             'income_created' => 0,
             'invoices_linked' => 0,
+            'transfers_created' => 0,
             'customers_created' => 0,
             'errors' => [],
         ];
@@ -732,7 +734,19 @@ class ExpenseImportController extends Controller
             // First, create any new customers
             $customerMap = $this->createCustomers($expenseImport, $results);
 
-            // Process each non-skipped row
+            // Process balance swap rows first (they don't need customer mapping)
+            foreach ($expenseImport->rows()->where('action', 'balance_swap')->get() as $row) {
+                try {
+                    $this->createBalanceSwap($row, $results, $isDryRun);
+                } catch (\Exception $e) {
+                    $results['errors'][] = "Row {$row->row_number} (Balance Swap): " . $e->getMessage();
+                    $row->update(['status' => 'error']);
+                    $row->addValidationMessage('error', $e->getMessage());
+                    $row->save();
+                }
+            }
+
+            // Process each non-skipped row (expenses, income, invoice links)
             foreach ($expenseImport->rows()->whereNotIn('action', ['skip', 'balance_swap'])->get() as $row) {
                 try {
                     $this->processRow($row, $customerMap, $results, $isDryRun);
@@ -926,6 +940,72 @@ class ExpenseImportController extends Controller
         }
 
         $results['invoices_linked']++;
+    }
+
+    /**
+     * Create account transfer(s) from a balance swap row.
+     */
+    private function createBalanceSwap(ExpenseImportRow $row, array &$results, bool $isDryRun): void
+    {
+        if (!$row->is_valid_balance_swap) {
+            throw new \Exception('Invalid balance swap - requires both source and destination accounts');
+        }
+
+        $fromAccounts = $row->transfer_from_accounts; // Negative amounts = source
+        $toAccounts = $row->transfer_to_accounts;     // Positive amounts = destination
+
+        // For simple case: one source → one destination
+        // For complex case: create multiple transfers
+        foreach ($fromAccounts as $fromAccountId => $fromAmount) {
+            foreach ($toAccounts as $toAccountId => $toAmount) {
+                // Create transfer for the minimum of from/to amounts
+                $transferAmount = min($fromAmount, $toAmount);
+
+                if ($transferAmount <= 0) {
+                    continue;
+                }
+
+                $transfer = AccountTransfer::create([
+                    'from_account_id' => $fromAccountId,
+                    'to_account_id' => $toAccountId,
+                    'amount' => $transferAmount,
+                    'transfer_date' => $row->expense_date,
+                    'reference' => "IMPORT-{$row->expense_import_id}-{$row->row_number}",
+                    'description' => $row->item_description,
+                    'notes' => "Imported balance swap: {$row->comment}",
+                    'created_by' => auth()->id(),
+                ]);
+
+                // Update account balances
+                $fromAccount = Account::find($fromAccountId);
+                $toAccount = Account::find($toAccountId);
+
+                if ($fromAccount && method_exists($fromAccount, 'updateBalance')) {
+                    $fromAccount->updateBalance($transferAmount, 'subtract');
+                }
+
+                if ($toAccount && method_exists($toAccount, 'updateBalance')) {
+                    $toAccount->updateBalance($transferAmount, 'add');
+                }
+
+                if (!$isDryRun) {
+                    $row->update([
+                        'status' => 'imported',
+                        'created_transfer_id' => $transfer->id,
+                    ]);
+                }
+
+                $results['transfers_created']++;
+
+                // Reduce amounts for next iteration
+                $fromAmount -= $transferAmount;
+                $toAmount -= $transferAmount;
+
+                if ($fromAmount <= 0) {
+                    break; // Move to next fromAccount
+                }
+            }
+        }
     }
 
     /**

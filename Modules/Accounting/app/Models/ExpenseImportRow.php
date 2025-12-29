@@ -46,6 +46,7 @@ class ExpenseImportRow extends Model
         'action',
         'created_expense_id',
         'created_payment_id',
+        'created_transfer_id',
     ];
 
     protected $casts = [
@@ -114,6 +115,14 @@ class ExpenseImportRow extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Product::class);
+    }
+
+    /**
+     * Get the created account transfer (for balance swap rows).
+     */
+    public function accountTransfer(): BelongsTo
+    {
+        return $this->belongsTo(AccountTransfer::class, 'created_transfer_id');
     }
 
     /**
@@ -207,6 +216,52 @@ class ExpenseImportRow extends Model
     }
 
     /**
+     * Get source accounts for balance swap (accounts with negative amounts).
+     */
+    public function getTransferFromAccountsAttribute(): array
+    {
+        if (!$this->account_amounts) {
+            return [];
+        }
+
+        $fromAccounts = [];
+        foreach ($this->account_amounts as $accountId => $amount) {
+            if ($amount < 0) {
+                $fromAccounts[$accountId] = abs($amount);
+            }
+        }
+
+        return $fromAccounts;
+    }
+
+    /**
+     * Get destination accounts for balance swap (accounts with positive amounts).
+     */
+    public function getTransferToAccountsAttribute(): array
+    {
+        if (!$this->account_amounts) {
+            return [];
+        }
+
+        $toAccounts = [];
+        foreach ($this->account_amounts as $accountId => $amount) {
+            if ($amount > 0) {
+                $toAccounts[$accountId] = $amount;
+            }
+        }
+
+        return $toAccounts;
+    }
+
+    /**
+     * Check if this row is a valid balance swap (has both from and to accounts).
+     */
+    public function getIsValidBalanceSwapAttribute(): bool
+    {
+        return !empty($this->transfer_from_accounts) && !empty($this->transfer_to_accounts);
+    }
+
+    /**
      * Validate this row and update status.
      */
     public function validate(): void
@@ -234,41 +289,53 @@ class ExpenseImportRow extends Model
             }
         }
 
-        // Check category/product mapping based on income type
-        if ($this->is_income) {
-            // For income items, check product mapping
-            if (!$this->product_id && $this->category_raw) {
-                $messages[] = ['type' => 'warning', 'message' => "Product line not selected for income item"];
-                $hasWarning = true;
-            }
-        } else {
-            // For expense items, check category mapping
-            if (!$this->category_id && $this->category_raw) {
-                $messages[] = ['type' => 'warning', 'message' => "Category '{$this->category_raw}' not mapped"];
-                $hasWarning = true;
-            }
-        }
+        // Determine action first (needed for validation logic)
+        $isBalanceSwap = $this->expense_type_raw === 'Investment' && $this->category_raw === 'Balance Swap';
 
-        // Check customer mapping
-        if (!$this->customer_id && $this->customer_raw && !$this->create_customer) {
-            $messages[] = ['type' => 'warning', 'message' => "Customer '{$this->customer_raw}' not mapped - will create new"];
-            $hasWarning = true;
-            $this->create_customer = true;
-        }
-
-        // Check income rows
-        if ($this->is_income && !$this->invoice_id && !$this->income_without_invoice) {
-            $messages[] = ['type' => 'warning', 'message' => 'Income row not linked to invoice'];
-            $hasWarning = true;
-        }
-
-        // Determine action
-        if ($this->expense_type_raw === 'Investment' && $this->category_raw === 'Balance Swap') {
+        if ($isBalanceSwap) {
             $this->action = 'balance_swap';
         } elseif ($this->is_income) {
             $this->action = $this->invoice_id ? 'link_invoice' : 'create_income';
         } else {
             $this->action = 'create_expense';
+        }
+
+        // Balance swap validation
+        if ($isBalanceSwap) {
+            if (!$this->is_valid_balance_swap) {
+                $messages[] = ['type' => 'error', 'message' => 'Balance swap requires both source and destination accounts'];
+                $hasError = true;
+            } else {
+                $messages[] = ['type' => 'info', 'message' => 'Balance swap: will create account transfer'];
+            }
+        } else {
+            // Check category/product mapping based on income type (not for balance swaps)
+            if ($this->is_income) {
+                // For income items, check product mapping
+                if (!$this->product_id && $this->category_raw) {
+                    $messages[] = ['type' => 'warning', 'message' => "Product line not selected for income item"];
+                    $hasWarning = true;
+                }
+            } else {
+                // For expense items, check category mapping
+                if (!$this->category_id && $this->category_raw) {
+                    $messages[] = ['type' => 'warning', 'message' => "Category '{$this->category_raw}' not mapped"];
+                    $hasWarning = true;
+                }
+            }
+
+            // Check customer mapping (not for balance swaps)
+            if (!$this->customer_id && $this->customer_raw && !$this->create_customer) {
+                $messages[] = ['type' => 'warning', 'message' => "Customer '{$this->customer_raw}' not mapped - will create new"];
+                $hasWarning = true;
+                $this->create_customer = true;
+            }
+
+            // Check income rows
+            if ($this->is_income && !$this->invoice_id && !$this->income_without_invoice) {
+                $messages[] = ['type' => 'warning', 'message' => 'Income row not linked to invoice'];
+                $hasWarning = true;
+            }
         }
 
         // Set status
