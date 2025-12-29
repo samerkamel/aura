@@ -245,6 +245,7 @@ class InvoiceController extends Controller
             'items.*.description' => 'required|string',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.tax_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $invoice->update([
@@ -263,11 +264,17 @@ class InvoiceController extends Controller
         // Update invoice items
         $invoice->items()->delete();
         foreach ($request->items as $item) {
+            $taxRate = $item['tax_rate'] ?? 0;
+            $subtotal = $item['quantity'] * $item['unit_price'];
+            $taxAmount = $subtotal * ($taxRate / 100);
+
             $invoice->items()->create([
                 'description' => $item['description'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
-                'total' => $item['quantity'] * $item['unit_price'],
+                'tax_rate' => $taxRate,
+                'tax_amount' => $taxAmount,
+                'total' => $subtotal + $taxAmount,
             ]);
         }
 
