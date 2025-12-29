@@ -194,7 +194,7 @@ class AccountingController extends Controller
                     ->sum('paid_amount');
 
                 // Also include subcategories
-                $subcategoryIds = $category->children()->pluck('id');
+                $subcategoryIds = $category->subcategories()->pluck('id');
                 if ($subcategoryIds->isNotEmpty()) {
                     $actualAmount += ExpenseSchedule::where('payment_status', 'paid')
                         ->whereIn('category_id', $subcategoryIds)
