@@ -20,6 +20,7 @@ class Invoice extends Model
     use HasFactory;
 
     protected $fillable = [
+        'perfex_id',
         'invoice_number',
         'invoice_date',
         'due_date',
@@ -30,6 +31,7 @@ class Invoice extends Model
         'customer_id',
         'project_id',
         'invoice_sequence_id',
+        'business_unit_id',
         'created_by',
         'notes',
         'terms_conditions',

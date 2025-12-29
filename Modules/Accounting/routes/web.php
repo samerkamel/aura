@@ -8,6 +8,7 @@ use Modules\Accounting\Http\Controllers\IncomeController;
 use Modules\Accounting\Http\Controllers\IncomeSheetController;
 use Modules\Accounting\Http\Controllers\AccountController;
 use Modules\Accounting\Http\Controllers\EstimateController;
+use Modules\Accounting\Http\Controllers\CreditNoteController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -138,6 +139,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{estimate}/reject', [EstimateController::class, 'markAsRejected'])->name('reject');
             Route::post('/{estimate}/convert', [EstimateController::class, 'convertToContract'])->name('convert');
             Route::get('/{estimate}/pdf', [EstimateController::class, 'exportPdf'])->name('pdf');
+        });
+
+        // Credit Notes Management Routes
+        Route::prefix('credit-notes')->name('credit-notes.')->group(function () {
+            Route::get('/', [CreditNoteController::class, 'index'])->name('index');
+            Route::get('/create', [CreditNoteController::class, 'create'])->name('create');
+            Route::post('/', [CreditNoteController::class, 'store'])->name('store');
+            Route::get('/customer-invoices', [CreditNoteController::class, 'getCustomerInvoices'])->name('customer-invoices');
+            Route::get('/{creditNote}', [CreditNoteController::class, 'show'])->name('show');
+            Route::get('/{creditNote}/edit', [CreditNoteController::class, 'edit'])->name('edit');
+            Route::put('/{creditNote}', [CreditNoteController::class, 'update'])->name('update');
+            Route::delete('/{creditNote}', [CreditNoteController::class, 'destroy'])->name('destroy');
+            Route::post('/{creditNote}/open', [CreditNoteController::class, 'markAsOpen'])->name('open');
+            Route::post('/{creditNote}/void', [CreditNoteController::class, 'markAsVoid'])->name('void');
+            Route::post('/{creditNote}/apply', [CreditNoteController::class, 'applyToInvoice'])->name('apply');
+            Route::get('/{creditNote}/pdf', [CreditNoteController::class, 'exportPdf'])->name('pdf');
         });
     });
 });

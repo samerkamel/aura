@@ -26,6 +26,7 @@ class Estimate extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'perfex_id',
         'estimate_number',
         'customer_id',
         'project_id',

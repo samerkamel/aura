@@ -22,6 +22,7 @@ class ExpenseSchedule extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'perfex_id',
         'category_id',
         'subcategory_id',
         'name',

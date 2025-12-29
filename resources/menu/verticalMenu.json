@@ -272,6 +272,11 @@
           "slug": "accounting-estimates-index"
         },
         {
+          "url": "accounting/credit-notes",
+          "name": "Credit Notes",
+          "slug": "accounting-credit-notes-index"
+        },
+        {
           "url": "accounting/income-sheet",
           "name": "Income Sheet",
           "slug": "accounting-income-sheet-index"
