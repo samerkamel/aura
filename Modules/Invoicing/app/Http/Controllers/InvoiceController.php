@@ -53,7 +53,26 @@ class InvoiceController extends Controller
             $query->where('invoice_date', '<=', $request->date_to);
         }
 
-        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15);
+        // Sorting
+        $sortableColumns = ['invoice_number', 'invoice_date', 'due_date', 'total_amount', 'status'];
+        $sortBy = $request->get('sort_by', 'invoice_date');
+        $sortOrder = $request->get('sort_order', 'desc');
+
+        // Validate sort parameters
+        if (!in_array($sortBy, $sortableColumns)) {
+            $sortBy = 'invoice_date';
+        }
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
+        // Apply sorting - default is invoice_date DESC, then invoice_number DESC
+        $query->orderBy($sortBy, $sortOrder);
+        if ($sortBy !== 'invoice_number') {
+            $query->orderBy('invoice_number', 'desc');
+        }
+
+        $invoices = $query->paginate(15);
 
         // Calculate statistics
         $stats = [

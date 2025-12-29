@@ -37,10 +37,14 @@
 
             <!-- Filters -->
             <div class="card-body border-bottom">
-                <form method="GET" class="row g-3">
-                    <div class="col-md-3">
+                <form method="GET" id="filterForm" class="row g-3">
+                    <!-- Preserve sort parameters -->
+                    <input type="hidden" name="sort_by" value="{{ request('sort_by', 'invoice_date') }}">
+                    <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}">
+
+                    <div class="col-md-2">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select name="status" class="form-select filter-select">
                             <option value="">All Statuses</option>
                             <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                             <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>Sent</option>
@@ -51,32 +55,35 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Customer</label>
-                        <select name="customer" class="form-select">
+                        <select name="customer_id" class="form-select filter-select">
                             <option value="">All Customers</option>
                             @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ request('customer') == $customer->id ? 'selected' : '' }}>
+                                <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
                                     {{ $customer->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Date Range</label>
-                        <select name="date_range" class="form-select">
-                            <option value="">All Dates</option>
-                            <option value="today" {{ request('date_range') == 'today' ? 'selected' : '' }}>Today</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
-                            <option value="overdue" {{ request('date_range') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        </select>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" name="date_from" class="form-control filter-input" value="{{ request('date_from') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" name="date_to" class="form-control filter-input" value="{{ request('date_to') }}">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Search</label>
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Invoice number..." value="{{ request('search') }}">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="ti ti-search"></i>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti ti-filter me-1"></i>Filter
                             </button>
+                            @if(request()->hasAny(['status', 'customer_id', 'date_from', 'date_to', 'search']))
+                                <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
+                                    <i class="ti ti-x"></i>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -88,13 +95,51 @@
                     <div class="table-responsive">
                         <table class="table table-sm table-hover">
                             <thead>
+                                @php
+                                    $currentSort = request('sort_by', 'invoice_date');
+                                    $currentOrder = request('sort_order', 'desc');
+
+                                    $getSortUrl = function($column) use ($currentSort, $currentOrder) {
+                                        $newOrder = ($currentSort === $column && $currentOrder === 'desc') ? 'asc' : 'desc';
+                                        return request()->fullUrlWithQuery(['sort_by' => $column, 'sort_order' => $newOrder]);
+                                    };
+
+                                    $getSortIcon = function($column) use ($currentSort, $currentOrder) {
+                                        if ($currentSort !== $column) {
+                                            return '<i class="ti ti-arrows-sort text-muted"></i>';
+                                        }
+                                        return $currentOrder === 'asc'
+                                            ? '<i class="ti ti-sort-ascending text-primary"></i>'
+                                            : '<i class="ti ti-sort-descending text-primary"></i>';
+                                    };
+                                @endphp
                                 <tr>
-                                    <th>Invoice #</th>
+                                    <th>
+                                        <a href="{{ $getSortUrl('invoice_number') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
+                                            Invoice # {!! $getSortIcon('invoice_number') !!}
+                                        </a>
+                                    </th>
                                     <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Due Date</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
+                                    <th>
+                                        <a href="{{ $getSortUrl('invoice_date') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
+                                            Date {!! $getSortIcon('invoice_date') !!}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{{ $getSortUrl('due_date') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
+                                            Due Date {!! $getSortIcon('due_date') !!}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{{ $getSortUrl('total_amount') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
+                                            Amount {!! $getSortIcon('total_amount') !!}
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{{ $getSortUrl('status') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
+                                            Status {!! $getSortIcon('status') !!}
+                                        </a>
+                                    </th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -327,6 +372,20 @@
 
 @section('page-script')
 <script>
+// Auto-submit filter form on select change
+document.querySelectorAll('.filter-select').forEach(function(select) {
+    select.addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
+    });
+});
+
+// Auto-submit on date change
+document.querySelectorAll('.filter-input').forEach(function(input) {
+    input.addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
+    });
+});
+
 function markAsSent(invoiceId) {
     if (confirm('Mark this invoice as sent?')) {
         fetch(`/invoicing/invoices/${invoiceId}/send`, {
