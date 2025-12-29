@@ -86,13 +86,15 @@
                         <p class="card-text">Monthly Income</p>
                         <div class="d-flex align-items-end mb-2">
                             <h4 class="card-title mb-0 me-2">{{ number_format($monthlyIncome, 2) }} EGP</h4>
-                            @if($incomeGrowth >= 0)
-                                <small class="text-success">+{{ number_format($incomeGrowth, 1) }}%</small>
-                            @else
-                                <small class="text-danger">{{ number_format($incomeGrowth, 1) }}%</small>
+                            @if($incomeGrowth != 0)
+                                @if($incomeGrowth >= 0)
+                                    <small class="text-success"><i class="ti ti-arrow-up"></i>{{ number_format($incomeGrowth, 1) }}%</small>
+                                @else
+                                    <small class="text-danger"><i class="ti ti-arrow-down"></i>{{ number_format(abs($incomeGrowth), 1) }}%</small>
+                                @endif
                             @endif
                         </div>
-                        <small class="text-muted">From active contracts</small>
+                        <small class="text-muted">This month (vs last month)</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-success rounded">
@@ -112,17 +114,19 @@
                         <p class="card-text">Monthly Expenses</p>
                         <div class="d-flex align-items-end mb-2">
                             <h4 class="card-title mb-0 me-2">{{ number_format($monthlyExpenses, 2) }} EGP</h4>
-                            @if($expenseGrowth <= 0)
-                                <small class="text-success">{{ number_format($expenseGrowth, 1) }}%</small>
-                            @else
-                                <small class="text-danger">+{{ number_format($expenseGrowth, 1) }}%</small>
+                            @if($expenseGrowth != 0)
+                                @if($expenseGrowth <= 0)
+                                    <small class="text-success"><i class="ti ti-arrow-down"></i>{{ number_format(abs($expenseGrowth), 1) }}%</small>
+                                @else
+                                    <small class="text-danger"><i class="ti ti-arrow-up"></i>{{ number_format($expenseGrowth, 1) }}%</small>
+                                @endif
                             @endif
                         </div>
-                        <small class="text-muted">Recurring schedules</small>
+                        <small class="text-muted">Actual paid this month</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-danger rounded">
-                            <i class="ti ti-trending-down"></i>
+                            <i class="ti ti-receipt"></i>
                         </div>
                     </div>
                 </div>
@@ -141,7 +145,7 @@
                                 {{ number_format($netCashFlow, 2) }} EGP
                             </h4>
                         </div>
-                        <small class="text-muted">Monthly average</small>
+                        <small class="text-muted">Income - Expenses</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial {{ $netCashFlow >= 0 ? 'bg-primary' : 'bg-warning' }} rounded">
@@ -158,17 +162,60 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="card-info">
-                        <p class="card-text">Active Contracts</p>
+                        <p class="card-text">Total Account Balance</p>
                         <div class="d-flex align-items-end mb-2">
-                            <h4 class="card-title mb-0 me-2">{{ $activeContracts }}</h4>
+                            <h4 class="card-title mb-0 me-2">{{ number_format($accountsSummary['total_balance'], 2) }} EGP</h4>
                         </div>
-                        <small class="text-muted">Total value: {{ number_format($totalContractValue, 2) }} EGP</small>
+                        <small class="text-muted">Across {{ $accountsSummary['count'] }} accounts</small>
                     </div>
                     <div class="avatar">
                         <div class="avatar-initial bg-info rounded">
-                            <i class="ti ti-file-text"></i>
+                            <i class="ti ti-building-bank"></i>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- YTD Summary -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white mb-1">YTD Income</h6>
+                        <h4 class="mb-0">{{ number_format($ytdIncome, 2) }} EGP</h4>
+                    </div>
+                    <i class="ti ti-cash ti-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white mb-1">YTD Expenses</h6>
+                        <h4 class="mb-0">{{ number_format($ytdExpenses, 2) }} EGP</h4>
+                    </div>
+                    <i class="ti ti-shopping-cart ti-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card {{ ($ytdIncome - $ytdExpenses) >= 0 ? 'bg-success' : 'bg-warning' }} text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white mb-1">YTD Net</h6>
+                        <h4 class="mb-0">{{ number_format($ytdIncome - $ytdExpenses, 2) }} EGP</h4>
+                    </div>
+                    <i class="ti ti-chart-line ti-lg"></i>
                 </div>
             </div>
         </div>
@@ -259,52 +306,134 @@
 <!-- Bottom Row - Categories & Recent Activity -->
 <div class="row">
     <!-- Expense Categories -->
-    <div class="col-xl-6 col-12 mb-4">
-        <div class="card">
+    <div class="col-xl-4 col-12 mb-4">
+        <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Expense Categories</h5>
+                <h5 class="card-title mb-0">Expense by Category</h5>
                 <a href="{{ route('accounting.expenses.categories') }}" class="btn btn-outline-secondary btn-sm">
                     <i class="ti ti-settings me-1"></i>Manage
                 </a>
             </div>
             <div class="card-body">
-                <div id="expenseCategoriesChart"></div>
+                @if(!empty($expenseCategories['amounts']) && array_sum($expenseCategories['amounts']) > 0)
+                    <div id="expenseCategoriesChart"></div>
+                @else
+                    <div class="text-center py-4">
+                        <i class="ti ti-chart-pie text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">No expense data this month</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
-    <!-- Contract Status -->
-    <div class="col-xl-6 col-12 mb-4">
-        <div class="card">
+    <!-- Recent Paid Expenses -->
+    <div class="col-xl-4 col-12 mb-4">
+        <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Contract Status</h5>
-                <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="ti ti-file-text me-1"></i>View All
+                <h5 class="card-title mb-0">Recent Expenses</h5>
+                <a href="{{ route('accounting.expenses.paid') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="ti ti-list me-1"></i>View All
                 </a>
             </div>
             <div class="card-body">
-                @forelse($recentContracts as $contract)
+                @forelse($recentExpenses as $expense)
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h6 class="mb-0">{{ $contract->client_name }}</h6>
-                            <small class="text-muted">{{ \Illuminate\Support\Str::limit($contract->description, 40) }}</small>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-sm me-2">
+                                <span class="avatar-initial rounded" style="background-color: {{ $expense->category->color ?? '#6c757d' }}20; color: {{ $expense->category->color ?? '#6c757d' }};">
+                                    <i class="ti ti-receipt ti-sm"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ \Illuminate\Support\Str::limit($expense->name, 25) }}</h6>
+                                <small class="text-muted">{{ $expense->paid_date?->format('M j, Y') }}</small>
+                            </div>
                         </div>
                         <div class="text-end">
-                            <span class="badge bg-{{ $contract->status === 'active' ? 'success' : 'warning' }} mb-1">
-                                {{ ucfirst($contract->status) }}
-                            </span>
-                            <div class="text-muted small">{{ number_format($contract->total_amount, 0) }} EGP</div>
+                            <span class="text-danger fw-semibold">{{ number_format($expense->paid_amount, 2) }} EGP</span>
+                            @if($expense->paidFromAccount)
+                                <br><small class="text-muted">{{ $expense->paidFromAccount->name }}</small>
+                            @endif
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-3">
-                        <i class="ti ti-file-plus text-muted mb-2" style="font-size: 2rem;"></i>
-                        <p class="text-muted">No contracts found</p>
-                        <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary btn-sm">
-                            Create First Contract
+                        <i class="ti ti-receipt-off text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">No paid expenses yet</p>
+                        <a href="{{ route('accounting.expenses.index') }}" class="btn btn-primary btn-sm">
+                            View Expenses
                         </a>
                     </div>
                 @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Balances & Contract Status -->
+    <div class="col-xl-4 col-12 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Account Balances</h5>
+                <a href="{{ route('accounting.accounts.index') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="ti ti-building-bank me-1"></i>View All
+                </a>
+            </div>
+            <div class="card-body">
+                @forelse($accountsSummary['accounts'] as $account)
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-sm me-2">
+                                <span class="avatar-initial rounded bg-label-{{ $account->current_balance >= 0 ? 'success' : 'danger' }}">
+                                    <i class="ti ti-building-bank ti-sm"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ $account->name }}</h6>
+                                <small class="text-muted">{{ ucfirst(str_replace('_', ' ', $account->type)) }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="{{ $account->current_balance >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
+                                {{ number_format($account->current_balance, 2) }} EGP
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-3">
+                        <i class="ti ti-building-bank text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">No accounts found</p>
+                        <a href="{{ route('accounting.accounts.create') }}" class="btn btn-primary btn-sm">
+                            Add Account
+                        </a>
+                    </div>
+                @endforelse
+
+                @if($accountsSummary['count'] > 5)
+                    <div class="text-center pt-2 border-top">
+                        <a href="{{ route('accounting.accounts.index') }}" class="btn btn-link btn-sm">
+                            +{{ $accountsSummary['count'] - 5 }} more accounts
+                        </a>
+                    </div>
+                @endif
+
+                <!-- Recent Contracts Summary -->
+                @if($recentContracts->count() > 0)
+                    <hr class="my-3">
+                    <h6 class="text-muted mb-3">Active Contracts</h6>
+                    @foreach($recentContracts->take(3) as $contract)
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="small">{{ \Illuminate\Support\Str::limit($contract->client_name, 20) }}</span>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{{ $contract->status === 'active' ? 'success' : 'warning' }}">
+                                    {{ number_format($contract->total_amount, 0) }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>

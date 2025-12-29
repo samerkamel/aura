@@ -11,6 +11,7 @@ use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\Contract;
 use Modules\Accounting\Models\ContractPayment;
 use Modules\Accounting\Models\ExpenseCategory;
+use Modules\Accounting\Models\Account;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -40,28 +41,102 @@ class AccountingController extends Controller
         if (!auth()->user()->can('view-accounting-dashboard')) {
             abort(403, 'Unauthorized to access accounting dashboard.');
         }
+
+        // Current month date range
+        $currentMonthStart = now()->startOfMonth();
+        $currentMonthEnd = now()->endOfMonth();
+        $previousMonthStart = now()->subMonth()->startOfMonth();
+        $previousMonthEnd = now()->subMonth()->endOfMonth();
+        $yearStart = now()->startOfYear();
+
+        // Get starting balance from accounts
+        $totalAccountBalance = Account::active()->sum('current_balance');
+
         // Get current month projections
-        $currentMonth = now()->startOfMonth();
         $endMonth = now()->addMonths(6)->endOfMonth();
 
         // Generate projections for dashboard
         $projections = $this->projectionService
-            ->setStartingBalance(10000)
-            ->generateProjections($currentMonth, $endMonth, 'monthly');
+            ->setStartingBalance($totalAccountBalance)
+            ->generateProjections($currentMonthStart, $endMonth, 'monthly');
 
-        // Calculate dashboard metrics - using contract payments instead of income schedules
-        $contractPaymentsQuery = ContractPayment::where('status', 'pending')
-            ->where('due_date', '>=', now()->startOfMonth())
-            ->where('due_date', '<=', now()->endOfMonth());
+        // ACTUAL PAID EXPENSES this month (from imported/recorded expenses)
+        $monthlyExpensesActual = ExpenseSchedule::where('payment_status', 'paid')
+            ->where('paid_date', '>=', $currentMonthStart)
+            ->where('paid_date', '<=', $currentMonthEnd)
+            ->sum('paid_amount');
 
-        $monthlyIncome = $contractPaymentsQuery->sum('amount');
+        // Previous month expenses for growth calculation
+        $previousMonthExpenses = ExpenseSchedule::where('payment_status', 'paid')
+            ->where('paid_date', '>=', $previousMonthStart)
+            ->where('paid_date', '<=', $previousMonthEnd)
+            ->sum('paid_amount');
 
-        $monthlyExpenses = ExpenseSchedule::active()->get()->sum('monthly_equivalent_amount');
+        // ACTUAL INCOME this month (from paid contract payments + income expenses)
+        $monthlyIncomeFromContracts = ContractPayment::where('status', 'paid')
+            ->where('paid_date', '>=', $currentMonthStart)
+            ->where('paid_date', '<=', $currentMonthEnd)
+            ->sum('amount');
+
+        // Income from imported income items (is_income = true expenses that were paid)
+        $monthlyIncomeFromImports = ExpenseSchedule::where('payment_status', 'paid')
+            ->whereHas('category', function($q) {
+                // Income category or positive amounts
+            })
+            ->where('paid_date', '>=', $currentMonthStart)
+            ->where('paid_date', '<=', $currentMonthEnd)
+            ->where('paid_amount', '>', 0) // Positive amounts are income
+            ->sum('paid_amount');
+
+        // Also check for pending contract payments this month (expected income)
+        $expectedIncome = ContractPayment::where('status', 'pending')
+            ->where('due_date', '>=', $currentMonthStart)
+            ->where('due_date', '<=', $currentMonthEnd)
+            ->sum('amount');
+
+        $monthlyIncome = $monthlyIncomeFromContracts + $expectedIncome;
+
+        // Previous month income for growth calculation
+        $previousMonthIncome = ContractPayment::where('status', 'paid')
+            ->where('paid_date', '>=', $previousMonthStart)
+            ->where('paid_date', '<=', $previousMonthEnd)
+            ->sum('amount');
+
+        // Calculate real growth percentages
+        $incomeGrowth = $previousMonthIncome > 0
+            ? (($monthlyIncome - $previousMonthIncome) / $previousMonthIncome) * 100
+            : 0;
+
+        $expenseGrowth = $previousMonthExpenses > 0
+            ? (($monthlyExpensesActual - $previousMonthExpenses) / $previousMonthExpenses) * 100
+            : 0;
+
+        // Use actual expenses for display, fallback to recurring if no paid expenses
+        $monthlyExpenses = $monthlyExpensesActual > 0
+            ? $monthlyExpensesActual
+            : ExpenseSchedule::active()->get()->sum('monthly_equivalent_amount');
 
         $netCashFlow = $monthlyIncome - $monthlyExpenses;
 
         $activeContracts = Contract::active()->count();
         $totalContractValue = Contract::active()->sum('total_amount');
+
+        // Year-to-date totals
+        $ytdExpenses = ExpenseSchedule::where('payment_status', 'paid')
+            ->where('paid_date', '>=', $yearStart)
+            ->sum('paid_amount');
+
+        $ytdIncome = ContractPayment::where('status', 'paid')
+            ->where('paid_date', '>=', $yearStart)
+            ->sum('amount');
+
+        // Account balances summary
+        $accounts = Account::active()->orderByDesc('current_balance')->get();
+        $accountsSummary = [
+            'total_balance' => $totalAccountBalance,
+            'accounts' => $accounts->take(5),
+            'count' => $accounts->count(),
+        ];
 
         // Get upcoming payments (next 30 days)
         $upcomingPayments = collect();
@@ -106,14 +181,31 @@ class AccountingController extends Controller
             'periods' => $projections->pluck('projection_date')->map(fn($date) => $date->format('M Y'))->toArray(),
         ];
 
-        // Expense categories breakdown
+        // Expense categories breakdown - using ACTUAL paid expenses this month
         $categoryData = ExpenseCategory::active()
-            ->with('activeExpenseSchedules')
+            ->whereNull('parent_id') // Only top-level categories
             ->get()
-            ->map(function($category) {
+            ->map(function($category) use ($currentMonthStart, $currentMonthEnd) {
+                // Get actual paid expenses for this category this month
+                $actualAmount = ExpenseSchedule::where('payment_status', 'paid')
+                    ->where('category_id', $category->id)
+                    ->where('paid_date', '>=', $currentMonthStart)
+                    ->where('paid_date', '<=', $currentMonthEnd)
+                    ->sum('paid_amount');
+
+                // Also include subcategories
+                $subcategoryIds = $category->children()->pluck('id');
+                if ($subcategoryIds->isNotEmpty()) {
+                    $actualAmount += ExpenseSchedule::where('payment_status', 'paid')
+                        ->whereIn('category_id', $subcategoryIds)
+                        ->where('paid_date', '>=', $currentMonthStart)
+                        ->where('paid_date', '<=', $currentMonthEnd)
+                        ->sum('paid_amount');
+                }
+
                 return [
                     'name' => $category->name,
-                    'amount' => $category->monthly_amount,
+                    'amount' => $actualAmount,
                     'color' => $category->color,
                 ];
             })
@@ -125,6 +217,13 @@ class AccountingController extends Controller
             'colors' => $categoryData->pluck('color')->toArray(),
         ];
 
+        // Recent PAID expenses (for activity feed)
+        $recentExpenses = ExpenseSchedule::where('payment_status', 'paid')
+            ->with(['category', 'paidFromAccount'])
+            ->orderByDesc('paid_date')
+            ->take(5)
+            ->get();
+
         // Recent contracts
         $recentContracts = Contract::active()->latest()->take(5)->get();
 
@@ -133,8 +232,6 @@ class AccountingController extends Controller
 
         // Additional dashboard variables
         $selectedPeriod = 'monthly';
-        $incomeGrowth = 5.2;
-        $expenseGrowth = -2.1;
 
         return view('accounting::dashboard.index', compact(
             'monthlyIncome',
@@ -146,10 +243,14 @@ class AccountingController extends Controller
             'cashFlowData',
             'expenseCategories',
             'recentContracts',
+            'recentExpenses',
             'deficitPeriods',
             'selectedPeriod',
             'incomeGrowth',
-            'expenseGrowth'
+            'expenseGrowth',
+            'ytdExpenses',
+            'ytdIncome',
+            'accountsSummary'
         ));
     }
 
@@ -184,9 +285,12 @@ class AccountingController extends Controller
             default => $startDate->copy()->addMonths($duration),
         };
 
+        // Get starting balance from accounts
+        $totalAccountBalance = Account::active()->sum('current_balance');
+
         // Generate projections
         $projections = $this->projectionService
-            ->setStartingBalance(10000)
+            ->setStartingBalance($totalAccountBalance)
             ->generateProjections($startDate, $endDate, $selectedPeriod);
 
         // Prepare projection data for tables
@@ -320,8 +424,11 @@ class AccountingController extends Controller
             default => $startDate->copy()->addMonths($duration),
         };
 
+        // Get starting balance from accounts
+        $totalAccountBalance = Account::active()->sum('current_balance');
+
         $projections = $this->projectionService
-            ->setStartingBalance(10000)
+            ->setStartingBalance($totalAccountBalance)
             ->generateProjections($startDate, $endDate, $selectedPeriod);
 
         switch ($format) {
