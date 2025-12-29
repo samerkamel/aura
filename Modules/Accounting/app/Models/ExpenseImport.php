@@ -114,6 +114,20 @@ class ExpenseImport extends Model
     }
 
     /**
+     * Get unique unmapped values for a column (where corresponding _id is null).
+     */
+    public function getUnmappedValues(string $rawColumn, string $idColumn): array
+    {
+        return $this->rows()
+            ->whereNotNull($rawColumn)
+            ->where($rawColumn, '!=', '')
+            ->whereNull($idColumn)
+            ->distinct()
+            ->pluck($rawColumn)
+            ->toArray();
+    }
+
+    /**
      * Get rows grouped by a raw value.
      */
     public function getRowsGroupedBy(string $column): array

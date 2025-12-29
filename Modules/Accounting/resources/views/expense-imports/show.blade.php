@@ -118,18 +118,33 @@
 
         <!-- Value Mapping Section -->
         <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="ti tabler-link me-2"></i>Value Mapping</h6>
-                <small class="text-muted">Map imported values to existing entities. Changes apply to all matching rows.</small>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0"><i class="ti tabler-link me-2"></i>Value Mapping</h6>
+                    <small class="text-muted">Map imported values to existing entities. Changes apply to all matching rows.</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="showAllMappings">
+                    <label class="form-check-label" for="showAllMappings">Show All (including mapped)</label>
+                </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                @if($mappingCounts['types']['unmapped'] == 0 && $mappingCounts['categories']['unmapped'] == 0 && $mappingCounts['customers']['unmapped'] == 0)
+                    <div class="alert alert-success mb-0" id="allMappedAlert">
+                        <i class="ti tabler-check me-2"></i>All values have been mapped! Toggle "Show All" to review or change mappings.
+                    </div>
+                @endif
+                <div class="row" id="mappingSection">
                     <!-- Expense Type Mapping -->
                     <div class="col-md-6 col-lg-3 mb-3">
-                        <label class="form-label">Expense Types</label>
-                        @foreach($uniqueTypes as $rawType)
+                        <label class="form-label">
+                            Expense Types
+                            <span class="badge bg-label-primary ms-1" id="typesCount">{{ $mappingCounts['types']['unmapped'] }}/{{ $mappingCounts['types']['total'] }}</span>
+                        </label>
+                        {{-- Unmapped types (shown by default) --}}
+                        @foreach($unmappedTypes as $rawType)
                             @if($rawType && !in_array($rawType, ['Income', 'Investment']))
-                            <div class="input-group input-group-sm mb-2">
+                            <div class="input-group input-group-sm mb-2 mapping-item unmapped-item" data-field="expense_type">
                                 <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawType }}">{{ \Illuminate\Support\Str::limit($rawType, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="expense_type" data-raw="{{ $rawType }}">
                                     <option value="">-- Select --</option>
@@ -140,14 +155,35 @@
                             </div>
                             @endif
                         @endforeach
+                        {{-- Mapped types (hidden by default) --}}
+                        @foreach(array_diff($allTypes, $unmappedTypes) as $rawType)
+                            @if($rawType && !in_array($rawType, ['Income', 'Investment']))
+                            <div class="input-group input-group-sm mb-2 mapping-item mapped-item" data-field="expense_type" style="display: none;">
+                                <span class="input-group-text text-truncate bg-success-subtle" style="max-width: 120px;" title="{{ $rawType }}">{{ \Illuminate\Support\Str::limit($rawType, 12) }}</span>
+                                <select class="form-select form-select-sm mapping-select" data-field="expense_type" data-raw="{{ $rawType }}">
+                                    <option value="">-- Select --</option>
+                                    @foreach($expenseTypes as $type)
+                                        @php
+                                            $isSelected = $expenseImport->rows()->where('expense_type_raw', $rawType)->whereNotNull('expense_type_id')->value('expense_type_id') == $type->id;
+                                        @endphp
+                                        <option value="{{ $type->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $type->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                        @endforeach
                     </div>
 
                     <!-- Category Mapping -->
                     <div class="col-md-6 col-lg-3 mb-3">
-                        <label class="form-label">Categories</label>
-                        @foreach(array_slice($uniqueCategories, 0, 10) as $rawCategory)
+                        <label class="form-label">
+                            Categories
+                            <span class="badge bg-label-info ms-1" id="categoriesCount">{{ $mappingCounts['categories']['unmapped'] }}/{{ $mappingCounts['categories']['total'] }}</span>
+                        </label>
+                        {{-- Unmapped categories (shown by default) --}}
+                        @foreach($unmappedCategories as $rawCategory)
                             @if($rawCategory)
-                            <div class="input-group input-group-sm mb-2">
+                            <div class="input-group input-group-sm mb-2 mapping-item unmapped-item" data-field="category">
                                 <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCategory }}">{{ \Illuminate\Support\Str::limit($rawCategory, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="category" data-raw="{{ $rawCategory }}">
                                     <option value="">-- Select --</option>
@@ -158,17 +194,35 @@
                             </div>
                             @endif
                         @endforeach
-                        @if(count($uniqueCategories) > 10)
-                            <small class="text-muted">+{{ count($uniqueCategories) - 10 }} more categories</small>
-                        @endif
+                        {{-- Mapped categories (hidden by default) --}}
+                        @foreach(array_diff($allCategories, $unmappedCategories) as $rawCategory)
+                            @if($rawCategory)
+                            <div class="input-group input-group-sm mb-2 mapping-item mapped-item" data-field="category" style="display: none;">
+                                <span class="input-group-text text-truncate bg-success-subtle" style="max-width: 120px;" title="{{ $rawCategory }}">{{ \Illuminate\Support\Str::limit($rawCategory, 12) }}</span>
+                                <select class="form-select form-select-sm mapping-select" data-field="category" data-raw="{{ $rawCategory }}">
+                                    <option value="">-- Select --</option>
+                                    @foreach($categories as $category)
+                                        @php
+                                            $isSelected = $expenseImport->rows()->where('category_raw', $rawCategory)->whereNotNull('category_id')->value('category_id') == $category->id;
+                                        @endphp
+                                        <option value="{{ $category->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                        @endforeach
                     </div>
 
                     <!-- Customer Mapping -->
                     <div class="col-md-6 col-lg-3 mb-3">
-                        <label class="form-label">Customers</label>
-                        @foreach(array_slice($uniqueCustomers, 0, 10) as $rawCustomer)
+                        <label class="form-label">
+                            Customers
+                            <span class="badge bg-label-success ms-1" id="customersCount">{{ $mappingCounts['customers']['unmapped'] }}/{{ $mappingCounts['customers']['total'] }}</span>
+                        </label>
+                        {{-- Unmapped customers (shown by default) --}}
+                        @foreach($unmappedCustomers as $rawCustomer)
                             @if($rawCustomer)
-                            <div class="input-group input-group-sm mb-2">
+                            <div class="input-group input-group-sm mb-2 mapping-item unmapped-item" data-field="customer">
                                 <span class="input-group-text text-truncate" style="max-width: 120px;" title="{{ $rawCustomer }}">{{ \Illuminate\Support\Str::limit($rawCustomer, 12) }}</span>
                                 <select class="form-select form-select-sm mapping-select" data-field="customer" data-raw="{{ $rawCustomer }}">
                                     <option value="">-- Create New --</option>
@@ -179,9 +233,23 @@
                             </div>
                             @endif
                         @endforeach
-                        @if(count($uniqueCustomers) > 10)
-                            <small class="text-muted">+{{ count($uniqueCustomers) - 10 }} more customers</small>
-                        @endif
+                        {{-- Mapped customers (hidden by default) --}}
+                        @foreach(array_diff($allCustomers, $unmappedCustomers) as $rawCustomer)
+                            @if($rawCustomer)
+                            <div class="input-group input-group-sm mb-2 mapping-item mapped-item" data-field="customer" style="display: none;">
+                                <span class="input-group-text text-truncate bg-success-subtle" style="max-width: 120px;" title="{{ $rawCustomer }}">{{ \Illuminate\Support\Str::limit($rawCustomer, 12) }}</span>
+                                <select class="form-select form-select-sm mapping-select" data-field="customer" data-raw="{{ $rawCustomer }}">
+                                    <option value="">-- Create New --</option>
+                                    @foreach($customers as $customer)
+                                        @php
+                                            $isSelected = $expenseImport->rows()->where('customer_raw', $rawCustomer)->whereNotNull('customer_id')->value('customer_id') == $customer->id;
+                                        @endphp
+                                        <option value="{{ $customer->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $customer->display_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                        @endforeach
                     </div>
 
                     <!-- Bulk Actions -->
@@ -355,6 +423,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+    // Toggle show all mappings
+    const showAllToggle = document.getElementById('showAllMappings');
+    const mappedItems = document.querySelectorAll('.mapped-item');
+    const allMappedAlert = document.getElementById('allMappedAlert');
+
+    showAllToggle.addEventListener('change', function() {
+        mappedItems.forEach(item => {
+            item.style.display = this.checked ? 'flex' : 'none';
+        });
+        if (allMappedAlert) {
+            allMappedAlert.style.display = this.checked ? 'none' : 'block';
+        }
+    });
 
     // Initialize Select2 for invoice search
     $('#invoiceSelect').select2({

@@ -427,11 +427,22 @@ class ExpenseImportController extends Controller
         $accounts = Account::active()->orderBy('name')->get();
         $customers = Customer::orderBy('company_name')->get();
 
-        // Get unique raw values for mapping UI
-        $uniqueTypes = $expenseImport->getUniqueValues('expense_type_raw');
-        $uniqueCategories = $expenseImport->getUniqueValues('category_raw');
-        $uniqueSubcategories = $expenseImport->getUniqueValues('subcategory_raw');
-        $uniqueCustomers = $expenseImport->getUniqueValues('customer_raw');
+        // Get unique unmapped values for mapping UI (only show items that need mapping)
+        $unmappedTypes = $expenseImport->getUnmappedValues('expense_type_raw', 'expense_type_id');
+        $unmappedCategories = $expenseImport->getUnmappedValues('category_raw', 'category_id');
+        $unmappedCustomers = $expenseImport->getUnmappedValues('customer_raw', 'customer_id');
+
+        // Get all unique values for "show all" toggle
+        $allTypes = $expenseImport->getUniqueValues('expense_type_raw');
+        $allCategories = $expenseImport->getUniqueValues('category_raw');
+        $allCustomers = $expenseImport->getUniqueValues('customer_raw');
+
+        // Count totals for display
+        $mappingCounts = [
+            'types' => ['unmapped' => count($unmappedTypes), 'total' => count($allTypes)],
+            'categories' => ['unmapped' => count($unmappedCategories), 'total' => count($allCategories)],
+            'customers' => ['unmapped' => count($unmappedCustomers), 'total' => count($allCustomers)],
+        ];
 
         return view('accounting::expense-imports.show', compact(
             'expenseImport',
@@ -439,10 +450,13 @@ class ExpenseImportController extends Controller
             'categories',
             'accounts',
             'customers',
-            'uniqueTypes',
-            'uniqueCategories',
-            'uniqueSubcategories',
-            'uniqueCustomers'
+            'unmappedTypes',
+            'unmappedCategories',
+            'unmappedCustomers',
+            'allTypes',
+            'allCategories',
+            'allCustomers',
+            'mappingCounts'
         ));
     }
 
