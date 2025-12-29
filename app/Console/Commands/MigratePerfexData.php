@@ -227,6 +227,7 @@ class MigratePerfexData extends Command
 
         $invoices = $this->extractTableData('tblinvoices');
         $items = $this->extractTableData('tblitemable');
+        $itemTaxes = $this->extractTableData('tblitem_tax');
         $payments = $this->extractTableData('tblinvoicepaymentrecords');
 
         $this->stats['invoices'] = ['total' => count($invoices), 'created' => 0, 'skipped' => 0];
@@ -237,7 +238,7 @@ class MigratePerfexData extends Command
         $bar->start();
 
         foreach ($invoices as $invoice) {
-            $this->processInvoice($invoice, $items, $payments);
+            $this->processInvoice($invoice, $items, $itemTaxes, $payments);
             $bar->advance();
         }
 
@@ -245,7 +246,7 @@ class MigratePerfexData extends Command
         $this->newLine(2);
     }
 
-    protected function processInvoice(array $invoice, array $allItems, array $allPayments): void
+    protected function processInvoice(array $invoice, array $allItems, array $allItemTaxes, array $allPayments): void
     {
         $perfexId = $invoice['id'] ?? null;
         $clientId = $invoice['clientid'] ?? null;
@@ -325,13 +326,31 @@ class MigratePerfexData extends Command
 
             // Create items
             foreach ($invoiceItems as $index => $item) {
+                $itemId = $item['id'] ?? null;
+                $qty = (float)($item['qty'] ?? 1);
+                $rate = (float)($item['rate'] ?? 0);
+                $itemSubtotal = $qty * $rate;
+
+                // Find tax rate for this item
+                $itemTax = array_filter($allItemTaxes, function($tax) use ($itemId, $perfexId) {
+                    return ($tax['itemid'] ?? null) == $itemId
+                        && ($tax['rel_id'] ?? null) == $perfexId
+                        && ($tax['rel_type'] ?? '') === 'invoice';
+                });
+                $taxRate = !empty($itemTax) ? (float)(array_values($itemTax)[0]['taxrate'] ?? 0) : 0;
+                $taxAmount = $itemSubtotal * ($taxRate / 100);
+
                 InvoiceItem::create([
                     'invoice_id' => $newInvoice->id,
                     'description' => $item['description'] ?? 'Item',
-                    'quantity' => (float)($item['qty'] ?? 1),
-                    'unit_price' => (float)($item['rate'] ?? 0),
-                    'total' => (float)($item['qty'] ?? 1) * (float)($item['rate'] ?? 0),
-                    'sort_order' => $index,
+                    'long_description' => $item['long_description'] ?? null,
+                    'quantity' => $qty,
+                    'unit_price' => $rate,
+                    'unit' => $item['unit'] ?? null,
+                    'tax_rate' => $taxRate,
+                    'tax_amount' => $taxAmount,
+                    'total' => $itemSubtotal + $taxAmount,
+                    'sort_order' => (int)($item['item_order'] ?? $index),
                 ]);
                 $this->stats['invoice_items']['created']++;
             }

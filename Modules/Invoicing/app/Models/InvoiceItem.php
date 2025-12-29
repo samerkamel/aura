@@ -19,8 +19,12 @@ class InvoiceItem extends Model
     protected $fillable = [
         'invoice_id',
         'description',
+        'long_description',
         'quantity',
         'unit_price',
+        'unit',
+        'tax_rate',
+        'tax_amount',
         'total',
         'sort_order',
         'contract_payment_id',
@@ -29,6 +33,8 @@ class InvoiceItem extends Model
     protected $casts = [
         'quantity' => 'decimal:2',
         'unit_price' => 'decimal:2',
+        'tax_rate' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
         'total' => 'decimal:2',
         'sort_order' => 'integer',
     ];
@@ -57,17 +63,29 @@ class InvoiceItem extends Model
         parent::boot();
 
         static::saving(function ($item) {
-            $item->total = $item->quantity * $item->unit_price;
+            $subtotal = $item->quantity * $item->unit_price;
+            $item->tax_amount = $subtotal * ($item->tax_rate / 100);
+            $item->total = $subtotal + $item->tax_amount;
         });
 
         static::saved(function ($item) {
-            // Recalculate invoice totals when item is saved
-            $item->invoice->calculateTotals();
+            // Recalculate invoice totals when item is saved (skip during migration)
+            if (!app()->runningInConsole() || !str_contains(request()->server('argv')[1] ?? '', 'perfex:migrate')) {
+                $item->invoice->calculateTotals();
+            }
         });
 
         static::deleted(function ($item) {
             // Recalculate invoice totals when item is deleted
             $item->invoice->calculateTotals();
         });
+    }
+
+    /**
+     * Get the subtotal (before tax).
+     */
+    public function getSubtotalAttribute(): float
+    {
+        return $this->quantity * $this->unit_price;
     }
 }
