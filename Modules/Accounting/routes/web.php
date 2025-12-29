@@ -9,6 +9,7 @@ use Modules\Accounting\Http\Controllers\IncomeSheetController;
 use Modules\Accounting\Http\Controllers\AccountController;
 use Modules\Accounting\Http\Controllers\EstimateController;
 use Modules\Accounting\Http\Controllers\CreditNoteController;
+use Modules\Accounting\Http\Controllers\ExpenseImportController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -156,5 +157,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{creditNote}/apply', [CreditNoteController::class, 'applyToInvoice'])->name('apply');
             Route::get('/{creditNote}/pdf', [CreditNoteController::class, 'exportPdf'])->name('pdf');
         });
+
+        // Expense Import Routes
+        Route::prefix('expense-imports')->name('expense-imports.')->group(function () {
+            Route::get('/', [ExpenseImportController::class, 'index'])->name('index');
+            Route::get('/create', [ExpenseImportController::class, 'create'])->name('create');
+            Route::post('/', [ExpenseImportController::class, 'store'])->name('store');
+            Route::get('/search-invoices', [ExpenseImportController::class, 'searchInvoices'])->name('search-invoices');
+            Route::get('/{expenseImport}', [ExpenseImportController::class, 'show'])->name('show');
+            Route::delete('/{expenseImport}', [ExpenseImportController::class, 'destroy'])->name('destroy');
+            Route::get('/{expenseImport}/preview', [ExpenseImportController::class, 'preview'])->name('preview');
+            Route::post('/{expenseImport}/execute', [ExpenseImportController::class, 'execute'])->name('execute');
+            Route::post('/{expenseImport}/bulk-update', [ExpenseImportController::class, 'bulkUpdate'])->name('bulk-update');
+            Route::post('/{expenseImport}/map-value', [ExpenseImportController::class, 'mapValue'])->name('map-value');
+        });
+
+        // Expense Import Row Routes (separate for AJAX)
+        Route::patch('/expense-imports/rows/{expenseImportRow}', [ExpenseImportController::class, 'updateRow'])
+            ->name('expense-imports.rows.update');
     });
 });

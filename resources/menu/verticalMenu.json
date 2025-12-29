@@ -257,6 +257,11 @@
           "slug": "accounting-expenses-paid"
         },
         {
+          "url": "accounting/expense-imports",
+          "name": "Import Expenses",
+          "slug": "accounting-expense-imports-index"
+        },
+        {
           "url": "accounting/accounts",
           "name": "Accounts",
           "slug": "accounting-accounts-index"
