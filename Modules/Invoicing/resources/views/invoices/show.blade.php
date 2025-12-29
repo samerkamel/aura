@@ -121,10 +121,6 @@
                                     <td class="text-success">{{ $invoice->paid_date->format('M j, Y') }}</td>
                                 </tr>
                                 @endif
-                                <tr>
-                                    <td class="text-end pe-3"><strong>Business Unit:</strong></td>
-                                    <td>{{ $invoice->businessUnit->name }}</td>
-                                </tr>
                             </table>
                         </div>
                     </div>

@@ -92,6 +92,14 @@ class Invoice extends Model
     }
 
     /**
+     * Get the business unit this invoice belongs to.
+     */
+    public function businessUnit(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\HR\Models\BusinessUnit::class);
+    }
+
+    /**
      * Get the user who created this invoice.
      */
     public function createdBy(): BelongsTo
