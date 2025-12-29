@@ -27,6 +27,10 @@ class Invoice extends Model
         'subtotal',
         'tax_amount',
         'total_amount',
+        'currency',
+        'exchange_rate',
+        'subtotal_in_base',
+        'total_in_base',
         'status',
         'customer_id',
         'project_id',
@@ -49,7 +53,61 @@ class Invoice extends Model
         'tax_amount' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'exchange_rate' => 'decimal:6',
+        'subtotal_in_base' => 'decimal:2',
+        'total_in_base' => 'decimal:2',
     ];
+
+    /**
+     * Available currencies.
+     */
+    public const CURRENCIES = [
+        'EGP' => ['name' => 'Egyptian Pound', 'symbol' => 'EGP'],
+        'USD' => ['name' => 'US Dollar', 'symbol' => '$'],
+        'EUR' => ['name' => 'Euro', 'symbol' => '€'],
+        'GBP' => ['name' => 'British Pound', 'symbol' => '£'],
+        'SAR' => ['name' => 'Saudi Riyal', 'symbol' => 'SAR'],
+        'AED' => ['name' => 'UAE Dirham', 'symbol' => 'AED'],
+    ];
+
+    /**
+     * Get currency symbol.
+     */
+    public function getCurrencySymbolAttribute(): string
+    {
+        return self::CURRENCIES[$this->currency]['symbol'] ?? $this->currency;
+    }
+
+    /**
+     * Get formatted total with currency.
+     */
+    public function getFormattedTotalAttribute(): string
+    {
+        return number_format($this->total_amount, 2) . ' ' . $this->currency;
+    }
+
+    /**
+     * Get formatted total in base currency (EGP).
+     */
+    public function getFormattedTotalInBaseAttribute(): string
+    {
+        $total = $this->total_in_base ?? ($this->total_amount * $this->exchange_rate);
+        return number_format($total, 2) . ' EGP';
+    }
+
+    /**
+     * Calculate and store base currency amounts.
+     */
+    public function calculateBaseCurrencyAmounts(): void
+    {
+        if ($this->currency !== 'EGP' && $this->exchange_rate > 0) {
+            $this->subtotal_in_base = $this->subtotal * $this->exchange_rate;
+            $this->total_in_base = $this->total_amount * $this->exchange_rate;
+        } else {
+            $this->subtotal_in_base = $this->subtotal;
+            $this->total_in_base = $this->total_amount;
+        }
+    }
 
     /**
      * Get the items for this invoice.
@@ -293,9 +351,22 @@ class Invoice extends Model
     public function calculateTotals(): void
     {
         $subtotal = $this->items->sum('total');
+        $totalAmount = $subtotal + $this->tax_amount;
+
+        // Calculate base currency amounts
+        $exchangeRate = $this->exchange_rate ?? 1;
+        $subtotalInBase = ($this->currency !== 'EGP' && $exchangeRate > 0)
+            ? $subtotal * $exchangeRate
+            : $subtotal;
+        $totalInBase = ($this->currency !== 'EGP' && $exchangeRate > 0)
+            ? $totalAmount * $exchangeRate
+            : $totalAmount;
+
         $this->update([
             'subtotal' => $subtotal,
-            'total_amount' => $subtotal + $this->tax_amount,
+            'total_amount' => $totalAmount,
+            'subtotal_in_base' => $subtotalInBase,
+            'total_in_base' => $totalInBase,
         ]);
     }
 

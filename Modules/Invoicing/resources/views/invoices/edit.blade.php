@@ -104,6 +104,35 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Currency</label>
+                                        <select name="currency" id="currency" class="form-select @error('currency') is-invalid @enderror" onchange="updateCurrencyDisplay()">
+                                            @foreach(\Modules\Invoicing\Models\Invoice::CURRENCIES as $code => $info)
+                                                <option value="{{ $code }}" {{ (old('currency', $invoice->currency ?? 'EGP') == $code) ? 'selected' : '' }}>
+                                                    {{ $code }} - {{ $info['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('currency')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Exchange Rate <small class="text-muted">(to EGP)</small></label>
+                                        <input type="number" name="exchange_rate" id="exchange_rate" class="form-control @error('exchange_rate') is-invalid @enderror"
+                                               value="{{ old('exchange_rate', $invoice->exchange_rate ?? 1) }}" min="0.000001" step="0.000001" onchange="calculateGrandTotal()">
+                                        @error('exchange_rate')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">1 <span id="currency-code">{{ $invoice->currency ?? 'EGP' }}</span> = <span id="rate-display">{{ $invoice->exchange_rate ?? 1 }}</span> EGP</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -188,16 +217,23 @@
                                     <h6 class="card-title">Invoice Summary</h6>
                                     <div class="d-flex justify-content-between">
                                         <span>Subtotal:</span>
-                                        <span id="subtotal">{{ number_format($invoice->subtotal_amount, 2) }} EGP</span>
+                                        <span id="subtotal">{{ number_format($invoice->subtotal, 2) }} <span class="currency-display">{{ $invoice->currency ?? 'EGP' }}</span></span>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span>Tax:</span>
-                                        <span id="total-tax">{{ number_format($invoice->tax_amount, 2) }} EGP</span>
+                                        <span id="total-tax">{{ number_format($invoice->tax_amount, 2) }} <span class="currency-display">{{ $invoice->currency ?? 'EGP' }}</span></span>
                                     </div>
                                     <hr>
                                     <div class="d-flex justify-content-between fw-bold">
                                         <span>Total:</span>
-                                        <span id="grand-total">{{ number_format($invoice->total_amount, 2) }} EGP</span>
+                                        <span id="grand-total">{{ number_format($invoice->total_amount, 2) }} <span class="currency-display">{{ $invoice->currency ?? 'EGP' }}</span></span>
+                                    </div>
+                                    <div id="egp-equivalent" class="mt-2 text-muted small" style="{{ ($invoice->currency ?? 'EGP') === 'EGP' ? 'display:none;' : '' }}">
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Total in EGP:</span>
+                                            <span id="total-egp">{{ number_format(($invoice->total_in_base ?? $invoice->total_amount), 2) }} EGP</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -312,11 +348,57 @@ function calculateGrandTotal() {
     });
 
     const grandTotal = subtotal + totalTax;
+    const currency = document.getElementById('currency').value;
+    const exchangeRate = parseFloat(document.getElementById('exchange_rate').value) || 1;
 
-    document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' EGP';
-    document.getElementById('total-tax').textContent = totalTax.toFixed(2) + ' EGP';
-    document.getElementById('grand-total').textContent = grandTotal.toFixed(2) + ' EGP';
+    document.getElementById('subtotal').innerHTML = subtotal.toFixed(2) + ' <span class="currency-display">' + currency + '</span>';
+    document.getElementById('total-tax').innerHTML = totalTax.toFixed(2) + ' <span class="currency-display">' + currency + '</span>';
+    document.getElementById('grand-total').innerHTML = grandTotal.toFixed(2) + ' <span class="currency-display">' + currency + '</span>';
+
+    // Show EGP equivalent if not EGP
+    const egpEquivalent = document.getElementById('egp-equivalent');
+    if (currency !== 'EGP') {
+        const totalInEgp = grandTotal * exchangeRate;
+        document.getElementById('total-egp').textContent = totalInEgp.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' EGP';
+        egpEquivalent.style.display = 'block';
+    } else {
+        egpEquivalent.style.display = 'none';
+    }
 }
+
+function updateCurrencyDisplay() {
+    const currency = document.getElementById('currency').value;
+    const exchangeRate = document.getElementById('exchange_rate');
+
+    // Update currency code display
+    document.getElementById('currency-code').textContent = currency;
+
+    // Update all currency displays
+    document.querySelectorAll('.currency-display').forEach(el => {
+        el.textContent = currency;
+    });
+
+    // Update item total currency symbols
+    document.querySelectorAll('.input-group-text').forEach(el => {
+        if (el.textContent.match(/^(EGP|\$|€|£|SAR|AED)$/)) {
+            el.textContent = currency;
+        }
+    });
+
+    // If EGP, set exchange rate to 1
+    if (currency === 'EGP') {
+        exchangeRate.value = 1;
+        document.getElementById('rate-display').textContent = '1';
+    }
+
+    calculateGrandTotal();
+}
+
+// Update rate display when exchange rate changes
+document.getElementById('exchange_rate').addEventListener('input', function() {
+    document.getElementById('rate-display').textContent = this.value;
+    calculateGrandTotal();
+});
 
 // Calculate initial totals on page load
 document.addEventListener('DOMContentLoaded', function() {
