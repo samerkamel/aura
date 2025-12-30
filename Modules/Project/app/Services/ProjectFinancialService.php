@@ -208,17 +208,28 @@ class ProjectFinancialService
     public function calculateBurnRate(Project $project, int $days = 30): array
     {
         $startDate = Carbon::now()->subDays($days);
-        $costs = $project->costs()
+        $endDate = Carbon::now();
+
+        // Get recorded costs (non-labor) for the period
+        $recordedCosts = $project->costs()
+            ->where('cost_type', '!=', 'labor')
             ->where('cost_date', '>=', $startDate)
             ->sum('amount');
 
-        $dailyBurnRate = $costs / $days;
+        // Get dynamic labor costs for the period (includes PM overhead)
+        $laborCosts = $this->calculateLaborCostsFromWorklogs($project, $startDate, $endDate);
+
+        // Total costs for the period
+        $periodCosts = $recordedCosts + $laborCosts['total'];
+
+        $dailyBurnRate = $periodCosts / $days;
         $weeklyBurnRate = $dailyBurnRate * 7;
         $monthlyBurnRate = $dailyBurnRate * 30;
 
-        // Calculate runway
+        // Calculate runway using total project costs (including dynamic labor)
         $totalBudget = $project->budgets()->active()->sum('planned_amount');
-        $totalSpent = $project->costs()->sum('amount');
+        $totalProjectCosts = $this->getTotalProjectCosts($project);
+        $totalSpent = $totalProjectCosts['total'];
         $remaining = $totalBudget - $totalSpent;
         $runwayDays = $dailyBurnRate > 0 ? $remaining / $dailyBurnRate : null;
 
@@ -227,7 +238,9 @@ class ProjectFinancialService
             'weekly' => round($weeklyBurnRate, 2),
             'monthly' => round($monthlyBurnRate, 2),
             'period_days' => $days,
-            'period_total' => round($costs, 2),
+            'period_total' => round($periodCosts, 2),
+            'period_labor' => round($laborCosts['total'], 2),
+            'period_other' => round($recordedCosts, 2),
             'runway_days' => $runwayDays ? round($runwayDays) : null,
             'runway_date' => $runwayDays ? Carbon::now()->addDays($runwayDays)->format('Y-m-d') : null,
         ];
