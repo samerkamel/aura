@@ -246,13 +246,20 @@ class CompanySetting extends Model
 
     /**
      * Get the fiscal year start for a specific year.
+     * For fiscal years starting late in the year (month >= 7), the fiscal year "X"
+     * starts in calendar year "X-1". For example, FY2026 with December start
+     * begins on Dec 26, 2025.
      */
     public function getFiscalYearStartForYear(int $year): Carbon
     {
         $cycleDay = $this->cycle_start_day ?? 1;
         $fiscalMonth = $this->fiscal_year_start_month ?? 1;
 
-        return Carbon::create($year, $fiscalMonth, $cycleDay)->startOfDay();
+        // For fiscal years starting in the second half of the year (July onwards),
+        // the fiscal year named "X" starts in calendar year "X-1"
+        $calendarYear = $fiscalMonth >= 7 ? $year - 1 : $year;
+
+        return Carbon::create($calendarYear, $fiscalMonth, $cycleDay)->startOfDay();
     }
 
     /**
