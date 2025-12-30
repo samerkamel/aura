@@ -144,16 +144,13 @@
                                             </div>
                                         @endif
                                         @if($hasChildren)
-                                            <button type="button" class="btn btn-sm btn-icon btn-text-secondary collapse-toggle me-2"
-                                                    data-target-parent="{{ $category->id }}"
-                                                    title="Collapse/Expand subcategories">
-                                                <i class="ti ti-minus"></i>
-                                            </button>
-                                        @elseif($depth == 0)
-                                            {{-- Spacer to align with categories that have collapse buttons --}}
-                                            <span class="me-2" style="width: 31px; display: inline-block;"></span>
+                                            <div class="rounded me-3 collapse-toggle"
+                                                 data-target-parent="{{ $category->id }}"
+                                                 title="Click to collapse/expand subcategories"
+                                                 style="width: 12px; height: 12px; background-color: {{ $category->color }}; cursor: pointer;"></div>
+                                        @else
+                                            <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         @endif
-                                        <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
                                             <span class="d-inline-flex align-items-center gap-2">
                                                 <strong @if($category->description) data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $category->description }}" @endif style="cursor: {{ $category->description ? 'help' : 'default' }}">{{ $category->name }}</strong>
@@ -647,28 +644,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Toggle collapse for a parent category
     function toggleCollapse(parentId, collapse) {
         const parentRow = document.querySelector(`.category-row[data-category-id="${parentId}"]`);
-        const toggleBtn = parentRow?.querySelector('.collapse-toggle');
+        const toggleDot = parentRow?.querySelector('.collapse-toggle');
 
-        if (!toggleBtn) return;
+        if (!toggleDot) return;
 
         const descendants = getDescendantRows(parentId);
-        const icon = toggleBtn.querySelector('i');
 
         if (collapse) {
-            toggleBtn.dataset.collapsed = 'true';
-            icon.className = 'ti ti-plus';
+            toggleDot.dataset.collapsed = 'true';
+            // Add visual indicator for collapsed state - ring/border
+            toggleDot.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.3)';
             descendants.forEach(d => d.style.display = 'none');
         } else {
-            toggleBtn.dataset.collapsed = 'false';
-            icon.className = 'ti ti-minus';
+            toggleDot.dataset.collapsed = 'false';
+            // Remove visual indicator
+            toggleDot.style.boxShadow = 'none';
             // Re-apply visibility considering the empty filter
             applyVisibility();
         }
     }
 
-    // Individual collapse toggle buttons
-    document.querySelectorAll('.collapse-toggle').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+    // Individual collapse toggle (colored dots)
+    document.querySelectorAll('.collapse-toggle').forEach(dot => {
+        dot.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -681,9 +679,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Expand All button
     document.getElementById('expandAllBtn')?.addEventListener('click', function() {
-        document.querySelectorAll('.collapse-toggle').forEach(btn => {
-            btn.dataset.collapsed = 'false';
-            btn.querySelector('i').className = 'ti ti-minus';
+        document.querySelectorAll('.collapse-toggle').forEach(dot => {
+            dot.dataset.collapsed = 'false';
+            dot.style.boxShadow = 'none';
         });
         applyVisibility();
     });
