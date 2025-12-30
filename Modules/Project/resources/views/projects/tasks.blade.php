@@ -1,3 +1,4 @@
+@use('Illuminate\Support\Str')
 @extends('layouts/layoutMaster')
 
 @section('title', $project->name . ' - Tasks')

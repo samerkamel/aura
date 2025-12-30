@@ -1,3 +1,4 @@
+@use('Illuminate\Support\Str')
 <div class="kanban-card {{ $issue->isOverdue() ? 'issue-overdue' : '' }}" data-jira-url="{{ $issue->jira_url }}">
   <div class="d-flex justify-content-between align-items-start mb-1">
     <a href="{{ $issue->jira_url }}" target="_blank" class="issue-key text-decoration-none">
