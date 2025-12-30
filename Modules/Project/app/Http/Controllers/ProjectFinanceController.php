@@ -116,7 +116,7 @@ class ProjectFinanceController extends Controller
         $costs = $query->orderBy('cost_date', 'desc')->paginate(20);
         $costTypes = ProjectCost::COST_TYPES;
         $budgets = $project->budgets()->active()->get();
-        $employees = Employee::active()->orderBy('first_name')->get();
+        $employees = Employee::active()->orderBy('name')->get();
         $breakdown = $this->financialService->getCostBreakdown($project);
 
         return view('project::projects.finance.costs', compact(
