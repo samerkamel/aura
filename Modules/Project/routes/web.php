@@ -13,6 +13,9 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     // Jira Sync
     Route::post('/sync-jira', [ProjectController::class, 'syncFromJira'])->name('sync-jira');
 
+    // Follow-ups (must come BEFORE /{project} dynamic route)
+    Route::get('/followups', [ProjectController::class, 'followups'])->name('followups');
+
     // Reports (must come BEFORE /{project} dynamic route)
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ProjectReportController::class, 'index'])->name('index');
@@ -41,4 +44,8 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::put('/{project}/employees/update-role', [ProjectController::class, 'updateEmployeeRole'])->name('update-employee-role');
     Route::delete('/{project}/employees/unassign', [ProjectController::class, 'unassignEmployee'])->name('unassign-employee');
     Route::post('/{project}/employees/sync-worklogs', [ProjectController::class, 'syncEmployeesFromWorklogs'])->name('sync-employees-worklogs');
+
+    // Project follow-up routes
+    Route::post('/{project}/followups', [ProjectController::class, 'storeFollowup'])->name('store-followup');
+    Route::get('/{project}/followups/history', [ProjectController::class, 'getProjectFollowups'])->name('get-followups');
 });

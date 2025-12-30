@@ -20,11 +20,36 @@ class Project extends Model
         'jira_project_id',
         'needs_monthly_report',
         'is_active',
+        'last_followup_date',
+        'next_followup_date',
+        'followup_status',
     ];
 
     protected $casts = [
         'needs_monthly_report' => 'boolean',
         'is_active' => 'boolean',
+        'last_followup_date' => 'date',
+        'next_followup_date' => 'date',
+    ];
+
+    /**
+     * Follow-up status types.
+     */
+    public const FOLLOWUP_STATUSES = [
+        'up_to_date' => 'Up to Date',
+        'due_soon' => 'Due Soon',
+        'overdue' => 'Overdue',
+        'none' => 'No Follow-ups',
+    ];
+
+    /**
+     * Follow-up status colors for badges.
+     */
+    public const FOLLOWUP_STATUS_COLORS = [
+        'up_to_date' => 'success',
+        'due_soon' => 'warning',
+        'overdue' => 'danger',
+        'none' => 'secondary',
     ];
 
     /**
@@ -99,6 +124,51 @@ class Project extends Model
     {
         return $this->belongsToMany(\Modules\Accounting\Models\Contract::class, 'contract_project')
                     ->withTimestamps();
+    }
+
+    /**
+     * Get all follow-ups for this project.
+     */
+    public function followups()
+    {
+        return $this->hasMany(ProjectFollowup::class)->orderByDesc('followup_date');
+    }
+
+    /**
+     * Get the latest follow-up for this project.
+     */
+    public function latestFollowup()
+    {
+        return $this->hasOne(ProjectFollowup::class)->latestOfMany('followup_date');
+    }
+
+    /**
+     * Get follow-up status label.
+     */
+    public function getFollowupStatusLabelAttribute(): string
+    {
+        return self::FOLLOWUP_STATUSES[$this->followup_status] ?? 'Unknown';
+    }
+
+    /**
+     * Get follow-up status color for badge.
+     */
+    public function getFollowupStatusColorAttribute(): string
+    {
+        return self::FOLLOWUP_STATUS_COLORS[$this->followup_status] ?? 'secondary';
+    }
+
+    /**
+     * Check if project needs follow-up (active in past 30 days or has open tasks).
+     */
+    public function needsFollowup(): bool
+    {
+        // Has worklogs in the past 30 days
+        $hasRecentActivity = JiraWorklog::where('issue_key', 'LIKE', $this->code . '-%')
+            ->where('worklog_started', '>=', now()->subDays(30))
+            ->exists();
+
+        return $this->is_active && ($hasRecentActivity || $this->followup_status === 'overdue' || $this->followup_status === 'due_soon');
     }
 
     /**

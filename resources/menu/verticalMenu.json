@@ -157,32 +157,6 @@
       ]
     },
     {
-      "name": "Attendance Settings",
-      "icon": "menu-icon tf-icons ti ti-settings",
-      "slug": "attendance-settings",
-      "roles": [
-        "super-admin",
-        "hr-manager"
-      ],
-      "submenu": [
-        {
-          "url": "attendance/settings",
-          "name": "General Settings",
-          "slug": "attendance-settings-index"
-        },
-        {
-          "url": "attendance/rules",
-          "name": "Attendance Rules",
-          "slug": "attendance-rules-index"
-        },
-        {
-          "url": "attendance/public-holidays",
-          "name": "Public Holidays",
-          "slug": "attendance-public-holidays-index"
-        }
-      ]
-    },
-    {
       "name": "Leave Policies",
       "icon": "menu-icon tf-icons ti ti-file-text",
       "slug": "leave-policies",
@@ -211,11 +185,6 @@
           "url": "payroll/billable-hours",
           "name": "Billable Hours",
           "slug": "payroll-billable-hours-index"
-        },
-        {
-          "url": "payroll/settings",
-          "name": "Settings",
-          "slug": "payroll-settings-index"
         }
       ]
     },
@@ -264,6 +233,11 @@
           "url": "projects",
           "name": "All Projects",
           "slug": "projects-index"
+        },
+        {
+          "url": "projects/followups",
+          "name": "Follow-ups",
+          "slug": "projects-followups"
         },
         {
           "url": "projects/create",
@@ -410,27 +384,6 @@
       ]
     },
     {
-      "name": "Invoice Settings",
-      "icon": "menu-icon tf-icons ti ti-settings",
-      "slug": "invoice-settings",
-      "roles": [
-        "super-admin",
-        "finance-manager"
-      ],
-      "submenu": [
-        {
-          "url": "invoicing/admin/sequences",
-          "name": "Invoice Sequences",
-          "slug": "invoicing-sequences-index"
-        },
-        {
-          "url": "invoicing/admin/internal-sequences",
-          "name": "Internal Sequences",
-          "slug": "invoicing-internal-sequences-index"
-        }
-      ]
-    },
-    {
       "menuHeader": "Administration",
       "roles": [
         "super-admin"
@@ -498,6 +451,36 @@
           "url": "settings/company",
           "name": "Company Settings",
           "slug": "settings-company"
+        },
+        {
+          "url": "attendance/settings",
+          "name": "Attendance Settings",
+          "slug": "settings-attendance"
+        },
+        {
+          "url": "attendance/rules",
+          "name": "Attendance Rules",
+          "slug": "settings-attendance-rules"
+        },
+        {
+          "url": "attendance/public-holidays",
+          "name": "Public Holidays",
+          "slug": "settings-public-holidays"
+        },
+        {
+          "url": "payroll/settings",
+          "name": "Payroll & Jira",
+          "slug": "settings-payroll"
+        },
+        {
+          "url": "invoicing/admin/sequences",
+          "name": "Invoice Sequences",
+          "slug": "settings-invoice-sequences"
+        },
+        {
+          "url": "invoicing/admin/internal-sequences",
+          "name": "Internal Sequences",
+          "slug": "settings-internal-sequences"
         }
       ]
     }

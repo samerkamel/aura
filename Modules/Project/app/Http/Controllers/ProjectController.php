@@ -9,7 +9,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
+use Modules\Project\Models\ProjectFollowup;
 use Modules\Project\Services\JiraProjectSyncService;
+use Modules\Project\Services\ProjectFollowupService;
 
 class ProjectController extends Controller
 {
@@ -451,5 +453,79 @@ class ProjectController extends Controller
         return redirect()
             ->back()
             ->with('success', $message);
+    }
+
+    /**
+     * Display the follow-ups dashboard.
+     */
+    public function followups(ProjectFollowupService $followupService): View
+    {
+        $dashboard = $followupService->getFollowupDashboard();
+
+        return view('project::projects.followups', [
+            'projects' => $dashboard['projects'],
+            'summary' => $dashboard['summary'],
+        ]);
+    }
+
+    /**
+     * Store a new follow-up for a project.
+     */
+    public function storeFollowup(Request $request, Project $project, ProjectFollowupService $followupService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:call,email,meeting,message,other',
+            'notes' => 'required|string|max:2000',
+            'contact_person' => 'nullable|string|max:255',
+            'outcome' => 'required|in:positive,neutral,needs_attention,escalation',
+            'followup_date' => 'required|date',
+            'next_followup_date' => 'nullable|date|after_or_equal:followup_date',
+        ]);
+
+        $followupService->logFollowup($project, $validated);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Follow-up logged successfully for ' . $project->name);
+    }
+
+    /**
+     * Get follow-up history for a project (AJAX).
+     */
+    public function getProjectFollowups(Project $project, ProjectFollowupService $followupService)
+    {
+        $followups = $followupService->getProjectFollowupHistory($project, 20);
+        $activity = $followupService->getProjectActivitySummary($project);
+
+        return response()->json([
+            'followups' => $followups->map(function ($followup) {
+                return [
+                    'id' => $followup->id,
+                    'type' => $followup->type,
+                    'type_label' => $followup->type_label,
+                    'notes' => $followup->notes,
+                    'contact_person' => $followup->contact_person,
+                    'outcome' => $followup->outcome,
+                    'outcome_label' => $followup->outcome_label,
+                    'outcome_color' => $followup->outcome_color,
+                    'followup_date' => $followup->followup_date->format('Y-m-d'),
+                    'followup_date_formatted' => $followup->followup_date->format('M d, Y'),
+                    'next_followup_date' => $followup->next_followup_date?->format('Y-m-d'),
+                    'user' => $followup->user?->name ?? 'Unknown',
+                    'created_at' => $followup->created_at->diffForHumans(),
+                ];
+            }),
+            'activity' => $activity,
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'code' => $project->code,
+                'followup_status' => $project->followup_status,
+                'followup_status_label' => $project->followup_status_label,
+                'followup_status_color' => $project->followup_status_color,
+                'last_followup_date' => $project->last_followup_date?->format('M d, Y'),
+                'next_followup_date' => $project->next_followup_date?->format('M d, Y'),
+            ],
+        ]);
     }
 }
