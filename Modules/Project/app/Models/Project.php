@@ -14,9 +14,21 @@ class Project extends Model
 
     protected $fillable = [
         'customer_id',
+        'project_manager_id',
         'name',
         'code',
         'description',
+        'planned_budget',
+        'hourly_rate',
+        'currency',
+        'planned_start_date',
+        'planned_end_date',
+        'actual_start_date',
+        'actual_end_date',
+        'health_status',
+        'current_health_score',
+        'estimated_hours',
+        'billing_type',
         'jira_project_id',
         'needs_monthly_report',
         'is_active',
@@ -30,6 +42,41 @@ class Project extends Model
         'is_active' => 'boolean',
         'last_followup_date' => 'date',
         'next_followup_date' => 'date',
+        'planned_start_date' => 'date',
+        'planned_end_date' => 'date',
+        'actual_start_date' => 'date',
+        'actual_end_date' => 'date',
+        'planned_budget' => 'decimal:2',
+        'hourly_rate' => 'decimal:2',
+        'current_health_score' => 'decimal:2',
+    ];
+
+    /**
+     * Health status types.
+     */
+    public const HEALTH_STATUSES = [
+        'green' => 'On Track',
+        'yellow' => 'At Risk',
+        'red' => 'Critical',
+    ];
+
+    /**
+     * Health status colors for badges.
+     */
+    public const HEALTH_STATUS_COLORS = [
+        'green' => 'success',
+        'yellow' => 'warning',
+        'red' => 'danger',
+    ];
+
+    /**
+     * Billing types.
+     */
+    public const BILLING_TYPES = [
+        'fixed' => 'Fixed Price',
+        'hourly' => 'Hourly Rate',
+        'milestone' => 'Milestone-Based',
+        'retainer' => 'Retainer',
     ];
 
     /**
@@ -107,6 +154,93 @@ class Project extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    /**
+     * Get the project manager.
+     */
+    public function projectManager()
+    {
+        return $this->belongsTo(Employee::class, 'project_manager_id');
+    }
+
+    /**
+     * Get health snapshots for this project.
+     */
+    public function healthSnapshots()
+    {
+        return $this->hasMany(ProjectHealthSnapshot::class)->orderByDesc('snapshot_date');
+    }
+
+    /**
+     * Get the latest health snapshot.
+     */
+    public function latestHealthSnapshot()
+    {
+        return $this->hasOne(ProjectHealthSnapshot::class)->latestOfMany('snapshot_date');
+    }
+
+    /**
+     * Get health status label.
+     */
+    public function getHealthStatusLabelAttribute(): string
+    {
+        return self::HEALTH_STATUSES[$this->health_status] ?? 'Unknown';
+    }
+
+    /**
+     * Get health status color for badge.
+     */
+    public function getHealthStatusColorAttribute(): string
+    {
+        return self::HEALTH_STATUS_COLORS[$this->health_status] ?? 'secondary';
+    }
+
+    /**
+     * Get billing type label.
+     */
+    public function getBillingTypeLabelAttribute(): string
+    {
+        return self::BILLING_TYPES[$this->billing_type] ?? 'Unknown';
+    }
+
+    /**
+     * Get project progress percentage based on timeline.
+     */
+    public function getTimelineProgressAttribute(): ?int
+    {
+        if (!$this->planned_start_date || !$this->planned_end_date) {
+            return null;
+        }
+
+        $totalDays = $this->planned_start_date->diffInDays($this->planned_end_date);
+        if ($totalDays <= 0) {
+            return 100;
+        }
+
+        $elapsedDays = $this->planned_start_date->diffInDays(now());
+        $progress = min(100, max(0, round(($elapsedDays / $totalDays) * 100)));
+
+        return $progress;
+    }
+
+    /**
+     * Check if project is overdue.
+     */
+    public function isOverdue(): bool
+    {
+        return $this->planned_end_date && $this->planned_end_date->isPast() && !$this->actual_end_date;
+    }
+
+    /**
+     * Get days until deadline (negative if overdue).
+     */
+    public function getDaysUntilDeadlineAttribute(): ?int
+    {
+        if (!$this->planned_end_date) {
+            return null;
+        }
+        return now()->startOfDay()->diffInDays($this->planned_end_date->startOfDay(), false);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Project\Http\Controllers\ProjectController;
+use Modules\Project\Http\Controllers\ProjectDashboardController;
 use Modules\Project\Http\Controllers\ProjectReportController;
 
 Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group(function () {
@@ -53,4 +54,11 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/tasks', [ProjectController::class, 'tasks'])->name('tasks');
     Route::post('/{project}/tasks/sync', [ProjectController::class, 'syncIssues'])->name('sync-issues');
     Route::get('/{project}/tasks/issues', [ProjectController::class, 'getProjectIssues'])->name('get-issues');
+
+    // Project Dashboard routes
+    Route::get('/{project}/dashboard', [ProjectDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/{project}/dashboard/refresh-health', [ProjectDashboardController::class, 'refreshHealth'])->name('refresh-health');
+    Route::get('/{project}/dashboard/health-trend', [ProjectDashboardController::class, 'healthTrend'])->name('health-trend');
+    Route::get('/{project}/dashboard/activity', [ProjectDashboardController::class, 'activityFeed'])->name('activity-feed');
+    Route::get('/{project}/dashboard/team', [ProjectDashboardController::class, 'teamPerformance'])->name('team-performance');
 });
