@@ -16,14 +16,9 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#generateLaborModal">
-                <i class="ti ti-clock me-1"></i> Generate from Worklogs
-            </button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCostModal">
-                <i class="ti ti-plus me-1"></i> Record Cost
-            </button>
-        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCostModal">
+            <i class="ti ti-plus me-1"></i> Record Cost
+        </button>
     </div>
 
     <!-- Summary -->
@@ -41,7 +36,12 @@
                                     <span class="avatar avatar-lg rounded mb-2">
                                         <span class="avatar-initial bg-label-{{ $item['color'] }} rounded"><i class="ti ti-{{ $item['type'] === 'labor' ? 'users' : ($item['type'] === 'expense' ? 'receipt' : ($item['type'] === 'contractor' ? 'briefcase' : ($item['type'] === 'infrastructure' ? 'server' : ($item['type'] === 'software' ? 'app-window' : 'dots')))) }} ti-26px"></i></span>
                                     </span>
-                                    <small class="text-muted">{{ $item['label'] }}</small>
+                                    <small class="text-muted">
+                                        {{ $item['label'] }}
+                                        @if($item['is_dynamic'] ?? false)
+                                            <span class="badge bg-label-info ms-1" title="Auto-calculated from worklogs"><i class="ti ti-refresh ti-xs"></i></span>
+                                        @endif
+                                    </small>
                                     <strong>{{ number_format($item['amount'], 2) }}</strong>
                                     <small class="text-muted">{{ $item['percentage'] }}%</small>
                                 </div>
@@ -57,11 +57,62 @@
                     <div class="text-center">
                         <h2 class="mb-1">{{ number_format($breakdown['total'], 2) }}</h2>
                         <span class="text-muted">Total Costs</span>
+                        <div class="mt-2">
+                            <small class="text-muted d-block">Labor Hours: {{ number_format($breakdown['labor_hours'], 1) }}h</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Labor Cost Details (Auto-calculated) -->
+    @if(count($breakdown['labor_details']) > 0)
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title mb-0">Labor Costs <span class="badge bg-label-info ms-2"><i class="ti ti-refresh me-1"></i>Auto-calculated</span></h5>
+                <small class="text-muted">Formula: (Salary / Billable Hours This Month) × Worked Hours × 3</small>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Period</th>
+                        <th class="text-end">Salary</th>
+                        <th class="text-end">Billable Hours</th>
+                        <th class="text-end">Worked Hours</th>
+                        <th class="text-end">Hourly Rate</th>
+                        <th class="text-end">Cost (×3)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($breakdown['labor_details'] as $detail)
+                        <tr>
+                            <td>{{ $detail['employee_name'] }}</td>
+                            <td>{{ $detail['month_label'] }}</td>
+                            <td class="text-end">{{ number_format($detail['salary'], 2) }}</td>
+                            <td class="text-end">{{ number_format($detail['billable_hours'], 1) }}h</td>
+                            <td class="text-end">{{ number_format($detail['worked_hours'], 1) }}h</td>
+                            <td class="text-end">{{ number_format($detail['hourly_rate'], 2) }}/h</td>
+                            <td class="text-end fw-medium">{{ number_format($detail['cost'], 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="4"><strong>Total Labor Cost</strong></td>
+                        <td class="text-end"><strong>{{ number_format($breakdown['labor_hours'], 1) }}h</strong></td>
+                        <td></td>
+                        <td class="text-end"><strong>{{ number_format(collect($breakdown['labor_details'])->sum('cost'), 2) }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    @endif
 
     <!-- Filters -->
     <div class="card mb-4">
@@ -100,8 +151,12 @@
         </div>
     </div>
 
-    <!-- Costs Table -->
+    <!-- Other Recorded Costs Table -->
     <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Other Recorded Costs</h5>
+            <small class="text-muted">Manually recorded expenses, contractors, infrastructure, and software costs</small>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -385,42 +440,6 @@
         </div>
     </div>
 
-    <!-- Generate Labor Costs Modal -->
-    <div class="modal fade" id="generateLaborModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('projects.finance.costs.generate-labor', $project) }}" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Generate Labor Costs from Worklogs</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-muted">
-                            This will generate cost entries from worklogs that haven't been processed yet.
-                            Costs will be calculated using employee hourly rates or the project default rate.
-                        </p>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">From Date</label>
-                                <input type="date" name="start_date" class="form-control"
-                                       value="{{ now()->startOfMonth()->format('Y-m-d') }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">To Date</label>
-                                <input type="date" name="end_date" class="form-control"
-                                       value="{{ now()->format('Y-m-d') }}" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Generate Costs</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('page-script')

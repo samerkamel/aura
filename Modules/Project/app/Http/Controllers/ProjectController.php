@@ -11,10 +11,9 @@ use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectFollowup;
 use Modules\Project\Services\JiraIssueSyncService;
-use Modules\Attendance\Models\PublicHoliday;
-use Carbon\Carbon;
 use Modules\Project\Services\JiraProjectSyncService;
 use Modules\Project\Services\ProjectFollowupService;
+use Modules\Project\Services\ProjectFinancialService;
 
 class ProjectController extends Controller
 {
@@ -143,74 +142,10 @@ class ProjectController extends Controller
                 ->sum('time_spent_hours');
         }
 
-        // Calculate project cost from finance section + labor costs from worklogs
-        // Get recorded costs from project_costs table (non-labor costs)
-        $recordedCosts = $project->costs()->where('cost_type', '!=', 'labor')->sum('amount');
-
-        // Calculate labor costs from worklogs using formula:
-        // (Salary / Billable Hours This Month) × Worked Hours × 3
-        // Billable hours per day = 5 hours
-        // Billable hours this month = Working days (excluding weekends & holidays) × 5
-        $billableHoursPerDay = 5;
-
-        $lifetimeWorklogs = ($startDate && $endDate)
-            ? \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')->with('employee')->get()
-            : $worklogs;
-
-        // Get all public holidays for calculation
-        $publicHolidays = PublicHoliday::pluck('date')->map(fn($d) => $d->format('Y-m-d'))->toArray();
-
-        // Helper function to calculate billable hours for a month
-        $calculateBillableHours = function ($year, $month) use ($publicHolidays, $billableHoursPerDay) {
-            $startOfMonth = Carbon::create($year, $month, 1);
-            $endOfMonth = $startOfMonth->copy()->endOfMonth();
-            $workingDays = 0;
-
-            for ($date = $startOfMonth->copy(); $date <= $endOfMonth; $date->addDay()) {
-                // Skip weekends (Saturday = 6, Sunday = 0)
-                if ($date->dayOfWeek === Carbon::SATURDAY || $date->dayOfWeek === Carbon::SUNDAY) {
-                    continue;
-                }
-                // Skip public holidays
-                if (in_array($date->format('Y-m-d'), $publicHolidays)) {
-                    continue;
-                }
-                $workingDays++;
-            }
-
-            return $workingDays * $billableHoursPerDay;
-        };
-
-        // Calculate labor cost by grouping worklogs by employee and month
-        $laborCost = $lifetimeWorklogs->groupBy('employee_id')->sum(function ($employeeWorklogs) use ($calculateBillableHours) {
-            $employee = $employeeWorklogs->first()->employee;
-
-            if (!$employee || $employee->base_salary <= 0) {
-                return 0;
-            }
-
-            // Group by year-month and calculate cost for each month
-            return $employeeWorklogs->groupBy(function ($worklog) {
-                return $worklog->worklog_started->format('Y-m');
-            })->sum(function ($monthWorklogs) use ($employee, $calculateBillableHours) {
-                $firstWorklog = $monthWorklogs->first();
-                $year = $firstWorklog->worklog_started->year;
-                $month = $firstWorklog->worklog_started->month;
-
-                $billableHoursThisMonth = $calculateBillableHours($year, $month);
-                $workedHoursThisMonth = $monthWorklogs->sum('time_spent_hours');
-
-                if ($billableHoursThisMonth <= 0) {
-                    return 0;
-                }
-
-                // Formula: (Salary / Billable Hours This Month) × Worked Hours × 3
-                $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
-                return $hourlyRate * $workedHoursThisMonth * 3;
-            });
-        });
-
-        $projectCost = $recordedCosts + $laborCost;
+        // Calculate project cost from finance section (uses dynamic labor calculation)
+        $financialService = app(ProjectFinancialService::class);
+        $projectCosts = $financialService->getTotalProjectCosts($project);
+        $projectCost = $projectCosts['total'];
 
         return view('project::projects.show', [
             'project' => $project,

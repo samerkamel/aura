@@ -6,18 +6,150 @@ use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectBudget;
 use Modules\Project\Models\ProjectCost;
 use Modules\Project\Models\ProjectRevenue;
+use Modules\Attendance\Models\PublicHoliday;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class ProjectFinancialService
 {
     /**
+     * Billable hours per day constant.
+     */
+    private const BILLABLE_HOURS_PER_DAY = 5;
+
+    /**
+     * Calculate billable hours for a given month.
+     */
+    private function calculateBillableHoursForMonth(int $year, int $month): float
+    {
+        $publicHolidays = PublicHoliday::whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->pluck('date')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->toArray();
+
+        $startOfMonth = Carbon::create($year, $month, 1);
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $workingDays = 0;
+
+        for ($date = $startOfMonth->copy(); $date <= $endOfMonth; $date->addDay()) {
+            // Skip weekends (Saturday = 6, Sunday = 0)
+            if ($date->dayOfWeek === Carbon::SATURDAY || $date->dayOfWeek === Carbon::SUNDAY) {
+                continue;
+            }
+            // Skip public holidays
+            if (in_array($date->format('Y-m-d'), $publicHolidays)) {
+                continue;
+            }
+            $workingDays++;
+        }
+
+        return $workingDays * self::BILLABLE_HOURS_PER_DAY;
+    }
+
+    /**
+     * Calculate dynamic labor costs from worklogs.
+     * Formula: (Salary / Billable Hours This Month) × Worked Hours × 3
+     */
+    public function calculateLaborCostsFromWorklogs(Project $project, ?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $query = $project->worklogs()->with('employee');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('worklog_started', [$startDate, $endDate]);
+        }
+
+        $worklogs = $query->get();
+
+        $laborDetails = [];
+        $totalLaborCost = 0;
+        $totalHours = 0;
+
+        // Group by employee and month for accurate calculation
+        $groupedWorklogs = $worklogs->groupBy('employee_id');
+
+        foreach ($groupedWorklogs as $employeeId => $employeeWorklogs) {
+            $employee = $employeeWorklogs->first()->employee;
+
+            if (!$employee || $employee->base_salary <= 0) {
+                continue;
+            }
+
+            // Group by year-month
+            $monthlyWorklogs = $employeeWorklogs->groupBy(function ($worklog) {
+                return $worklog->worklog_started->format('Y-m');
+            });
+
+            foreach ($monthlyWorklogs as $yearMonth => $monthWorklogs) {
+                $firstWorklog = $monthWorklogs->first();
+                $year = $firstWorklog->worklog_started->year;
+                $month = $firstWorklog->worklog_started->month;
+
+                $billableHoursThisMonth = $this->calculateBillableHoursForMonth($year, $month);
+                $workedHoursThisMonth = $monthWorklogs->sum('time_spent_hours');
+
+                if ($billableHoursThisMonth <= 0) {
+                    continue;
+                }
+
+                // Formula: (Salary / Billable Hours This Month) × Worked Hours × 3
+                $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
+                $cost = $hourlyRate * $workedHoursThisMonth * 3;
+
+                $laborDetails[] = [
+                    'employee_id' => $employeeId,
+                    'employee_name' => $employee->name,
+                    'month' => $yearMonth,
+                    'month_label' => Carbon::createFromFormat('Y-m', $yearMonth)->format('M Y'),
+                    'salary' => $employee->base_salary,
+                    'billable_hours' => $billableHoursThisMonth,
+                    'worked_hours' => round($workedHoursThisMonth, 2),
+                    'hourly_rate' => round($hourlyRate, 2),
+                    'cost' => round($cost, 2),
+                ];
+
+                $totalLaborCost += $cost;
+                $totalHours += $workedHoursThisMonth;
+            }
+        }
+
+        return [
+            'total' => round($totalLaborCost, 2),
+            'total_hours' => round($totalHours, 2),
+            'details' => $laborDetails,
+        ];
+    }
+
+    /**
+     * Get total project costs (recorded + dynamic labor).
+     */
+    public function getTotalProjectCosts(Project $project): array
+    {
+        // Get recorded costs (non-labor)
+        $recordedCosts = $project->costs()->where('cost_type', '!=', 'labor')->sum('amount');
+
+        // Get dynamic labor costs from worklogs
+        $laborCosts = $this->calculateLaborCostsFromWorklogs($project);
+
+        return [
+            'recorded_costs' => round($recordedCosts, 2),
+            'labor_costs' => $laborCosts['total'],
+            'labor_hours' => $laborCosts['total_hours'],
+            'total' => round($recordedCosts + $laborCosts['total'], 2),
+        ];
+    }
+
+    /**
      * Get financial summary for a project.
      */
     public function getFinancialSummary(Project $project): array
     {
         $totalBudget = $project->budgets()->active()->sum('planned_amount');
-        $totalSpent = $project->costs()->sum('amount');
+
+        // Get total costs (recorded + dynamic labor)
+        $totalCosts = $this->getTotalProjectCosts($project);
+        $totalSpent = $totalCosts['total'];
+
         $totalRevenue = $project->revenues()->sum('amount');
         $receivedRevenue = $project->revenues()->sum('amount_received');
         $pendingRevenue = $totalRevenue - $receivedRevenue;
@@ -94,11 +226,17 @@ class ProjectFinancialService
      */
     public function getCostBreakdown(Project $project): array
     {
+        // Get recorded costs (excluding labor since we calculate it dynamically)
         $costs = $project->costs()
+            ->where('cost_type', '!=', 'labor')
             ->selectRaw('cost_type, SUM(amount) as total')
             ->groupBy('cost_type')
             ->pluck('total', 'cost_type')
             ->toArray();
+
+        // Get dynamic labor costs from worklogs
+        $laborCosts = $this->calculateLaborCostsFromWorklogs($project);
+        $costs['labor'] = $laborCosts['total'];
 
         $total = array_sum($costs);
 
@@ -111,12 +249,15 @@ class ProjectFinancialService
                 'amount' => $amount,
                 'percentage' => $total > 0 ? round(($amount / $total) * 100, 1) : 0,
                 'color' => ProjectCost::COST_TYPE_COLORS[$type] ?? 'secondary',
+                'is_dynamic' => $type === 'labor',
             ];
         }
 
         return [
             'total' => $total,
             'breakdown' => $breakdown,
+            'labor_details' => $laborCosts['details'],
+            'labor_hours' => $laborCosts['total_hours'],
         ];
     }
 
@@ -232,15 +373,22 @@ class ProjectFinancialService
     {
         $totalRevenue = $project->revenues()->sum('amount');
         $receivedRevenue = $project->revenues()->sum('amount_received');
-        $totalCosts = $project->costs()->sum('amount');
-        $laborCosts = $project->costs()->where('cost_type', 'labor')->sum('amount');
-        $nonLaborCosts = $totalCosts - $laborCosts;
+
+        // Get recorded costs (non-labor)
+        $recordedCosts = $project->costs()->where('cost_type', '!=', 'labor')->sum('amount');
+
+        // Get dynamic labor costs from worklogs
+        $laborCostsData = $this->calculateLaborCostsFromWorklogs($project);
+        $laborCosts = $laborCostsData['total'];
+        $totalHours = $laborCostsData['total_hours'];
+
+        $totalCosts = $recordedCosts + $laborCosts;
+        $nonLaborCosts = $recordedCosts;
 
         $grossProfit = $receivedRevenue - $totalCosts;
         $grossMargin = $receivedRevenue > 0 ? ($grossProfit / $receivedRevenue) * 100 : 0;
 
         // Calculate labor efficiency
-        $totalHours = $project->costs()->where('cost_type', 'labor')->sum('hours') ?: 0;
         $effectiveRate = $totalHours > 0 ? $receivedRevenue / $totalHours : 0;
         $averageCostRate = $totalHours > 0 ? $laborCosts / $totalHours : 0;
 

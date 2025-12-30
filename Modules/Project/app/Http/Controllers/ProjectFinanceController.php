@@ -97,10 +97,12 @@ class ProjectFinanceController extends Controller
      */
     public function costs(Project $project, Request $request)
     {
-        $query = $project->costs()->with(['employee', 'budget', 'creator']);
+        // Only show non-labor costs in the table (labor is calculated dynamically from worklogs)
+        $query = $project->costs()->with(['employee', 'budget', 'creator'])
+            ->where('cost_type', '!=', 'labor');
 
         // Filters
-        if ($request->filled('cost_type')) {
+        if ($request->filled('cost_type') && $request->cost_type !== 'labor') {
             $query->where('cost_type', $request->cost_type);
         }
         if ($request->filled('start_date')) {
@@ -114,7 +116,10 @@ class ProjectFinanceController extends Controller
         }
 
         $costs = $query->orderBy('cost_date', 'desc')->paginate(20);
-        $costTypes = ProjectCost::COST_TYPES;
+
+        // Remove labor from cost types dropdown (it's calculated automatically)
+        $costTypes = array_filter(ProjectCost::COST_TYPES, fn($key) => $key !== 'labor', ARRAY_FILTER_USE_KEY);
+
         $budgets = $project->budgets()->active()->get();
         $employees = Employee::active()->orderBy('name')->get();
         $breakdown = $this->financialService->getCostBreakdown($project);
