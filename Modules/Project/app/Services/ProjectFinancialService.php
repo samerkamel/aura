@@ -23,6 +23,11 @@ class ProjectFinancialService
     private const PM_OVERHEAD_PERCENTAGE = 0.20;
 
     /**
+     * Labor cost multiplier.
+     */
+    private const LABOR_COST_MULTIPLIER = 2.75;
+
+    /**
      * Calculate billable hours for a given month.
      */
     private function calculateBillableHoursForMonth(int $year, int $month): float
@@ -97,9 +102,9 @@ class ProjectFinancialService
                     continue;
                 }
 
-                // Formula: (Salary / Billable Hours This Month) × Worked Hours × 3
+                // Formula: (Salary / Billable Hours This Month) × Worked Hours × Multiplier
                 $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
-                $cost = $hourlyRate * $workedHoursThisMonth * 3;
+                $cost = $hourlyRate * $workedHoursThisMonth * self::LABOR_COST_MULTIPLIER;
 
                 $laborDetails[] = [
                     'employee_id' => $employeeId,
