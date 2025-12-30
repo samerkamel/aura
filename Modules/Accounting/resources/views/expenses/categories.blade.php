@@ -149,6 +149,9 @@
                                                     title="Collapse/Expand subcategories">
                                                 <i class="ti ti-minus"></i>
                                             </button>
+                                        @elseif($depth == 0)
+                                            {{-- Spacer to align with categories that have collapse buttons --}}
+                                            <span class="me-2" style="width: 31px; display: inline-block;"></span>
                                         @endif
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
