@@ -141,22 +141,31 @@ class ProjectController extends Controller
                 ->sum('time_spent_hours');
         }
 
-        // Calculate project cost (lifetime hours * hourly cost per employee * 3)
-        // Hourly cost = Employee Salary / 120, then multiplied by 3 for full cost
+        // Calculate project cost from finance section + labor costs from worklogs
+        // Get recorded costs from project_costs table (non-labor costs)
+        $recordedCosts = $project->costs()->where('cost_type', '!=', 'labor')->sum('amount');
+
+        // Calculate labor costs from worklogs: (salary / working_hours_per_month) * worked_hours * 3
+        // Working hours per month = 160 (standard 8 hours * 20 working days)
+        $workingHoursPerMonth = 160;
+
         $lifetimeWorklogs = ($startDate && $endDate)
             ? \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')->with('employee')->get()
             : $worklogs;
 
-        $projectCost = $lifetimeWorklogs->groupBy('employee_id')->sum(function ($employeeWorklogs) {
+        $laborCost = $lifetimeWorklogs->groupBy('employee_id')->sum(function ($employeeWorklogs) use ($workingHoursPerMonth) {
             $employee = $employeeWorklogs->first()->employee;
             $totalEmployeeHours = $employeeWorklogs->sum('time_spent_hours');
 
             if ($employee && $employee->base_salary > 0) {
-                $hourlyCost = $employee->base_salary / 120;
-                return $hourlyCost * $totalEmployeeHours * 3;
+                // Formula: (salary / working_hours_per_month) * worked_hours * 3
+                $hourlyRate = $employee->base_salary / $workingHoursPerMonth;
+                return $hourlyRate * $totalEmployeeHours * 3;
             }
             return 0;
         });
+
+        $projectCost = $recordedCosts + $laborCost;
 
         return view('project::projects.show', [
             'project' => $project,
