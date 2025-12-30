@@ -68,44 +68,120 @@
 
     <!-- Labor Cost Details (Auto-calculated) -->
     @if(count($breakdown['labor_details']) > 0)
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <h5 class="card-title mb-0">Labor Costs <span class="badge bg-label-info ms-2"><i class="ti ti-refresh me-1"></i>Auto-calculated</span></h5>
-                <small class="text-muted">Formula: (Salary / Billable Hours This Month) × Worked Hours × 3</small>
+    @php
+        // Aggregate by month
+        $monthlyTotals = collect($breakdown['labor_details'])->groupBy('month')->map(function ($items) {
+            return [
+                'month_label' => $items->first()['month_label'],
+                'hours' => $items->sum('worked_hours'),
+                'cost' => $items->sum('cost'),
+            ];
+        })->sortKeys();
+
+        // Aggregate by employee
+        $employeeTotals = collect($breakdown['labor_details'])->groupBy('employee_name')->map(function ($items) {
+            return [
+                'hours' => $items->sum('worked_hours'),
+                'cost' => $items->sum('cost'),
+            ];
+        })->sortByDesc('cost');
+    @endphp
+    <div class="row g-4 mb-4">
+        <!-- Main Labor Details Table -->
+        <div class="col-lg-9">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Labor Costs <span class="badge bg-label-info ms-2"><i class="ti ti-refresh me-1"></i>Auto-calculated</span></h5>
+                        <small class="text-muted">Formula: (Salary / Billable Hours This Month) × Worked Hours × 3</small>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Period</th>
+                                <th class="text-end">Worked Hours</th>
+                                <th class="text-end">Hourly Rate</th>
+                                <th class="text-end">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($breakdown['labor_details'] as $detail)
+                                <tr>
+                                    <td>{{ $detail['employee_name'] }}</td>
+                                    <td>{{ $detail['month_label'] }}</td>
+                                    <td class="text-end">{{ number_format($detail['worked_hours'], 1) }}h</td>
+                                    <td class="text-end">{{ number_format($detail['hourly_rate'], 2) }}/h</td>
+                                    <td class="text-end fw-medium">{{ number_format($detail['cost'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="2"><strong>Total Labor Cost</strong></td>
+                                <td class="text-end"><strong>{{ number_format($breakdown['labor_hours'], 1) }}h</strong></td>
+                                <td></td>
+                                <td class="text-end"><strong>{{ number_format(collect($breakdown['labor_details'])->sum('cost'), 2) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Period</th>
-                        <th class="text-end">Worked Hours</th>
-                        <th class="text-end">Hourly Rate</th>
-                        <th class="text-end">Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($breakdown['labor_details'] as $detail)
-                        <tr>
-                            <td>{{ $detail['employee_name'] }}</td>
-                            <td>{{ $detail['month_label'] }}</td>
-                            <td class="text-end">{{ number_format($detail['worked_hours'], 1) }}h</td>
-                            <td class="text-end">{{ number_format($detail['hourly_rate'], 2) }}/h</td>
-                            <td class="text-end fw-medium">{{ number_format($detail['cost'], 2) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr class="table-light">
-                        <td colspan="2"><strong>Total Labor Cost</strong></td>
-                        <td class="text-end"><strong>{{ number_format($breakdown['labor_hours'], 1) }}h</strong></td>
-                        <td></td>
-                        <td class="text-end"><strong>{{ number_format(collect($breakdown['labor_details'])->sum('cost'), 2) }}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
+
+        <!-- Summary Tables -->
+        <div class="col-lg-3">
+            <!-- Monthly Summary -->
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="card-title mb-0"><i class="ti ti-calendar me-1"></i> By Month</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th class="text-end">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($monthlyTotals as $month)
+                                <tr>
+                                    <td>{{ $month['month_label'] }}</td>
+                                    <td class="text-end">{{ number_format($month['cost'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Employee Summary -->
+            <div class="card">
+                <div class="card-header py-3">
+                    <h6 class="card-title mb-0"><i class="ti ti-users me-1"></i> By Employee</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th class="text-end">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($employeeTotals as $name => $data)
+                                <tr>
+                                    <td>{{ $name }}</td>
+                                    <td class="text-end">{{ number_format($data['cost'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     @endif
