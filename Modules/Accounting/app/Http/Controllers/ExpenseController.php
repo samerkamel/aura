@@ -1395,7 +1395,8 @@ class ExpenseController extends Controller
             $monthsElapsed = 12; // Past fiscal year - full year elapsed
         } else {
             // Current fiscal year - calculate months from fiscal year start to today
-            $monthsElapsed = $fiscalYearStart->diffInMonths($today) + 1;
+            // diffInMonths can return float in some Carbon versions, so floor it and add 1
+            $monthsElapsed = (int) floor($fiscalYearStart->diffInMonths($today)) + 1;
             // Cap at 12 months
             $monthsElapsed = min($monthsElapsed, 12);
         }
