@@ -81,11 +81,9 @@
                     <tr>
                         <th>Employee</th>
                         <th>Period</th>
-                        <th class="text-end">Salary</th>
-                        <th class="text-end">Billable Hours</th>
                         <th class="text-end">Worked Hours</th>
                         <th class="text-end">Hourly Rate</th>
-                        <th class="text-end">Cost (×3)</th>
+                        <th class="text-end">Cost</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,8 +91,6 @@
                         <tr>
                             <td>{{ $detail['employee_name'] }}</td>
                             <td>{{ $detail['month_label'] }}</td>
-                            <td class="text-end">{{ number_format($detail['salary'], 2) }}</td>
-                            <td class="text-end">{{ number_format($detail['billable_hours'], 1) }}h</td>
                             <td class="text-end">{{ number_format($detail['worked_hours'], 1) }}h</td>
                             <td class="text-end">{{ number_format($detail['hourly_rate'], 2) }}/h</td>
                             <td class="text-end fw-medium">{{ number_format($detail['cost'], 2) }}</td>
@@ -103,7 +99,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="table-light">
-                        <td colspan="4"><strong>Total Labor Cost</strong></td>
+                        <td colspan="2"><strong>Total Labor Cost</strong></td>
                         <td class="text-end"><strong>{{ number_format($breakdown['labor_hours'], 1) }}h</strong></td>
                         <td></td>
                         <td class="text-end"><strong>{{ number_format(collect($breakdown['labor_details'])->sum('cost'), 2) }}</strong></td>
