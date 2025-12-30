@@ -34,9 +34,8 @@
     padding-bottom: 1rem;
   }
   .kanban-column {
-    flex: 1;
-    min-width: 300px;
-    max-width: 350px;
+    flex: 0 0 280px;
+    min-width: 280px;
   }
   .kanban-column-header {
     padding: 0.75rem 1rem;
@@ -288,59 +287,43 @@
   @elseif($view === 'kanban')
     <!-- Kanban Board -->
     <div class="kanban-board">
-      <!-- To Do Column -->
-      <div class="kanban-column">
-        <div class="kanban-column-header todo">
-          <span><i class="ti ti-circle me-2"></i>To Do</span>
-          <span class="badge bg-light text-dark">{{ count($issues['todo']) }}</span>
+      @forelse($issues as $statusKey => $column)
+        @php
+          $categoryClass = match($column['category']) {
+            'new' => 'todo',
+            'indeterminate' => 'in-progress',
+            'done' => 'done',
+            default => 'in-progress'
+          };
+          $categoryIcon = match($column['category']) {
+            'new' => 'ti-circle',
+            'indeterminate' => 'ti-loader',
+            'done' => 'ti-check',
+            default => 'ti-loader'
+          };
+        @endphp
+        <div class="kanban-column">
+          <div class="kanban-column-header {{ $categoryClass }}">
+            <span><i class="ti {{ $categoryIcon }} me-2"></i>{{ $column['name'] }}</span>
+            <span class="badge bg-light text-dark">{{ count($column['issues']) }}</span>
+          </div>
+          <div class="kanban-column-body">
+            @forelse($column['issues'] as $issue)
+              @include('project::projects.partials.kanban-card', ['issue' => $issue])
+            @empty
+              <div class="text-center text-muted py-4">
+                <i class="ti {{ $categoryIcon }} mb-2"></i>
+                <p class="mb-0 small">No items</p>
+              </div>
+            @endforelse
+          </div>
         </div>
-        <div class="kanban-column-body">
-          @forelse($issues['todo'] as $issue)
-            @include('project::projects.partials.kanban-card', ['issue' => $issue])
-          @empty
-            <div class="text-center text-muted py-4">
-              <i class="ti ti-checkbox mb-2"></i>
-              <p class="mb-0 small">No items</p>
-            </div>
-          @endforelse
+      @empty
+        <div class="col-12 text-center py-5">
+          <i class="ti ti-clipboard-list ti-xl text-muted mb-3"></i>
+          <p class="text-muted">No issues found. Click "Sync from Jira" to fetch issues.</p>
         </div>
-      </div>
-
-      <!-- In Progress Column -->
-      <div class="kanban-column">
-        <div class="kanban-column-header in-progress">
-          <span><i class="ti ti-loader me-2"></i>In Progress</span>
-          <span class="badge bg-light text-dark">{{ count($issues['in_progress']) }}</span>
-        </div>
-        <div class="kanban-column-body">
-          @forelse($issues['in_progress'] as $issue)
-            @include('project::projects.partials.kanban-card', ['issue' => $issue])
-          @empty
-            <div class="text-center text-muted py-4">
-              <i class="ti ti-loader mb-2"></i>
-              <p class="mb-0 small">No items</p>
-            </div>
-          @endforelse
-        </div>
-      </div>
-
-      <!-- Done Column -->
-      <div class="kanban-column">
-        <div class="kanban-column-header done">
-          <span><i class="ti ti-check me-2"></i>Done</span>
-          <span class="badge bg-light text-dark">{{ count($issues['done']) }}</span>
-        </div>
-        <div class="kanban-column-body">
-          @forelse($issues['done'] as $issue)
-            @include('project::projects.partials.kanban-card', ['issue' => $issue])
-          @empty
-            <div class="text-center text-muted py-4">
-              <i class="ti ti-check mb-2"></i>
-              <p class="mb-0 small">No items</p>
-            </div>
-          @endforelse
-        </div>
-      </div>
+      @endforelse
     </div>
   @else
     <!-- List View -->

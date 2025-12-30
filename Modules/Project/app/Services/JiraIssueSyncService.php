@@ -314,7 +314,7 @@ class JiraIssueSyncService
     }
 
     /**
-     * Get issues for Kanban view.
+     * Get issues for Kanban view grouped by actual status.
      */
     public function getIssuesForKanban(Project $project): array
     {
@@ -323,11 +323,31 @@ class JiraIssueSyncService
             ->orderBy('jira_updated_at', 'desc')
             ->get();
 
-        return [
-            'todo' => $issues->where('status_category', 'new')->values(),
-            'in_progress' => $issues->where('status_category', 'indeterminate')->values(),
-            'done' => $issues->where('status_category', 'done')->values(),
-        ];
+        // Group by actual status
+        $grouped = $issues->groupBy('status');
+
+        // Get unique statuses with their categories for ordering
+        $statusOrder = $project->jiraIssues()
+            ->select('status', 'status_category')
+            ->distinct()
+            ->get()
+            ->sortBy(function ($item) {
+                // Order: new (To Do) -> indeterminate (In Progress) -> done
+                $categoryOrder = ['new' => 0, 'indeterminate' => 1, 'done' => 2];
+                return $categoryOrder[$item->status_category] ?? 1;
+            });
+
+        $columns = [];
+        foreach ($statusOrder as $statusInfo) {
+            $status = $statusInfo->status;
+            $columns[$status] = [
+                'name' => $status,
+                'category' => $statusInfo->status_category,
+                'issues' => $grouped->get($status, collect())->values(),
+            ];
+        }
+
+        return $columns;
     }
 
     /**
