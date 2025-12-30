@@ -365,25 +365,31 @@ class ProjectFinancialService
      */
     public function generateLaborCostsFromWorklogs(Project $project, Carbon $startDate, Carbon $endDate): int
     {
-        // Get worklogs for the project in the date range
+        // Get existing worklog IDs that already have costs
+        $existingWorklogIds = ProjectCost::where('project_id', $project->id)
+            ->where('reference_type', 'worklog')
+            ->pluck('reference_id')
+            ->toArray();
+
+        // Get worklogs for the project in the date range that don't have costs yet
         $worklogs = $project->worklogs()
-            ->whereBetween('started_at', [$startDate, $endDate])
-            ->whereDoesntHave('projectCost')
+            ->whereBetween('worklog_started', [$startDate, $endDate])
+            ->whereNotIn('id', $existingWorklogIds)
             ->with('employee')
             ->get();
 
         $count = 0;
         foreach ($worklogs as $worklog) {
             $hourlyRate = $worklog->employee->hourly_rate ?? $project->hourly_rate ?? 0;
-            $hours = $worklog->time_spent_seconds / 3600;
+            $hours = $worklog->time_spent_hours;
             $amount = $hours * $hourlyRate;
 
             ProjectCost::create([
                 'project_id' => $project->id,
                 'cost_type' => 'labor',
-                'description' => "Worklog: {$worklog->summary}",
+                'description' => "Worklog: {$worklog->issue_summary}",
                 'amount' => $amount,
-                'cost_date' => $worklog->started_at->toDateString(),
+                'cost_date' => $worklog->worklog_started->toDateString(),
                 'employee_id' => $worklog->employee_id,
                 'hours' => $hours,
                 'hourly_rate' => $hourlyRate,

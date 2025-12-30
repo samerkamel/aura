@@ -51,8 +51,8 @@
                                     'loss' => 'Loss',
                                 ];
                             @endphp
-                            <div class="avatar avatar-xl bg-label-{{ $statusColors[$profitability['profitability_status']] }} rounded-circle mb-2">
-                                <i class="ti ti-chart-pie ti-32px"></i>
+                            <div class="avatar avatar-xl rounded-circle mb-2">
+                                <span class="avatar-initial bg-label-{{ $statusColors[$profitability['profitability_status']] }} rounded-circle"><i class="ti ti-chart-pie ti-32px"></i></span>
                             </div>
                             <h5 class="mb-0">{{ $statusLabels[$profitability['profitability_status']] }}</h5>
                             <small class="text-muted">Profitability Status</small>

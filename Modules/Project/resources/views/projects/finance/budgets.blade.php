@@ -26,8 +26,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <span class="avatar avatar-lg bg-label-primary rounded me-3">
-                            <i class="ti ti-wallet ti-26px"></i>
+                        <span class="avatar avatar-lg rounded me-3">
+                            <span class="avatar-initial bg-label-primary rounded"><i class="ti ti-wallet ti-26px"></i></span>
                         </span>
                         <div>
                             <span class="text-muted d-block">Total Planned</span>
@@ -41,8 +41,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <span class="avatar avatar-lg bg-label-warning rounded me-3">
-                            <i class="ti ti-receipt ti-26px"></i>
+                        <span class="avatar avatar-lg rounded me-3">
+                            <span class="avatar-initial bg-label-warning rounded"><i class="ti ti-receipt ti-26px"></i></span>
                         </span>
                         <div>
                             <span class="text-muted d-block">Total Spent</span>
@@ -56,8 +56,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <span class="avatar avatar-lg bg-label-success rounded me-3">
-                            <i class="ti ti-coin ti-26px"></i>
+                        <span class="avatar avatar-lg rounded me-3">
+                            <span class="avatar-initial bg-label-success rounded"><i class="ti ti-coin ti-26px"></i></span>
                         </span>
                         <div>
                             <span class="text-muted d-block">Remaining</span>
@@ -73,8 +73,8 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <span class="avatar avatar-lg bg-label-info rounded me-3">
-                            <i class="ti ti-percentage ti-26px"></i>
+                        <span class="avatar avatar-lg rounded me-3">
+                            <span class="avatar-initial bg-label-info rounded"><i class="ti ti-percentage ti-26px"></i></span>
                         </span>
                         <div>
                             <span class="text-muted d-block">Utilization</span>

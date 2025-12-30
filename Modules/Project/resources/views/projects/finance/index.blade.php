@@ -47,8 +47,8 @@
                                 </span>
                             </div>
                         </div>
-                        <span class="avatar avatar-lg bg-label-primary rounded">
-                            <i class="ti ti-wallet ti-26px"></i>
+                        <span class="avatar avatar-lg rounded">
+                            <span class="avatar-initial bg-label-primary rounded"><i class="ti ti-wallet ti-26px"></i></span>
                         </span>
                     </div>
                 </div>
@@ -64,8 +64,8 @@
                                 <h4 class="mb-0 me-2">{{ number_format($dashboard['summary']['total_spent'], 2) }}</h4>
                             </div>
                         </div>
-                        <span class="avatar avatar-lg bg-label-warning rounded">
-                            <i class="ti ti-receipt ti-26px"></i>
+                        <span class="avatar avatar-lg rounded">
+                            <span class="avatar-initial bg-label-warning rounded"><i class="ti ti-receipt ti-26px"></i></span>
                         </span>
                     </div>
                 </div>
@@ -86,8 +86,8 @@
                                 @endif
                             </div>
                         </div>
-                        <span class="avatar avatar-lg bg-label-success rounded">
-                            <i class="ti ti-cash ti-26px"></i>
+                        <span class="avatar avatar-lg rounded">
+                            <span class="avatar-initial bg-label-success rounded"><i class="ti ti-cash ti-26px"></i></span>
                         </span>
                     </div>
                 </div>
@@ -108,8 +108,8 @@
                                 </span>
                             </div>
                         </div>
-                        <span class="avatar avatar-lg bg-label-{{ $dashboard['summary']['is_profitable'] ? 'success' : 'danger' }} rounded">
-                            <i class="ti ti-chart-line ti-26px"></i>
+                        <span class="avatar avatar-lg rounded">
+                            <span class="avatar-initial bg-label-{{ $dashboard['summary']['is_profitable'] ? 'success' : 'danger' }} rounded"><i class="ti ti-chart-line ti-26px"></i></span>
                         </span>
                     </div>
                 </div>

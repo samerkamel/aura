@@ -38,8 +38,8 @@
                         @foreach($breakdown['breakdown'] as $item)
                             <div class="col-6 col-md-4 col-lg-2 mb-3">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <span class="avatar avatar-lg bg-label-{{ $item['color'] }} rounded mb-2">
-                                        <i class="ti ti-{{ $item['type'] === 'labor' ? 'users' : ($item['type'] === 'expense' ? 'receipt' : ($item['type'] === 'contractor' ? 'briefcase' : ($item['type'] === 'infrastructure' ? 'server' : ($item['type'] === 'software' ? 'app-window' : 'dots')))) }} ti-26px"></i>
+                                    <span class="avatar avatar-lg rounded mb-2">
+                                        <span class="avatar-initial bg-label-{{ $item['color'] }} rounded"><i class="ti ti-{{ $item['type'] === 'labor' ? 'users' : ($item['type'] === 'expense' ? 'receipt' : ($item['type'] === 'contractor' ? 'briefcase' : ($item['type'] === 'infrastructure' ? 'server' : ($item['type'] === 'software' ? 'app-window' : 'dots')))) }} ti-26px"></i></span>
                                     </span>
                                     <small class="text-muted">{{ $item['label'] }}</small>
                                     <strong>{{ number_format($item['amount'], 2) }}</strong>

@@ -80,7 +80,8 @@
       "Bash(Modules/Accounting/resources/views/expense-imports/ )",
       "Bash(resources/menu/verticalMenu.json)",
       "Bash(wc:*)",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -100 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A 10 ''Jira issue sync error''\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -100 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A 10 ''Jira issue sync error''\")",
+      "Bash(python3:*)"
     ],
     "deny": []
   }
