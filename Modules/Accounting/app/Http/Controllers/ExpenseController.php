@@ -1334,6 +1334,9 @@ class ExpenseController extends Controller
         $currentYear = (int) $request->get('year', date('Y'));
         $availableYears = range(date('Y') - 2, date('Y') + 2);
 
+        // Get company settings for fiscal year calculation
+        $companySettings = \Modules\Settings\Models\CompanySetting::getSettings();
+
         // Get products with their budgets for the year
         $products = \App\Models\Product::with(['budgets' => function ($query) use ($currentYear) {
             $query->where('budget_year', $currentYear);
@@ -1375,17 +1378,26 @@ class ExpenseController extends Controller
             ->mainCategories()
             ->get();
 
-        // Calculate YTD values for each category
-        $isCurrentYear = $currentYear == (int) date('Y');
-        $isFutureYear = $currentYear > (int) date('Y');
+        // Calculate fiscal year dates and months elapsed
+        $today = \Carbon\Carbon::today();
+        $fiscalYearStart = $companySettings->getFiscalYearStartForYear($currentYear);
+        $fiscalYearEnd = $companySettings->getFiscalYearEndForYear($currentYear);
 
-        // Calculate months elapsed based on year type
+        // Determine if we're in the current, past, or future fiscal year
+        $isFutureYear = $today->lt($fiscalYearStart);
+        $isPastYear = $today->gt($fiscalYearEnd);
+        $isCurrentYear = !$isFutureYear && !$isPastYear;
+
+        // Calculate months elapsed based on fiscal year
         if ($isFutureYear) {
-            $monthsElapsed = 0; // Future year - no months elapsed yet
-        } elseif ($isCurrentYear) {
-            $monthsElapsed = (int) date('n'); // Current year - use current month
+            $monthsElapsed = 0; // Future fiscal year - no months elapsed yet
+        } elseif ($isPastYear) {
+            $monthsElapsed = 12; // Past fiscal year - full year elapsed
         } else {
-            $monthsElapsed = 12; // Past year - full year elapsed
+            // Current fiscal year - calculate months from fiscal year start to today
+            $monthsElapsed = $fiscalYearStart->diffInMonths($today) + 1;
+            // Cap at 12 months
+            $monthsElapsed = min($monthsElapsed, 12);
         }
 
         // Add tier and budget info to main categories for sorting
