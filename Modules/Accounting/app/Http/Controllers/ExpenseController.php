@@ -1378,7 +1378,15 @@ class ExpenseController extends Controller
         // Calculate YTD values for each category
         $isCurrentYear = $currentYear == (int) date('Y');
         $isFutureYear = $currentYear > (int) date('Y');
-        $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
+
+        // Calculate months elapsed based on year type
+        if ($isFutureYear) {
+            $monthsElapsed = 0; // Future year - no months elapsed yet
+        } elseif ($isCurrentYear) {
+            $monthsElapsed = (int) date('n'); // Current year - use current month
+        } else {
+            $monthsElapsed = 12; // Past year - full year elapsed
+        }
 
         // Add tier and budget info to main categories for sorting
         foreach ($mainCategories as $mainCategory) {
