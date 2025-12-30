@@ -341,24 +341,58 @@ class ProjectFinancialService
     }
 
     /**
-     * Get budget breakdown by category.
+     * Get budget breakdown by category, including dynamic labor costs.
      */
     public function getBudgetBreakdown(Project $project): array
     {
+        // Get dynamic labor costs from worklogs (includes PM overhead)
+        $laborCosts = $this->calculateLaborCostsFromWorklogs($project);
+
         $budgets = $project->budgets()
             ->active()
             ->get()
-            ->map(function ($budget) {
+            ->map(function ($budget) use ($laborCosts) {
+                // Add labor costs to 'development' category since that's where labor typically goes
+                $actualAmount = $budget->actual_amount;
+                if ($budget->category === 'development') {
+                    $actualAmount += $laborCosts['total'];
+                }
+
+                $remaining = $budget->planned_amount - $actualAmount;
+                $utilization = $budget->planned_amount > 0
+                    ? round(($actualAmount / $budget->planned_amount) * 100, 1)
+                    : 0;
+
+                // Determine status based on utilization
+                $status = 'healthy';
+                if ($utilization >= 100) {
+                    $status = 'over';
+                } elseif ($utilization >= 90) {
+                    $status = 'critical';
+                } elseif ($utilization >= 75) {
+                    $status = 'warning';
+                }
+
+                $statusColor = match ($status) {
+                    'over' => 'danger',
+                    'critical' => 'danger',
+                    'warning' => 'warning',
+                    'healthy' => 'success',
+                    default => 'secondary',
+                };
+
                 return [
                     'id' => $budget->id,
                     'category' => $budget->category,
                     'category_label' => $budget->category_label,
                     'planned' => $budget->planned_amount,
-                    'actual' => $budget->actual_amount,
-                    'remaining' => $budget->remaining_amount,
-                    'utilization' => $budget->utilization_percentage,
-                    'status' => $budget->status,
-                    'status_color' => $budget->status_color,
+                    'actual' => $actualAmount,
+                    'recorded_costs' => $budget->actual_amount,
+                    'labor_costs' => $budget->category === 'development' ? $laborCosts['total'] : 0,
+                    'remaining' => $remaining,
+                    'utilization' => $utilization,
+                    'status' => $status,
+                    'status_color' => $statusColor,
                     'category_color' => $budget->category_color,
                 ];
             });
@@ -371,6 +405,7 @@ class ProjectFinancialService
             'total_actual' => $totalActual,
             'total_remaining' => $totalPlanned - $totalActual,
             'overall_utilization' => $totalPlanned > 0 ? round(($totalActual / $totalPlanned) * 100, 1) : 0,
+            'labor_costs_total' => $laborCosts['total'],
             'categories' => $budgets->toArray(),
         ];
     }
