@@ -87,37 +87,41 @@ class JiraIssueSyncService
      */
     public function fetchProjectIssues(string $projectCode, int $maxResults = 500): array
     {
-        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/search';
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/search/jql';
 
         $allIssues = [];
-        $startAt = 0;
-        $batchSize = 100;
+        $nextPageToken = null;
 
         do {
+            $requestBody = [
+                'jql' => "project = {$projectCode} ORDER BY updated DESC",
+                'maxResults' => min(100, $maxResults - count($allIssues)),
+                'fields' => [
+                    'summary',
+                    'description',
+                    'status',
+                    'issuetype',
+                    'priority',
+                    'assignee',
+                    'reporter',
+                    'parent',
+                    'customfield_10014', // Epic link (common field)
+                    'customfield_10016', // Story points (common field)
+                    'duedate',
+                    'labels',
+                    'components',
+                    'created',
+                    'updated',
+                ],
+            ];
+
+            if ($nextPageToken) {
+                $requestBody['nextPageToken'] = $nextPageToken;
+            }
+
             $response = Http::withBasicAuth($this->email, $this->apiToken)
                 ->timeout(60)
-                ->post($url, [
-                    'jql' => "project = {$projectCode} ORDER BY updated DESC",
-                    'maxResults' => min($batchSize, $maxResults - count($allIssues)),
-                    'startAt' => $startAt,
-                    'fields' => [
-                        'summary',
-                        'description',
-                        'status',
-                        'issuetype',
-                        'priority',
-                        'assignee',
-                        'reporter',
-                        'parent',
-                        'customfield_10014', // Epic link (common field)
-                        'customfield_10016', // Story points (common field)
-                        'duedate',
-                        'labels',
-                        'components',
-                        'created',
-                        'updated',
-                    ],
-                ]);
+                ->post($url, $requestBody);
 
             if (!$response->successful()) {
                 Log::error('Jira API error fetching issues', [
@@ -131,10 +135,9 @@ class JiraIssueSyncService
             $issues = $data['issues'] ?? [];
             $allIssues = array_merge($allIssues, $issues);
 
-            $startAt += count($issues);
-            $total = $data['total'] ?? 0;
+            $nextPageToken = $data['nextPageToken'] ?? null;
 
-        } while (count($issues) === $batchSize && count($allIssues) < $maxResults && $startAt < $total);
+        } while ($nextPageToken && count($allIssues) < $maxResults);
 
         return $allIssues;
     }

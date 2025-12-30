@@ -78,7 +78,8 @@
       "Bash(Modules/Accounting/database/migrations/2025_12_29_190000_create_expense_imports_table.php )",
       "Bash(Modules/Accounting/database/seeders/ImportAccountSeeder.php )",
       "Bash(Modules/Accounting/resources/views/expense-imports/ )",
-      "Bash(resources/menu/verticalMenu.json)"
+      "Bash(resources/menu/verticalMenu.json)",
+      "Bash(wc:*)"
     ],
     "deny": []
   }
