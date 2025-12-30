@@ -580,12 +580,12 @@ class ProjectController extends Controller
 
             $message = "Sync completed: {$results['created']} created, {$results['updated']} updated.";
             if (!empty($results['errors'])) {
-                $message .= " " . count($results['errors']) . " errors occurred.";
+                $message .= " Errors: " . implode('; ', array_slice($results['errors'], 0, 5));
             }
 
             return redirect()
                 ->back()
-                ->with('success', $message);
+                ->with(!empty($results['errors']) ? 'warning' : 'success', $message);
         } catch (\Exception $e) {
             return redirect()
                 ->back()

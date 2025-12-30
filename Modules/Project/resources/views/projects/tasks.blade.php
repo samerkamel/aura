@@ -148,6 +148,13 @@
     </div>
   @endif
 
+  @if (session('warning'))
+    <div class="alert alert-warning alert-dismissible mb-4" role="alert">
+      {{ session('warning') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
   <!-- Project Header -->
   <div class="project-header">
     <div class="d-flex justify-content-between align-items-center">
