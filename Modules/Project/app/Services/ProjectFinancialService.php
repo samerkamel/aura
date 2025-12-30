@@ -305,7 +305,7 @@ class ProjectFinancialService
         return $project->revenues()
             ->where('status', '!=', 'received')
             ->where('due_date', '<', Carbon::now())
-            ->where('outstanding_amount', '>', 0)
+            ->whereRaw('(amount - amount_received) > 0')
             ->orderBy('due_date')
             ->get();
     }

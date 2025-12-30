@@ -3,11 +3,11 @@
 @section('title', $project->name . ' - Dashboard')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
+@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
 @endsection
 
 @section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+@vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
 @endsection
 
 @section('page-style')
