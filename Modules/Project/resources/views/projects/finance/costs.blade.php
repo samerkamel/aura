@@ -143,6 +143,7 @@
                         <thead>
                             <tr>
                                 <th>Month</th>
+                                <th class="text-end">Hours</th>
                                 <th class="text-end">Cost</th>
                             </tr>
                         </thead>
@@ -150,6 +151,7 @@
                             @foreach($monthlyTotals as $month)
                                 <tr>
                                     <td>{{ $month['month_label'] }}</td>
+                                    <td class="text-end">{{ number_format($month['hours'], 1) }}h</td>
                                     <td class="text-end">{{ number_format($month['cost'], 2) }}</td>
                                 </tr>
                             @endforeach
@@ -168,6 +170,7 @@
                         <thead>
                             <tr>
                                 <th>Employee</th>
+                                <th class="text-end">Hours</th>
                                 <th class="text-end">Cost</th>
                             </tr>
                         </thead>
@@ -175,6 +178,7 @@
                             @foreach($employeeTotals as $name => $data)
                                 <tr>
                                     <td>{{ $name }}</td>
+                                    <td class="text-end">{{ number_format($data['hours'], 1) }}h</td>
                                     <td class="text-end">{{ number_format($data['cost'], 2) }}</td>
                                 </tr>
                             @endforeach
