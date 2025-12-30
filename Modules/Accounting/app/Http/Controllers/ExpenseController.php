@@ -442,11 +442,18 @@ class ExpenseController extends Controller
         $isCurrentYear = now()->between($fiscalYearStart, $fiscalYearEnd);
         $isFutureYear = now()->lt($fiscalYearStart);
 
-        // For current fiscal year: months elapsed since fiscal year start
+        // For current fiscal year: count months elapsed since fiscal year start
         // For past/future years: full 12 months
         if ($isCurrentYear) {
-            $monthsElapsed = (int) ceil($fiscalYearStart->diffInMonths(now()) + 1);
-            $monthsElapsed = min($monthsElapsed, 12); // Cap at 12
+            // Count complete months plus current month
+            // Dec 26, 2025 to Dec 30, 2025 = 0 complete months, but we're in month 1
+            $monthsElapsed = 1;
+            $checkDate = $fiscalYearStart->copy();
+            while ($checkDate->copy()->addMonth()->lte(now())) {
+                $checkDate->addMonth();
+                $monthsElapsed++;
+                if ($monthsElapsed >= 12) break;
+            }
         } else {
             $monthsElapsed = 12;
         }
