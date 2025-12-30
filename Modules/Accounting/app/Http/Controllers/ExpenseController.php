@@ -435,14 +435,21 @@ class ExpenseController extends Controller
             ->mainCategories()
             ->get();
 
-        // Calculate YTD values for each category (calendar year based)
-        $isCurrentYear = $currentYear == (int) date('Y');
-        $isFutureYear = $currentYear > (int) date('Y');
+        // Get fiscal year dates for the budget year
+        [$fiscalYearStart, $fiscalYearEnd] = $this->getFiscalYearDatesForBudgetYear($currentYear);
 
-        // For current year: use current month number (1-12)
-        // For past years: full 12 months
-        // For future years: full 12 months (projection)
-        $monthsElapsed = $isCurrentYear ? (int) date('n') : 12;
+        // Calculate if this is current, past, or future fiscal year
+        $isCurrentYear = now()->between($fiscalYearStart, $fiscalYearEnd);
+        $isFutureYear = now()->lt($fiscalYearStart);
+
+        // For current fiscal year: months elapsed since fiscal year start
+        // For past/future years: full 12 months
+        if ($isCurrentYear) {
+            $monthsElapsed = (int) ceil($fiscalYearStart->diffInMonths(now()) + 1);
+            $monthsElapsed = min($monthsElapsed, 12); // Cap at 12
+        } else {
+            $monthsElapsed = 12;
+        }
 
         // Add tier and budget info to main categories for sorting
         foreach ($mainCategories as $mainCategory) {
@@ -1471,12 +1478,15 @@ class ExpenseController extends Controller
     private function calculateYtdTotal(ExpenseCategory $category, ?int $year = null, bool $includeDescendants = true): float
     {
         $year = $year ?? (int) date('Y');
-        $yearStart = now()->setYear($year)->startOfYear();
-        $isCurrentYear = $year == (int) date('Y');
 
-        // For current year: up to now
-        // For past/future years: full year
-        $endDate = $isCurrentYear ? now() : now()->setYear($year)->endOfYear();
+        // Get fiscal year dates for the budget year
+        [$fiscalYearStart, $fiscalYearEnd] = $this->getFiscalYearDatesForBudgetYear($year);
+
+        $isCurrentYear = now()->between($fiscalYearStart, $fiscalYearEnd);
+
+        // For current fiscal year: up to now
+        // For past/future fiscal years: full year
+        $endDate = $isCurrentYear ? now() : $fiscalYearEnd;
 
         // Get category IDs to include (this category + all descendants if requested)
         $categoryIds = [$category->id];
@@ -1489,9 +1499,31 @@ class ExpenseController extends Controller
 
         return ExpenseSchedule::whereIn('category_id', $categoryIds)
             ->where('payment_status', 'paid')
-            ->where('paid_date', '>=', $yearStart)
+            ->where('paid_date', '>=', $fiscalYearStart)
             ->where('paid_date', '<=', $endDate)
             ->sum('paid_amount');
+    }
+
+    /**
+     * Get fiscal year start and end dates for a budget year.
+     * Budget year 2025 with fiscal month 12 and cycle day 26 = Dec 26, 2024 to Dec 25, 2025
+     */
+    private function getFiscalYearDatesForBudgetYear(int $budgetYear): array
+    {
+        $companySettings = \Modules\Settings\Models\CompanySetting::getSettings();
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $fiscalMonth = $companySettings->fiscal_year_start_month ?? 1;
+
+        // The fiscal year labeled "2025" ends just before the start of FY 2026
+        // FY 2026 starts on (2025, fiscalMonth, cycleDay) if fiscalMonth >= current position
+        // So FY 2025 ends on Dec 25, 2025 (one day before Dec 26, 2025)
+        $nextFiscalYearStart = \Carbon\Carbon::create($budgetYear, $fiscalMonth, $cycleDay)->startOfDay();
+        $fiscalYearEnd = $nextFiscalYearStart->copy()->subDay()->endOfDay();
+
+        // Fiscal year starts exactly one year before the next fiscal year starts
+        $fiscalYearStart = $nextFiscalYearStart->copy()->subYear()->startOfDay();
+
+        return [$fiscalYearStart, $fiscalYearEnd];
     }
 
     /**
