@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectFollowup;
+use Modules\Project\Services\JiraIssueSyncService;
 use Modules\Project\Services\JiraProjectSyncService;
 use Modules\Project\Services\ProjectFollowupService;
 
@@ -526,6 +527,104 @@ class ProjectController extends Controller
                 'last_followup_date' => $project->last_followup_date?->format('M d, Y'),
                 'next_followup_date' => $project->next_followup_date?->format('M d, Y'),
             ],
+        ]);
+    }
+
+    /**
+     * Display Jira issues/tasks for a project.
+     */
+    public function tasks(Request $request, Project $project, JiraIssueSyncService $issueSyncService): View
+    {
+        $project->load('customer');
+
+        // Get issue summary
+        $summary = $issueSyncService->getProjectIssueSummary($project);
+
+        // Get filters
+        $filters = $request->only(['status_category', 'issue_type', 'assignee_employee_id', 'priority', 'search', 'view']);
+        $view = $filters['view'] ?? 'kanban';
+
+        // Get issues based on view type
+        if ($view === 'kanban') {
+            $issues = $issueSyncService->getIssuesForKanban($project);
+        } else {
+            $issues = $issueSyncService->getFilteredIssues($project, $filters);
+        }
+
+        // Get filter options
+        $issueTypes = $project->jiraIssues()->distinct()->pluck('issue_type')->sort()->values();
+        $priorities = $project->jiraIssues()->distinct()->whereNotNull('priority')->pluck('priority')->sort()->values();
+        $assignees = Employee::whereIn('id', $project->jiraIssues()->whereNotNull('assignee_employee_id')->pluck('assignee_employee_id'))
+            ->orderBy('name')
+            ->get();
+
+        return view('project::projects.tasks', [
+            'project' => $project,
+            'issues' => $issues,
+            'summary' => $summary,
+            'filters' => $filters,
+            'view' => $view,
+            'issueTypes' => $issueTypes,
+            'priorities' => $priorities,
+            'assignees' => $assignees,
+        ]);
+    }
+
+    /**
+     * Sync Jira issues for a project.
+     */
+    public function syncIssues(Project $project, JiraIssueSyncService $issueSyncService): RedirectResponse
+    {
+        try {
+            $results = $issueSyncService->syncProjectIssues($project);
+
+            $message = "Sync completed: {$results['created']} created, {$results['updated']} updated.";
+            if (!empty($results['errors'])) {
+                $message .= " " . count($results['errors']) . " errors occurred.";
+            }
+
+            return redirect()
+                ->back()
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Sync failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get Jira issues for a project (AJAX).
+     */
+    public function getProjectIssues(Request $request, Project $project, JiraIssueSyncService $issueSyncService)
+    {
+        $filters = $request->only(['status_category', 'issue_type', 'assignee_employee_id', 'priority', 'search', 'sort_by', 'sort_dir']);
+
+        $issues = $issueSyncService->getFilteredIssues($project, $filters);
+        $summary = $issueSyncService->getProjectIssueSummary($project);
+
+        return response()->json([
+            'issues' => $issues->map(function ($issue) {
+                return [
+                    'id' => $issue->id,
+                    'issue_key' => $issue->issue_key,
+                    'summary' => $issue->summary,
+                    'issue_type' => $issue->issue_type,
+                    'issue_type_icon' => $issue->issue_type_icon,
+                    'issue_type_color' => $issue->issue_type_color,
+                    'status' => $issue->status,
+                    'status_category' => $issue->status_category,
+                    'status_color' => $issue->status_color,
+                    'priority' => $issue->priority,
+                    'priority_color' => $issue->priority_color,
+                    'assignee' => $issue->assignee?->name ?? $issue->assignee_email,
+                    'due_date' => $issue->due_date?->format('M d, Y'),
+                    'is_overdue' => $issue->isOverdue(),
+                    'jira_url' => $issue->jira_url,
+                    'jira_updated_at' => $issue->jira_updated_at?->diffForHumans(),
+                ];
+            }),
+            'summary' => $summary,
         ]);
     }
 }

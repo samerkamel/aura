@@ -48,4 +48,9 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     // Project follow-up routes
     Route::post('/{project}/followups', [ProjectController::class, 'storeFollowup'])->name('store-followup');
     Route::get('/{project}/followups/history', [ProjectController::class, 'getProjectFollowups'])->name('get-followups');
+
+    // Project Jira issues/tasks routes
+    Route::get('/{project}/tasks', [ProjectController::class, 'tasks'])->name('tasks');
+    Route::post('/{project}/tasks/sync', [ProjectController::class, 'syncIssues'])->name('sync-issues');
+    Route::get('/{project}/tasks/issues', [ProjectController::class, 'getProjectIssues'])->name('get-issues');
 });

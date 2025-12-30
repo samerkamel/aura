@@ -135,6 +135,41 @@ class Project extends Model
     }
 
     /**
+     * Get all Jira issues for this project.
+     */
+    public function jiraIssues()
+    {
+        return $this->hasMany(JiraIssue::class);
+    }
+
+    /**
+     * Get open Jira issues count.
+     */
+    public function getOpenIssuesCountAttribute(): int
+    {
+        return $this->jiraIssues()->open()->count();
+    }
+
+    /**
+     * Get Jira issue summary by status category.
+     */
+    public function getIssueSummaryAttribute(): array
+    {
+        $issues = $this->jiraIssues()
+            ->selectRaw('status_category, COUNT(*) as count')
+            ->groupBy('status_category')
+            ->pluck('count', 'status_category')
+            ->toArray();
+
+        return [
+            'todo' => $issues['new'] ?? 0,
+            'in_progress' => $issues['indeterminate'] ?? 0,
+            'done' => $issues['done'] ?? 0,
+            'total' => array_sum($issues),
+        ];
+    }
+
+    /**
      * Get the latest follow-up for this project.
      */
     public function latestFollowup()

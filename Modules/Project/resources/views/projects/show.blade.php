@@ -53,6 +53,9 @@
         @endif
       </div>
       <div>
+        <a href="{{ route('projects.tasks', $project) }}" class="btn btn-light btn-sm">
+          <i class="ti ti-subtask me-1"></i>Tasks
+        </a>
         <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
           <i class="ti ti-users me-1"></i>Manage Team
         </a>
