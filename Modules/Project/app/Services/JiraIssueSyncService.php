@@ -161,12 +161,10 @@ class JiraIssueSyncService
         ];
         $normalizedCategory = $statusCategoryMap[$statusCategory] ?? 'new';
 
-        // Try to match assignee to employee
+        // Try to match assignee to employee (by Jira account ID first, then by email)
         $assigneeEmail = $fields['assignee']['emailAddress'] ?? null;
-        $assigneeEmployeeId = null;
-        if ($assigneeEmail) {
-            $assigneeEmployeeId = $this->matchAssigneeToEmployee($assigneeEmail);
-        }
+        $assigneeAccountId = $fields['assignee']['accountId'] ?? null;
+        $assigneeEmployeeId = $this->matchAssigneeToEmployee($assigneeAccountId, $assigneeEmail);
 
         // Extract epic key if present
         $epicKey = $fields['customfield_10014'] ?? null;
@@ -251,15 +249,29 @@ class JiraIssueSyncService
     }
 
     /**
-     * Match a Jira assignee email to an employee.
+     * Match a Jira assignee to an employee by account ID or email.
      */
-    public function matchAssigneeToEmployee(string $email): ?int
+    public function matchAssigneeToEmployee(?string $accountId, ?string $email): ?int
     {
-        $employee = Employee::where('work_email', $email)
-            ->orWhere('personal_email', $email)
-            ->first();
+        // First try to match by Jira account ID (most reliable)
+        if ($accountId) {
+            $employee = Employee::where('jira_account_id', $accountId)->first();
+            if ($employee) {
+                return $employee->id;
+            }
+        }
 
-        return $employee?->id;
+        // Fallback to email matching
+        if ($email) {
+            $employee = Employee::where('email', $email)
+                ->orWhere('personal_email', $email)
+                ->first();
+            if ($employee) {
+                return $employee->id;
+            }
+        }
+
+        return null;
     }
 
     /**
