@@ -387,9 +387,16 @@ class ProjectFinancialService
             $monthStart = $startDate->copy()->addMonths($i);
             $monthEnd = $monthStart->copy()->endOfMonth();
 
-            $costs = $project->costs()
+            // Get recorded costs (non-labor)
+            $recordedCosts = $project->costs()
+                ->where('cost_type', '!=', 'labor')
                 ->whereBetween('cost_date', [$monthStart, $monthEnd])
                 ->sum('amount');
+
+            // Get dynamic labor costs from worklogs for this month (includes PM overhead)
+            $laborCosts = $this->calculateLaborCostsFromWorklogs($project, $monthStart, $monthEnd);
+
+            $totalCosts = $recordedCosts + $laborCosts['total'];
 
             $revenue = $project->revenues()
                 ->whereBetween('revenue_date', [$monthStart, $monthEnd])
@@ -398,9 +405,11 @@ class ProjectFinancialService
             $trend[] = [
                 'month' => $monthStart->format('M Y'),
                 'month_short' => $monthStart->format('M'),
-                'costs' => round($costs, 2),
+                'costs' => round($totalCosts, 2),
+                'labor_costs' => round($laborCosts['total'], 2),
+                'other_costs' => round($recordedCosts, 2),
                 'revenue' => round($revenue, 2),
-                'profit' => round($revenue - $costs, 2),
+                'profit' => round($revenue - $totalCosts, 2),
             ];
         }
 

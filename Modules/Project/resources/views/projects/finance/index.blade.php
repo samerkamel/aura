@@ -333,24 +333,35 @@
             const monthlyTrendData = @json($dashboard['monthly_trend']);
             const trendChart = new ApexCharts(document.querySelector('#monthlyTrendChart'), {
                 chart: {
-                    type: 'area',
+                    type: 'bar',
                     height: 350,
+                    stacked: false,
                     toolbar: { show: false }
                 },
                 series: [
-                    { name: 'Revenue', data: monthlyTrendData.map(d => d.revenue) },
-                    { name: 'Costs', data: monthlyTrendData.map(d => d.costs) },
-                    { name: 'Profit', data: monthlyTrendData.map(d => d.profit) }
+                    { name: 'Revenue', type: 'column', data: monthlyTrendData.map(d => d.revenue) },
+                    { name: 'Labor Costs', type: 'column', data: monthlyTrendData.map(d => d.labor_costs) },
+                    { name: 'Other Costs', type: 'column', data: monthlyTrendData.map(d => d.other_costs) },
+                    { name: 'Profit', type: 'line', data: monthlyTrendData.map(d => d.profit) }
                 ],
                 xaxis: {
                     categories: monthlyTrendData.map(d => d.month_short)
                 },
-                colors: ['#28c76f', '#ff9f43', '#7367f0'],
-                stroke: { curve: 'smooth', width: 2 },
-                fill: { type: 'gradient', gradient: { opacityFrom: 0.5, opacityTo: 0.1 } },
+                colors: ['#28c76f', '#ff6b6b', '#ff9f43', '#7367f0'],
+                stroke: { width: [0, 0, 0, 3], curve: 'smooth' },
+                plotOptions: {
+                    bar: { columnWidth: '60%', borderRadius: 4 }
+                },
                 legend: { position: 'top' },
                 tooltip: {
-                    y: { formatter: val => val.toLocaleString() }
+                    shared: true,
+                    intersect: false,
+                    y: { formatter: val => val ? val.toLocaleString() : '0' }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: val => val ? val.toLocaleString() : '0'
+                    }
                 }
             });
             trendChart.render();
