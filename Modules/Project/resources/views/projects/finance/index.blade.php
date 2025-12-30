@@ -329,29 +329,35 @@
 @section('page-script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Monthly Trend Chart
+            // Monthly Trend Chart - Cumulative Area Chart
             const monthlyTrendData = @json($dashboard['monthly_trend']);
             const trendChart = new ApexCharts(document.querySelector('#monthlyTrendChart'), {
                 chart: {
-                    type: 'bar',
+                    type: 'area',
                     height: 350,
                     stacked: false,
                     toolbar: { show: false }
                 },
                 series: [
-                    { name: 'Revenue', type: 'column', data: monthlyTrendData.map(d => d.revenue) },
-                    { name: 'Labor Costs', type: 'column', data: monthlyTrendData.map(d => d.labor_costs) },
-                    { name: 'Other Costs', type: 'column', data: monthlyTrendData.map(d => d.other_costs) },
-                    { name: 'Profit', type: 'line', data: monthlyTrendData.map(d => d.profit) }
+                    { name: 'Cumulative Revenue', data: monthlyTrendData.map(d => d.cumulative_revenue) },
+                    { name: 'Cumulative Costs', data: monthlyTrendData.map(d => d.cumulative_costs) },
+                    { name: 'Cumulative Profit/Loss', data: monthlyTrendData.map(d => d.cumulative_profit) }
                 ],
                 xaxis: {
                     categories: monthlyTrendData.map(d => d.month_short)
                 },
-                colors: ['#28c76f', '#ff6b6b', '#ff9f43', '#7367f0'],
-                stroke: { width: [0, 0, 0, 3], curve: 'smooth' },
-                plotOptions: {
-                    bar: { columnWidth: '60%', borderRadius: 4 }
+                colors: ['#28c76f', '#ea5455', '#7367f0'],
+                stroke: { width: 2, curve: 'smooth' },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.1,
+                        stops: [0, 90, 100]
+                    }
                 },
+                dataLabels: { enabled: false },
                 legend: { position: 'top' },
                 tooltip: {
                     shared: true,

@@ -376,12 +376,33 @@ class ProjectFinancialService
     }
 
     /**
-     * Get monthly financial trend.
+     * Get monthly financial trend with cumulative totals.
      */
     public function getMonthlyTrend(Project $project, int $months = 6): array
     {
         $startDate = Carbon::now()->subMonths($months - 1)->startOfMonth();
         $trend = [];
+
+        // Cumulative totals
+        $cumulativeRevenue = 0;
+        $cumulativeCosts = 0;
+
+        // Get all data before the trend period for accurate cumulative starting point
+        $prePeriodRevenue = $project->revenues()
+            ->where('revenue_date', '<', $startDate)
+            ->sum('amount_received');
+        $prePeriodCosts = $project->costs()
+            ->where('cost_type', '!=', 'labor')
+            ->where('cost_date', '<', $startDate)
+            ->sum('amount');
+        $prePeriodLabor = $this->calculateLaborCostsFromWorklogs(
+            $project,
+            Carbon::create(2000, 1, 1),
+            $startDate->copy()->subDay()
+        );
+
+        $cumulativeRevenue = $prePeriodRevenue;
+        $cumulativeCosts = $prePeriodCosts + $prePeriodLabor['total'];
 
         for ($i = 0; $i < $months; $i++) {
             $monthStart = $startDate->copy()->addMonths($i);
@@ -402,6 +423,10 @@ class ProjectFinancialService
                 ->whereBetween('revenue_date', [$monthStart, $monthEnd])
                 ->sum('amount_received');
 
+            // Update cumulative totals
+            $cumulativeRevenue += $revenue;
+            $cumulativeCosts += $totalCosts;
+
             $trend[] = [
                 'month' => $monthStart->format('M Y'),
                 'month_short' => $monthStart->format('M'),
@@ -410,6 +435,10 @@ class ProjectFinancialService
                 'other_costs' => round($recordedCosts, 2),
                 'revenue' => round($revenue, 2),
                 'profit' => round($revenue - $totalCosts, 2),
+                // Cumulative values for area chart
+                'cumulative_revenue' => round($cumulativeRevenue, 2),
+                'cumulative_costs' => round($cumulativeCosts, 2),
+                'cumulative_profit' => round($cumulativeRevenue - $cumulativeCosts, 2),
             ];
         }
 
