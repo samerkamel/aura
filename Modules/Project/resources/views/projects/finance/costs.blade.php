@@ -158,7 +158,7 @@
             </div>
 
             <!-- Employee Summary -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header py-3">
                     <h6 class="card-title mb-0"><i class="ti ti-users me-1"></i> By Employee</h6>
                 </div>
@@ -181,6 +181,24 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Project Management Overhead -->
+            <div class="card">
+                <div class="card-header py-3">
+                    <h6 class="card-title mb-0"><i class="ti ti-briefcase me-1"></i> Project Management</h6>
+                </div>
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">20% of Labor Cost</span>
+                        <strong>{{ number_format($breakdown['pm_overhead'], 2) }}</strong>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-medium">Total Labor + PM</span>
+                        <strong class="text-primary">{{ number_format($breakdown['labor_subtotal'] + $breakdown['pm_overhead'], 2) }}</strong>
+                    </div>
                 </div>
             </div>
         </div>

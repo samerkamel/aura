@@ -455,6 +455,21 @@
             @error('bank_info.iban')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
+          </div>
+
+          <!-- Currency Field -->
+          <div class="mb-3">
+            <label class="form-label" for="bank_info_currency">Salary Currency</label>
+            <select
+              class="form-select @error('bank_info.currency') is-invalid @enderror"
+              id="bank_info_currency"
+              name="bank_info[currency]">
+              <option value="EGP" {{ old('bank_info.currency', $employee->bank_info['currency'] ?? 'EGP') == 'EGP' ? 'selected' : '' }}>EGP - Egyptian Pound</option>
+              <option value="USD" {{ old('bank_info.currency', $employee->bank_info['currency'] ?? '') == 'USD' ? 'selected' : '' }}>USD - US Dollar</option>
+            </select>
+            @error('bank_info.currency')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
             <div class="form-text">
               <i class="ti ti-shield-lock me-1"></i>Bank information is encrypted for security
             </div>

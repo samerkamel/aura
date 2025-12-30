@@ -432,6 +432,18 @@
               <span class="font-monospace small">{{ $employee->bank_info['iban'] }}</span>
             </div>
             @endif
+            @if(isset($employee->bank_info['account_id']) && $employee->bank_info['account_id'])
+            <div class="info-item d-flex justify-content-between">
+              <span class="info-label">Bank Employee ID</span>
+              <span class="font-monospace">{{ $employee->bank_info['account_id'] }}</span>
+            </div>
+            @endif
+            @if(isset($employee->bank_info['currency']) && $employee->bank_info['currency'])
+            <div class="info-item d-flex justify-content-between">
+              <span class="info-label">Salary Currency</span>
+              <span>{{ $employee->bank_info['currency'] }}</span>
+            </div>
+            @endif
           </div>
         </div>
       </div>

@@ -69,7 +69,9 @@ class PayrollFinalizeTest extends TestCase
             'contact_info' => ['phone' => '123-456-7890'],
             'bank_info' => [
                 'bank_name' => 'Test Bank',
-                'account_number' => '1234567890',
+                'account_number' => '11306956499',
+                'account_id' => '1001642367',
+                'currency' => 'EGP',
             ],
         ]);
 

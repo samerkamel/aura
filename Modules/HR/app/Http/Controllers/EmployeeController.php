@@ -363,6 +363,7 @@ class EmployeeController extends Controller
                 'account_number' => trim($data['account_number'] ?? ''),
                 'account_id' => trim($data['account_id'] ?? ''),
                 'iban' => trim($data['iban'] ?? ''),
+                'currency' => strtoupper(trim($data['currency'] ?? 'EGP')),
             ],
             'emergency_contact' => [
                 'name' => trim($data['emergency_contact_name'] ?? ''),

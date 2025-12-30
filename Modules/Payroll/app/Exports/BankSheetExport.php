@@ -16,7 +16,11 @@ use Illuminate\Support\Collection;
  *
  * Handles the generation of Excel files for bank payroll submission.
  * Formats the data according to bank specifications with required columns:
- * Employee Name, Bank Account Number, and Final Salary Amount.
+ * - Beneficiary Account No. (11 or 13 digits)
+ * - Beneficiary Name
+ * - Transaction Currency (EGP/USD)
+ * - Payment Amount
+ * - Employee ID (10 digits - bank employee ID)
  *
  * @author Dev Agent
  */
@@ -56,42 +60,54 @@ class BankSheetExport implements FromCollection, WithHeadings, WithMapping, With
 
     /**
      * Define the headings for the Excel file.
+     * These match the bank's required format exactly.
      *
      * @return array
      */
     public function headings(): array
     {
         return [
-            'Employee Name',
-            'Bank Account Number',
-            'Final Salary Amount',
+            'Beneficiary Account No. (Mandatory Field) (Length 11 or 13 Digit)',
+            'Beneficiary Name',
+            'Transaction Currency (Mandatory Field) (EGP,USD in Capital Letter)',
+            'Payment Amount (Mandatory Field) (Example: 1000.55)',
+            'Employee ID (Mandatory Field) (Length 10 Digit)',
         ];
     }
 
     /**
-     * Map each payroll run to the required format.
+     * Map each payroll run to the required bank format.
      *
      * @param mixed $payrollRun
      * @return array
      */
     public function map($payrollRun): array
     {
+        $employee = $payrollRun->employee;
+        $bankInfo = $employee->bank_info ?? [];
+
         return [
-            $payrollRun->employee->name,
-            $payrollRun->employee->bank_account_number ?? 'N/A',
-            $payrollRun->final_salary,
+            $bankInfo['account_number'] ?? '',
+            $employee->name,
+            strtoupper($bankInfo['currency'] ?? 'EGP'),
+            round($payrollRun->final_salary, 2),
+            $bankInfo['account_id'] ?? '',
         ];
     }
 
     /**
      * Apply column formatting.
+     * Account number and Employee ID as text to preserve leading zeros.
+     * Payment amount as number with 2 decimal places.
      *
      * @return array
      */
     public function columnFormats(): array
     {
         return [
-            'C' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, // Final Salary Amount column
+            'A' => NumberFormat::FORMAT_TEXT, // Account number as text
+            'D' => NumberFormat::FORMAT_NUMBER_00, // Payment amount with 2 decimals
+            'E' => NumberFormat::FORMAT_TEXT, // Employee ID as text
         ];
     }
 
@@ -104,10 +120,10 @@ class BankSheetExport implements FromCollection, WithHeadings, WithMapping, With
     public function styles(Worksheet $sheet)
     {
         // Style the header row
-        $sheet->getStyle('A1:C1')->applyFromArray([
+        $sheet->getStyle('A1:E1')->applyFromArray([
             'font' => [
                 'bold' => true,
-                'size' => 12,
+                'size' => 10,
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -126,20 +142,8 @@ class BankSheetExport implements FromCollection, WithHeadings, WithMapping, With
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
         $sheet->getColumnDimension('C')->setAutoSize(true);
-
-        // Add a title row above the headers
-        $sheet->insertNewRowBefore(1);
-        $sheet->setCellValue('A1', "Payroll Export - {$this->periodLabel}");
-        $sheet->mergeCells('A1:C1');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 14,
-            ],
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ],
-        ]);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
 
         return [];
     }

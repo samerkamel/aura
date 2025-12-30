@@ -244,13 +244,9 @@
                       <i class="ti ti-file-export me-1"></i>Finalize & Export
                     </button>
                   @else
-                    <form method="POST" action="{{ route('payroll.run.finalize-adjusted') }}" class="d-inline">
-                      @csrf
-                      <input type="hidden" name="period" value="{{ $selectedPeriod }}">
-                      <button type="submit" class="btn btn-success">
-                        <i class="ti ti-download me-1"></i>Download Bank Sheet
-                      </button>
-                    </form>
+                    <button type="button" class="btn btn-success" onclick="document.getElementById('downloadBankSheetForm').submit();">
+                      <i class="ti ti-download me-1"></i>Download Bank Sheet
+                    </button>
                   @endif
                 </div>
               </div>
@@ -263,6 +259,12 @@
 
   <!-- Recalculate Form (outside main form to avoid nesting) -->
   <form method="POST" action="{{ route('payroll.run.recalculate') }}" id="recalculateForm" class="d-none">
+    @csrf
+    <input type="hidden" name="period" value="{{ $selectedPeriod }}">
+  </form>
+
+  <!-- Download Bank Sheet Form (outside main form to avoid nesting) -->
+  <form method="POST" action="{{ route('payroll.run.finalize-adjusted') }}" id="downloadBankSheetForm" class="d-none">
     @csrf
     <input type="hidden" name="period" value="{{ $selectedPeriod }}">
   </form>

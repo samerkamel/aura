@@ -59,8 +59,9 @@
                                     <li><strong>permanent_address</strong> - Permanent address</li>
                                     <li><strong>bank_name</strong> - Bank name</li>
                                     <li><strong>account_number</strong> - Bank account number</li>
-                                    <li><strong>account_id</strong> - Account ID</li>
+                                    <li><strong>account_id</strong> - Bank employee ID (10 digits)</li>
                                     <li><strong>iban</strong> - IBAN</li>
+                                    <li><strong>currency</strong> - Salary currency (EGP or USD)</li>
                                     <li><strong>emergency_contact_name</strong> - Emergency contact name</li>
                                     <li><strong>emergency_contact_phone</strong> - Emergency contact phone</li>
                                     <li><strong>emergency_contact_relationship</strong> - Relationship (e.g., Spouse, Parent)</li>
@@ -134,10 +135,10 @@
 function downloadSampleCSV() {
     // Create sample CSV content
     const csvContent = [
-        ['name', 'name_ar', 'email', 'personal_email', 'attendance_id', 'national_id', 'national_insurance_number', 'start_date', 'mobile_number', 'secondary_number', 'current_address', 'permanent_address', 'bank_name', 'account_number', 'account_id', 'iban', 'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'],
-        ['John Doe', 'جون دو', 'john.doe@company.com', 'john.personal@email.com', 'ATT001', '12345678901234', 'NIN123456', '2024-01-15', '+1234567890', '+1234567800', '123 Main St, City', '456 Home St, Town', 'ABC Bank', '1234567890', 'ACC001', 'EG123456789012345678901234', 'Jane Doe', '+1234567899', 'Spouse'],
-        ['Jane Smith', 'جين سميث', 'jane.smith@company.com', 'jane.personal@email.com', 'ATT002', '12345678901235', 'NIN123457', '2024-02-01', '+1234567891', '', '456 Oak Ave, City', '789 Family Rd, Village', 'XYZ Bank', '0987654321', 'ACC002', 'EG987654321098765432109876', 'John Smith', '+1234567898', 'Parent'],
-        ['Mike Johnson', 'مايك جونسون', 'mike.johnson@company.com', '', 'ATT003', '12345678901236', 'NIN123458', '2024-01-20', '+1234567892', '+1234567801', '789 Pine Rd, City', '321 Origin St, Hometown', 'DEF Bank', '5678901234', 'ACC003', 'EG567890123456789012345678', 'Sarah Johnson', '+1234567897', 'Sibling']
+        ['name', 'name_ar', 'email', 'personal_email', 'attendance_id', 'national_id', 'national_insurance_number', 'start_date', 'mobile_number', 'secondary_number', 'current_address', 'permanent_address', 'bank_name', 'account_number', 'account_id', 'iban', 'currency', 'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'],
+        ['John Doe', 'جون دو', 'john.doe@company.com', 'john.personal@email.com', 'ATT001', '12345678901234', 'NIN123456', '2024-01-15', '+1234567890', '+1234567800', '123 Main St, City', '456 Home St, Town', 'ABC Bank', '12345678901', '1001234567', 'EG123456789012345678901234', 'EGP', 'Jane Doe', '+1234567899', 'Spouse'],
+        ['Jane Smith', 'جين سميث', 'jane.smith@company.com', 'jane.personal@email.com', 'ATT002', '12345678901235', 'NIN123457', '2024-02-01', '+1234567891', '', '456 Oak Ave, City', '789 Family Rd, Village', 'XYZ Bank', '09876543210', '1002345678', 'EG987654321098765432109876', 'EGP', 'John Smith', '+1234567898', 'Parent'],
+        ['Mike Johnson', 'مايك جونسون', 'mike.johnson@company.com', '', 'ATT003', '12345678901236', 'NIN123458', '2024-01-20', '+1234567892', '+1234567801', '789 Pine Rd, City', '321 Origin St, Hometown', 'DEF Bank', '56789012345', '1003456789', 'EG567890123456789012345678', 'USD', 'Sarah Johnson', '+1234567897', 'Sibling']
     ];
 
     // Convert to CSV string

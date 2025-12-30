@@ -18,6 +18,11 @@ class ProjectFinancialService
     private const BILLABLE_HOURS_PER_DAY = 5;
 
     /**
+     * Project management overhead percentage.
+     */
+    private const PM_OVERHEAD_PERCENTAGE = 0.20;
+
+    /**
      * Calculate billable hours for a given month.
      */
     private function calculateBillableHoursForMonth(int $year, int $month): float
@@ -113,8 +118,13 @@ class ProjectFinancialService
             }
         }
 
+        $pmOverhead = round($totalLaborCost * self::PM_OVERHEAD_PERCENTAGE, 2);
+        $totalWithPm = round($totalLaborCost + $pmOverhead, 2);
+
         return [
-            'total' => round($totalLaborCost, 2),
+            'total' => $totalWithPm,
+            'subtotal' => round($totalLaborCost, 2),
+            'pm_overhead' => $pmOverhead,
             'total_hours' => round($totalHours, 2),
             'details' => $laborDetails,
         ];
@@ -128,12 +138,14 @@ class ProjectFinancialService
         // Get recorded costs (non-labor)
         $recordedCosts = $project->costs()->where('cost_type', '!=', 'labor')->sum('amount');
 
-        // Get dynamic labor costs from worklogs
+        // Get dynamic labor costs from worklogs (includes PM overhead)
         $laborCosts = $this->calculateLaborCostsFromWorklogs($project);
 
         return [
             'recorded_costs' => round($recordedCosts, 2),
             'labor_costs' => $laborCosts['total'],
+            'labor_subtotal' => $laborCosts['subtotal'],
+            'pm_overhead' => $laborCosts['pm_overhead'],
             'labor_hours' => $laborCosts['total_hours'],
             'total' => round($recordedCosts + $laborCosts['total'], 2),
         ];
@@ -234,7 +246,7 @@ class ProjectFinancialService
             ->pluck('total', 'cost_type')
             ->toArray();
 
-        // Get dynamic labor costs from worklogs
+        // Get dynamic labor costs from worklogs (includes PM overhead)
         $laborCosts = $this->calculateLaborCostsFromWorklogs($project);
         $costs['labor'] = $laborCosts['total'];
 
@@ -257,7 +269,9 @@ class ProjectFinancialService
             'total' => $total,
             'breakdown' => $breakdown,
             'labor_details' => $laborCosts['details'],
+            'labor_subtotal' => $laborCosts['subtotal'],
             'labor_hours' => $laborCosts['total_hours'],
+            'pm_overhead' => $laborCosts['pm_overhead'],
         ];
     }
 
