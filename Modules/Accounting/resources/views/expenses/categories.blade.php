@@ -54,7 +54,7 @@
 
             @if(isset($revenueSummary))
             <div class="card-body pt-0">
-                <div class="alert alert-light border mb-0">
+                <div class="alert alert-light border mb-3">
                     <div class="row text-center">
                         <div class="col-md-3">
                             <small class="text-muted d-block">{{ $currentYear }} Revenue Target</small>
@@ -85,6 +85,24 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- View Controls -->
+                <div class="d-flex justify-content-between align-items-center mb-0">
+                    <div class="d-flex gap-3 align-items-center">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="expandAllBtn">
+                            <i class="ti ti-arrows-maximize me-1"></i>Expand All
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="collapseAllBtn">
+                            <i class="ti ti-arrows-minimize me-1"></i>Collapse All
+                        </button>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="hideEmptyCategories">
+                        <label class="form-check-label" for="hideEmptyCategories">
+                            Hide empty categories <small class="text-muted">(no budget & no expenses)</small>
+                        </label>
+                    </div>
+                </div>
             </div>
             @endif
 
@@ -106,14 +124,31 @@
                     </thead>
                     <tbody class="table-border-bottom-0">
                         @forelse($categories as $category)
-                            <tr class="{{ !$category->is_active ? 'opacity-50' : '' }}">
+                            @php
+                                $depth = $category->depth ?? 0;
+                                $hasChildren = $category->subcategories && $category->subcategories->count() > 0;
+                                $isEmptyCategory = ($category->planned_monthly ?? 0) == 0 && ($category->ytd_total ?? 0) == 0;
+                                $parentId = $category->parent_id ?? '';
+                            @endphp
+                            <tr class="category-row {{ !$category->is_active ? 'opacity-50' : '' }}"
+                                data-category-id="{{ $category->id }}"
+                                data-parent-id="{{ $parentId }}"
+                                data-has-children="{{ $hasChildren ? 'true' : 'false' }}"
+                                data-is-empty="{{ $isEmptyCategory ? 'true' : 'false' }}"
+                                data-depth="{{ $depth }}">
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @php $depth = $category->depth ?? 0; @endphp
                                         @if($depth > 0)
                                             <div class="me-2 text-muted" style="font-family: monospace;">
                                                 {{ str_repeat('│  ', $depth - 1) }}└─
                                             </div>
+                                        @endif
+                                        @if($hasChildren)
+                                            <button type="button" class="btn btn-sm btn-icon btn-text-secondary collapse-toggle me-2"
+                                                    data-target-parent="{{ $category->id }}"
+                                                    title="Collapse/Expand subcategories">
+                                                <i class="ti ti-minus"></i>
+                                            </button>
                                         @endif
                                         <div class="rounded me-3" style="width: 12px; height: 12px; background-color: {{ $category->color }};"></div>
                                         <div>
@@ -528,6 +563,143 @@ document.addEventListener('DOMContentLoaded', function() {
         const deleteModal = new bootstrap.Modal(document.getElementById('deleteCategoryModal'));
         deleteModal.show();
     };
+
+    // ========================================
+    // Collapsible Categories & Filtering
+    // ========================================
+
+    // Get all category rows
+    const categoryRows = document.querySelectorAll('.category-row');
+
+    // Helper function to get all descendant rows of a category
+    function getDescendantRows(parentId) {
+        const descendants = [];
+        const directChildren = document.querySelectorAll(`.category-row[data-parent-id="${parentId}"]`);
+
+        directChildren.forEach(child => {
+            descendants.push(child);
+            const childId = child.dataset.categoryId;
+            // Recursively get children of this child
+            descendants.push(...getDescendantRows(childId));
+        });
+
+        return descendants;
+    }
+
+    // Helper function to check if a category should be visible based on empty filter
+    function shouldShowCategory(row, hideEmpty) {
+        if (!hideEmpty) return true;
+
+        const isEmpty = row.dataset.isEmpty === 'true';
+        if (!isEmpty) return true;
+
+        // Even if empty, show if any descendants are not empty
+        const categoryId = row.dataset.categoryId;
+        const descendants = getDescendantRows(categoryId);
+
+        for (const descendant of descendants) {
+            if (descendant.dataset.isEmpty === 'false') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Helper function to check if parent is collapsed
+    function isParentCollapsed(row) {
+        let parentId = row.dataset.parentId;
+
+        while (parentId) {
+            const parentRow = document.querySelector(`.category-row[data-category-id="${parentId}"]`);
+            if (!parentRow) break;
+
+            const toggleBtn = parentRow.querySelector('.collapse-toggle');
+            if (toggleBtn && toggleBtn.dataset.collapsed === 'true') {
+                return true;
+            }
+
+            parentId = parentRow.dataset.parentId;
+        }
+
+        return false;
+    }
+
+    // Apply visibility based on both collapse state and empty filter
+    function applyVisibility() {
+        const hideEmpty = document.getElementById('hideEmptyCategories')?.checked ?? false;
+
+        categoryRows.forEach(row => {
+            const shouldShow = shouldShowCategory(row, hideEmpty);
+            const parentCollapsed = isParentCollapsed(row);
+
+            if (!shouldShow || parentCollapsed) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        });
+    }
+
+    // Toggle collapse for a parent category
+    function toggleCollapse(parentId, collapse) {
+        const parentRow = document.querySelector(`.category-row[data-category-id="${parentId}"]`);
+        const toggleBtn = parentRow?.querySelector('.collapse-toggle');
+
+        if (!toggleBtn) return;
+
+        const descendants = getDescendantRows(parentId);
+        const icon = toggleBtn.querySelector('i');
+
+        if (collapse) {
+            toggleBtn.dataset.collapsed = 'true';
+            icon.className = 'ti ti-plus';
+            descendants.forEach(d => d.style.display = 'none');
+        } else {
+            toggleBtn.dataset.collapsed = 'false';
+            icon.className = 'ti ti-minus';
+            // Re-apply visibility considering the empty filter
+            applyVisibility();
+        }
+    }
+
+    // Individual collapse toggle buttons
+    document.querySelectorAll('.collapse-toggle').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const parentId = this.dataset.targetParent;
+            const isCollapsed = this.dataset.collapsed === 'true';
+
+            toggleCollapse(parentId, !isCollapsed);
+        });
+    });
+
+    // Expand All button
+    document.getElementById('expandAllBtn')?.addEventListener('click', function() {
+        document.querySelectorAll('.collapse-toggle').forEach(btn => {
+            btn.dataset.collapsed = 'false';
+            btn.querySelector('i').className = 'ti ti-minus';
+        });
+        applyVisibility();
+    });
+
+    // Collapse All button
+    document.getElementById('collapseAllBtn')?.addEventListener('click', function() {
+        // Only collapse top-level parent categories (those without parent_id)
+        document.querySelectorAll('.category-row[data-has-children="true"]').forEach(row => {
+            if (!row.dataset.parentId) {
+                const parentId = row.dataset.categoryId;
+                toggleCollapse(parentId, true);
+            }
+        });
+    });
+
+    // Hide empty categories toggle
+    document.getElementById('hideEmptyCategories')?.addEventListener('change', function() {
+        applyVisibility();
+    });
 });
 </script>
 @endsection
