@@ -129,6 +129,9 @@
       <button type="button" class="btn btn-outline-primary btn-sm" id="refreshHealth">
         <i class="ti ti-refresh me-1"></i>Refresh Health
       </button>
+      <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-success btn-sm">
+        <i class="ti ti-chart-pie-2 me-1"></i>Finance
+      </a>
       <a href="{{ route('projects.tasks', $project) }}" class="btn btn-outline-secondary btn-sm">
         <i class="ti ti-list-check me-1"></i>Tasks
       </a>

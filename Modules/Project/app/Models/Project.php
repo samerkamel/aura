@@ -173,6 +173,30 @@ class Project extends Model
     }
 
     /**
+     * Get budgets for this project.
+     */
+    public function budgets()
+    {
+        return $this->hasMany(ProjectBudget::class);
+    }
+
+    /**
+     * Get costs for this project.
+     */
+    public function costs()
+    {
+        return $this->hasMany(ProjectCost::class);
+    }
+
+    /**
+     * Get revenues for this project.
+     */
+    public function revenues()
+    {
+        return $this->hasMany(ProjectRevenue::class);
+    }
+
+    /**
      * Get the latest health snapshot.
      */
     public function latestHealthSnapshot()

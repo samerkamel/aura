@@ -56,6 +56,9 @@
         <a href="{{ route('projects.dashboard', $project) }}" class="btn btn-warning btn-sm">
           <i class="ti ti-dashboard me-1"></i>Dashboard
         </a>
+        <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-success btn-sm">
+          <i class="ti ti-chart-pie-2 me-1"></i>Finance
+        </a>
         <a href="{{ route('projects.tasks', $project) }}" class="btn btn-light btn-sm">
           <i class="ti ti-subtask me-1"></i>Tasks
         </a>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Project\Http\Controllers\ProjectController;
 use Modules\Project\Http\Controllers\ProjectDashboardController;
+use Modules\Project\Http\Controllers\ProjectFinanceController;
 use Modules\Project\Http\Controllers\ProjectReportController;
 
 Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group(function () {
@@ -61,4 +62,37 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/dashboard/health-trend', [ProjectDashboardController::class, 'healthTrend'])->name('health-trend');
     Route::get('/{project}/dashboard/activity', [ProjectDashboardController::class, 'activityFeed'])->name('activity-feed');
     Route::get('/{project}/dashboard/team', [ProjectDashboardController::class, 'teamPerformance'])->name('team-performance');
+
+    // Project Finance routes
+    Route::prefix('{project}/finance')->name('finance.')->group(function () {
+        // Financial Dashboard
+        Route::get('/', [ProjectFinanceController::class, 'index'])->name('index');
+
+        // Budgets
+        Route::get('/budgets', [ProjectFinanceController::class, 'budgets'])->name('budgets');
+        Route::post('/budgets', [ProjectFinanceController::class, 'storeBudget'])->name('budgets.store');
+        Route::put('/budgets/{budget}', [ProjectFinanceController::class, 'updateBudget'])->name('budgets.update');
+        Route::delete('/budgets/{budget}', [ProjectFinanceController::class, 'destroyBudget'])->name('budgets.destroy');
+
+        // Costs
+        Route::get('/costs', [ProjectFinanceController::class, 'costs'])->name('costs');
+        Route::post('/costs', [ProjectFinanceController::class, 'storeCost'])->name('costs.store');
+        Route::put('/costs/{cost}', [ProjectFinanceController::class, 'updateCost'])->name('costs.update');
+        Route::delete('/costs/{cost}', [ProjectFinanceController::class, 'destroyCost'])->name('costs.destroy');
+        Route::post('/costs/generate-labor', [ProjectFinanceController::class, 'generateLaborCosts'])->name('costs.generate-labor');
+
+        // Revenues
+        Route::get('/revenues', [ProjectFinanceController::class, 'revenues'])->name('revenues');
+        Route::post('/revenues', [ProjectFinanceController::class, 'storeRevenue'])->name('revenues.store');
+        Route::put('/revenues/{revenue}', [ProjectFinanceController::class, 'updateRevenue'])->name('revenues.update');
+        Route::delete('/revenues/{revenue}', [ProjectFinanceController::class, 'destroyRevenue'])->name('revenues.destroy');
+        Route::post('/revenues/{revenue}/payment', [ProjectFinanceController::class, 'recordPayment'])->name('revenues.record-payment');
+
+        // Profitability
+        Route::get('/profitability', [ProjectFinanceController::class, 'profitability'])->name('profitability');
+
+        // API endpoints
+        Route::get('/api/summary', [ProjectFinanceController::class, 'apiSummary'])->name('api.summary');
+        Route::get('/api/trend', [ProjectFinanceController::class, 'apiMonthlyTrend'])->name('api.trend');
+    });
 });
