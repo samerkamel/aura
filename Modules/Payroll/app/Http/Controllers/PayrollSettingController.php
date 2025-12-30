@@ -31,6 +31,7 @@ class PayrollSettingController extends Controller
         // Get current weight settings or set defaults
         $attendanceWeight = Setting::get('weight_attendance_pct', 50);
         $billableHoursWeight = Setting::get('weight_billable_hours_pct', 50);
+        $laborCostMultiplier = Setting::get('labor_cost_multiplier', 2.9);
 
         // Get period settings for the last 3 months and next 3 months
         $periodSettings = collect();
@@ -54,7 +55,7 @@ class PayrollSettingController extends Controller
         // Get Jira settings
         $jiraSettings = JiraSetting::getInstance();
 
-        return view('payroll::settings.index', compact('attendanceWeight', 'billableHoursWeight', 'periodSettings', 'jiraSettings'));
+        return view('payroll::settings.index', compact('attendanceWeight', 'billableHoursWeight', 'laborCostMultiplier', 'periodSettings', 'jiraSettings'));
     }
 
     /**
@@ -122,6 +123,25 @@ class PayrollSettingController extends Controller
 
         return redirect()->route('payroll.settings.index')
             ->with('success', 'Payroll weight settings updated successfully.');
+    }
+
+    /**
+     * Store the labor cost multiplier setting.
+     */
+    public function storeLaborCostMultiplier(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'labor_cost_multiplier' => 'required|numeric|min:1|max:10',
+        ]);
+
+        Setting::set(
+            'labor_cost_multiplier',
+            $request->labor_cost_multiplier,
+            'Labor cost multiplier for project cost calculations'
+        );
+
+        return redirect()->route('payroll.settings.index')
+            ->with('success', 'Labor cost multiplier updated successfully.');
     }
 
     /**

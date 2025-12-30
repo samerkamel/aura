@@ -127,6 +127,60 @@
         </div>
       </div>
 
+      <!-- Labor Cost Multiplier -->
+      <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-calculator me-2"></i>Labor Cost Multiplier
+          </h5>
+          <small class="text-muted">
+            For project cost calculations
+          </small>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info mb-4">
+            <i class="ti ti-info-circle me-2"></i>
+            This multiplier is applied to labor costs when calculating project expenses.
+            <br>
+            <small class="text-muted">Formula: (Salary / Billable Hours) × Worked Hours × <strong>Multiplier</strong></small>
+          </div>
+
+          <form action="{{ route('payroll.settings.labor-cost-multiplier.store') }}" method="POST">
+            @csrf
+            <div class="row align-items-end">
+              <div class="col-md-4">
+                <div class="form-floating form-floating-outline mb-3">
+                  <input
+                    type="number"
+                    class="form-control @error('labor_cost_multiplier') is-invalid @enderror"
+                    id="labor_cost_multiplier"
+                    name="labor_cost_multiplier"
+                    value="{{ old('labor_cost_multiplier', $laborCostMultiplier) }}"
+                    min="1"
+                    max="10"
+                    step="0.01"
+                    placeholder="2.9"
+                    required
+                  >
+                  <label for="labor_cost_multiplier">Multiplier Value</label>
+                  @error('labor_cost_multiplier')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <button type="submit" class="btn btn-primary">
+                  <i class="ti ti-device-floppy me-2"></i>Save Multiplier
+                </button>
+              </div>
+              <div class="col-md-4 mb-3">
+                <span class="badge bg-label-primary">Current: {{ $laborCostMultiplier }}×</span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Target Billable Hours per Period -->
       <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">

@@ -7,6 +7,7 @@ use Modules\Project\Models\ProjectBudget;
 use Modules\Project\Models\ProjectCost;
 use Modules\Project\Models\ProjectRevenue;
 use Modules\Attendance\Models\PublicHoliday;
+use Modules\Attendance\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -23,9 +24,17 @@ class ProjectFinancialService
     private const PM_OVERHEAD_PERCENTAGE = 0.20;
 
     /**
-     * Labor cost multiplier.
+     * Default labor cost multiplier (used if not set in settings).
      */
-    private const LABOR_COST_MULTIPLIER = 2.75;
+    private const DEFAULT_LABOR_COST_MULTIPLIER = 2.9;
+
+    /**
+     * Get the labor cost multiplier from settings.
+     */
+    private function getLaborCostMultiplier(): float
+    {
+        return (float) Setting::get('labor_cost_multiplier', self::DEFAULT_LABOR_COST_MULTIPLIER);
+    }
 
     /**
      * Calculate billable hours for a given month.
@@ -104,7 +113,7 @@ class ProjectFinancialService
 
                 // Formula: (Salary / Billable Hours This Month) × Worked Hours × Multiplier
                 $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
-                $cost = $hourlyRate * $workedHoursThisMonth * self::LABOR_COST_MULTIPLIER;
+                $cost = $hourlyRate * $workedHoursThisMonth * $this->getLaborCostMultiplier();
 
                 $laborDetails[] = [
                     'employee_id' => $employeeId,

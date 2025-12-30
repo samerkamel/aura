@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('settings', [PayrollSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [PayrollSettingController::class, 'store'])->name('settings.store');
         Route::post('settings/period', [PayrollSettingController::class, 'storePeriodSettings'])->name('settings.period.store');
+        Route::post('settings/labor-cost-multiplier', [PayrollSettingController::class, 'storeLaborCostMultiplier'])->name('settings.labor-cost-multiplier.store');
         Route::post('settings/jira', [PayrollSettingController::class, 'storeJiraSettings'])->name('settings.jira.store');
         Route::post('settings/jira/test', [PayrollSettingController::class, 'testJiraConnection'])->name('settings.jira.test');
 
