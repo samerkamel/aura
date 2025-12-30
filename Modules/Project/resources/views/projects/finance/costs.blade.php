@@ -90,11 +90,8 @@
         <!-- Main Labor Details Table -->
         <div class="col-lg-9">
             <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title mb-0">Labor Costs <span class="badge bg-label-info ms-2"><i class="ti ti-refresh me-1"></i>Auto-calculated</span></h5>
-                        <small class="text-muted">Formula: (Salary / Billable Hours This Month) × Worked Hours × 3</small>
-                    </div>
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Labor Costs <span class="badge bg-label-info ms-2"><i class="ti ti-refresh me-1"></i>Auto-calculated</span></h5>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
