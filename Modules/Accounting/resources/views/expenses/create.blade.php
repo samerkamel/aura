@@ -391,10 +391,23 @@ document.addEventListener('DOMContentLoaded', function() {
         })];
     }));
 
+    // Build subcategories with all nested levels using allDescendants
     const subcategoriesByCategory = @json($categories->mapWithKeys(function($category) {
-        return [$category->id => $category->subcategories->map(function($sub) {
-            return ['id' => $sub->id, 'name' => $sub->name];
-        })];
+        // Get all descendants recursively with depth indication
+        $allSubs = collect();
+        $addDescendants = function($parent, $depth = 0) use (&$addDescendants, &$allSubs) {
+            foreach ($parent->subcategories()->active()->orderBy('sort_order')->orderBy('name')->get() as $sub) {
+                $prefix = str_repeat('── ', $depth);
+                $allSubs->push([
+                    'id' => $sub->id,
+                    'name' => $prefix . $sub->name,
+                    'depth' => $depth
+                ]);
+                $addDescendants($sub, $depth + 1);
+            }
+        };
+        $addDescendants($category);
+        return [$category->id => $allSubs];
     }));
 
     // Handle expense type change
