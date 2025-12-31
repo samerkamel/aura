@@ -441,4 +441,38 @@ class EmployeeController extends Controller
 
         return (float) $cleaned;
     }
+
+    /**
+     * Update employee salary with history tracking.
+     */
+    public function updateSalary(Request $request, Employee $employee): RedirectResponse
+    {
+        // Check permission
+        if (!Gate::allows('edit-employee-financial')) {
+            abort(403, 'You do not have permission to edit salary information.');
+        }
+
+        $request->validate([
+            'new_salary' => 'required|numeric|min:0',
+            'effective_date' => 'required|date',
+            'reason' => 'required|in:initial,annual_review,promotion,adjustment,correction,other',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $newSalary = (float) $request->new_salary;
+        $effectiveDate = Carbon::parse($request->effective_date);
+
+        // Add salary change with history tracking
+        $employee->addSalaryChange(
+            newSalary: $newSalary,
+            effectiveDate: $effectiveDate,
+            reason: $request->reason,
+            notes: $request->notes,
+            approvedBy: auth()->id()
+        );
+
+        return redirect()
+            ->route('hr.employees.edit', $employee)
+            ->with('success', "Salary updated to " . number_format($newSalary, 2) . " EGP effective " . $effectiveDate->format('M d, Y'));
+    }
 }

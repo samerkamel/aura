@@ -278,21 +278,23 @@
             <i class="ti ti-currency-dollar me-2"></i>Salary Information
           </h6>
 
-          <div class="mb-3">
-            <label class="form-label" for="base_salary">Base Salary (EGP)</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              class="form-control @error('base_salary') is-invalid @enderror"
-              id="base_salary"
-              name="base_salary"
-              value="{{ old('base_salary', $employee->base_salary) }}"
-              placeholder="0.00">
-            @error('base_salary')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+          <!-- Current Salary Display -->
+          <div class="card bg-label-primary mb-3">
+            <div class="card-body py-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <small class="text-muted d-block">Current Base Salary</small>
+                  <h4 class="mb-0">{{ number_format($employee->base_salary ?? 0, 2) }} EGP</h4>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#salaryChangeModal">
+                  <i class="ti ti-edit me-1"></i>Change Salary
+                </button>
+              </div>
+            </div>
           </div>
+
+          <!-- Hidden field to store salary (updated via modal) -->
+          <input type="hidden" name="base_salary" id="base_salary" value="{{ old('base_salary', $employee->base_salary) }}">
 
           <div class="mb-3">
             <label class="form-label" for="hourly_rate">Hourly Rate (EGP/hr)</label>
@@ -311,18 +313,47 @@
             <small class="form-text text-muted">Default rate used for project reports and billable hours</small>
           </div>
 
+          <!-- Salary History -->
           <div class="mb-3">
-            <label class="form-label" for="salary_change_reason">Salary Change Reason</label>
-            <input
-              type="text"
-              class="form-control @error('salary_change_reason') is-invalid @enderror"
-              id="salary_change_reason"
-              name="salary_change_reason"
-              placeholder="Enter reason for salary change (if any)">
-            @error('salary_change_reason')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <small class="form-text text-muted">This will be recorded in the salary history</small>
+            <label class="form-label d-flex justify-content-between align-items-center">
+              <span><i class="ti ti-history me-1"></i>Salary History</span>
+            </label>
+            <div class="list-group list-group-flush" style="max-height: 200px; overflow-y: auto;">
+              @forelse($employee->salaryHistory()->orderBy('effective_date', 'desc')->take(5)->get() as $history)
+                <div class="list-group-item px-0 py-2">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <span class="fw-semibold">{{ number_format($history->base_salary, 2) }} {{ $history->currency }}</span>
+                      @if($history->change_percentage !== null)
+                        <span class="badge bg-label-{{ $history->change_percentage >= 0 ? 'success' : 'danger' }} ms-2">
+                          {{ $history->change_percentage >= 0 ? '+' : '' }}{{ number_format($history->change_percentage, 1) }}%
+                        </span>
+                      @endif
+                      <br>
+                      <small class="text-muted">
+                        {{ $history->reason_label }}
+                        @if($history->notes)
+                          - {{ \Illuminate\Support\Str::limit($history->notes, 30) }}
+                        @endif
+                      </small>
+                    </div>
+                    <div class="text-end">
+                      <small class="text-muted d-block">{{ $history->effective_date->format('M d, Y') }}</small>
+                      @if($history->isCurrent())
+                        <span class="badge bg-success">Current</span>
+                      @else
+                        <small class="text-muted">to {{ $history->end_date?->format('M d, Y') }}</small>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+              @empty
+                <div class="list-group-item px-0 py-3 text-center text-muted">
+                  <i class="ti ti-history ti-lg mb-2 d-block"></i>
+                  No salary history recorded
+                </div>
+              @endforelse
+            </div>
           </div>
           @endif
         </div>
@@ -557,6 +588,85 @@
     </form>
   </div>
 </div>
+
+@if($canEditSalary ?? false)
+<!-- Salary Change Modal -->
+<div class="modal fade" id="salaryChangeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ti ti-currency-dollar me-2"></i>Change Salary
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="salaryChangeForm" action="{{ route('hr.employees.salary.update', $employee) }}" method="POST">
+        @csrf
+        <div class="modal-body">
+          <div class="alert alert-info mb-3">
+            <i class="ti ti-info-circle me-2"></i>
+            Current salary: <strong>{{ number_format($employee->base_salary ?? 0, 2) }} EGP</strong>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="new_salary">New Salary (EGP) <span class="text-danger">*</span></label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              class="form-control"
+              id="new_salary"
+              name="new_salary"
+              placeholder="Enter new salary amount"
+              required>
+            <div id="salaryChangePreview" class="form-text"></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="effective_date">Effective Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              class="form-control"
+              id="effective_date"
+              name="effective_date"
+              value="{{ now()->format('Y-m-d') }}"
+              required>
+            <small class="form-text text-muted">The date when this salary becomes effective</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="reason">Reason <span class="text-danger">*</span></label>
+            <select class="form-select" id="reason" name="reason" required>
+              <option value="">Select reason...</option>
+              <option value="annual_review">Annual Review</option>
+              <option value="promotion">Promotion</option>
+              <option value="adjustment">Adjustment</option>
+              <option value="correction">Correction</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea
+              class="form-control"
+              id="notes"
+              name="notes"
+              rows="2"
+              placeholder="Optional notes about this salary change"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ti ti-check me-1"></i>Save Salary Change
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endif
 @endsection
 
 @section('page-script')
@@ -584,5 +694,52 @@ function setLastSignInDate() {
   document.getElementById('termination_date').value = '{{ $lastSignInDate->format("Y-m-d") }}';
   @endif
 }
+
+// Salary change preview
+@if($canEditSalary ?? false)
+document.addEventListener('DOMContentLoaded', function() {
+  const currentSalary = {{ $employee->base_salary ?? 0 }};
+  const newSalaryInput = document.getElementById('new_salary');
+  const previewElement = document.getElementById('salaryChangePreview');
+
+  if (newSalaryInput && previewElement) {
+    newSalaryInput.addEventListener('input', function() {
+      const newSalary = parseFloat(this.value) || 0;
+
+      if (newSalary > 0 && currentSalary > 0) {
+        const change = newSalary - currentSalary;
+        const percentChange = ((change / currentSalary) * 100).toFixed(1);
+        const isIncrease = change >= 0;
+
+        previewElement.innerHTML = `
+          <span class="text-${isIncrease ? 'success' : 'danger'}">
+            <i class="ti ti-trending-${isIncrease ? 'up' : 'down'} me-1"></i>
+            ${isIncrease ? '+' : ''}${change.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} EGP
+            (${isIncrease ? '+' : ''}${percentChange}%)
+          </span>
+        `;
+      } else if (newSalary > 0 && currentSalary === 0) {
+        previewElement.innerHTML = `
+          <span class="text-success">
+            <i class="ti ti-plus me-1"></i>Setting initial salary
+          </span>
+        `;
+      } else {
+        previewElement.innerHTML = '';
+      }
+    });
+  }
+
+  // Reset form when modal is closed
+  const modal = document.getElementById('salaryChangeModal');
+  if (modal) {
+    modal.addEventListener('hidden.bs.modal', function() {
+      document.getElementById('salaryChangeForm').reset();
+      document.getElementById('effective_date').value = '{{ now()->format("Y-m-d") }}';
+      previewElement.innerHTML = '';
+    });
+  }
+});
+@endif
 </script>
 @endsection

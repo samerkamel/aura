@@ -5,6 +5,8 @@ namespace Modules\HR\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 /**
  * Employee Model
@@ -194,11 +196,84 @@ class Employee extends Model
   }
 
   /**
-   * Relationship to salary histories
+   * Relationship to salary history records.
    */
-  public function salaryHistories()
+  public function salaryHistory(): HasMany
   {
-    return $this->hasMany(SalaryHistory::class)->orderBy('change_date', 'desc');
+    return $this->hasMany(EmployeeSalaryHistory::class)->orderBy('effective_date', 'desc');
+  }
+
+  /**
+   * Get the salary that was effective at a specific date.
+   * Falls back to base_salary if no history found.
+   */
+  public function getSalaryAt(Carbon $date): ?float
+  {
+    $salaryRecord = $this->salaryHistory()
+        ->effectiveAt($date)
+        ->first();
+
+    return $salaryRecord?->base_salary ?? $this->base_salary;
+  }
+
+  /**
+   * Get the current salary from history (or fallback to base_salary).
+   */
+  public function getCurrentSalaryFromHistory(): ?float
+  {
+    $currentSalary = $this->salaryHistory()
+        ->current()
+        ->first();
+
+    return $currentSalary?->base_salary ?? $this->base_salary;
+  }
+
+  /**
+   * Add a new salary change record.
+   * Automatically closes the previous salary record.
+   */
+  public function addSalaryChange(
+    float $newSalary,
+    Carbon $effectiveDate,
+    string $reason = 'adjustment',
+    ?string $notes = null,
+    ?int $approvedBy = null
+  ): EmployeeSalaryHistory {
+    // Close the current salary record
+    $this->salaryHistory()
+        ->current()
+        ->update(['end_date' => $effectiveDate->copy()->subDay()]);
+
+    // Create new salary record
+    $salaryRecord = $this->salaryHistory()->create([
+        'base_salary' => $newSalary,
+        'currency' => 'EGP',
+        'effective_date' => $effectiveDate,
+        'end_date' => null,
+        'reason' => $reason,
+        'notes' => $notes,
+        'approved_by' => $approvedBy,
+        'created_by' => auth()->id(),
+    ]);
+
+    // Also update the base_salary field for backwards compatibility
+    $this->update(['base_salary' => $newSalary]);
+
+    return $salaryRecord;
+  }
+
+  /**
+   * Get salary history with change percentages for display.
+   */
+  public function getSalaryHistoryWithChanges(): \Illuminate\Support\Collection
+  {
+    return $this->salaryHistory()
+        ->orderBy('effective_date', 'desc')
+        ->get()
+        ->map(function ($record) {
+            $record->change_percentage = $record->change_percentage;
+            return $record;
+        });
   }
 
   /**

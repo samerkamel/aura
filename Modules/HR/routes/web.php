@@ -22,6 +22,9 @@ Route::prefix('hr')->name('hr.')->group(function () {
     Route::delete('documents/{document}', [EmployeeDocumentController::class, 'destroy'])->name('documents.destroy');
     Route::get('documents/{document}/download', [EmployeeDocumentController::class, 'download'])->name('documents.download');
 
+    // Salary history routes
+    Route::post('salary', [EmployeeController::class, 'updateSalary'])->name('salary.update');
+
     // Off-boarding routes
     Route::get('offboarding', [EmployeeController::class, 'showOffboarding'])->name('offboarding.show');
     Route::post('offboarding', [EmployeeController::class, 'processOffboarding'])->name('offboarding.process');
