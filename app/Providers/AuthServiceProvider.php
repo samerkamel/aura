@@ -235,5 +235,218 @@ class AuthServiceProvider extends ServiceProvider
             // Fallback to old role field for backward compatibility
             return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
         });
+
+        // ========================================
+        // Project Module Permissions
+        // ========================================
+
+        // View all projects
+        Gate::define('view-all-projects', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-all-projects')) {
+                return true;
+            }
+            return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // View only assigned projects (employees can see projects they're assigned to)
+        Gate::define('view-assigned-projects', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-assigned-projects') || $user->hasPermission('view-all-projects')) {
+                return true;
+            }
+            // All users can view their assigned projects by default
+            return true;
+        });
+
+        // Check if user can view a specific project
+        Gate::define('view-project', function ($user, $project) {
+            // Super admin and users with view-all-projects can see everything
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-all-projects')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Check if user is assigned to this project
+            if ($user->employee) {
+                // Check if employee is the project manager
+                if ($project->project_manager_id === $user->employee->id) {
+                    return true;
+                }
+                // Check if employee is assigned to the project
+                if ($project->employees()->where('employee_id', $user->employee->id)->exists()) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        // Create projects
+        Gate::define('create-project', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('create-project')) {
+                return true;
+            }
+            return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
+        });
+
+        // Edit projects
+        Gate::define('edit-project', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('edit-project')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers can edit their own projects
+            if ($project && $user->employee && $project->project_manager_id === $user->employee->id) {
+                return $user->hasPermission('edit-assigned-project');
+            }
+
+            return false;
+        });
+
+        // Delete projects
+        Gate::define('delete-project', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('delete-project')) {
+                return true;
+            }
+            return isset($user->role) && $user->role === 'super_admin';
+        });
+
+        // View project finance dashboard
+        Gate::define('view-project-finance', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-project-finance')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers can view finance of their projects
+            if ($project && $user->employee && $project->project_manager_id === $user->employee->id) {
+                return $user->hasPermission('view-assigned-project-finance');
+            }
+
+            return false;
+        });
+
+        // Manage project budgets
+        Gate::define('manage-project-budgets', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-budgets')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            return false;
+        });
+
+        // Manage project costs
+        Gate::define('manage-project-costs', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-costs')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers can manage costs of their projects
+            if ($project && $user->employee && $project->project_manager_id === $user->employee->id) {
+                return $user->hasPermission('manage-assigned-project-costs');
+            }
+
+            return false;
+        });
+
+        // Manage project revenues
+        Gate::define('manage-project-revenues', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-revenues')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            return false;
+        });
+
+        // View project profitability
+        Gate::define('view-project-profitability', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('view-project-profitability')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers can view profitability of their projects
+            if ($project && $user->employee && $project->project_manager_id === $user->employee->id) {
+                return $user->hasPermission('view-assigned-project-profitability');
+            }
+
+            return false;
+        });
+
+        // Manage project follow-ups
+        Gate::define('manage-project-followups', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-followups')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers and assigned employees can manage follow-ups
+            if ($project && $user->employee) {
+                if ($project->project_manager_id === $user->employee->id) {
+                    return true;
+                }
+                if ($project->employees()->where('employee_id', $user->employee->id)->exists()) {
+                    return $user->hasPermission('manage-assigned-project-followups');
+                }
+            }
+
+            return false;
+        });
+
+        // Manage project reports
+        Gate::define('manage-project-reports', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-reports')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            return false;
+        });
+
+        // Manage project team (assign employees)
+        Gate::define('manage-project-team', function ($user, $project = null) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('manage-project-team')) {
+                return true;
+            }
+            if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+                return true;
+            }
+
+            // Project managers can manage their own project teams
+            if ($project && $user->employee && $project->project_manager_id === $user->employee->id) {
+                return true;
+            }
+
+            return false;
+        });
+
+        // Sync Jira data for projects
+        Gate::define('sync-project-jira', function ($user) {
+            if ($user->hasRole('super-admin') || $user->hasPermission('sync-project-jira')) {
+                return true;
+            }
+            return isset($user->role) && in_array($user->role, ['super_admin', 'admin']);
+        });
     }
 }
