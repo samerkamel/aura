@@ -53,10 +53,15 @@ class PayrollServiceProvider extends ServiceProvider
      */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function () {
+            $schedule = $this->app->make(\Illuminate\Console\Scheduling\Schedule::class);
+
+            // Sync billable hours from Jira every 3 hours (at :30)
+            $schedule->command('jira:sync-billable-hours', ['--period' => 'this-month'])
+                ->cron('30 */3 * * *') // At minute 30 past every 3rd hour
+                ->withoutOverlapping()
+                ->appendOutputTo(storage_path('logs/jira-sync.log'));
+        });
     }
 
     /**

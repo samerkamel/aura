@@ -43,7 +43,11 @@ class ProjectServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            \Modules\Project\Console\Commands\CalculateProjectHealth::class,
+            \Modules\Project\Console\Commands\SyncJiraProjects::class,
+            \Modules\Project\Console\Commands\SyncJiraIssues::class,
+        ]);
     }
 
     /**
@@ -51,10 +55,21 @@ class ProjectServiceProvider extends ServiceProvider
      */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function () {
+            $schedule = $this->app->make(\Illuminate\Console\Scheduling\Schedule::class);
+
+            // Sync projects from Jira every 3 hours (at :00)
+            $schedule->command('jira:sync-projects')
+                ->cron('0 */3 * * *') // At minute 0 past every 3rd hour
+                ->withoutOverlapping()
+                ->appendOutputTo(storage_path('logs/jira-sync.log'));
+
+            // Sync issues from Jira every 3 hours (at :15)
+            $schedule->command('jira:sync-issues')
+                ->cron('15 */3 * * *') // At minute 15 past every 3rd hour
+                ->withoutOverlapping()
+                ->appendOutputTo(storage_path('logs/jira-sync.log'));
+        });
     }
 
     /**
