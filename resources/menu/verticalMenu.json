@@ -157,16 +157,6 @@
       ]
     },
     {
-      "name": "Leave Policies",
-      "icon": "menu-icon tf-icons ti ti-file-text",
-      "slug": "leave-policies",
-      "url": "leave-policies",
-      "roles": [
-        "super-admin",
-        "hr-manager"
-      ]
-    },
-    {
       "name": "Payroll Management",
       "icon": "menu-icon tf-icons ti ti-currency-dollar",
       "slug": "payroll-management",
@@ -186,16 +176,6 @@
           "name": "Billable Hours",
           "slug": "payroll-billable-hours-index"
         }
-      ]
-    },
-    {
-      "name": "Letter Templates",
-      "icon": "menu-icon tf-icons ti ti-file-text",
-      "slug": "letter-templates",
-      "url": "letter-templates",
-      "roles": [
-        "super-admin",
-        "hr-manager"
       ]
     },
     {
@@ -481,6 +461,16 @@
           "url": "invoicing/admin/internal-sequences",
           "name": "Internal Sequences",
           "slug": "settings-internal-sequences"
+        },
+        {
+          "url": "leave-policies",
+          "name": "Leave Policies",
+          "slug": "settings-leave-policies"
+        },
+        {
+          "url": "letter-templates",
+          "name": "Letter Templates",
+          "slug": "settings-letter-templates"
         }
       ]
     }
