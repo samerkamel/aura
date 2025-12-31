@@ -107,7 +107,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee): View
     {
-        $employee->load(['documents', 'salaryHistories', 'positionRelation']);
+        $employee->load(['documents', 'salaryHistory', 'positionRelation']);
         $canViewSalary = Gate::allows('view-employee-financial');
 
         return view('hr::employees.show', compact('employee', 'canViewSalary'));

@@ -734,7 +734,7 @@
       </div>
     </div>
 
-    @if($canViewSalary && $employee->salaryHistories->count() > 0)
+    @if($canViewSalary && $employee->salaryHistory->count() > 0)
     <!-- Salary History Section -->
     <div class="card mb-4">
       <div class="card-header">
@@ -745,27 +745,37 @@
           <table class="table table-sm table-hover">
             <thead class="table-light">
               <tr>
-                <th>Date</th>
-                <th>Old Salary</th>
-                <th>New Salary</th>
+                <th>Effective Date</th>
+                <th>Salary</th>
                 <th>Change</th>
                 <th>Reason</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              @foreach($employee->salaryHistories->sortByDesc('change_date')->take(5) as $history)
+              @foreach($employee->salaryHistory->sortByDesc('effective_date')->take(5) as $history)
               <tr>
-                <td>{{ $history->change_date->format('M d, Y') }}</td>
-                <td class="text-muted">EGP {{ $history->formatted_old_salary }}</td>
-                <td class="fw-bold text-success">EGP {{ $history->formatted_new_salary }}</td>
+                <td>{{ $history->effective_date->format('M d, Y') }}</td>
+                <td class="fw-bold">{{ number_format($history->base_salary, 2) }} {{ $history->currency }}</td>
                 <td>
-                  @if($history->salary_change >= 0)
-                    <span class="badge bg-success"><i class="ti ti-arrow-up me-1"></i>{{ $history->formatted_salary_change }}</span>
+                  @if($history->change_percentage !== null)
+                    @if($history->change_percentage >= 0)
+                      <span class="badge bg-success"><i class="ti ti-arrow-up me-1"></i>+{{ number_format($history->change_percentage, 1) }}%</span>
+                    @else
+                      <span class="badge bg-danger"><i class="ti ti-arrow-down me-1"></i>{{ number_format($history->change_percentage, 1) }}%</span>
+                    @endif
                   @else
-                    <span class="badge bg-danger"><i class="ti ti-arrow-down me-1"></i>{{ $history->formatted_salary_change }}</span>
+                    <span class="badge bg-secondary">Initial</span>
                   @endif
                 </td>
-                <td><small>{{ \Illuminate\Support\Str::limit($history->reason ?: 'No reason', 30) }}</small></td>
+                <td><small>{{ $history->reason_label }}</small></td>
+                <td>
+                  @if($history->isCurrent())
+                    <span class="badge bg-success">Current</span>
+                  @else
+                    <small class="text-muted">Until {{ $history->end_date?->format('M d, Y') }}</small>
+                  @endif
+                </td>
               </tr>
               @endforeach
             </tbody>
