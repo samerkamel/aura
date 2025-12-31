@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const assetName = button.getAttribute('data-asset-name');
 
       document.getElementById('delete_asset_name').textContent = assetName;
-      document.getElementById('deleteForm').action = `/assets/${assetId}`;
+      document.getElementById('deleteForm').action = `/assetmanager/assets/${assetId}`;
     });
   }
 });
