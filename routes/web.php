@@ -49,6 +49,7 @@ use App\Http\Controllers\apps\UserViewConnections;
 use App\Http\Controllers\apps\AccessRoles;
 use App\Http\Controllers\apps\AccessPermission;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\pages\UserProfile;
 use App\Http\Controllers\pages\UserTeams;
 use App\Http\Controllers\pages\UserProjects;
@@ -158,6 +159,15 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
     Route::get('/', [ProfileController::class, 'index'])->name('index');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
     Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password');
+});
+
+// User Shortcuts Routes
+Route::middleware('auth')->prefix('shortcuts')->name('shortcuts.')->group(function () {
+    Route::get('/', [ShortcutController::class, 'index'])->name('index');
+    Route::get('/available', [ShortcutController::class, 'available'])->name('available');
+    Route::post('/', [ShortcutController::class, 'store'])->name('store');
+    Route::delete('/{shortcut}', [ShortcutController::class, 'destroy'])->name('destroy');
+    Route::post('/reorder', [ShortcutController::class, 'reorder'])->name('reorder');
 });
 
 // locale

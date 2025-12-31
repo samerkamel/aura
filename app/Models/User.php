@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -65,6 +66,14 @@ class User extends Authenticatable
   public function roles(): BelongsToMany
   {
     return $this->belongsToMany(Role::class);
+  }
+
+  /**
+   * Get the user's shortcuts.
+   */
+  public function shortcuts(): HasMany
+  {
+    return $this->hasMany(UserShortcut::class)->ordered();
   }
 
   /**

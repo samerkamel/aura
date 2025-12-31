@@ -135,77 +135,29 @@ $companySettings = CompanySetting::getSettings();
             <a class="nav-link btn btn-text-secondary btn-icon rounded-pill btn-icon dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
               <i class='ti ti-layout-grid-add ti-md'></i>
             </a>
-            <div class="dropdown-menu dropdown-menu-end p-0">
+            <div class="dropdown-menu dropdown-menu-end p-0" style="min-width: 22rem;">
               <div class="dropdown-menu-header border-bottom">
                 <div class="dropdown-header d-flex align-items-center py-3">
                   <h6 class="mb-0 me-auto">Shortcuts</h6>
-                  <a href="javascript:void(0)" class="btn btn-text-secondary rounded-pill btn-icon dropdown-shortcuts-add" data-bs-toggle="tooltip" data-bs-placement="top" title="Add shortcuts"><i class="ti ti-plus text-heading"></i></a>
+                  <a href="javascript:void(0)" class="btn btn-text-secondary rounded-pill btn-icon" id="shortcut-edit-toggle" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit shortcuts">
+                    <i class="ti ti-pencil text-heading"></i>
+                  </a>
+                  <a href="javascript:void(0)" class="btn btn-text-secondary rounded-pill btn-icon" id="shortcut-add-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Add shortcut">
+                    <i class="ti ti-plus text-heading"></i>
+                  </a>
                 </div>
               </div>
-              <div class="dropdown-shortcuts-list scrollable-container">
-                <div class="row row-bordered overflow-visible g-0">
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-calendar ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('app/calendar')}}" class="stretched-link">Calendar</a>
-                    <small>Appointments</small>
-                  </div>
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-file-dollar ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('app/invoice/list')}}" class="stretched-link">Invoice App</a>
-                    <small>Manage Accounts</small>
+              <div class="dropdown-shortcuts-list scrollable-container" id="shortcuts-container" style="max-height: 400px; overflow-y: auto;">
+                <!-- Shortcuts will be loaded dynamically -->
+                <div class="text-center py-4" id="shortcuts-loading">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                   </div>
                 </div>
-                <div class="row row-bordered overflow-visible g-0">
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-user ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('app/user/list')}}" class="stretched-link">User App</a>
-                    <small>Manage Users</small>
-                  </div>
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-users ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('app/access-roles')}}" class="stretched-link">Role Management</a>
-                    <small>Permission</small>
-                  </div>
-                </div>
-                <div class="row row-bordered overflow-visible g-0">
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-device-desktop-analytics ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('/')}}" class="stretched-link">Dashboard</a>
-                    <small>User Dashboard</small>
-                  </div>
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-settings ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('pages/account-settings-account')}}" class="stretched-link">Setting</a>
-                    <small>Account Settings</small>
-                  </div>
-                </div>
-                <div class="row row-bordered overflow-visible g-0">
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-help ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('pages/faq')}}" class="stretched-link">FAQs</a>
-                    <small>FAQs & Articles</small>
-                  </div>
-                  <div class="dropdown-shortcuts-item col">
-                    <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                      <i class="ti ti-square ti-26px text-heading"></i>
-                    </span>
-                    <a href="{{url('modal-examples')}}" class="stretched-link">Modals</a>
-                    <small>Useful Popups</small>
-                  </div>
+                <div class="text-center py-4 d-none" id="shortcuts-empty">
+                  <i class="ti ti-layout-grid-add ti-xl text-muted mb-2"></i>
+                  <p class="text-muted mb-0">No shortcuts yet</p>
+                  <small class="text-muted">Click + to add shortcuts</small>
                 </div>
               </div>
             </div>
@@ -540,3 +492,303 @@ $companySettings = CompanySetting::getSettings();
     @endif
   </nav>
   <!-- / Navbar -->
+
+  <!-- Add Shortcut Modal -->
+  <div class="modal fade" id="addShortcutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Shortcut</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" class="form-control" id="shortcut-search" placeholder="Search menu items...">
+          </div>
+          <div id="available-shortcuts-list" style="max-height: 400px; overflow-y: auto;">
+            <div class="text-center py-4" id="available-shortcuts-loading">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Add Shortcut Modal -->
+
+  @once
+  @push('pricing-script')
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const shortcutsContainer = document.getElementById('shortcuts-container');
+    const shortcutsLoading = document.getElementById('shortcuts-loading');
+    const shortcutsEmpty = document.getElementById('shortcuts-empty');
+    const addShortcutBtn = document.getElementById('shortcut-add-btn');
+    const editToggleBtn = document.getElementById('shortcut-edit-toggle');
+    const addShortcutModal = new bootstrap.Modal(document.getElementById('addShortcutModal'));
+    const availableShortcutsList = document.getElementById('available-shortcuts-list');
+    const availableShortcutsLoading = document.getElementById('available-shortcuts-loading');
+    const shortcutSearch = document.getElementById('shortcut-search');
+
+    let shortcuts = [];
+    let availableItems = [];
+    let isEditMode = false;
+
+    // Load shortcuts on page load
+    loadShortcuts();
+
+    // Toggle edit mode
+    editToggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      isEditMode = !isEditMode;
+      this.querySelector('i').className = isEditMode ? 'ti ti-check text-success' : 'ti ti-pencil text-heading';
+      renderShortcuts();
+    });
+
+    // Open add shortcut modal
+    addShortcutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      loadAvailableItems();
+      addShortcutModal.show();
+    });
+
+    // Search filter
+    shortcutSearch.addEventListener('input', function() {
+      renderAvailableItems(this.value.toLowerCase());
+    });
+
+    function loadShortcuts() {
+      shortcutsLoading.classList.remove('d-none');
+      shortcutsEmpty.classList.add('d-none');
+
+      fetch('/shortcuts', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        shortcuts = data.shortcuts || [];
+        renderShortcuts();
+      })
+      .catch(error => {
+        console.error('Error loading shortcuts:', error);
+        shortcutsLoading.classList.add('d-none');
+        shortcutsEmpty.classList.remove('d-none');
+      });
+    }
+
+    function renderShortcuts() {
+      shortcutsLoading.classList.add('d-none');
+
+      if (shortcuts.length === 0) {
+        shortcutsEmpty.classList.remove('d-none');
+        // Remove any existing shortcut rows
+        const existingRows = shortcutsContainer.querySelectorAll('.shortcut-row');
+        existingRows.forEach(row => row.remove());
+        return;
+      }
+
+      shortcutsEmpty.classList.add('d-none');
+
+      // Remove existing shortcut rows
+      const existingRows = shortcutsContainer.querySelectorAll('.shortcut-row');
+      existingRows.forEach(row => row.remove());
+
+      // Create rows with 2 items each
+      for (let i = 0; i < shortcuts.length; i += 2) {
+        const row = document.createElement('div');
+        row.className = 'row row-bordered overflow-visible g-0 shortcut-row';
+
+        // First item
+        row.appendChild(createShortcutItem(shortcuts[i]));
+
+        // Second item (if exists)
+        if (shortcuts[i + 1]) {
+          row.appendChild(createShortcutItem(shortcuts[i + 1]));
+        } else {
+          // Empty placeholder
+          const emptyCol = document.createElement('div');
+          emptyCol.className = 'dropdown-shortcuts-item col';
+          row.appendChild(emptyCol);
+        }
+
+        shortcutsContainer.appendChild(row);
+      }
+    }
+
+    function createShortcutItem(shortcut) {
+      const item = document.createElement('div');
+      item.className = 'dropdown-shortcuts-item col position-relative';
+
+      const iconClass = shortcut.icon || 'ti ti-link';
+
+      item.innerHTML = `
+        <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+          <i class="${iconClass} ti-26px text-heading"></i>
+        </span>
+        <a href="${shortcut.url}" class="stretched-link">${shortcut.name}</a>
+        <small>${shortcut.subtitle || ''}</small>
+        ${isEditMode ? `<button class="btn btn-xs btn-danger position-absolute top-0 end-0 m-2 remove-shortcut" data-id="${shortcut.id}" style="z-index: 10;">
+          <i class="ti ti-x ti-xs"></i>
+        </button>` : ''}
+      `;
+
+      if (isEditMode) {
+        const removeBtn = item.querySelector('.remove-shortcut');
+        removeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          removeShortcut(shortcut.id);
+        });
+      }
+
+      return item;
+    }
+
+    function removeShortcut(id) {
+      fetch(`/shortcuts/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          shortcuts = shortcuts.filter(s => s.id !== id);
+          renderShortcuts();
+        }
+      })
+      .catch(error => console.error('Error removing shortcut:', error));
+    }
+
+    function loadAvailableItems() {
+      availableShortcutsLoading.classList.remove('d-none');
+      shortcutSearch.value = '';
+
+      fetch('/shortcuts/available', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        availableItems = data.items || [];
+        renderAvailableItems();
+      })
+      .catch(error => {
+        console.error('Error loading available items:', error);
+        availableShortcutsLoading.classList.add('d-none');
+      });
+    }
+
+    function renderAvailableItems(searchTerm = '') {
+      availableShortcutsLoading.classList.add('d-none');
+
+      // Clear existing items except loading
+      const existingItems = availableShortcutsList.querySelectorAll('.available-shortcut-item');
+      existingItems.forEach(item => item.remove());
+
+      const filteredItems = searchTerm
+        ? availableItems.filter(item =>
+            item.name.toLowerCase().includes(searchTerm) ||
+            (item.subtitle && item.subtitle.toLowerCase().includes(searchTerm))
+          )
+        : availableItems;
+
+      if (filteredItems.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'available-shortcut-item text-center text-muted py-4';
+        emptyMsg.textContent = searchTerm ? 'No matching items found' : 'All available items have been added';
+        availableShortcutsList.appendChild(emptyMsg);
+        return;
+      }
+
+      filteredItems.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'available-shortcut-item d-flex align-items-center p-3 border-bottom cursor-pointer hover-bg-light';
+        itemEl.style.cursor = 'pointer';
+
+        const iconClass = item.icon || 'ti ti-link';
+
+        itemEl.innerHTML = `
+          <span class="avatar avatar-sm bg-label-primary me-3 d-flex align-items-center justify-content-center">
+            <i class="${iconClass}"></i>
+          </span>
+          <div class="flex-grow-1">
+            <h6 class="mb-0">${item.name}</h6>
+            <small class="text-muted">${item.subtitle || item.url}</small>
+          </div>
+          <i class="ti ti-plus text-primary"></i>
+        `;
+
+        itemEl.addEventListener('click', function() {
+          addShortcut(item);
+        });
+
+        itemEl.addEventListener('mouseenter', function() {
+          this.classList.add('bg-lighter');
+        });
+
+        itemEl.addEventListener('mouseleave', function() {
+          this.classList.remove('bg-lighter');
+        });
+
+        availableShortcutsList.appendChild(itemEl);
+      });
+    }
+
+    function addShortcut(item) {
+      fetch('/shortcuts', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          name: item.name,
+          url: item.url,
+          icon: item.icon,
+          subtitle: item.subtitle,
+          slug: item.slug,
+          required_roles: item.required_roles
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          shortcuts.push(data.shortcut);
+          renderShortcuts();
+
+          // Remove from available items
+          availableItems = availableItems.filter(i => i.url !== item.url);
+          renderAvailableItems(shortcutSearch.value.toLowerCase());
+
+          // Close modal if no more items
+          if (availableItems.length === 0) {
+            addShortcutModal.hide();
+          }
+        } else {
+          alert(data.message || 'Failed to add shortcut');
+        }
+      })
+      .catch(error => {
+        console.error('Error adding shortcut:', error);
+        alert('Failed to add shortcut');
+      });
+    }
+  });
+  </script>
+  @endpush
+  @endonce
