@@ -33,7 +33,7 @@ class CapacityPlanningController extends Controller
                             });
                     });
             }])
-            ->orderBy('first_name')
+            ->orderBy('name')
             ->get();
 
         // Get active projects with employee allocations
@@ -193,7 +193,7 @@ class CapacityPlanningController extends Controller
             ->with(['projects' => function ($query) use ($startDate, $endDate) {
                 $query->where('is_active', true);
             }])
-            ->orderBy('first_name')
+            ->orderBy('name')
             ->get();
 
         $weeks = $this->getWeeksInRange($startDate, $endDate);

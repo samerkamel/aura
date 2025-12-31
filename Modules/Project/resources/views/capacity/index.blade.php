@@ -206,7 +206,7 @@
                       <div class="d-flex align-items-center">
                         <div class="avatar avatar-sm me-2">
                           <span class="avatar-initial rounded-circle bg-label-primary">
-                            {{ strtoupper(substr($row['employee']->first_name, 0, 1)) }}
+                            {{ strtoupper(substr($row['employee']->name, 0, 1)) }}
                           </span>
                         </div>
                         {{ $row['employee']->full_name }}
@@ -334,7 +334,7 @@
                 <div class="list-group-item d-flex align-items-center px-0">
                   <div class="avatar avatar-sm me-3">
                     <span class="avatar-initial rounded-circle bg-label-secondary">
-                      {{ strtoupper(substr($employee->first_name, 0, 1)) }}
+                      {{ strtoupper(substr($employee->name, 0, 1)) }}
                     </span>
                   </div>
                   <div class="flex-grow-1">
