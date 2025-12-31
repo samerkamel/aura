@@ -623,38 +623,41 @@ class ProjectDashboardService
             SUM(CASE WHEN health_status = "green" THEN 1 ELSE 0 END) as health_green,
             SUM(CASE WHEN health_status = "yellow" THEN 1 ELSE 0 END) as health_yellow,
             SUM(CASE WHEN health_status = "red" THEN 1 ELSE 0 END) as health_red,
-            AVG(completion_percentage) as avg_completion,
-            SUM(total_hours) as total_hours,
-            SUM(CASE WHEN planned_end_date < CURDATE() AND completion_percentage < 100 THEN 1 ELSE 0 END) as overdue_count
+            AVG(COALESCE(completion_percentage, 0)) as avg_completion,
+            SUM(CASE WHEN planned_end_date < CURDATE() AND COALESCE(completion_percentage, 0) < 100 THEN 1 ELSE 0 END) as overdue_count
         ')->first();
 
-        // Get revenue totals in single query
+        // Get project IDs and codes for subsequent queries
         $projectIds = (clone $baseQuery)->pluck('id');
+        $projectCodes = (clone $baseQuery)->pluck('code');
 
+        // Get revenue totals in single query
         $revenueStats = DB::table('project_revenues')
             ->whereIn('project_id', $projectIds)
-            ->selectRaw('
-                COALESCE(SUM(amount_received), 0) as total_revenue
-            ')
+            ->selectRaw('COALESCE(SUM(amount_received), 0) as total_revenue')
             ->first();
 
-        // Get labor costs from worklogs
-        $projectCodes = (clone $baseQuery)->pluck('code');
+        // Get total hours and labor costs from worklogs
+        $totalHours = 0;
         $laborCosts = 0;
         if ($projectCodes->isNotEmpty()) {
-            $laborCosts = DB::table('jira_worklogs')
+            $worklogStats = DB::table('jira_worklogs')
                 ->where(function ($q) use ($projectCodes) {
                     foreach ($projectCodes as $code) {
                         $q->orWhere('issue_key', 'LIKE', $code . '-%');
                     }
                 })
-                ->sum('cost');
+                ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours, COALESCE(SUM(cost), 0) as labor_costs')
+                ->first();
+
+            $totalHours = $worklogStats->total_hours ?? 0;
+            $laborCosts = $worklogStats->labor_costs ?? 0;
         }
 
         // Get direct costs
         $directCosts = DB::table('project_costs')
             ->whereIn('project_id', $projectIds)
-            ->sum('amount');
+            ->sum('amount') ?? 0;
 
         $totalCosts = $laborCosts + $directCosts;
         $totalRevenue = $revenueStats->total_revenue ?? 0;
@@ -674,7 +677,7 @@ class ProjectDashboardService
             'total_costs' => round($totalCosts, 2),
             'total_profit' => round($totalProfit, 2),
             'overall_margin' => $overallMargin,
-            'total_hours' => round($stats->total_hours ?? 0, 1),
+            'total_hours' => round($totalHours, 1),
             'average_completion' => round($stats->avg_completion ?? 0, 1),
             'overdue_count' => (int) ($stats->overdue_count ?? 0),
         ];
