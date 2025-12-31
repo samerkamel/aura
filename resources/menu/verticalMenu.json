@@ -272,69 +272,60 @@
           "url": "accounting/credit-notes",
           "name": "Credit Notes",
           "slug": "accounting-credit-notes-index"
-        }
-      ]
-    },
-    {
-      "name": "Reports",
-      "icon": "menu-icon tf-icons ti ti-chart-bar",
-      "slug": "accounting-reports",
-      "roles": [
-        "super-admin",
-        "finance-manager",
-        "finance-readonly"
-      ],
-      "submenu": [
-        {
-          "url": "accounting/income-sheet",
-          "name": "Income Sheet",
-          "slug": "accounting-income-sheet-index"
         },
         {
-          "url": "accounting/reports/income-expenses",
-          "name": "I&E Report",
-          "slug": "accounting-reports-income-expenses"
+          "name": "Reports",
+          "icon": "menu-icon tf-icons ti ti-chart-bar",
+          "slug": "accounting-reports",
+          "submenu": [
+            {
+              "url": "accounting/income-sheet",
+              "name": "Income Sheet",
+              "slug": "accounting-income-sheet-index"
+            },
+            {
+              "url": "accounting/reports/income-expenses",
+              "name": "I&E Report",
+              "slug": "accounting-reports-income-expenses"
+            },
+            {
+              "url": "accounting/reports",
+              "name": "All Reports",
+              "slug": "accounting-reports-index"
+            }
+          ]
         },
         {
-          "url": "accounting/reports",
-          "name": "All Reports",
-          "slug": "accounting-reports-index"
-        }
-      ]
-    },
-    {
-      "name": "Setup",
-      "icon": "menu-icon tf-icons ti ti-adjustments",
-      "slug": "accounting-setup",
-      "roles": [
-        "super-admin",
-        "finance-manager"
-      ],
-      "submenu": [
-        {
-          "url": "accounting/expense-imports",
-          "name": "Import Expenses",
-          "slug": "accounting-expense-imports-index"
-        },
-        {
-          "url": "accounting/accounts",
-          "name": "Accounts",
-          "slug": "accounting-accounts-index"
-        },
-        {
-          "url": "accounting/expenses/categories/manage",
-          "name": "Expense Categories",
-          "slug": "accounting-expenses-categories"
-        },
-        {
-          "url": "accounting/expense-types",
-          "name": "Expense Types",
-          "slug": "accounting-expense-types-index"
-        },
-        {
-          "url": "administration/products",
-          "name": "Products",
-          "slug": "administration-products-index"
+          "name": "Setup",
+          "icon": "menu-icon tf-icons ti ti-adjustments",
+          "slug": "accounting-setup",
+          "submenu": [
+            {
+              "url": "accounting/expense-imports",
+              "name": "Import Expenses",
+              "slug": "accounting-expense-imports-index"
+            },
+            {
+              "url": "accounting/accounts",
+              "name": "Accounts",
+              "slug": "accounting-accounts-index"
+            },
+            {
+              "url": "accounting/expenses/categories/manage",
+              "name": "Expense Categories",
+              "slug": "accounting-expenses-categories"
+            },
+            {
+              "url": "accounting/expense-types",
+              "name": "Expense Types",
+              "slug": "accounting-expense-types-index"
+            },
+            {
+              "url": "administration/products",
+              "name": "Products",
+              "slug": "administration-products-index"
+            }
+          ]
         }
       ]
     },
