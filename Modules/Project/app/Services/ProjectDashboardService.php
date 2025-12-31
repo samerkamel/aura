@@ -647,7 +647,7 @@ class ProjectDashboardService
                         $q->orWhere('issue_key', 'LIKE', $code . '-%');
                     }
                 })
-                ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours, COALESCE(SUM(cost), 0) as labor_costs')
+                ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours, COALESCE(SUM(total_cost), 0) as labor_costs')
                 ->first();
 
             $totalHours = $worklogStats->total_hours ?? 0;
