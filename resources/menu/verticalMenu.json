@@ -93,28 +93,6 @@
       ]
     },
     {
-      "name": "Positions",
-      "icon": "menu-icon tf-icons ti ti-briefcase",
-      "slug": "hr-positions",
-      "roles": [
-        "super-admin",
-        "hr-manager",
-        "hr-assistant"
-      ],
-      "submenu": [
-        {
-          "url": "hr/positions",
-          "name": "All Positions",
-          "slug": "hr-positions-index"
-        },
-        {
-          "url": "hr/positions/create",
-          "name": "Create Position",
-          "slug": "hr-positions-create"
-        }
-      ]
-    },
-    {
       "name": "Attendance Records",
       "icon": "menu-icon tf-icons ti ti-clock",
       "slug": "attendance-records",
@@ -441,6 +419,11 @@
           "url": "administration/permissions",
           "name": "Permissions",
           "slug": "settings-permissions-index"
+        },
+        {
+          "url": "hr/positions",
+          "name": "Positions",
+          "slug": "settings-positions-index"
         }
       ]
     }
