@@ -1,6 +1,6 @@
 @extends('layouts/layoutMaster')
 
-@section('title', 'Paid Expenses')
+@section('title', 'Expenses')
 
 @section('content')
 <div class="row">
@@ -12,7 +12,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title mb-1">Total Paid Expenses</h6>
+                                <h6 class="card-title mb-1">Total Expenses</h6>
                                 <h4 class="mb-0">{{ $statistics['total_count'] }}</h4>
                             </div>
                             <div class="avatar">
@@ -81,7 +81,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0">Paid Expenses</h5>
+                    <h5 class="mb-0">Expenses</h5>
                     <small class="text-muted">View all expenses that have been paid (one-time and scheduled)</small>
                 </div>
                 <div class="d-flex gap-2">

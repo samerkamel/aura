@@ -249,14 +249,9 @@
           "slug": "accounting-dashboard"
         },
         {
-          "url": "accounting/expenses",
-          "name": "Expense Schedules",
-          "slug": "accounting-expenses-index"
-        },
-        {
           "url": "accounting/expenses/paid",
-          "name": "Paid Expenses",
-          "slug": "accounting-expenses-paid"
+          "name": "Expenses",
+          "slug": "accounting-expenses-index"
         },
         {
           "url": "accounting/income",
