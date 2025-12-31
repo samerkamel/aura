@@ -65,7 +65,7 @@
       <div class="card h-100 border-start border-4 border-primary">
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div class="avatar avatar-md bg-label-primary me-3">
+            <div class="avatar avatar-md bg-label-primary me-3 d-flex align-items-center justify-content-center">
               <i class="ti ti-list ti-md"></i>
             </div>
             <div>
@@ -80,7 +80,7 @@
       <div class="card h-100 border-start border-4 border-danger">
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div class="avatar avatar-md bg-label-danger me-3">
+            <div class="avatar avatar-md bg-label-danger me-3 d-flex align-items-center justify-content-center">
               <i class="ti ti-alert-circle ti-md"></i>
             </div>
             <div>
@@ -95,7 +95,7 @@
       <div class="card h-100 border-start border-4 border-success">
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div class="avatar avatar-md bg-label-success me-3">
+            <div class="avatar avatar-md bg-label-success me-3 d-flex align-items-center justify-content-center">
               <i class="ti ti-check ti-md"></i>
             </div>
             <div>
@@ -110,7 +110,7 @@
       <div class="card h-100 border-start border-4 border-warning">
         <div class="card-body">
           <div class="d-flex align-items-center">
-            <div class="avatar avatar-md bg-label-warning me-3">
+            <div class="avatar avatar-md bg-label-warning me-3 d-flex align-items-center justify-content-center">
               <i class="ti ti-currency-dollar ti-md"></i>
             </div>
             <div>

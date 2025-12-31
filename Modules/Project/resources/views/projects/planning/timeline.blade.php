@@ -158,7 +158,7 @@
             <h6 class="text-muted mb-3">Blocked By</h6>
             @foreach($project->dependencies as $dep)
               <div class="d-flex align-items-center mb-2 p-2 border rounded">
-                <div class="avatar avatar-sm bg-label-secondary me-2">
+                <div class="avatar avatar-sm bg-label-secondary me-2 d-flex align-items-center justify-content-center">
                   <i class="ti ti-folder"></i>
                 </div>
                 <div class="flex-grow-1">
@@ -180,7 +180,7 @@
             <h6 class="text-muted mb-3">Blocking</h6>
             @foreach($project->dependents as $dependent)
               <div class="d-flex align-items-center mb-2 p-2 border rounded">
-                <div class="avatar avatar-sm bg-label-warning me-2">
+                <div class="avatar avatar-sm bg-label-warning me-2 d-flex align-items-center justify-content-center">
                   <i class="ti ti-folder"></i>
                 </div>
                 <div class="flex-grow-1">

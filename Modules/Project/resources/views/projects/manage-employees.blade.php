@@ -201,7 +201,7 @@
           <div class="row mb-4">
             <div class="col-md-4">
               <div class="d-flex align-items-center">
-                <div class="avatar avatar-md bg-label-primary me-3">
+                <div class="avatar avatar-md bg-label-primary me-3 d-flex align-items-center justify-content-center">
                   <i class="ti ti-users ti-md"></i>
                 </div>
                 <div>
@@ -212,7 +212,7 @@
             </div>
             <div class="col-md-4">
               <div class="d-flex align-items-center">
-                <div class="avatar avatar-md bg-label-success me-3">
+                <div class="avatar avatar-md bg-label-success me-3 d-flex align-items-center justify-content-center">
                   <i class="ti ti-user-check ti-md"></i>
                 </div>
                 <div>
@@ -223,7 +223,7 @@
             </div>
             <div class="col-md-4">
               <div class="d-flex align-items-center">
-                <div class="avatar avatar-md bg-label-{{ $totalAllocation > 500 ? 'warning' : 'info' }} me-3">
+                <div class="avatar avatar-md bg-label-{{ $totalAllocation > 500 ? 'warning' : 'info' }} me-3 d-flex align-items-center justify-content-center">
                   <i class="ti ti-percentage ti-md"></i>
                 </div>
                 <div>
