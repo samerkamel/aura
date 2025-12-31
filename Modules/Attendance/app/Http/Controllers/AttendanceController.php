@@ -497,7 +497,7 @@ class AttendanceController extends Controller
             foreach ($wfhRecordsByDate as $dateStr => $wfh) {
                 $wfhDate = Carbon::parse($dateStr);
                 $isWeekend = in_array($wfhDate->dayOfWeek, $weekendDayNumbers);
-                $isHoliday = in_array($dateStr, array_keys($publicHolidays->toArray()));
+                $isHoliday = in_array($dateStr, $publicHolidays);
                 if (!$isWeekend && !$isHoliday) {
                     $wfhDays++;
                 }
