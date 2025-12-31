@@ -259,16 +259,6 @@
           "slug": "accounting-expenses-paid"
         },
         {
-          "url": "accounting/expense-imports",
-          "name": "Import Expenses",
-          "slug": "accounting-expense-imports-index"
-        },
-        {
-          "url": "accounting/accounts",
-          "name": "Accounts",
-          "slug": "accounting-accounts-index"
-        },
-        {
           "url": "accounting/income",
           "name": "Income & Contracts",
           "slug": "accounting-income-index"
@@ -282,7 +272,19 @@
           "url": "accounting/credit-notes",
           "name": "Credit Notes",
           "slug": "accounting-credit-notes-index"
-        },
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "icon": "menu-icon tf-icons ti ti-chart-bar",
+      "slug": "accounting-reports",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ],
+      "submenu": [
         {
           "url": "accounting/income-sheet",
           "name": "Income Sheet",
@@ -292,6 +294,32 @@
           "url": "accounting/reports/income-expenses",
           "name": "I&E Report",
           "slug": "accounting-reports-income-expenses"
+        },
+        {
+          "url": "accounting/reports",
+          "name": "All Reports",
+          "slug": "accounting-reports-index"
+        }
+      ]
+    },
+    {
+      "name": "Setup",
+      "icon": "menu-icon tf-icons ti ti-adjustments",
+      "slug": "accounting-setup",
+      "roles": [
+        "super-admin",
+        "finance-manager"
+      ],
+      "submenu": [
+        {
+          "url": "accounting/expense-imports",
+          "name": "Import Expenses",
+          "slug": "accounting-expense-imports-index"
+        },
+        {
+          "url": "accounting/accounts",
+          "name": "Accounts",
+          "slug": "accounting-accounts-index"
         },
         {
           "url": "accounting/expenses/categories/manage",
@@ -304,14 +332,9 @@
           "slug": "accounting-expense-types-index"
         },
         {
-          "url": "accounting/reports",
-          "name": "Reports",
-          "slug": "accounting-reports-index"
-        },
-        {
           "url": "administration/products",
           "name": "Products",
-          "slug": "administration.products.index"
+          "slug": "administration-products-index"
         }
       ]
     },
