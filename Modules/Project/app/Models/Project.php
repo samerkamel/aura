@@ -14,6 +14,7 @@ class Project extends Model
 
     protected $fillable = [
         'customer_id',
+        'template_id',
         'project_manager_id',
         'name',
         'code',
@@ -28,6 +29,12 @@ class Project extends Model
         'health_status',
         'current_health_score',
         'estimated_hours',
+        'budgeted_hours',
+        'required_team_size',
+        'required_skills',
+        'priority',
+        'phase',
+        'completion_percentage',
         'billing_type',
         'jira_project_id',
         'needs_monthly_report',
@@ -49,6 +56,40 @@ class Project extends Model
         'planned_budget' => 'decimal:2',
         'hourly_rate' => 'decimal:2',
         'current_health_score' => 'decimal:2',
+        'budgeted_hours' => 'decimal:2',
+        'completion_percentage' => 'decimal:2',
+        'required_skills' => 'array',
+    ];
+
+    /**
+     * Priority levels.
+     */
+    public const PRIORITIES = [
+        'low' => 'Low',
+        'medium' => 'Medium',
+        'high' => 'High',
+        'critical' => 'Critical',
+    ];
+
+    /**
+     * Priority colors for badges.
+     */
+    public const PRIORITY_COLORS = [
+        'low' => 'secondary',
+        'medium' => 'info',
+        'high' => 'warning',
+        'critical' => 'danger',
+    ];
+
+    /**
+     * Project phases.
+     */
+    public const PHASES = [
+        'initiation' => 'Initiation',
+        'planning' => 'Planning',
+        'execution' => 'Execution',
+        'monitoring' => 'Monitoring',
+        'closure' => 'Closure',
     ];
 
     /**
@@ -443,8 +484,185 @@ class Project extends Model
     public function employees()
     {
         return $this->belongsToMany(Employee::class, 'project_employee')
-                    ->withPivot(['role', 'auto_assigned', 'assigned_at'])
+                    ->withPivot([
+                        'role',
+                        'auto_assigned',
+                        'assigned_at',
+                        'allocation_percentage',
+                        'start_date',
+                        'end_date',
+                        'hourly_rate',
+                        'notes',
+                    ])
                     ->withTimestamps();
+    }
+
+    /**
+     * Get the template used to create this project.
+     */
+    public function template()
+    {
+        return $this->belongsTo(ProjectTemplate::class, 'template_id');
+    }
+
+    /**
+     * Get project milestones.
+     */
+    public function milestones()
+    {
+        return $this->hasMany(ProjectMilestone::class)->orderBy('due_date');
+    }
+
+    /**
+     * Get project risks.
+     */
+    public function risks()
+    {
+        return $this->hasMany(ProjectRisk::class)->orderByDesc('risk_score');
+    }
+
+    /**
+     * Get project time estimates.
+     */
+    public function timeEstimates()
+    {
+        return $this->hasMany(ProjectTimeEstimate::class);
+    }
+
+    /**
+     * Get projects that this project depends on.
+     */
+    public function dependencies()
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'project_dependencies',
+            'project_id',
+            'depends_on_project_id'
+        )->withPivot(['dependency_type', 'lag_days', 'description', 'status', 'created_by'])
+         ->withTimestamps();
+    }
+
+    /**
+     * Get projects that depend on this project.
+     */
+    public function dependents()
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'project_dependencies',
+            'depends_on_project_id',
+            'project_id'
+        )->withPivot(['dependency_type', 'lag_days', 'description', 'status', 'created_by'])
+         ->withTimestamps();
+    }
+
+    /**
+     * Get dependency records for this project.
+     */
+    public function dependencyRecords()
+    {
+        return $this->hasMany(ProjectDependency::class, 'project_id');
+    }
+
+    /**
+     * Get priority label.
+     */
+    public function getPriorityLabelAttribute(): string
+    {
+        return self::PRIORITIES[$this->priority] ?? 'Unknown';
+    }
+
+    /**
+     * Get priority color for badge.
+     */
+    public function getPriorityColorAttribute(): string
+    {
+        return self::PRIORITY_COLORS[$this->priority] ?? 'secondary';
+    }
+
+    /**
+     * Get phase label.
+     */
+    public function getPhaseLabelAttribute(): string
+    {
+        return self::PHASES[$this->phase] ?? 'Unknown';
+    }
+
+    /**
+     * Get total allocated hours based on employee allocations.
+     */
+    public function getAllocatedHoursAttribute(): float
+    {
+        return $this->employees()
+            ->where(function ($query) {
+                $query->whereNull('project_employee.end_date')
+                      ->orWhere('project_employee.end_date', '>=', now());
+            })
+            ->sum(\DB::raw('(project_employee.allocation_percentage / 100) * 40')); // Assuming 40h/week
+    }
+
+    /**
+     * Get count of active risks.
+     */
+    public function getActiveRisksCountAttribute(): int
+    {
+        return $this->risks()->active()->count();
+    }
+
+    /**
+     * Get count of high-risk issues.
+     */
+    public function getHighRisksCountAttribute(): int
+    {
+        return $this->risks()->highRisk()->count();
+    }
+
+    /**
+     * Get upcoming milestones (next 14 days).
+     */
+    public function getUpcomingMilestonesAttribute()
+    {
+        return $this->milestones()->upcoming()->get();
+    }
+
+    /**
+     * Get overdue milestones.
+     */
+    public function getOverdueMilestonesAttribute()
+    {
+        return $this->milestones()->overdue()->get();
+    }
+
+    /**
+     * Calculate actual completion percentage based on time estimates.
+     */
+    public function calculateCompletionPercentage(): float
+    {
+        $estimates = $this->timeEstimates;
+
+        if ($estimates->isEmpty()) {
+            return 0;
+        }
+
+        $totalEstimated = $estimates->sum('estimated_hours');
+        $completedHours = $estimates->where('status', 'completed')->sum('estimated_hours');
+
+        if ($totalEstimated <= 0) {
+            return 0;
+        }
+
+        return round(($completedHours / $totalEstimated) * 100, 2);
+    }
+
+    /**
+     * Update completion percentage from time estimates.
+     */
+    public function updateCompletionPercentage(): void
+    {
+        $this->update([
+            'completion_percentage' => $this->calculateCompletionPercentage(),
+        ]);
     }
 
     /**

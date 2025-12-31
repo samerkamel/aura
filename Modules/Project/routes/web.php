@@ -5,8 +5,25 @@ use Modules\Project\Http\Controllers\ProjectController;
 use Modules\Project\Http\Controllers\ProjectDashboardController;
 use Modules\Project\Http\Controllers\ProjectFinanceController;
 use Modules\Project\Http\Controllers\ProjectReportController;
+use Modules\Project\Http\Controllers\ProjectPlanningController;
+use Modules\Project\Http\Controllers\ProjectTemplateController;
+use Modules\Project\Http\Controllers\CapacityPlanningController;
 
 Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group(function () {
+    // Project Templates (must come before dynamic {project} routes)
+    Route::prefix('templates')->name('templates.')->group(function () {
+        Route::get('/', [ProjectTemplateController::class, 'index'])->name('index');
+        Route::get('/create', [ProjectTemplateController::class, 'create'])->name('create');
+        Route::post('/', [ProjectTemplateController::class, 'store'])->name('store');
+        Route::get('/{template}', [ProjectTemplateController::class, 'show'])->name('show');
+        Route::get('/{template}/edit', [ProjectTemplateController::class, 'edit'])->name('edit');
+        Route::put('/{template}', [ProjectTemplateController::class, 'update'])->name('update');
+        Route::delete('/{template}', [ProjectTemplateController::class, 'destroy'])->name('destroy');
+        Route::post('/{template}/toggle-active', [ProjectTemplateController::class, 'toggleActive'])->name('toggle-active');
+        Route::get('/{template}/create-project', [ProjectTemplateController::class, 'createProject'])->name('create-project');
+        Route::post('/{template}/create-project', [ProjectTemplateController::class, 'storeProject'])->name('store-project');
+    });
+
     // Projects list and create (static routes first)
     Route::get('/', [ProjectController::class, 'index'])->name('index');
     Route::get('/create', [ProjectController::class, 'create'])->name('create');
@@ -32,6 +49,12 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         Route::delete('/{report}', [ProjectReportController::class, 'destroy'])->name('destroy');
     });
 
+    // Capacity Planning (must come BEFORE /{project} dynamic route)
+    Route::prefix('capacity')->name('capacity.')->group(function () {
+        Route::get('/', [CapacityPlanningController::class, 'index'])->name('index');
+        Route::get('/api/heatmap', [CapacityPlanningController::class, 'apiHeatmapData'])->name('api.heatmap');
+    });
+
     // Project CRUD with dynamic {project} parameter (must come AFTER static routes)
     Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
     Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
@@ -46,6 +69,9 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::put('/{project}/employees/update-role', [ProjectController::class, 'updateEmployeeRole'])->name('update-employee-role');
     Route::delete('/{project}/employees/unassign', [ProjectController::class, 'unassignEmployee'])->name('unassign-employee');
     Route::post('/{project}/employees/sync-worklogs', [ProjectController::class, 'syncEmployeesFromWorklogs'])->name('sync-employees-worklogs');
+
+    // Create template from project
+    Route::post('/{project}/create-template', [ProjectTemplateController::class, 'createFromProject'])->name('create-template');
 
     // Project follow-up routes
     Route::post('/{project}/followups', [ProjectController::class, 'storeFollowup'])->name('store-followup');
@@ -94,5 +120,35 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         // API endpoints
         Route::get('/api/summary', [ProjectFinanceController::class, 'apiSummary'])->name('api.summary');
         Route::get('/api/trend', [ProjectFinanceController::class, 'apiMonthlyTrend'])->name('api.trend');
+    });
+
+    // Project Planning routes
+    Route::prefix('{project}/planning')->name('planning.')->group(function () {
+        // Milestones
+        Route::get('/milestones', [ProjectPlanningController::class, 'milestones'])->name('milestones');
+        Route::post('/milestones', [ProjectPlanningController::class, 'storeMilestone'])->name('milestones.store');
+        Route::put('/milestones/{milestone}', [ProjectPlanningController::class, 'updateMilestone'])->name('milestones.update');
+        Route::delete('/milestones/{milestone}', [ProjectPlanningController::class, 'destroyMilestone'])->name('milestones.destroy');
+
+        // Risks
+        Route::get('/risks', [ProjectPlanningController::class, 'risks'])->name('risks');
+        Route::post('/risks', [ProjectPlanningController::class, 'storeRisk'])->name('risks.store');
+        Route::put('/risks/{risk}', [ProjectPlanningController::class, 'updateRisk'])->name('risks.update');
+        Route::delete('/risks/{risk}', [ProjectPlanningController::class, 'destroyRisk'])->name('risks.destroy');
+
+        // Time Estimates
+        Route::get('/time-estimates', [ProjectPlanningController::class, 'timeEstimates'])->name('time-estimates');
+        Route::post('/time-estimates', [ProjectPlanningController::class, 'storeTimeEstimate'])->name('time-estimates.store');
+        Route::put('/time-estimates/{estimate}', [ProjectPlanningController::class, 'updateTimeEstimate'])->name('time-estimates.update');
+        Route::delete('/time-estimates/{estimate}', [ProjectPlanningController::class, 'destroyTimeEstimate'])->name('time-estimates.destroy');
+
+        // Dependencies
+        Route::get('/dependencies', [ProjectPlanningController::class, 'dependencies'])->name('dependencies');
+        Route::post('/dependencies', [ProjectPlanningController::class, 'storeDependency'])->name('dependencies.store');
+        Route::put('/dependencies/{dependency}', [ProjectPlanningController::class, 'updateDependency'])->name('dependencies.update');
+        Route::delete('/dependencies/{dependency}', [ProjectPlanningController::class, 'destroyDependency'])->name('dependencies.destroy');
+
+        // Timeline/Gantt View
+        Route::get('/timeline', [ProjectPlanningController::class, 'timeline'])->name('timeline');
     });
 });

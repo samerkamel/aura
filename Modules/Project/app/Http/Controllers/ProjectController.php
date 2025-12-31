@@ -421,6 +421,11 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'role' => 'required|in:member,lead',
+            'allocation_percentage' => 'nullable|numeric|min:0|max:100',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         // Check if already assigned
@@ -432,6 +437,11 @@ class ProjectController extends Controller
 
         $project->employees()->attach($validated['employee_id'], [
             'role' => $validated['role'],
+            'allocation_percentage' => $validated['allocation_percentage'] ?? 100,
+            'start_date' => $validated['start_date'] ?? now()->format('Y-m-d'),
+            'end_date' => $validated['end_date'] ?? null,
+            'hourly_rate' => $validated['hourly_rate'] ?? null,
+            'notes' => $validated['notes'] ?? null,
             'auto_assigned' => false,
             'assigned_at' => now(),
         ]);
@@ -444,7 +454,7 @@ class ProjectController extends Controller
     }
 
     /**
-     * Update an employee's role in a project.
+     * Update an employee's allocation in a project.
      */
     public function updateEmployeeRole(Request $request, Project $project): RedirectResponse
     {
@@ -455,15 +465,36 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'role' => 'required|in:member,lead',
+            'allocation_percentage' => 'nullable|numeric|min:0|max:100',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:500',
         ]);
 
-        $project->employees()->updateExistingPivot($validated['employee_id'], [
-            'role' => $validated['role'],
-        ]);
+        $updateData = ['role' => $validated['role']];
+
+        if (isset($validated['allocation_percentage'])) {
+            $updateData['allocation_percentage'] = $validated['allocation_percentage'];
+        }
+        if (array_key_exists('start_date', $validated)) {
+            $updateData['start_date'] = $validated['start_date'];
+        }
+        if (array_key_exists('end_date', $validated)) {
+            $updateData['end_date'] = $validated['end_date'];
+        }
+        if (array_key_exists('hourly_rate', $validated)) {
+            $updateData['hourly_rate'] = $validated['hourly_rate'] ?: null;
+        }
+        if (array_key_exists('notes', $validated)) {
+            $updateData['notes'] = $validated['notes'];
+        }
+
+        $project->employees()->updateExistingPivot($validated['employee_id'], $updateData);
 
         return redirect()
             ->back()
-            ->with('success', 'Employee role updated successfully.');
+            ->with('success', 'Employee allocation updated successfully.');
     }
 
     /**

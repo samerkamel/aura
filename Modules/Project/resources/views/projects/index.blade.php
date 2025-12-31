@@ -12,6 +12,33 @@
             <i class="ti ti-folder me-2"></i>Projects
           </h5>
           <div class="d-flex gap-2">
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="ti ti-apps me-1"></i>Tools
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{{ route('projects.templates.index') }}">
+                    <i class="ti ti-template me-2"></i>Project Templates
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('projects.capacity.index') }}">
+                    <i class="ti ti-calendar-stats me-2"></i>Capacity Planning
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('projects.reports.index') }}">
+                    <i class="ti ti-report me-2"></i>Reports
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('projects.followups') }}">
+                    <i class="ti ti-bell me-2"></i>Follow-ups
+                  </a>
+                </li>
+              </ul>
+            </div>
             <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline">
               @csrf
               <button type="submit" class="btn btn-outline-primary btn-sm">

@@ -92,6 +92,51 @@
                 <div class="invalid-feedback">{{ $message }}</div>
               @enderror
             </div>
+            <div class="mb-3">
+              <label for="allocation_percentage" class="form-label">Allocation %</label>
+              <div class="input-group">
+                <input type="number" class="form-control @error('allocation_percentage') is-invalid @enderror"
+                       id="allocation_percentage" name="allocation_percentage"
+                       min="0" max="100" value="100" step="5">
+                <span class="input-group-text">%</span>
+              </div>
+              <small class="text-muted">Percentage of time allocated to this project</small>
+              @error('allocation_percentage')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" class="form-control @error('start_date') is-invalid @enderror"
+                       id="start_date" name="start_date" value="{{ date('Y-m-d') }}">
+                @error('start_date')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+              <div class="col-6">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" class="form-control @error('end_date') is-invalid @enderror"
+                       id="end_date" name="end_date">
+                <small class="text-muted">Optional</small>
+                @error('end_date')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="hourly_rate" class="form-label">Hourly Rate Override</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control @error('hourly_rate') is-invalid @enderror"
+                       id="hourly_rate" name="hourly_rate" step="0.01" min="0"
+                       placeholder="Leave blank for default">
+              </div>
+              <small class="text-muted">Override employee's default rate for this project</small>
+              @error('hourly_rate')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
             <button type="submit" class="btn btn-primary w-100">
               <i class="ti ti-plus me-1"></i>Assign Employee
             </button>
@@ -146,90 +191,144 @@
           </h5>
         </div>
         <div class="card-body">
+          <!-- Allocation Summary -->
+          @php
+            $totalAllocation = $project->employees->sum('pivot.allocation_percentage');
+            $activeCount = $project->employees->filter(function($e) {
+              return is_null($e->pivot->end_date) || \Carbon\Carbon::parse($e->pivot->end_date)->isFuture();
+            })->count();
+          @endphp
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="d-flex align-items-center">
+                <div class="avatar avatar-md bg-label-primary me-3">
+                  <i class="ti ti-users ti-md"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">{{ $project->employees->count() }}</h6>
+                  <small class="text-muted">Total Members</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex align-items-center">
+                <div class="avatar avatar-md bg-label-success me-3">
+                  <i class="ti ti-user-check ti-md"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">{{ $activeCount }}</h6>
+                  <small class="text-muted">Currently Active</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex align-items-center">
+                <div class="avatar avatar-md bg-label-{{ $totalAllocation > 500 ? 'warning' : 'info' }} me-3">
+                  <i class="ti ti-percentage ti-md"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">{{ number_format($totalAllocation, 0) }}%</h6>
+                  <small class="text-muted">Total Allocation</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
           @if($project->employees->count() > 0)
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead>
                   <tr>
                     <th>Employee</th>
-                    <th>Position</th>
                     <th>Role</th>
-                    <th>Assignment</th>
-                    <th>Date Assigned</th>
+                    <th class="text-center">Allocation</th>
+                    <th>Period</th>
+                    <th>Hourly Rate</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   @foreach($project->employees->sortByDesc('pivot.role') as $employee)
-                    <tr>
+                    @php
+                      $isExpired = $employee->pivot->end_date && \Carbon\Carbon::parse($employee->pivot->end_date)->isPast();
+                    @endphp
+                    <tr class="{{ $isExpired ? 'table-secondary' : '' }}">
                       <td>
                         <div class="d-flex align-items-center">
                           <div class="avatar avatar-sm me-3" style="background-color: {{ '#' . substr(md5($employee->name), 0, 6) }}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
                             {{ strtoupper(substr($employee->name, 0, 2)) }}
                           </div>
                           <div>
-                            <h6 class="mb-0">{{ $employee->name }}</h6>
-                            <small class="text-muted">{{ $employee->email }}</small>
+                            <h6 class="mb-0">
+                              {{ $employee->name }}
+                              @if($isExpired)
+                                <span class="badge bg-label-secondary ms-1">Ended</span>
+                              @endif
+                            </h6>
+                            <small class="text-muted">{{ $employee->position ?? $employee->email }}</small>
                           </div>
                         </div>
                       </td>
-                      <td>{{ $employee->position ?? '-' }}</td>
                       <td>
                         <span class="badge bg-label-{{ $employee->pivot->role === 'lead' ? 'warning' : 'primary' }}">
-                          {{ $employee->pivot->role === 'lead' ? 'Project Lead' : 'Team Member' }}
+                          {{ $employee->pivot->role === 'lead' ? 'Lead' : 'Member' }}
                         </span>
-                      </td>
-                      <td>
                         @if($employee->pivot->auto_assigned)
                           <span class="badge bg-label-info" title="Auto-assigned from worklogs">
-                            <i class="ti ti-robot me-1"></i>Auto
-                          </span>
-                        @else
-                          <span class="badge bg-label-secondary">
-                            <i class="ti ti-user me-1"></i>Manual
+                            <i class="ti ti-robot"></i>
                           </span>
                         @endif
                       </td>
-                      <td>
-                        {{ $employee->pivot->assigned_at ? \Carbon\Carbon::parse($employee->pivot->assigned_at)->format('M d, Y') : '-' }}
+                      <td class="text-center">
+                        @php
+                          $alloc = $employee->pivot->allocation_percentage ?? 100;
+                          $allocClass = $alloc >= 80 ? 'success' : ($alloc >= 50 ? 'warning' : 'secondary');
+                        @endphp
+                        <div class="d-flex flex-column align-items-center">
+                          <span class="fw-semibold">{{ $alloc }}%</span>
+                          <div class="progress" style="width: 60px; height: 6px;">
+                            <div class="progress-bar bg-{{ $allocClass }}" role="progressbar"
+                                 style="width: {{ $alloc }}%"></div>
+                          </div>
+                        </div>
                       </td>
                       <td>
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
+                        <small>
+                          @if($employee->pivot->start_date)
+                            {{ \Carbon\Carbon::parse($employee->pivot->start_date)->format('M d, Y') }}
+                          @else
+                            {{ $employee->pivot->assigned_at ? \Carbon\Carbon::parse($employee->pivot->assigned_at)->format('M d, Y') : '-' }}
+                          @endif
+                          @if($employee->pivot->end_date)
+                            <br>→ {{ \Carbon\Carbon::parse($employee->pivot->end_date)->format('M d, Y') }}
+                          @else
+                            <br><span class="text-muted">Ongoing</span>
+                          @endif
+                        </small>
+                      </td>
+                      <td>
+                        @if($employee->pivot->hourly_rate)
+                          <span class="fw-semibold">${{ number_format($employee->pivot->hourly_rate, 2) }}</span>
+                        @else
+                          <span class="text-muted">Default</span>
+                        @endif
+                      </td>
+                      <td>
+                        <div class="d-flex gap-1">
+                          <button type="button" class="btn btn-sm btn-icon btn-outline-primary"
+                                  data-bs-toggle="modal" data-bs-target="#editAllocationModal"
+                                  onclick="editAllocation({{ $employee->id }}, '{{ $employee->name }}', '{{ $employee->pivot->role }}', {{ $employee->pivot->allocation_percentage ?? 100 }}, '{{ $employee->pivot->start_date }}', '{{ $employee->pivot->end_date }}', '{{ $employee->pivot->hourly_rate }}', '{{ addslashes($employee->pivot->notes) }}')">
+                            <i class="ti ti-edit"></i>
                           </button>
-                          <div class="dropdown-menu">
-                            @if($employee->pivot->role === 'member')
-                              <form method="POST" action="{{ route('projects.update-employee-role', $project) }}" class="d-inline">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                                <input type="hidden" name="role" value="lead">
-                                <button type="submit" class="dropdown-item">
-                                  <i class="ti ti-arrow-up me-2"></i>Promote to Lead
-                                </button>
-                              </form>
-                            @else
-                              <form method="POST" action="{{ route('projects.update-employee-role', $project) }}" class="d-inline">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                                <input type="hidden" name="role" value="member">
-                                <button type="submit" class="dropdown-item">
-                                  <i class="ti ti-arrow-down me-2"></i>Change to Member
-                                </button>
-                              </form>
-                            @endif
-                            <div class="dropdown-divider"></div>
-                            <form method="POST" action="{{ route('projects.unassign-employee', $project) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this employee from the project?')">
-                              @csrf
-                              @method('DELETE')
-                              <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                              <button type="submit" class="dropdown-item text-danger">
-                                <i class="ti ti-user-minus me-2"></i>Remove from Project
-                              </button>
-                            </form>
-                          </div>
+                          <form method="POST" action="{{ route('projects.unassign-employee', $project) }}"
+                                class="d-inline" onsubmit="return confirm('Remove {{ $employee->name }} from the project?')">
+                            @csrf
+                            @method('DELETE')
+                            <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger">
+                              <i class="ti ti-user-minus"></i>
+                            </button>
+                          </form>
                         </div>
                       </td>
                     </tr>
@@ -251,6 +350,67 @@
   </div>
 </div>
 
+<!-- Edit Allocation Modal -->
+<div class="modal fade" id="editAllocationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ route('projects.update-employee-role', $project) }}">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="employee_id" id="editEmployeeId">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Allocation - <span id="editEmployeeName"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="editRole" class="form-label">Role</label>
+            <select class="form-select" id="editRole" name="role" required>
+              <option value="member">Team Member</option>
+              <option value="lead">Project Lead</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editAllocation" class="form-label">Allocation %</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="editAllocation" name="allocation_percentage"
+                     min="0" max="100" step="5" required>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6">
+              <label for="editStartDate" class="form-label">Start Date</label>
+              <input type="date" class="form-control" id="editStartDate" name="start_date">
+            </div>
+            <div class="col-6">
+              <label for="editEndDate" class="form-label">End Date</label>
+              <input type="date" class="form-control" id="editEndDate" name="end_date">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="editHourlyRate" class="form-label">Hourly Rate Override</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" id="editHourlyRate" name="hourly_rate"
+                     step="0.01" min="0" placeholder="Leave blank for default">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="editNotes" class="form-label">Notes</label>
+            <textarea class="form-control" id="editNotes" name="notes" rows="2"
+                      placeholder="Optional notes about this assignment"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 @section('page-script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -264,6 +424,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+function editAllocation(employeeId, employeeName, role, allocation, startDate, endDate, hourlyRate, notes) {
+  document.getElementById('editEmployeeId').value = employeeId;
+  document.getElementById('editEmployeeName').textContent = employeeName;
+  document.getElementById('editRole').value = role;
+  document.getElementById('editAllocation').value = allocation;
+  document.getElementById('editStartDate').value = startDate || '';
+  document.getElementById('editEndDate').value = endDate || '';
+  document.getElementById('editHourlyRate').value = hourlyRate || '';
+  document.getElementById('editNotes').value = notes || '';
+}
 </script>
 @endsection
 @endsection

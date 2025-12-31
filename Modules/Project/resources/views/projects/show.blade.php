@@ -63,10 +63,22 @@
           <i class="ti ti-subtask me-1"></i>Tasks
         </a>
         <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-users me-1"></i>Manage Team
+          <i class="ti ti-users me-1"></i>Team
         </a>
+        <div class="btn-group">
+          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="ti ti-calendar-event me-1"></i>Planning
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ route('projects.planning.milestones', $project) }}"><i class="ti ti-flag me-2"></i>Milestones</a></li>
+            <li><a class="dropdown-item" href="{{ route('projects.planning.timeline', $project) }}"><i class="ti ti-chart-line me-2"></i>Timeline</a></li>
+            <li><a class="dropdown-item" href="{{ route('projects.planning.time-estimates', $project) }}"><i class="ti ti-clock me-2"></i>Time Estimates</a></li>
+            <li><a class="dropdown-item" href="{{ route('projects.planning.risks', $project) }}"><i class="ti ti-alert-triangle me-2"></i>Risks</a></li>
+            <li><a class="dropdown-item" href="{{ route('projects.planning.dependencies', $project) }}"><i class="ti ti-link me-2"></i>Dependencies</a></li>
+          </ul>
+        </div>
         <a href="{{ route('accounting.estimates.create', ['project_id' => $project->id]) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-file-invoice me-1"></i>Create Estimate
+          <i class="ti ti-file-invoice me-1"></i>Estimate
         </a>
         @can('view-financial-reports')
         <a href="{{ route('projects.edit', $project) }}" class="btn btn-light btn-sm">
