@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectReport;
@@ -18,6 +19,7 @@ class ProjectReportController extends Controller
 
     public function __construct(ProjectReportService $reportService)
     {
+        $this->middleware('auth');
         $this->reportService = $reportService;
     }
 
@@ -26,6 +28,10 @@ class ProjectReportController extends Controller
      */
     public function index(Request $request): View
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to view project reports.');
+        }
+
         $query = ProjectReport::with('createdBy')
             ->orderBy('created_at', 'desc');
 
@@ -50,6 +56,10 @@ class ProjectReportController extends Controller
      */
     public function create(): View
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to create project reports.');
+        }
+
         // Get projects that need monthly reports
         $reportableProjects = Project::needsMonthlyReport()->orderBy('name')->get();
 
@@ -63,6 +73,10 @@ class ProjectReportController extends Controller
      */
     public function generate(Request $request): View
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to generate project reports.');
+        }
+
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -94,6 +108,10 @@ class ProjectReportController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to save project reports.');
+        }
+
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -143,6 +161,10 @@ class ProjectReportController extends Controller
      */
     public function show(ProjectReport $report): View
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to view project reports.');
+        }
+
         return view('project::reports.show', [
             'report' => $report,
         ]);
@@ -153,6 +175,10 @@ class ProjectReportController extends Controller
      */
     public function exportPdf(ProjectReport $report)
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to export project reports.');
+        }
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('project::reports.pdf', [
             'report' => $report,
             'isPdf' => true,
@@ -170,6 +196,10 @@ class ProjectReportController extends Controller
      */
     public function exportExcel(ProjectReport $report)
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to export project reports.');
+        }
+
         // Create Excel export
         $filename = 'project-report-' . $report->start_date->format('Y-m') . '.xlsx';
 
@@ -285,6 +315,10 @@ class ProjectReportController extends Controller
      */
     public function edit(ProjectReport $report): View
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to edit project reports.');
+        }
+
         $startDate = $report->start_date;
         $endDate = $report->end_date;
 
@@ -356,6 +390,10 @@ class ProjectReportController extends Controller
      */
     public function update(Request $request, ProjectReport $report): RedirectResponse
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to update project reports.');
+        }
+
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -405,6 +443,10 @@ class ProjectReportController extends Controller
      */
     public function destroy(ProjectReport $report): RedirectResponse
     {
+        if (!Gate::allows('manage-project-reports')) {
+            abort(403, 'You do not have permission to delete project reports.');
+        }
+
         $report->delete();
 
         return redirect()

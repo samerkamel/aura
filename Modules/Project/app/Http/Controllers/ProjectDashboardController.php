@@ -5,6 +5,7 @@ namespace Modules\Project\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Modules\Payroll\Models\JiraWorklog;
 use Modules\Project\Models\Project;
@@ -14,13 +15,19 @@ class ProjectDashboardController extends Controller
 {
     public function __construct(
         protected ProjectHealthService $healthService
-    ) {}
+    ) {
+        $this->middleware('auth');
+    }
 
     /**
      * Display the project dashboard.
      */
     public function index(Project $project): View
     {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to view this project.');
+        }
+
         $project->load(['customer', 'projectManager', 'latestHealthSnapshot']);
 
         $summary = $this->healthService->getDashboardSummary($project);
@@ -62,6 +69,10 @@ class ProjectDashboardController extends Controller
      */
     public function refreshHealth(Project $project): JsonResponse
     {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         try {
             $snapshot = $this->healthService->createSnapshot($project);
 
@@ -90,6 +101,10 @@ class ProjectDashboardController extends Controller
      */
     public function healthTrend(Request $request, Project $project): JsonResponse
     {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $days = $request->input('days', 30);
         $trend = $this->healthService->getHealthTrend($project, $days);
 
@@ -101,6 +116,10 @@ class ProjectDashboardController extends Controller
      */
     public function activityFeed(Request $request, Project $project): JsonResponse
     {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $limit = $request->input('limit', 20);
 
         // Combine worklogs, follow-ups, and issue updates
@@ -152,6 +171,10 @@ class ProjectDashboardController extends Controller
      */
     public function teamPerformance(Request $request, Project $project): JsonResponse
     {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $startDate = $request->input('start_date', now()->startOfMonth()->toDateString());
         $endDate = $request->input('end_date', now()->toDateString());
 

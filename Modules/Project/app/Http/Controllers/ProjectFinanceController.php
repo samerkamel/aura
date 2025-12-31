@@ -4,6 +4,7 @@ namespace Modules\Project\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectBudget;
 use Modules\Project\Models\ProjectCost;
@@ -17,6 +18,7 @@ class ProjectFinanceController extends Controller
 
     public function __construct(ProjectFinancialService $financialService)
     {
+        $this->middleware('auth');
         $this->financialService = $financialService;
     }
 
@@ -25,6 +27,10 @@ class ProjectFinanceController extends Controller
      */
     public function index(Project $project)
     {
+        if (!Gate::allows('view-project-finance', $project)) {
+            abort(403, 'You do not have permission to view project finances.');
+        }
+
         $dashboard = $this->financialService->getFinancialDashboard($project);
 
         return view('project::projects.finance.index', compact('project', 'dashboard'));
@@ -35,6 +41,10 @@ class ProjectFinanceController extends Controller
      */
     public function budgets(Project $project)
     {
+        if (!Gate::allows('manage-project-budgets', $project)) {
+            abort(403, 'You do not have permission to manage project budgets.');
+        }
+
         $budgets = $project->budgets()->orderBy('category')->get();
         $categories = ProjectBudget::CATEGORIES;
         $breakdown = $this->financialService->getBudgetBreakdown($project);
@@ -47,6 +57,10 @@ class ProjectFinanceController extends Controller
      */
     public function storeBudget(Request $request, Project $project)
     {
+        if (!Gate::allows('manage-project-budgets', $project)) {
+            abort(403, 'You do not have permission to manage project budgets.');
+        }
+
         $validated = $request->validate([
             'category' => 'required|string',
             'description' => 'nullable|string',
@@ -66,6 +80,10 @@ class ProjectFinanceController extends Controller
      */
     public function updateBudget(Request $request, Project $project, ProjectBudget $budget)
     {
+        if (!Gate::allows('manage-project-budgets', $project)) {
+            abort(403, 'You do not have permission to manage project budgets.');
+        }
+
         $validated = $request->validate([
             'category' => 'required|string',
             'description' => 'nullable|string',
@@ -86,6 +104,10 @@ class ProjectFinanceController extends Controller
      */
     public function destroyBudget(Project $project, ProjectBudget $budget)
     {
+        if (!Gate::allows('manage-project-budgets', $project)) {
+            abort(403, 'You do not have permission to manage project budgets.');
+        }
+
         $budget->delete();
 
         return redirect()->route('projects.finance.budgets', $project)
@@ -97,6 +119,10 @@ class ProjectFinanceController extends Controller
      */
     public function costs(Project $project, Request $request)
     {
+        if (!Gate::allows('manage-project-costs', $project)) {
+            abort(403, 'You do not have permission to manage project costs.');
+        }
+
         // Only show non-labor costs in the table (labor is calculated dynamically from worklogs)
         $query = $project->costs()->with(['employee', 'budget', 'creator'])
             ->where('cost_type', '!=', 'labor');
@@ -134,6 +160,10 @@ class ProjectFinanceController extends Controller
      */
     public function storeCost(Request $request, Project $project)
     {
+        if (!Gate::allows('manage-project-costs', $project)) {
+            abort(403, 'You do not have permission to manage project costs.');
+        }
+
         $validated = $request->validate([
             'cost_type' => 'required|string|in:' . implode(',', array_keys(ProjectCost::COST_TYPES)),
             'description' => 'required|string|max:255',
@@ -158,6 +188,10 @@ class ProjectFinanceController extends Controller
      */
     public function updateCost(Request $request, Project $project, ProjectCost $cost)
     {
+        if (!Gate::allows('manage-project-costs', $project)) {
+            abort(403, 'You do not have permission to manage project costs.');
+        }
+
         $validated = $request->validate([
             'cost_type' => 'required|string|in:' . implode(',', array_keys(ProjectCost::COST_TYPES)),
             'description' => 'required|string|max:255',
@@ -182,6 +216,10 @@ class ProjectFinanceController extends Controller
      */
     public function destroyCost(Project $project, ProjectCost $cost)
     {
+        if (!Gate::allows('manage-project-costs', $project)) {
+            abort(403, 'You do not have permission to manage project costs.');
+        }
+
         $cost->delete();
 
         return redirect()->route('projects.finance.costs', $project)
@@ -193,6 +231,10 @@ class ProjectFinanceController extends Controller
      */
     public function revenues(Project $project, Request $request)
     {
+        if (!Gate::allows('manage-project-revenues', $project)) {
+            abort(403, 'You do not have permission to manage project revenues.');
+        }
+
         $query = $project->revenues()->with(['contract', 'invoice', 'creator']);
 
         // Filters
@@ -224,6 +266,10 @@ class ProjectFinanceController extends Controller
      */
     public function storeRevenue(Request $request, Project $project)
     {
+        if (!Gate::allows('manage-project-revenues', $project)) {
+            abort(403, 'You do not have permission to manage project revenues.');
+        }
+
         $validated = $request->validate([
             'revenue_type' => 'required|string|in:' . implode(',', array_keys(ProjectRevenue::REVENUE_TYPES)),
             'description' => 'required|string|max:255',
@@ -247,6 +293,10 @@ class ProjectFinanceController extends Controller
      */
     public function updateRevenue(Request $request, Project $project, ProjectRevenue $revenue)
     {
+        if (!Gate::allows('manage-project-revenues', $project)) {
+            abort(403, 'You do not have permission to manage project revenues.');
+        }
+
         $validated = $request->validate([
             'revenue_type' => 'required|string|in:' . implode(',', array_keys(ProjectRevenue::REVENUE_TYPES)),
             'description' => 'required|string|max:255',
@@ -270,6 +320,10 @@ class ProjectFinanceController extends Controller
      */
     public function destroyRevenue(Project $project, ProjectRevenue $revenue)
     {
+        if (!Gate::allows('manage-project-revenues', $project)) {
+            abort(403, 'You do not have permission to manage project revenues.');
+        }
+
         $revenue->delete();
 
         return redirect()->route('projects.finance.revenues', $project)
@@ -281,6 +335,10 @@ class ProjectFinanceController extends Controller
      */
     public function recordPayment(Request $request, Project $project, ProjectRevenue $revenue)
     {
+        if (!Gate::allows('manage-project-revenues', $project)) {
+            abort(403, 'You do not have permission to manage project revenues.');
+        }
+
         $validated = $request->validate([
             'amount' => 'required|numeric|min:0|max:' . $revenue->outstanding_amount,
             'received_date' => 'required|date',
@@ -299,6 +357,10 @@ class ProjectFinanceController extends Controller
      */
     public function profitability(Project $project)
     {
+        if (!Gate::allows('view-project-profitability', $project)) {
+            abort(403, 'You do not have permission to view project profitability.');
+        }
+
         $profitability = $this->financialService->getProfitabilityAnalysis($project);
         $monthlyTrend = $this->financialService->getMonthlyTrend($project, 12);
         $burnRate = $this->financialService->calculateBurnRate($project);
@@ -313,6 +375,10 @@ class ProjectFinanceController extends Controller
      */
     public function apiSummary(Project $project)
     {
+        if (!Gate::allows('view-project-finance', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         return response()->json($this->financialService->getFinancialSummary($project));
     }
 
@@ -321,6 +387,10 @@ class ProjectFinanceController extends Controller
      */
     public function apiMonthlyTrend(Project $project, Request $request)
     {
+        if (!Gate::allows('view-project-finance', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $months = $request->get('months', 6);
         return response()->json($this->financialService->getMonthlyTrend($project, $months));
     }
@@ -330,6 +400,10 @@ class ProjectFinanceController extends Controller
      */
     public function generateLaborCosts(Request $request, Project $project)
     {
+        if (!Gate::allows('manage-project-costs', $project)) {
+            abort(403, 'You do not have permission to manage project costs.');
+        }
+
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',

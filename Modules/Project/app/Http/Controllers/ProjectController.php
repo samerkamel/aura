@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
@@ -18,11 +19,26 @@ use Modules\Project\Services\ProjectFinancialService;
 class ProjectController extends Controller
 {
     /**
+     * Create a new controller instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of projects.
      */
     public function index(Request $request): View
     {
-        $query = Project::with('customer');
+        // Check if user can view any projects
+        if (!Gate::allows('view-all-projects') && !Gate::allows('view-assigned-projects')) {
+            abort(403, 'You do not have permission to view projects.');
+        }
+
+        // Start with projects accessible by the current user
+        $query = Project::with('customer')
+            ->accessibleByUser(auth()->user());
 
         // Filter by status (default to active only)
         $status = $request->get('status', 'active');
@@ -59,6 +75,7 @@ class ProjectController extends Controller
             'projects' => $projects,
             'customers' => $customers,
             'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id']),
+            'canViewAll' => Gate::allows('view-all-projects'),
         ]);
     }
 
@@ -67,6 +84,10 @@ class ProjectController extends Controller
      */
     public function create(): View
     {
+        if (!Gate::allows('create-project')) {
+            abort(403, 'You do not have permission to create projects.');
+        }
+
         $customers = Customer::active()->orderBy('name')->get();
 
         return view('project::projects.create', [
@@ -79,6 +100,10 @@ class ProjectController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if (!Gate::allows('create-project')) {
+            abort(403, 'You do not have permission to create projects.');
+        }
+
         $validated = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'name' => 'required|string|max:255',
@@ -103,6 +128,10 @@ class ProjectController extends Controller
      */
     public function show(Request $request, Project $project): View
     {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to view this project.');
+        }
+
         $project->load(['customer', 'employees', 'invoices.payments', 'invoices.customer', 'contracts.payments', 'contracts.customer']);
 
         // Get worklogs with optional date filtering (default: lifetime/all time)
@@ -167,6 +196,10 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): View
     {
+        if (!Gate::allows('edit-project', $project)) {
+            abort(403, 'You do not have permission to edit this project.');
+        }
+
         $customers = Customer::active()->orderBy('name')->get();
 
         return view('project::projects.edit', [
@@ -180,6 +213,10 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project): RedirectResponse
     {
+        if (!Gate::allows('edit-project', $project)) {
+            abort(403, 'You do not have permission to edit this project.');
+        }
+
         $validated = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'name' => 'required|string|max:255',
@@ -204,6 +241,10 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): RedirectResponse
     {
+        if (!Gate::allows('delete-project')) {
+            abort(403, 'You do not have permission to delete projects.');
+        }
+
         $project->delete();
 
         return redirect()
@@ -216,6 +257,10 @@ class ProjectController extends Controller
      */
     public function syncFromJira(JiraProjectSyncService $jiraService): RedirectResponse
     {
+        if (!Gate::allows('sync-project-jira')) {
+            abort(403, 'You do not have permission to sync projects from Jira.');
+        }
+
         try {
             $results = $jiraService->syncProjects();
 
@@ -254,6 +299,10 @@ class ProjectController extends Controller
      */
     public function worklogs(Request $request, Project $project): View
     {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to view this project.');
+        }
+
         $project->load(['customer', 'employees']);
 
         // Build query
@@ -345,6 +394,10 @@ class ProjectController extends Controller
      */
     public function manageEmployees(Project $project): View
     {
+        if (!Gate::allows('manage-project-team', $project)) {
+            abort(403, 'You do not have permission to manage this project\'s team.');
+        }
+
         $project->load('employees');
 
         // Get all active employees not already assigned
@@ -369,6 +422,10 @@ class ProjectController extends Controller
      */
     public function assignEmployee(Request $request, Project $project): RedirectResponse
     {
+        if (!Gate::allows('manage-project-team', $project)) {
+            abort(403, 'You do not have permission to manage this project\'s team.');
+        }
+
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'role' => 'required|in:member,lead',
@@ -399,6 +456,10 @@ class ProjectController extends Controller
      */
     public function updateEmployeeRole(Request $request, Project $project): RedirectResponse
     {
+        if (!Gate::allows('manage-project-team', $project)) {
+            abort(403, 'You do not have permission to manage this project\'s team.');
+        }
+
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'role' => 'required|in:member,lead',
@@ -418,6 +479,10 @@ class ProjectController extends Controller
      */
     public function unassignEmployee(Request $request, Project $project): RedirectResponse
     {
+        if (!Gate::allows('manage-project-team', $project)) {
+            abort(403, 'You do not have permission to manage this project\'s team.');
+        }
+
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
         ]);
@@ -436,6 +501,10 @@ class ProjectController extends Controller
      */
     public function syncEmployeesFromWorklogs(Project $project): RedirectResponse
     {
+        if (!Gate::allows('manage-project-team', $project)) {
+            abort(403, 'You do not have permission to manage this project\'s team.');
+        }
+
         $result = $project->syncEmployeesFromWorklogs();
 
         $message = "Sync complete: {$result['newly_added']} new employees added from {$result['total_with_worklogs']} with worklogs.";
@@ -450,6 +519,10 @@ class ProjectController extends Controller
      */
     public function followups(ProjectFollowupService $followupService): View
     {
+        if (!Gate::allows('manage-project-followups')) {
+            abort(403, 'You do not have permission to access project follow-ups.');
+        }
+
         $dashboard = $followupService->getFollowupDashboard();
 
         return view('project::projects.followups', [
@@ -463,6 +536,10 @@ class ProjectController extends Controller
      */
     public function storeFollowup(Request $request, Project $project, ProjectFollowupService $followupService): RedirectResponse
     {
+        if (!Gate::allows('manage-project-followups', $project)) {
+            abort(403, 'You do not have permission to manage follow-ups for this project.');
+        }
+
         $validated = $request->validate([
             'type' => 'required|in:call,email,meeting,message,other',
             'notes' => 'required|string|max:2000',
@@ -484,6 +561,10 @@ class ProjectController extends Controller
      */
     public function getProjectFollowups(Project $project, ProjectFollowupService $followupService)
     {
+        if (!Gate::allows('manage-project-followups', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $followups = $followupService->getProjectFollowupHistory($project, 20);
         $activity = $followupService->getProjectActivitySummary($project);
 
@@ -524,6 +605,10 @@ class ProjectController extends Controller
      */
     public function tasks(Request $request, Project $project, JiraIssueSyncService $issueSyncService): View
     {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to view this project.');
+        }
+
         $project->load('customer');
 
         // Get issue summary
@@ -564,6 +649,10 @@ class ProjectController extends Controller
      */
     public function syncIssues(Project $project, JiraIssueSyncService $issueSyncService): RedirectResponse
     {
+        if (!Gate::allows('sync-project-jira')) {
+            abort(403, 'You do not have permission to sync Jira issues.');
+        }
+
         try {
             $results = $issueSyncService->syncProjectIssues($project);
 
@@ -587,6 +676,10 @@ class ProjectController extends Controller
      */
     public function getProjectIssues(Request $request, Project $project, JiraIssueSyncService $issueSyncService)
     {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $filters = $request->only(['status_category', 'issue_type', 'assignee_employee_id', 'priority', 'search', 'sort_by', 'sort_dir']);
 
         $issues = $issueSyncService->getFilteredIssues($project, $filters);

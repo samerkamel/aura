@@ -141,6 +141,45 @@ class Project extends Model
     }
 
     /**
+     * Scope for projects assigned to a specific employee.
+     * Includes projects where employee is project manager or team member.
+     */
+    public function scopeAssignedToEmployee($query, $employeeId)
+    {
+        return $query->where(function ($q) use ($employeeId) {
+            $q->where('project_manager_id', $employeeId)
+              ->orWhereHas('employees', function ($q2) use ($employeeId) {
+                  $q2->where('employee_id', $employeeId);
+              });
+        });
+    }
+
+    /**
+     * Scope for projects accessible by a user based on their permissions.
+     * Super admins and users with view-all-projects see all projects.
+     * Others see only projects they're assigned to.
+     */
+    public function scopeAccessibleByUser($query, $user)
+    {
+        // Super admins and those with view-all-projects can see everything
+        if ($user->hasRole('super-admin') || $user->hasPermission('view-all-projects')) {
+            return $query;
+        }
+
+        if (isset($user->role) && in_array($user->role, ['super_admin', 'admin'])) {
+            return $query;
+        }
+
+        // Others only see assigned projects
+        if ($user->employee) {
+            return $query->assignedToEmployee($user->employee->id);
+        }
+
+        // No employee linked - return no projects
+        return $query->whereRaw('1 = 0');
+    }
+
+    /**
      * Get the report lines for this project.
      */
     public function reportLines()
