@@ -154,7 +154,7 @@ class Invoice extends Model
      */
     public function businessUnit(): BelongsTo
     {
-        return $this->belongsTo(\Modules\HR\Models\BusinessUnit::class);
+        return $this->belongsTo(\App\Models\BusinessUnit::class);
     }
 
     /**
