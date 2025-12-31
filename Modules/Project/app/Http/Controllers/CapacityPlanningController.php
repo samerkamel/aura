@@ -20,8 +20,9 @@ class CapacityPlanningController extends Controller
         $startDate = Carbon::parse($request->get('start_date', now()->startOfMonth()));
         $endDate = Carbon::parse($request->get('end_date', now()->addMonths(2)->endOfMonth()));
 
-        // Get all active employees with their project allocations
+        // Get all active employees with billable hours (project staff only, excludes support)
         $employees = Employee::active()
+            ->where('billable_hours_applicable', true)
             ->with(['projects' => function ($query) use ($startDate, $endDate) {
                 $query->where('is_active', true)
                     ->where(function ($q) use ($startDate, $endDate) {
@@ -190,6 +191,7 @@ class CapacityPlanningController extends Controller
         $endDate = Carbon::parse($request->get('end_date', now()->addMonths(2)->endOfMonth()));
 
         $employees = Employee::active()
+            ->where('billable_hours_applicable', true)
             ->with(['projects' => function ($query) use ($startDate, $endDate) {
                 $query->where('is_active', true);
             }])
