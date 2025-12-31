@@ -180,7 +180,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td>{{ Str::limit($estimate->title, 40) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($estimate->title, 40) }}</td>
                                 <td>
                                     @if($estimate->project)
                                         <span class="badge bg-label-primary">{{ $estimate->project->name }}</span>
