@@ -63,7 +63,7 @@
               <h6 class="text-muted mb-2">Estimated Hours</h6>
               <h3 class="mb-0">{{ number_format($summary['total_estimated'], 1) }}h</h3>
             </div>
-            <div class="avatar avatar-md bg-label-primary">
+            <div class="avatar avatar-md bg-label-primary d-flex align-items-center justify-content-center">
               <i class="ti ti-clock ti-md"></i>
             </div>
           </div>
@@ -78,7 +78,7 @@
               <h6 class="text-muted mb-2">Actual Hours</h6>
               <h3 class="mb-0">{{ number_format($summary['total_actual'], 1) }}h</h3>
             </div>
-            <div class="avatar avatar-md bg-label-info">
+            <div class="avatar avatar-md bg-label-info d-flex align-items-center justify-content-center">
               <i class="ti ti-hourglass ti-md"></i>
             </div>
           </div>
@@ -93,7 +93,7 @@
               <h6 class="text-muted mb-2">Remaining Hours</h6>
               <h3 class="mb-0">{{ number_format($summary['total_remaining'], 1) }}h</h3>
             </div>
-            <div class="avatar avatar-md bg-label-warning">
+            <div class="avatar avatar-md bg-label-warning d-flex align-items-center justify-content-center">
               <i class="ti ti-clock-pause ti-md"></i>
             </div>
           </div>
@@ -112,7 +112,7 @@
               @endphp
               <h3 class="mb-0 text-{{ $varianceClass }}">{{ $varianceSign }}{{ number_format($summary['variance'], 1) }}h</h3>
             </div>
-            <div class="avatar avatar-md bg-label-{{ $varianceClass }}">
+            <div class="avatar avatar-md bg-label-{{ $varianceClass }} d-flex align-items-center justify-content-center">
               <i class="ti ti-chart-{{ $summary['variance'] > 0 ? 'arrows-vertical' : 'arrows' }} ti-md"></i>
             </div>
           </div>
