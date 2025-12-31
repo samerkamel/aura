@@ -237,6 +237,17 @@
       ]
     },
     {
+      "name": "Customers",
+      "icon": "menu-icon tf-icons ti ti-building-store",
+      "slug": "customers-index",
+      "url": "administration/customers",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "project-manager"
+      ]
+    },
+    {
       "menuHeader": "Financial Planning",
       "roles": [
         "super-admin",
@@ -364,62 +375,6 @@
       ]
     },
     {
-      "menuHeader": "Administration",
-      "roles": [
-        "super-admin"
-      ]
-    },
-    {
-      "name": "User Management",
-      "icon": "menu-icon tf-icons ti ti-users-group",
-      "slug": "administration-users",
-      "roles": [
-        "super-admin"
-      ],
-      "submenu": [
-        {
-          "url": "administration/users",
-          "name": "All Users",
-          "slug": "administration-users-index"
-        },
-        {
-          "url": "administration/users/create",
-          "name": "Create User",
-          "slug": "administration-users-create"
-        }
-      ]
-    },
-    {
-      "name": "Roles & Permissions",
-      "icon": "menu-icon tf-icons ti ti-shield-check",
-      "slug": "administration-roles",
-      "roles": [
-        "super-admin"
-      ],
-      "submenu": [
-        {
-          "url": "administration/roles",
-          "name": "Roles",
-          "slug": "administration-roles-index"
-        },
-        {
-          "url": "administration/permissions",
-          "name": "Permissions",
-          "slug": "administration-permissions-index"
-        }
-      ]
-    },
-    {
-      "name": "Customers",
-      "icon": "menu-icon tf-icons ti ti-users",
-      "slug": "administration-customers-index",
-      "url": "administration/customers",
-      "roles": [
-        "super-admin",
-        "finance-manager"
-      ]
-    },
-    {
       "name": "Settings",
       "icon": "menu-icon tf-icons ti ti-settings",
       "slug": "settings",
@@ -471,6 +426,21 @@
           "url": "letter-templates",
           "name": "Letter Templates",
           "slug": "settings-letter-templates"
+        },
+        {
+          "url": "administration/users",
+          "name": "Users",
+          "slug": "settings-users-index"
+        },
+        {
+          "url": "administration/roles",
+          "name": "Roles",
+          "slug": "settings-roles-index"
+        },
+        {
+          "url": "administration/permissions",
+          "name": "Permissions",
+          "slug": "settings-permissions-index"
         }
       ]
     }
