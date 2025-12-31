@@ -269,6 +269,16 @@
           "slug": "accounting-credit-notes-index"
         },
         {
+          "url": "invoicing/invoices",
+          "name": "Invoices",
+          "slug": "accounting-invoices-index"
+        },
+        {
+          "url": "invoicing/payments",
+          "name": "Payment Records",
+          "slug": "accounting-payments-index"
+        },
+        {
           "name": "Reports",
           "icon": "menu-icon tf-icons ti ti-chart-bar",
           "slug": "accounting-reports",
@@ -321,33 +331,6 @@
               "slug": "administration-products-index"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Invoice Management",
-      "icon": "menu-icon tf-icons ti ti-file-invoice",
-      "slug": "invoice-management",
-      "roles": [
-        "super-admin",
-        "finance-manager",
-        "finance-readonly"
-      ],
-      "submenu": [
-        {
-          "url": "invoicing/invoices",
-          "name": "Customer Invoices",
-          "slug": "invoicing-invoices-index"
-        },
-        {
-          "url": "invoicing/invoices/create",
-          "name": "Create Invoice",
-          "slug": "invoicing-invoices-create"
-        },
-        {
-          "url": "invoicing/payments",
-          "name": "Payment Records",
-          "slug": "invoicing-payments-index"
         }
       ]
     },
