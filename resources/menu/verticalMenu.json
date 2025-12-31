@@ -234,9 +234,86 @@
       ]
     },
     {
-      "name": "Accounting",
-      "icon": "menu-icon tf-icons ti ti-coin",
-      "slug": "accounting-cash-flow",
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons ti ti-chart-pie",
+      "slug": "accounting-dashboard",
+      "url": "accounting",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Expenses",
+      "icon": "menu-icon tf-icons ti ti-receipt",
+      "slug": "accounting-expenses-index",
+      "url": "accounting/expenses/paid",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Income & Contracts",
+      "icon": "menu-icon tf-icons ti ti-file-dollar",
+      "slug": "accounting-income-index",
+      "url": "accounting/income",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Estimates",
+      "icon": "menu-icon tf-icons ti ti-file-text",
+      "slug": "accounting-estimates-index",
+      "url": "accounting/estimates",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Credit Notes",
+      "icon": "menu-icon tf-icons ti ti-credit-card-off",
+      "slug": "accounting-credit-notes-index",
+      "url": "accounting/credit-notes",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Invoices",
+      "icon": "menu-icon tf-icons ti ti-file-invoice",
+      "slug": "accounting-invoices-index",
+      "url": "invoicing/invoices",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Payment Records",
+      "icon": "menu-icon tf-icons ti ti-cash",
+      "slug": "accounting-payments-index",
+      "url": "invoicing/payments",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ]
+    },
+    {
+      "name": "Reports",
+      "icon": "menu-icon tf-icons ti ti-chart-bar",
+      "slug": "accounting-reports",
       "roles": [
         "super-admin",
         "finance-manager",
@@ -244,93 +321,56 @@
       ],
       "submenu": [
         {
-          "url": "accounting",
-          "name": "Dashboard",
-          "slug": "accounting-dashboard"
+          "url": "accounting/income-sheet",
+          "name": "Income Sheet",
+          "slug": "accounting-income-sheet-index"
         },
         {
-          "url": "accounting/expenses/paid",
-          "name": "Expenses",
-          "slug": "accounting-expenses-index"
+          "url": "accounting/reports/income-expenses",
+          "name": "I&E Report",
+          "slug": "accounting-reports-income-expenses"
         },
         {
-          "url": "accounting/income",
-          "name": "Income & Contracts",
-          "slug": "accounting-income-index"
+          "url": "accounting/reports",
+          "name": "All Reports",
+          "slug": "accounting-reports-index"
+        }
+      ]
+    },
+    {
+      "name": "Setup",
+      "icon": "menu-icon tf-icons ti ti-adjustments",
+      "slug": "accounting-setup",
+      "roles": [
+        "super-admin",
+        "finance-manager",
+        "finance-readonly"
+      ],
+      "submenu": [
+        {
+          "url": "accounting/expense-imports",
+          "name": "Import Expenses",
+          "slug": "accounting-expense-imports-index"
         },
         {
-          "url": "accounting/estimates",
-          "name": "Estimates",
-          "slug": "accounting-estimates-index"
+          "url": "accounting/accounts",
+          "name": "Accounts",
+          "slug": "accounting-accounts-index"
         },
         {
-          "url": "accounting/credit-notes",
-          "name": "Credit Notes",
-          "slug": "accounting-credit-notes-index"
+          "url": "accounting/expenses/categories/manage",
+          "name": "Expense Categories",
+          "slug": "accounting-expenses-categories"
         },
         {
-          "url": "invoicing/invoices",
-          "name": "Invoices",
-          "slug": "accounting-invoices-index"
+          "url": "accounting/expense-types",
+          "name": "Expense Types",
+          "slug": "accounting-expense-types-index"
         },
         {
-          "url": "invoicing/payments",
-          "name": "Payment Records",
-          "slug": "accounting-payments-index"
-        },
-        {
-          "name": "Reports",
-          "icon": "menu-icon tf-icons ti ti-chart-bar",
-          "slug": "accounting-reports",
-          "submenu": [
-            {
-              "url": "accounting/income-sheet",
-              "name": "Income Sheet",
-              "slug": "accounting-income-sheet-index"
-            },
-            {
-              "url": "accounting/reports/income-expenses",
-              "name": "I&E Report",
-              "slug": "accounting-reports-income-expenses"
-            },
-            {
-              "url": "accounting/reports",
-              "name": "All Reports",
-              "slug": "accounting-reports-index"
-            }
-          ]
-        },
-        {
-          "name": "Setup",
-          "icon": "menu-icon tf-icons ti ti-adjustments",
-          "slug": "accounting-setup",
-          "submenu": [
-            {
-              "url": "accounting/expense-imports",
-              "name": "Import Expenses",
-              "slug": "accounting-expense-imports-index"
-            },
-            {
-              "url": "accounting/accounts",
-              "name": "Accounts",
-              "slug": "accounting-accounts-index"
-            },
-            {
-              "url": "accounting/expenses/categories/manage",
-              "name": "Expense Categories",
-              "slug": "accounting-expenses-categories"
-            },
-            {
-              "url": "accounting/expense-types",
-              "name": "Expense Types",
-              "slug": "accounting-expense-types-index"
-            },
-            {
-              "url": "administration/products",
-              "name": "Products",
-              "slug": "administration-products-index"
-            }
-          ]
+          "url": "administration/products",
+          "name": "Products",
+          "slug": "administration-products-index"
         }
       ]
     },
