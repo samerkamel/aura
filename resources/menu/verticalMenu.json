@@ -345,16 +345,6 @@
           "slug": "invoicing-invoices-create"
         },
         {
-          "url": "invoicing/internal-transactions",
-          "name": "Internal Transactions",
-          "slug": "invoicing-internal-transactions-index"
-        },
-        {
-          "url": "invoicing/internal-transactions/create",
-          "name": "Create Internal Transaction",
-          "slug": "invoicing-internal-transactions-create"
-        },
-        {
           "url": "invoicing/payments",
           "name": "Payment Records",
           "slug": "invoicing-payments-index"
@@ -398,11 +388,6 @@
           "url": "invoicing/admin/sequences",
           "name": "Invoice Sequences",
           "slug": "settings-invoice-sequences"
-        },
-        {
-          "url": "invoicing/admin/internal-sequences",
-          "name": "Internal Sequences",
-          "slug": "settings-internal-sequences"
         },
         {
           "url": "leave-policies",
