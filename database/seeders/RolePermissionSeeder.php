@@ -95,12 +95,32 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'approve-internal-transactions', 'display_name' => 'Approve Internal Transactions', 'description' => 'Can approve or reject internal transactions', 'category' => 'internal-accounting'],
             ['name' => 'manage-internal-sequences', 'display_name' => 'Manage Internal Sequences', 'description' => 'Can configure internal transaction numbering', 'category' => 'internal-accounting'],
 
-            // Project Management
-            ['name' => 'view-projects', 'display_name' => 'View Projects', 'description' => 'Can view project list and details', 'category' => 'projects'],
-            ['name' => 'manage-projects', 'display_name' => 'Manage Projects', 'description' => 'Can create, edit, and delete projects', 'category' => 'projects'],
-            ['name' => 'view-project-financials', 'display_name' => 'View Project Financials', 'description' => 'Can view project financial data including costs and rates', 'category' => 'projects'],
+            // Project Management - Access Control
+            ['name' => 'view-all-projects', 'display_name' => 'View All Projects', 'description' => 'Can view all projects in the system', 'category' => 'projects'],
+            ['name' => 'view-assigned-projects', 'display_name' => 'View Assigned Projects', 'description' => 'Can view only projects assigned to them', 'category' => 'projects'],
+
+            // Project Management - CRUD
+            ['name' => 'create-project', 'display_name' => 'Create Projects', 'description' => 'Can create new projects', 'category' => 'projects'],
+            ['name' => 'edit-project', 'display_name' => 'Edit Projects', 'description' => 'Can edit project details', 'category' => 'projects'],
+            ['name' => 'edit-assigned-project', 'display_name' => 'Edit Assigned Projects', 'description' => 'Can edit projects they are assigned to as manager', 'category' => 'projects'],
+            ['name' => 'delete-project', 'display_name' => 'Delete Projects', 'description' => 'Can delete projects', 'category' => 'projects'],
+
+            // Project Management - Finance
+            ['name' => 'view-project-finance', 'display_name' => 'View Project Finance', 'description' => 'Can view project financial dashboard', 'category' => 'projects'],
+            ['name' => 'view-assigned-project-finance', 'display_name' => 'View Assigned Project Finance', 'description' => 'Can view finance of projects they manage', 'category' => 'projects'],
+            ['name' => 'manage-project-budgets', 'display_name' => 'Manage Project Budgets', 'description' => 'Can create and edit project budgets', 'category' => 'projects'],
+            ['name' => 'manage-project-costs', 'display_name' => 'Manage Project Costs', 'description' => 'Can record and edit project costs', 'category' => 'projects'],
+            ['name' => 'manage-assigned-project-costs', 'display_name' => 'Manage Assigned Project Costs', 'description' => 'Can manage costs for projects they manage', 'category' => 'projects'],
+            ['name' => 'manage-project-revenues', 'display_name' => 'Manage Project Revenues', 'description' => 'Can record and edit project revenues', 'category' => 'projects'],
+            ['name' => 'view-project-profitability', 'display_name' => 'View Project Profitability', 'description' => 'Can view project profitability analysis', 'category' => 'projects'],
+            ['name' => 'view-assigned-project-profitability', 'display_name' => 'View Assigned Project Profitability', 'description' => 'Can view profitability for projects they manage', 'category' => 'projects'],
+
+            // Project Management - Operations
+            ['name' => 'manage-project-followups', 'display_name' => 'Manage Project Follow-ups', 'description' => 'Can log and manage project follow-ups', 'category' => 'projects'],
+            ['name' => 'manage-assigned-project-followups', 'display_name' => 'Manage Assigned Project Follow-ups', 'description' => 'Can manage follow-ups for projects they are assigned to', 'category' => 'projects'],
             ['name' => 'manage-project-reports', 'display_name' => 'Manage Project Reports', 'description' => 'Can generate and manage project reports', 'category' => 'projects'],
-            ['name' => 'manage-project-employees', 'display_name' => 'Manage Project Employees', 'description' => 'Can assign and unassign employees to projects', 'category' => 'projects'],
+            ['name' => 'manage-project-team', 'display_name' => 'Manage Project Team', 'description' => 'Can assign and unassign employees to projects', 'category' => 'projects'],
+            ['name' => 'sync-project-jira', 'display_name' => 'Sync Project Jira', 'description' => 'Can sync projects and issues from Jira', 'category' => 'projects'],
         ];
 
         foreach ($permissions as $permissionData) {
@@ -183,11 +203,27 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'project-manager',
                 'display_name' => 'Project Manager',
-                'description' => 'Can view all projects and their financial data, but no access to accounting or other financial modules',
+                'description' => 'Can manage all projects and their financial data, but no access to accounting or other financial modules',
                 'permissions' => [
-                    'view-projects', 'manage-projects',
-                    'view-project-financials', 'manage-project-reports',
-                    'manage-project-employees',
+                    'view-all-projects', 'create-project', 'edit-project', 'delete-project',
+                    'view-project-finance', 'manage-project-budgets', 'manage-project-costs',
+                    'manage-project-revenues', 'view-project-profitability',
+                    'manage-project-followups', 'manage-project-reports',
+                    'manage-project-team', 'sync-project-jira',
+                    'view-employees'
+                ]
+            ],
+            [
+                'name' => 'project-member',
+                'display_name' => 'Project Member',
+                'description' => 'Can view and contribute to projects they are assigned to',
+                'permissions' => [
+                    'view-assigned-projects',
+                    'edit-assigned-project',
+                    'view-assigned-project-finance',
+                    'manage-assigned-project-costs',
+                    'view-assigned-project-profitability',
+                    'manage-assigned-project-followups',
                     'view-employees'
                 ]
             ],
