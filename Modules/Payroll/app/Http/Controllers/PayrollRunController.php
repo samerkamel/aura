@@ -3,6 +3,7 @@
 namespace Modules\Payroll\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\PayrollAccountingSyncService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
@@ -27,9 +28,17 @@ class PayrollRunController extends Controller
      */
     private $payrollCalculationService;
 
-    public function __construct(PayrollCalculationService $payrollCalculationService)
-    {
+    /**
+     * @var PayrollAccountingSyncService
+     */
+    private $accountingSyncService;
+
+    public function __construct(
+        PayrollCalculationService $payrollCalculationService,
+        PayrollAccountingSyncService $accountingSyncService
+    ) {
         $this->payrollCalculationService = $payrollCalculationService;
+        $this->accountingSyncService = $accountingSyncService;
     }
 
     /**
@@ -375,6 +384,13 @@ class PayrollRunController extends Controller
                 }
             });
 
+            // Sync finalized payroll to accounting as scheduled expenses
+            $syncResult = $this->accountingSyncService->createScheduledExpenses($payrollRuns);
+
+            if (!$syncResult['success']) {
+                Log::warning('Payroll synced to accounting with issues', $syncResult);
+            }
+
             // Generate Excel file for bank submission
             $periodLabel = $periodStart->format('F Y');
             $export = new \Modules\Payroll\Exports\BankSheetExport($payrollRuns, $periodLabel);
@@ -430,5 +446,96 @@ class PayrollRunController extends Controller
         return redirect()
             ->route('payroll.run.adjustments', ['period' => $selectedPeriod])
             ->with('success', "Payroll recalculated successfully. {$deletedCount} runs deleted.");
+    }
+
+    /**
+     * Mark payroll as transferred (bank transfer completed).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function markAsTransferred(Request $request)
+    {
+        $request->validate([
+            'period' => 'required|date_format:Y-m',
+            'paid_from_account_id' => 'nullable|exists:accounts,id',
+        ]);
+
+        $companySettings = CompanySetting::getSettings();
+        $selectedPeriod = $request->get('period');
+        $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
+
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
+
+        try {
+            // Get finalized payroll runs for this period
+            $payrollRuns = PayrollRun::forPeriod($periodStart->toDateString(), $periodEnd->toDateString())
+                ->where('status', 'finalized')
+                ->where('transfer_status', PayrollRun::TRANSFER_PENDING)
+                ->with('employee')
+                ->get();
+
+            if ($payrollRuns->isEmpty()) {
+                return back()->withErrors(['transfer' => 'No pending payroll runs found for this period.']);
+            }
+
+            // Mark payroll expenses as paid in accounting
+            $paidFromAccountId = $request->get('paid_from_account_id');
+            $syncResult = $this->accountingSyncService->markAsPaid($payrollRuns, $paidFromAccountId);
+
+            if (!$syncResult['success']) {
+                Log::warning('Payroll transfer marking had issues', $syncResult);
+            }
+
+            Log::info('Payroll marked as transferred', [
+                'period' => $selectedPeriod,
+                'employees' => $payrollRuns->count(),
+                'total_amount' => $payrollRuns->sum('effective_salary'),
+            ]);
+
+            return redirect()
+                ->route('payroll.run.adjustments', ['period' => $selectedPeriod])
+                ->with('success', "Payroll marked as transferred. {$payrollRuns->count()} employees processed.");
+
+        } catch (\Exception $e) {
+            Log::error('Failed to mark payroll as transferred', [
+                'period' => $selectedPeriod,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->withErrors(['transfer' => 'Failed to mark as transferred: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get accounting sync status for a period.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSyncStatus(Request $request)
+    {
+        $request->validate([
+            'period' => 'required|date_format:Y-m',
+        ]);
+
+        $companySettings = CompanySetting::getSettings();
+        $selectedPeriod = $request->get('period');
+        $periodMonth = Carbon::createFromFormat('Y-m', $selectedPeriod);
+
+        $cycleDay = $companySettings->cycle_start_day ?? 1;
+        $periodEnd = $periodMonth->copy()->day($cycleDay)->subDay()->endOfDay();
+        $periodStart = $periodMonth->copy()->subMonth()->day($cycleDay)->startOfDay();
+
+        $summary = $this->accountingSyncService->getExpensesSummary($periodStart, $periodEnd);
+        $isSynced = $this->accountingSyncService->isPeriodSynced($periodStart, $periodEnd);
+
+        return response()->json([
+            'is_synced' => $isSynced,
+            'summary' => $summary,
+        ]);
     }
 }

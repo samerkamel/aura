@@ -68,7 +68,8 @@ class ProjectFinancialService
 
     /**
      * Calculate dynamic labor costs from worklogs.
-     * Formula: (Salary / Billable Hours This Month) × Worked Hours × 3
+     * Uses persisted costs when available, otherwise calculates dynamically.
+     * Formula: (Salary / Billable Hours This Month) × Worked Hours × Multiplier
      */
     public function calculateLaborCostsFromWorklogs(Project $project, ?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
@@ -82,10 +83,39 @@ class ProjectFinancialService
 
         $laborDetails = [];
         $totalLaborCost = 0;
+        $totalPmOverhead = 0;
         $totalHours = 0;
 
-        // Group by employee and month for accurate calculation
-        $groupedWorklogs = $worklogs->groupBy('employee_id');
+        // Separate persisted and non-persisted worklogs
+        $persistedWorklogs = $worklogs->where('cost_calculated', true);
+        $nonPersistedWorklogs = $worklogs->where('cost_calculated', false);
+
+        // Use persisted costs directly
+        foreach ($persistedWorklogs as $worklog) {
+            $employee = $worklog->employee;
+            $yearMonth = $worklog->worklog_started->format('Y-m');
+
+            $laborDetails[] = [
+                'employee_id' => $worklog->employee_id,
+                'employee_name' => $employee?->name ?? 'Unknown',
+                'month' => $yearMonth,
+                'month_label' => Carbon::createFromFormat('Y-m', $yearMonth)->format('M Y'),
+                'salary' => $worklog->employee_salary_at_time,
+                'billable_hours' => $worklog->billable_hours_in_month,
+                'worked_hours' => round($worklog->time_spent_hours, 2),
+                'hourly_rate' => round($worklog->hourly_rate, 2),
+                'cost' => round($worklog->labor_cost, 2),
+                'pm_overhead' => round($worklog->pm_overhead, 2),
+                'persisted' => true,
+            ];
+
+            $totalLaborCost += $worklog->labor_cost;
+            $totalPmOverhead += $worklog->pm_overhead;
+            $totalHours += $worklog->time_spent_hours;
+        }
+
+        // Calculate dynamic costs for non-persisted worklogs
+        $groupedWorklogs = $nonPersistedWorklogs->groupBy('employee_id');
 
         foreach ($groupedWorklogs as $employeeId => $employeeWorklogs) {
             $employee = $employeeWorklogs->first()->employee;
@@ -114,6 +144,7 @@ class ProjectFinancialService
                 // Formula: (Salary / Billable Hours This Month) × Worked Hours × Multiplier
                 $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
                 $cost = $hourlyRate * $workedHoursThisMonth * $this->getLaborCostMultiplier();
+                $pmOverhead = $cost * self::PM_OVERHEAD_PERCENTAGE;
 
                 $laborDetails[] = [
                     'employee_id' => $employeeId,
@@ -125,22 +156,26 @@ class ProjectFinancialService
                     'worked_hours' => round($workedHoursThisMonth, 2),
                     'hourly_rate' => round($hourlyRate, 2),
                     'cost' => round($cost, 2),
+                    'pm_overhead' => round($pmOverhead, 2),
+                    'persisted' => false,
                 ];
 
                 $totalLaborCost += $cost;
+                $totalPmOverhead += $pmOverhead;
                 $totalHours += $workedHoursThisMonth;
             }
         }
 
-        $pmOverhead = round($totalLaborCost * self::PM_OVERHEAD_PERCENTAGE, 2);
-        $totalWithPm = round($totalLaborCost + $pmOverhead, 2);
+        $totalWithPm = round($totalLaborCost + $totalPmOverhead, 2);
 
         return [
             'total' => $totalWithPm,
             'subtotal' => round($totalLaborCost, 2),
-            'pm_overhead' => $pmOverhead,
+            'pm_overhead' => round($totalPmOverhead, 2),
             'total_hours' => round($totalHours, 2),
             'details' => $laborDetails,
+            'persisted_count' => $persistedWorklogs->count(),
+            'dynamic_count' => $nonPersistedWorklogs->count(),
         ];
     }
 

@@ -23,6 +23,15 @@ class ExpenseSchedule extends Model
      */
     protected $fillable = [
         'perfex_id',
+        // Payroll integration fields
+        'payroll_run_id',
+        'payroll_employee_id',
+        'is_payroll_expense',
+        // Project integration fields
+        'project_id',
+        'project_cost_id',
+        'is_project_expense',
+        // Standard fields
         'category_id',
         'subcategory_id',
         'name',
@@ -59,6 +68,8 @@ class ExpenseSchedule extends Model
         'paid_date' => 'date',
         'paid_amount' => 'decimal:2',
         'is_active' => 'boolean',
+        'is_payroll_expense' => 'boolean',
+        'is_project_expense' => 'boolean',
         'skip_weekends' => 'boolean',
         'excluded_dates' => 'array',
         'frequency_value' => 'integer',
@@ -94,6 +105,70 @@ class ExpenseSchedule extends Model
     public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ExpenseAttachment::class);
+    }
+
+    /**
+     * Get the payroll run linked to this expense.
+     */
+    public function payrollRun(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Payroll\Models\PayrollRun::class, 'payroll_run_id');
+    }
+
+    /**
+     * Get the employee linked to this payroll expense.
+     */
+    public function payrollEmployee(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\HR\Models\Employee::class, 'payroll_employee_id');
+    }
+
+    /**
+     * Get the project linked to this expense.
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Project\Models\Project::class, 'project_id');
+    }
+
+    /**
+     * Get the project cost linked to this expense.
+     */
+    public function projectCost(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Project\Models\ProjectCost::class, 'project_cost_id');
+    }
+
+    /**
+     * Scope to get payroll-related expenses.
+     */
+    public function scopePayrollExpenses(Builder $query): Builder
+    {
+        return $query->where('is_payroll_expense', true);
+    }
+
+    /**
+     * Scope to get non-payroll expenses.
+     */
+    public function scopeNonPayroll(Builder $query): Builder
+    {
+        return $query->where('is_payroll_expense', false);
+    }
+
+    /**
+     * Scope to get project-related expenses.
+     */
+    public function scopeProjectExpenses(Builder $query): Builder
+    {
+        return $query->where('is_project_expense', true);
+    }
+
+    /**
+     * Scope to get expenses for a specific project.
+     */
+    public function scopeForProject(Builder $query, int $projectId): Builder
+    {
+        return $query->where('project_id', $projectId)->where('is_project_expense', true);
     }
 
     /**

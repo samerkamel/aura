@@ -23,7 +23,7 @@
         </div>
         <div class="card-body">
           <!-- Period Info -->
-          <div class="alert alert-info mb-0">
+          <div class="alert alert-info mb-3">
             <i class="ti ti-info-circle me-2"></i>
             <strong>Period:</strong> {{ $periodStart->format('M j, Y') }} - {{ $periodEnd->format('M j, Y') }}
             <span class="ms-3"><strong>Employees:</strong> {{ $payrollRuns->count() }}</span>
@@ -32,6 +32,9 @@
               @php
                 $finalized = $payrollRuns->where('status', 'finalized')->count();
                 $pending = $payrollRuns->where('status', 'pending_adjustment')->count();
+                $transferred = $payrollRuns->where('transfer_status', 'transferred')->count();
+                $pendingTransfer = $payrollRuns->where('status', 'finalized')->where('transfer_status', 'pending')->count();
+                $syncedToAccounting = $payrollRuns->where('synced_to_accounting', true)->count();
               @endphp
               @if($finalized > 0)
                 <span class="badge bg-success">{{ $finalized }} Finalized</span>
@@ -41,6 +44,36 @@
               @endif
             </span>
           </div>
+
+          <!-- Accounting & Transfer Status -->
+          @if($finalized > 0)
+            <div class="row">
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-0">
+                  <i class="ti ti-building-bank me-2 {{ $syncedToAccounting > 0 ? 'text-success' : 'text-muted' }}"></i>
+                  <span class="me-2">Accounting Sync:</span>
+                  @if($syncedToAccounting > 0)
+                    <span class="badge bg-label-success">{{ $syncedToAccounting }} Synced</span>
+                  @else
+                    <span class="badge bg-label-secondary">Not synced</span>
+                  @endif
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-0">
+                  <i class="ti ti-transfer me-2 {{ $transferred > 0 ? 'text-success' : 'text-muted' }}"></i>
+                  <span class="me-2">Transfer Status:</span>
+                  @if($transferred > 0)
+                    <span class="badge bg-label-success">{{ $transferred }} Transferred</span>
+                  @elseif($pendingTransfer > 0)
+                    <span class="badge bg-label-warning">{{ $pendingTransfer }} Pending Transfer</span>
+                  @else
+                    <span class="badge bg-label-secondary">Not ready</span>
+                  @endif
+                </div>
+              </div>
+            </div>
+          @endif
         </div>
       </div>
     </div>
@@ -56,6 +89,13 @@
   @if($errors->has('finalization'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
       <i class="ti ti-alert-circle me-2"></i>{{ $errors->first('finalization') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
+  @if($errors->has('transfer'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="ti ti-alert-circle me-2"></i>{{ $errors->first('transfer') }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
@@ -115,12 +155,22 @@
                           </div>
                           <div>
                             <strong>{{ $run->employee->name ?? 'Unknown' }}</strong>
-                            @if($run->is_adjusted)
-                              <br><span class="badge bg-label-warning">Adjusted</span>
-                            @endif
-                            @if($isFinalized)
-                              <br><span class="badge bg-label-success">Finalized</span>
-                            @endif
+                            <div class="mt-1">
+                              @if($run->is_adjusted)
+                                <span class="badge bg-label-warning badge-sm">Adjusted</span>
+                              @endif
+                              @if($isFinalized)
+                                <span class="badge bg-label-success badge-sm">Finalized</span>
+                              @endif
+                              @if($run->synced_to_accounting)
+                                <span class="badge bg-label-info badge-sm" title="Synced to Accounting"><i class="ti ti-building-bank"></i></span>
+                              @endif
+                              @if($run->transfer_status === 'transferred')
+                                <span class="badge bg-label-primary badge-sm" title="Transferred"><i class="ti ti-check"></i> Transferred</span>
+                              @elseif($isFinalized && $run->transfer_status === 'pending')
+                                <span class="badge bg-label-secondary badge-sm" title="Awaiting Transfer"><i class="ti ti-clock"></i></span>
+                              @endif
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -232,7 +282,13 @@
                 <div>
                   <p class="text-muted mb-0">
                     <i class="ti ti-info-circle me-1"></i>
-                    Save your adjustments before finalizing. Finalized payroll cannot be modified.
+                    @if($pending > 0)
+                      Save your adjustments before finalizing. Finalized payroll cannot be modified.
+                    @elseif($pendingTransfer > 0)
+                      Payroll is finalized. Mark as transferred after completing the bank transfer.
+                    @else
+                      Payroll has been transferred to bank accounts.
+                    @endif
                   </p>
                 </div>
                 <div class="btn-group">
@@ -243,8 +299,18 @@
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#finalizeModal">
                       <i class="ti ti-file-export me-1"></i>Finalize & Export
                     </button>
+                  @elseif($pendingTransfer > 0)
+                    <button type="button" class="btn btn-outline-success" onclick="document.getElementById('downloadBankSheetForm').submit();">
+                      <i class="ti ti-download me-1"></i>Download Bank Sheet
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#transferModal">
+                      <i class="ti ti-transfer me-1"></i>Mark as Transferred
+                    </button>
                   @else
-                    <button type="button" class="btn btn-success" onclick="document.getElementById('downloadBankSheetForm').submit();">
+                    <a href="{{ route('accounting.expenses.index', ['filter' => 'payroll']) }}" class="btn btn-outline-info">
+                      <i class="ti ti-building-bank me-1"></i>View in Accounting
+                    </a>
+                    <button type="button" class="btn btn-outline-success" onclick="document.getElementById('downloadBankSheetForm').submit();">
                       <i class="ti ti-download me-1"></i>Download Bank Sheet
                     </button>
                   @endif
@@ -296,6 +362,56 @@
           </button>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mark as Transferred Modal -->
+<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ route('payroll.run.mark-transferred') }}">
+        @csrf
+        <input type="hidden" name="period" value="{{ $selectedPeriod }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="transferModalLabel">
+            <i class="ti ti-transfer text-primary me-2"></i>Mark as Transferred
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Confirm that the payroll has been transferred to employee bank accounts.</p>
+
+          <div class="mb-3">
+            <label class="form-label">Paid From Account (Optional)</label>
+            <select name="paid_from_account_id" class="form-select">
+              <option value="">-- Select Account --</option>
+              @php
+                $accounts = \Modules\Accounting\Models\Account::where('is_active', true)->orderBy('name')->get();
+              @endphp
+              @foreach($accounts as $account)
+                <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->account_number }})</option>
+              @endforeach
+            </select>
+            <small class="text-muted">Select the bank account used for the transfer (for accounting records).</small>
+          </div>
+
+          <div class="alert alert-info mb-0">
+            <i class="ti ti-info-circle me-2"></i>
+            <strong>Note:</strong> This will update the accounting records to show these payroll expenses as "Paid".
+            <br><br>
+            <strong>Total Amount:</strong> {{ number_format($payrollRuns->where('status', 'finalized')->sum('final_salary'), 2) }} EGP
+            <br>
+            <strong>Employees:</strong> {{ $payrollRuns->where('status', 'finalized')->count() }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ti ti-check me-1"></i>Confirm Transfer
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

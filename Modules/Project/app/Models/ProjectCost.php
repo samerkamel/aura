@@ -19,6 +19,9 @@ class ProjectCost extends Model
         'cost_date',
         'employee_id',
         'expense_id',
+        'expense_schedule_id',
+        'synced_to_accounting',
+        'synced_at',
         'hours',
         'hourly_rate',
         'is_billable',
@@ -35,6 +38,8 @@ class ProjectCost extends Model
         'hourly_rate' => 'decimal:2',
         'is_billable' => 'boolean',
         'is_auto_generated' => 'boolean',
+        'synced_to_accounting' => 'boolean',
+        'synced_at' => 'datetime',
     ];
 
     /**
@@ -103,6 +108,38 @@ class ProjectCost extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the linked expense schedule (for accounting integration).
+     */
+    public function expenseSchedule(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Accounting\Models\ExpenseSchedule::class, 'expense_schedule_id');
+    }
+
+    /**
+     * Check if this cost is synced to accounting.
+     */
+    public function isSyncedToAccounting(): bool
+    {
+        return (bool) $this->synced_to_accounting;
+    }
+
+    /**
+     * Scope for synced costs.
+     */
+    public function scopeSynced($query)
+    {
+        return $query->where('synced_to_accounting', true);
+    }
+
+    /**
+     * Scope for unsynced costs.
+     */
+    public function scopeUnsynced($query)
+    {
+        return $query->where('synced_to_accounting', false);
     }
 
     /**

@@ -16,12 +16,16 @@ class ProjectRevenue extends Model
         'amount',
         'revenue_date',
         'contract_id',
+        'contract_payment_id',
         'invoice_id',
         'status',
         'amount_received',
         'due_date',
         'received_date',
         'created_by',
+        // Sync tracking fields
+        'synced_from_contract',
+        'synced_at',
     ];
 
     protected $casts = [
@@ -30,6 +34,8 @@ class ProjectRevenue extends Model
         'revenue_date' => 'date',
         'due_date' => 'date',
         'received_date' => 'date',
+        'synced_from_contract' => 'boolean',
+        'synced_at' => 'datetime',
     ];
 
     /**
@@ -90,6 +96,14 @@ class ProjectRevenue extends Model
     public function contract(): BelongsTo
     {
         return $this->belongsTo(\Modules\Accounting\Models\Contract::class);
+    }
+
+    /**
+     * Get the contract payment (if linked).
+     */
+    public function contractPayment(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Accounting\Models\ContractPayment::class);
     }
 
     /**
@@ -222,6 +236,38 @@ class ProjectRevenue extends Model
     public function scopeDateRange($query, $startDate, $endDate)
     {
         return $query->whereBetween('revenue_date', [$startDate, $endDate]);
+    }
+
+    /**
+     * Scope for synced from contract.
+     */
+    public function scopeSyncedFromContract($query)
+    {
+        return $query->where('synced_from_contract', true);
+    }
+
+    /**
+     * Scope for manually created (not synced).
+     */
+    public function scopeManuallyCreated($query)
+    {
+        return $query->where('synced_from_contract', false);
+    }
+
+    /**
+     * Scope for revenues from a specific contract.
+     */
+    public function scopeFromContract($query, $contractId)
+    {
+        return $query->where('contract_id', $contractId);
+    }
+
+    /**
+     * Check if this revenue was synced from a contract.
+     */
+    public function isSyncedFromContract(): bool
+    {
+        return (bool) $this->synced_from_contract;
     }
 
     /**

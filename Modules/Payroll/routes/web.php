@@ -47,5 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('run-adjustments', [PayrollRunController::class, 'saveAdjustments'])->name('run.adjustments.save');
         Route::post('run-finalize-adjusted', [PayrollRunController::class, 'finalizeFromAdjustments'])->name('run.finalize-adjusted');
         Route::post('run-recalculate', [PayrollRunController::class, 'recalculate'])->name('run.recalculate');
+
+        // Payroll Transfer & Accounting Sync Routes
+        Route::post('run-mark-transferred', [PayrollRunController::class, 'markAsTransferred'])->name('run.mark-transferred');
+        Route::get('run-sync-status', [PayrollRunController::class, 'getSyncStatus'])->name('run.sync-status');
     });
 });

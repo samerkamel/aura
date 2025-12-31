@@ -16,29 +16,69 @@ class ProjectTimeEstimate extends Model
         'description',
         'estimated_hours',
         'actual_hours',
+        'synced_hours',
         'remaining_hours',
         'variance_hours',
         'variance_percentage',
+        'progress_percentage',
         'assigned_to',
+        'hourly_rate',
+        'estimated_cost',
+        'actual_cost',
+        'cost_variance',
+        'cost_variance_percentage',
         'estimated_start_date',
         'estimated_end_date',
         'actual_start_date',
         'actual_end_date',
         'status',
+        'priority',
+        'category',
         'jira_issue_key',
+        'last_worklog_sync',
+        'worklog_count',
         'created_by',
     ];
 
     protected $casts = [
         'estimated_hours' => 'decimal:2',
         'actual_hours' => 'decimal:2',
+        'synced_hours' => 'decimal:2',
         'remaining_hours' => 'decimal:2',
         'variance_hours' => 'decimal:2',
         'variance_percentage' => 'decimal:2',
+        'progress_percentage' => 'decimal:2',
+        'hourly_rate' => 'decimal:2',
+        'estimated_cost' => 'decimal:2',
+        'actual_cost' => 'decimal:2',
+        'cost_variance' => 'decimal:2',
+        'cost_variance_percentage' => 'decimal:2',
         'estimated_start_date' => 'date',
         'estimated_end_date' => 'date',
         'actual_start_date' => 'date',
         'actual_end_date' => 'date',
+        'last_worklog_sync' => 'datetime',
+        'worklog_count' => 'integer',
+    ];
+
+    /**
+     * Priority levels.
+     */
+    public const PRIORITIES = [
+        'low' => 'Low',
+        'medium' => 'Medium',
+        'high' => 'High',
+        'critical' => 'Critical',
+    ];
+
+    /**
+     * Priority colors.
+     */
+    public const PRIORITY_COLORS = [
+        'low' => 'secondary',
+        'medium' => 'info',
+        'high' => 'warning',
+        'critical' => 'danger',
     ];
 
     protected static function boot()
@@ -164,5 +204,78 @@ class ProjectTimeEstimate extends Model
             'status' => 'in_progress',
             'actual_start_date' => $this->actual_start_date ?? now(),
         ]);
+    }
+
+    // Cost tracking helpers
+    public function isCostOverBudget(): bool
+    {
+        return ($this->cost_variance ?? 0) > 0;
+    }
+
+    public function isCostUnderBudget(): bool
+    {
+        return ($this->cost_variance ?? 0) < 0;
+    }
+
+    public function getCostVarianceColor(): string
+    {
+        if ($this->cost_variance === null || $this->cost_variance == 0) {
+            return 'secondary';
+        }
+        return $this->cost_variance > 0 ? 'danger' : 'success';
+    }
+
+    public function getPriorityBadgeClass(): string
+    {
+        return self::PRIORITY_COLORS[$this->priority] ?? 'secondary';
+    }
+
+    public function getPriorityLabel(): string
+    {
+        return self::PRIORITIES[$this->priority] ?? 'Unknown';
+    }
+
+    public function needsSync(): bool
+    {
+        if (!$this->jira_issue_key) {
+            return false;
+        }
+
+        // Needs sync if never synced or last sync was more than 1 hour ago
+        if (!$this->last_worklog_sync) {
+            return true;
+        }
+
+        return $this->last_worklog_sync->lt(now()->subHour());
+    }
+
+    // Scopes for new fields
+    public function scopeHighPriority($query)
+    {
+        return $query->whereIn('priority', ['high', 'critical']);
+    }
+
+    public function scopeOverCostBudget($query)
+    {
+        return $query->where('cost_variance', '>', 0);
+    }
+
+    public function scopeUnderCostBudget($query)
+    {
+        return $query->where('cost_variance', '<', 0);
+    }
+
+    public function scopeNeedsWorklogSync($query)
+    {
+        return $query->whereNotNull('jira_issue_key')
+            ->where(function ($q) {
+                $q->whereNull('last_worklog_sync')
+                    ->orWhere('last_worklog_sync', '<', now()->subHour());
+            });
+    }
+
+    public function scopeWithCategory($query, string $category)
+    {
+        return $query->where('category', $category);
     }
 }

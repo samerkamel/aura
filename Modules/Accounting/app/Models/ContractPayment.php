@@ -30,6 +30,10 @@ class ContractPayment extends Model
         'notes',
         'is_milestone',
         'sequence_number',
+        // Project revenue sync fields
+        'project_revenue_id',
+        'synced_to_project',
+        'synced_to_project_at',
     ];
 
     protected $casts = [
@@ -39,6 +43,8 @@ class ContractPayment extends Model
         'paid_date' => 'date',
         'is_milestone' => 'boolean',
         'sequence_number' => 'integer',
+        'synced_to_project' => 'boolean',
+        'synced_to_project_at' => 'datetime',
     ];
 
     /**
@@ -55,6 +61,38 @@ class ContractPayment extends Model
     public function invoiceItem(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(\Modules\Invoicing\Models\InvoiceItem::class);
+    }
+
+    /**
+     * Get the project revenue linked to this payment.
+     */
+    public function projectRevenue(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Project\Models\ProjectRevenue::class, 'project_revenue_id');
+    }
+
+    /**
+     * Scope to get synced payments.
+     */
+    public function scopeSyncedToProject(Builder $query): Builder
+    {
+        return $query->where('synced_to_project', true);
+    }
+
+    /**
+     * Scope to get unsynced payments.
+     */
+    public function scopeNotSyncedToProject(Builder $query): Builder
+    {
+        return $query->where('synced_to_project', false);
+    }
+
+    /**
+     * Check if payment is synced to project.
+     */
+    public function isSyncedToProject(): bool
+    {
+        return (bool) $this->synced_to_project;
     }
 
     /**

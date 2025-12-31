@@ -13,6 +13,7 @@ use Modules\Accounting\Http\Requests\UpdateContractRequest;
 use Modules\Invoicing\Models\Invoice;
 use Modules\Invoicing\Models\InvoiceItem;
 use Carbon\Carbon;
+use App\Services\ContractRevenueSyncService;
 
 /**
  * IncomeController
@@ -21,6 +22,18 @@ use Carbon\Carbon;
  */
 class IncomeController extends Controller
 {
+    /**
+     * Contract revenue sync service.
+     */
+    protected ContractRevenueSyncService $syncService;
+
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(ContractRevenueSyncService $syncService)
+    {
+        $this->syncService = $syncService;
+    }
     /**
      * Display a listing of contracts.
      */
@@ -111,7 +124,13 @@ class IncomeController extends Controller
 
         // Attach projects to contract (many-to-many)
         if ($request->has('project_ids') && is_array($request->project_ids)) {
-            $contract->projects()->attach(array_filter($request->project_ids));
+            $projectIds = array_filter($request->project_ids);
+            $contract->projects()->attach($projectIds);
+
+            // Sync contract payments to project revenues
+            if (!empty($projectIds)) {
+                $this->syncService->syncContractToProjects($contract);
+            }
         }
 
         // Handle department allocations
@@ -215,7 +234,28 @@ class IncomeController extends Controller
 
         // Sync projects (many-to-many)
         if ($request->has('project_ids')) {
-            $contract->projects()->sync(array_filter($request->project_ids ?? []));
+            $oldProjectIds = $contract->projects()->pluck('projects.id')->toArray();
+            $newProjectIds = array_filter($request->project_ids ?? []);
+
+            $contract->projects()->sync($newProjectIds);
+
+            // Handle removed projects - remove synced revenues
+            $removedProjectIds = array_diff($oldProjectIds, $newProjectIds);
+            foreach ($removedProjectIds as $projectId) {
+                $project = \Modules\Project\Models\Project::find($projectId);
+                if ($project) {
+                    $this->syncService->onProjectUnlinkedFromContract($project, $contract);
+                }
+            }
+
+            // Handle added projects - sync revenues
+            $addedProjectIds = array_diff($newProjectIds, $oldProjectIds);
+            foreach ($addedProjectIds as $projectId) {
+                $project = \Modules\Project\Models\Project::find($projectId);
+                if ($project) {
+                    $this->syncService->onProjectLinkedToContract($project, $contract);
+                }
+            }
         }
 
         // Handle department allocations
@@ -306,7 +346,7 @@ class IncomeController extends Controller
                 ->with('error', 'Payment amount would exceed contract total. Remaining: ' . number_format($contract->total_amount - $existingPaymentsTotal, 2) . ' EGP');
         }
 
-        $contract->payments()->create([
+        $payment = $contract->payments()->create([
             'name' => $request->name,
             'description' => $request->description,
             'amount' => $amount,
@@ -315,6 +355,11 @@ class IncomeController extends Controller
             'is_milestone' => true,
             'sequence_number' => $contract->payments()->max('sequence_number') + 1,
         ]);
+
+        // Sync new payment to linked projects
+        foreach ($contract->projects as $project) {
+            $this->syncService->syncPaymentToProject($payment, $project);
+        }
 
         $paymentType = $request->payment_type === 'percentage'
             ? "({$request->percentage}% of contract)"
@@ -393,9 +438,13 @@ class IncomeController extends Controller
         if ($request->has('status')) {
             if ($request->status === 'paid') {
                 $this->markRelatedInvoicesAsPaid($payment);
+                // Sync payment paid status to project revenue
+                $this->syncService->onPaymentPaid($payment);
             } else {
                 // If payment is no longer paid, check if related invoices should be updated
                 $this->updateRelatedInvoicesStatus($payment);
+                // Also sync status change to project revenue
+                $this->syncService->syncPaymentStatusChange($payment);
             }
         }
 

@@ -20,6 +20,14 @@ class PayrollRun extends Model
     use HasFactory;
 
     /**
+     * Transfer status constants.
+     */
+    public const TRANSFER_PENDING = 'pending';
+    public const TRANSFER_PROCESSING = 'processing';
+    public const TRANSFER_TRANSFERRED = 'transferred';
+    public const TRANSFER_FAILED = 'failed';
+
+    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
@@ -37,6 +45,12 @@ class PayrollRun extends Model
         'performance_percentage',
         'calculation_snapshot',
         'status',
+        // Transfer status fields
+        'transfer_status',
+        'transferred_at',
+        'transferred_by',
+        'synced_to_accounting',
+        'synced_at',
     ];
 
     /**
@@ -54,6 +68,9 @@ class PayrollRun extends Model
         'is_adjusted' => 'boolean',
         'performance_percentage' => 'decimal:2',
         'calculation_snapshot' => 'array',
+        'transferred_at' => 'datetime',
+        'synced_to_accounting' => 'boolean',
+        'synced_at' => 'datetime',
     ];
 
     /**
@@ -97,5 +114,70 @@ class PayrollRun extends Model
     public function scopePendingAdjustment($query)
     {
         return $query->where('status', 'pending_adjustment');
+    }
+
+    /**
+     * Scope to get payroll runs pending transfer.
+     */
+    public function scopePendingTransfer($query)
+    {
+        return $query->where('status', 'finalized')
+            ->where('transfer_status', self::TRANSFER_PENDING);
+    }
+
+    /**
+     * Scope to get transferred payroll runs.
+     */
+    public function scopeTransferred($query)
+    {
+        return $query->where('transfer_status', self::TRANSFER_TRANSFERRED);
+    }
+
+    /**
+     * Scope to get payroll runs not yet synced to accounting.
+     */
+    public function scopeNotSyncedToAccounting($query)
+    {
+        return $query->where('synced_to_accounting', false);
+    }
+
+    /**
+     * Get the user who transferred this payroll run.
+     */
+    public function transferredBy(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'transferred_by');
+    }
+
+    /**
+     * Get the linked expense schedules.
+     */
+    public function expenseSchedules()
+    {
+        return $this->hasMany(\Modules\Accounting\Models\ExpenseSchedule::class, 'payroll_run_id');
+    }
+
+    /**
+     * Check if this payroll run has been synced to accounting.
+     */
+    public function isSyncedToAccounting(): bool
+    {
+        return (bool) $this->synced_to_accounting;
+    }
+
+    /**
+     * Check if this payroll run has been transferred.
+     */
+    public function isTransferred(): bool
+    {
+        return $this->transfer_status === self::TRANSFER_TRANSFERRED;
+    }
+
+    /**
+     * Get the period name (e.g., "December 2025").
+     */
+    public function getPeriodNameAttribute(): string
+    {
+        return $this->period_start_date->format('F Y');
     }
 }
