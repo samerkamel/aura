@@ -16,7 +16,6 @@ class ProjectDashboardController extends Controller
     public function __construct(
         protected ProjectHealthService $healthService
     ) {
-        $this->middleware('auth');
     }
 
     /**

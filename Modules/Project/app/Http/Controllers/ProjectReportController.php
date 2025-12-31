@@ -19,7 +19,6 @@ class ProjectReportController extends Controller
 
     public function __construct(ProjectReportService $reportService)
     {
-        $this->middleware('auth');
         $this->reportService = $reportService;
     }
 

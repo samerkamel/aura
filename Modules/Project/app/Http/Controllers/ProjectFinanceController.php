@@ -18,7 +18,6 @@ class ProjectFinanceController extends Controller
 
     public function __construct(ProjectFinancialService $financialService)
     {
-        $this->middleware('auth');
         $this->financialService = $financialService;
     }
 
