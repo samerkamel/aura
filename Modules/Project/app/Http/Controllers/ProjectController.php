@@ -30,7 +30,13 @@ class ProjectController extends Controller
         }
 
         // Start with projects accessible by the current user
-        $query = Project::with(['customer', 'projectManager', 'employees', 'revenues', 'jiraIssues'])
+        // Eager load only what's needed for the list view
+        $query = Project::with(['customer:id,name,company_name', 'projectManager:id,name'])
+            ->withCount(['employees', 'jiraIssues as open_issues_count' => function ($q) {
+                $q->whereNotIn('status', ['Done', 'Closed', 'Resolved']);
+            }])
+            ->withSum('revenues', 'amount')
+            ->withSum('revenues', 'amount_received')
             ->accessibleByUser(auth()->user());
 
         // Filter by status (default to active only)
@@ -83,27 +89,13 @@ class ProjectController extends Controller
 
         $projects = $query->paginate(20);
 
-        // Get project summaries for display
-        $projectSummaries = [];
-        foreach ($projects as $project) {
-            $projectSummaries[$project->id] = $dashboardService->getProjectListSummary($project);
-        }
+        // Get portfolio stats using optimized aggregation (single query)
+        $portfolioStats = $dashboardService->getPortfolioStatsOptimized($status, auth()->user());
 
-        // Get portfolio stats for all accessible projects (not just paginated)
-        $allProjectsQuery = Project::accessibleByUser(auth()->user());
-        if ($status === 'active') {
-            $allProjectsQuery->where('is_active', true);
-        } elseif ($status === 'inactive') {
-            $allProjectsQuery->where('is_active', false);
-        }
-        $allProjects = $allProjectsQuery->get();
-        $portfolioStats = $dashboardService->getPortfolioStats($allProjects);
-
-        $customers = Customer::active()->orderBy('name')->get();
+        $customers = Customer::active()->orderBy('name')->get(['id', 'name', 'company_name']);
 
         return view('project::projects.index', [
             'projects' => $projects,
-            'projectSummaries' => $projectSummaries,
             'portfolioStats' => $portfolioStats,
             'customers' => $customers,
             'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id', 'health_status', 'phase', 'sort', 'dir']),

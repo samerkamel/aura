@@ -277,7 +277,20 @@
   <!-- Projects Grid -->
   <div class="row">
     @forelse($projects as $project)
-      @php $summary = $projectSummaries[$project->id] ?? []; @endphp
+      @php
+        // Use eager-loaded aggregates directly
+        $completion = $project->completion_percentage ?? 0;
+        $totalHours = $project->total_hours ?? 0;
+        $receivedRevenue = $project->revenues_sum_amount_received ?? 0;
+        $teamSize = $project->employees_count ?? 0;
+        $openIssues = $project->open_issues_count ?? 0;
+        $healthColor = match($project->health_status) {
+            'green' => 'success',
+            'yellow' => 'warning',
+            'red' => 'danger',
+            default => 'secondary',
+        };
+      @endphp
       <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
         <div class="card project-card h-100 health-{{ $project->health_status ?? 'green' }}">
           <div class="card-body">
@@ -287,7 +300,7 @@
                 <div class="d-flex align-items-center mb-1">
                   <span class="badge bg-label-primary me-2">{{ $project->code }}</span>
                   @if($project->health_status)
-                    <span class="health-indicator bg-{{ $summary['health_color'] ?? 'secondary' }}" title="{{ $project->health_status_label ?? 'Unknown' }}"></span>
+                    <span class="health-indicator bg-{{ $healthColor }}" title="{{ $project->health_status_label ?? 'Unknown' }}"></span>
                   @endif
                 </div>
                 <h5 class="mb-0">
@@ -336,27 +349,25 @@
                 <svg viewBox="0 0 36 36" class="circular-chart">
                   <path class="circle-bg" stroke="#eee" stroke-width="3" fill="none"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke="{{ ($summary['completion'] ?? 0) >= 100 ? '#28c76f' : '#7367f0' }}"
+                  <path class="circle" stroke="{{ $completion >= 100 ? '#28c76f' : '#7367f0' }}"
                         stroke-width="3" stroke-linecap="round" fill="none"
-                        stroke-dasharray="{{ $summary['completion'] ?? 0 }}, 100"
+                        stroke-dasharray="{{ $completion }}, 100"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                 </svg>
-                <div class="progress-circle-inner">{{ round($summary['completion'] ?? 0) }}%</div>
+                <div class="progress-circle-inner">{{ round($completion) }}%</div>
               </div>
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between mini-stat mb-1">
                   <span>Hours</span>
-                  <span class="value">{{ number_format($summary['total_hours'] ?? 0, 1) }}h</span>
+                  <span class="value">{{ number_format($totalHours, 1) }}h</span>
                 </div>
                 <div class="d-flex justify-content-between mini-stat mb-1">
                   <span>Revenue</span>
-                  <span class="value">{{ number_format($summary['received_revenue'] ?? 0, 0) }}</span>
+                  <span class="value">{{ number_format($receivedRevenue, 0) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mini-stat">
-                  <span>Profit</span>
-                  <span class="value text-{{ ($summary['gross_profit'] ?? 0) >= 0 ? 'success' : 'danger' }}">
-                    {{ number_format($summary['gross_profit'] ?? 0, 0) }}
-                  </span>
+                  <span>Team</span>
+                  <span class="value">{{ $teamSize }} members</span>
                 </div>
               </div>
             </div>
@@ -364,29 +375,29 @@
             <!-- Footer Stats -->
             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
               <div class="d-flex align-items-center gap-3">
-                @if($summary['team_size'] ?? 0)
+                @if($teamSize > 0)
                   <span class="d-flex align-items-center" title="Team Size">
                     <i class="ti ti-users ti-xs text-muted me-1"></i>
-                    <small>{{ $summary['team_size'] }}</small>
+                    <small>{{ $teamSize }}</small>
                   </span>
                 @endif
-                @if($summary['open_issues'] ?? 0)
+                @if($openIssues > 0)
                   <span class="d-flex align-items-center" title="Open Issues">
                     <i class="ti ti-list-check ti-xs text-muted me-1"></i>
-                    <small>{{ $summary['open_issues'] }}</small>
+                    <small>{{ $openIssues }}</small>
                   </span>
                 @endif
-                @if($summary['gross_margin'] ?? false)
-                  <span class="badge bg-{{ $summary['gross_margin'] >= 20 ? 'success' : ($summary['gross_margin'] >= 0 ? 'warning' : 'danger') }}" title="Margin">
-                    {{ $summary['gross_margin'] }}%
+                @if($project->phase)
+                  <span class="badge bg-label-info" title="Phase">
+                    {{ $project->phase_label ?? $project->phase }}
                   </span>
                 @endif
               </div>
               <div>
-                @if($summary['is_overdue'] ?? false)
+                @if($project->isOverdue())
                   <span class="badge bg-danger">Overdue</span>
-                @elseif(isset($summary['days_until_deadline']) && $summary['days_until_deadline'] !== null && $summary['days_until_deadline'] <= 7)
-                  <span class="badge bg-warning">{{ $summary['days_until_deadline'] }}d left</span>
+                @elseif($project->days_until_deadline !== null && $project->days_until_deadline <= 7 && $project->days_until_deadline >= 0)
+                  <span class="badge bg-warning">{{ $project->days_until_deadline }}d left</span>
                 @elseif($project->is_active)
                   <span class="badge bg-success">Active</span>
                 @else

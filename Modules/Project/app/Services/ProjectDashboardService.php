@@ -602,6 +602,85 @@ class ProjectDashboardService
     }
 
     /**
+     * Get portfolio stats using optimized database aggregation.
+     * Uses single queries instead of N+1 queries.
+     */
+    public function getPortfolioStatsOptimized(string $status, $user): array
+    {
+        // Build base query for accessible projects
+        $baseQuery = Project::accessibleByUser($user);
+
+        if ($status === 'active') {
+            $baseQuery->where('is_active', true);
+        } elseif ($status === 'inactive') {
+            $baseQuery->where('is_active', false);
+        }
+
+        // Get project counts and aggregates in single query
+        $stats = (clone $baseQuery)->selectRaw('
+            COUNT(*) as total_projects,
+            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_projects,
+            SUM(CASE WHEN health_status = "green" THEN 1 ELSE 0 END) as health_green,
+            SUM(CASE WHEN health_status = "yellow" THEN 1 ELSE 0 END) as health_yellow,
+            SUM(CASE WHEN health_status = "red" THEN 1 ELSE 0 END) as health_red,
+            AVG(completion_percentage) as avg_completion,
+            SUM(total_hours) as total_hours,
+            SUM(CASE WHEN planned_end_date < CURDATE() AND completion_percentage < 100 THEN 1 ELSE 0 END) as overdue_count
+        ')->first();
+
+        // Get revenue totals in single query
+        $projectIds = (clone $baseQuery)->pluck('id');
+
+        $revenueStats = DB::table('project_revenues')
+            ->whereIn('project_id', $projectIds)
+            ->selectRaw('
+                COALESCE(SUM(amount_received), 0) as total_revenue
+            ')
+            ->first();
+
+        // Get labor costs from worklogs
+        $projectCodes = (clone $baseQuery)->pluck('code');
+        $laborCosts = 0;
+        if ($projectCodes->isNotEmpty()) {
+            $laborCosts = DB::table('jira_worklogs')
+                ->where(function ($q) use ($projectCodes) {
+                    foreach ($projectCodes as $code) {
+                        $q->orWhere('issue_key', 'LIKE', $code . '-%');
+                    }
+                })
+                ->sum('cost');
+        }
+
+        // Get direct costs
+        $directCosts = DB::table('project_costs')
+            ->whereIn('project_id', $projectIds)
+            ->sum('amount');
+
+        $totalCosts = $laborCosts + $directCosts;
+        $totalRevenue = $revenueStats->total_revenue ?? 0;
+        $totalProfit = $totalRevenue - $totalCosts;
+        $overallMargin = $totalRevenue > 0 ? round(($totalProfit / $totalRevenue) * 100, 1) : 0;
+
+        return [
+            'total_projects' => (int) ($stats->total_projects ?? 0),
+            'active_projects' => (int) ($stats->active_projects ?? 0),
+            'inactive_projects' => (int) (($stats->total_projects ?? 0) - ($stats->active_projects ?? 0)),
+            'health_distribution' => [
+                'green' => (int) ($stats->health_green ?? 0),
+                'yellow' => (int) ($stats->health_yellow ?? 0),
+                'red' => (int) ($stats->health_red ?? 0),
+            ],
+            'total_revenue' => round($totalRevenue, 2),
+            'total_costs' => round($totalCosts, 2),
+            'total_profit' => round($totalProfit, 2),
+            'overall_margin' => $overallMargin,
+            'total_hours' => round($stats->total_hours ?? 0, 1),
+            'average_completion' => round($stats->avg_completion ?? 0, 1),
+            'overdue_count' => (int) ($stats->overdue_count ?? 0),
+        ];
+    }
+
+    /**
      * Get days elapsed since project start.
      */
     private function getDaysElapsed(Project $project): ?int
