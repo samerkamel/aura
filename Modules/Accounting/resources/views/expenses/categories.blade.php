@@ -55,6 +55,11 @@
             @if(isset($revenueSummary))
             <div class="card-body pt-0">
                 <div class="alert alert-light border mb-3">
+                    <div class="row text-center mb-2">
+                        <div class="col-12">
+                            <small class="text-muted fw-bold">PLANNED (Budget Targets)</small>
+                        </div>
+                    </div>
                     <div class="row text-center">
                         <div class="col-md-3">
                             <small class="text-muted d-block">{{ $currentYear }} Revenue Target</small>
@@ -64,7 +69,7 @@
                             @endif
                         </div>
                         <div class="col-md-3">
-                            <small class="text-muted d-block">Monthly Revenue</small>
+                            <small class="text-muted d-block">Monthly Revenue (Plan)</small>
                             <strong class="text-primary">{{ number_format($revenueSummary['total_monthly_revenue'], 0) }} EGP</strong>
                         </div>
                         <div class="col-md-3">
@@ -82,6 +87,30 @@
                                 @endif
                             </small>
                             <strong>{{ $revenueSummary['months_elapsed'] }} / 12</strong>
+                        </div>
+                    </div>
+                    <hr class="my-2">
+                    <div class="row text-center mb-2">
+                        <div class="col-12">
+                            <small class="text-muted fw-bold">ACTUAL (From Paid Invoices)</small>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">YTD Revenue (Actual)</small>
+                            <strong class="text-info">{{ number_format($revenueSummary['actual_ytd_revenue'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Monthly Avg Revenue (Actual)</small>
+                            <strong class="text-info">{{ number_format($revenueSummary['actual_monthly_revenue'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Monthly Net Income (Actual)</small>
+                            <strong class="text-success">{{ number_format($revenueSummary['actual_monthly_net_income'], 0) }} EGP</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">YTD Net Income (Actual)</small>
+                            <strong class="text-success">{{ number_format($revenueSummary['actual_ytd_net_income'], 0) }} EGP</strong>
                         </div>
                     </div>
                 </div>
@@ -114,11 +143,19 @@
                             <th class="text-center">Budget %</th>
                             <th class="text-end">Plan (Monthly)</th>
                             <th class="text-end">Plan (YTD)</th>
+                            <th class="text-end text-info">
+                                Available (Monthly)
+                                <i class="ti ti-info-circle" data-bs-toggle="tooltip" title="Budget % × Actual Monthly Income"></i>
+                            </th>
+                            <th class="text-end text-info">
+                                Available (YTD)
+                                <i class="ti ti-info-circle" data-bs-toggle="tooltip" title="Budget % × Actual YTD Income"></i>
+                            </th>
                             <th class="text-end">
                                 Actual YTD
                                 <i class="ti ti-info-circle text-muted" data-bs-toggle="tooltip" title="Parent categories include all expenses from their subcategories"></i>
                             </th>
-                            <th class="text-end">Avg/Month YTD</th>
+                            <th class="text-end">Remaining</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -203,17 +240,31 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
+                                    @if($category->available_monthly > 0)
+                                        <strong class="text-info">{{ number_format($category->available_monthly, 0) }}</strong>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">
+                                    @if($category->available_ytd > 0)
+                                        <strong class="text-info">{{ number_format($category->available_ytd, 0) }}</strong>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">
                                     @if($category->ytd_total > 0)
                                         @php
-                                            $variance = $category->planned_ytd > 0 ? (($category->ytd_total - $category->planned_ytd) / $category->planned_ytd) * 100 : 0;
-                                            $varianceClass = $category->ytd_total > $category->planned_ytd ? 'text-danger' : 'text-success';
+                                            $variance = $category->available_ytd > 0 ? (($category->ytd_total - $category->available_ytd) / $category->available_ytd) * 100 : 0;
+                                            $varianceClass = $category->ytd_total > $category->available_ytd ? 'text-danger' : 'text-success';
                                             $hasSubcategories = $category->subcategories && $category->subcategories->count() > 0;
                                         @endphp
-                                        <strong class="{{ $category->planned_ytd > 0 ? $varianceClass : 'text-warning' }}">{{ number_format($category->ytd_total, 0) }}</strong>
+                                        <strong class="{{ $category->available_ytd > 0 ? $varianceClass : 'text-warning' }}">{{ number_format($category->ytd_total, 0) }}</strong>
                                         @if($hasSubcategories)
                                             <i class="ti ti-hierarchy-2 text-info ms-1" data-bs-toggle="tooltip" title="Includes expenses from {{ $category->subcategories->count() }} subcategories"></i>
                                         @endif
-                                        @if($category->planned_ytd > 0)
+                                        @if($category->available_ytd > 0)
                                             <br><small class="{{ $varianceClass }}">({{ $variance >= 0 ? '+' : '' }}{{ number_format($variance, 1) }}%)</small>
                                         @endif
                                     @else
@@ -221,10 +272,14 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
-                                    @if($category->ytd_average_per_month > 0)
-                                        <strong class="text-warning">{{ number_format($category->ytd_average_per_month, 0) }}</strong>
+                                    @php
+                                        $remaining = ($category->available_ytd ?? 0) - ($category->ytd_total ?? 0);
+                                        $remainingClass = $remaining >= 0 ? 'text-success' : 'text-danger';
+                                    @endphp
+                                    @if($category->available_ytd > 0 || $category->ytd_total > 0)
+                                        <strong class="{{ $remainingClass }}">{{ number_format($remaining, 0) }}</strong>
                                     @else
-                                        <span class="text-muted">0</span>
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td>
@@ -267,7 +322,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="9" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="ti ti-category text-muted mb-3" style="font-size: 4rem;"></i>
                                         <h5>No categories found</h5>

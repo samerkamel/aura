@@ -458,6 +458,17 @@ class ExpenseController extends Controller
             $monthsElapsed = 12;
         }
 
+        // Calculate actual income from paid invoices in the fiscal year
+        $actualYtdRevenue = \Modules\Invoicing\Models\Invoice::where('status', 'paid')
+            ->whereBetween('paid_date', [$fiscalYearStart, min($fiscalYearEnd, now())])
+            ->sum('total_in_base');
+
+        $actualMonthlyRevenue = $monthsElapsed > 0 ? $actualYtdRevenue / $monthsElapsed : 0;
+
+        // Calculate actual Net Income (after Tier 1 deductions)
+        $actualYtdNetIncome = $actualYtdRevenue * (1 - $tier1Percentage / 100);
+        $actualMonthlyNetIncome = $actualMonthlyRevenue * (1 - $tier1Percentage / 100);
+
         // Add tier and budget info to main categories for sorting
         foreach ($mainCategories as $mainCategory) {
             $budget = $mainCategory->budgets->first();
@@ -477,7 +488,7 @@ class ExpenseController extends Controller
         $categories = collect();
 
         // Recursive function to add categories with all descendants
-        $addCategoryWithDescendants = function ($category, $parentTier, $parentCalculationBase, $depth = 0) use (&$addCategoryWithDescendants, &$categories, $currentYear, $monthsElapsed, $totalMonthlyRevenue, $monthlyNetIncome) {
+        $addCategoryWithDescendants = function ($category, $parentTier, $parentCalculationBase, $depth = 0) use (&$addCategoryWithDescendants, &$categories, $currentYear, $monthsElapsed, $totalMonthlyRevenue, $monthlyNetIncome, $actualMonthlyRevenue, $actualMonthlyNetIncome) {
             // Load the parent relationship
             $category->load('parent');
 
@@ -486,20 +497,25 @@ class ExpenseController extends Controller
             $category->ytd_average_per_month = $monthsElapsed > 0 ? $category->ytd_total / $monthsElapsed : 0;
             $category->average_scheduled_per_month = $category->monthly_amount;
 
-            // For main categories, calculate planned budget
+            // For main categories, calculate planned budget and available (based on actual income)
             if ($category->parent_id === null) {
                 $budget = $category->budgets->first();
                 if ($budget) {
                     $percentage = $budget->budget_percentage;
                     if ($budget->calculation_base === 'total_revenue') {
                         $category->planned_monthly = ($percentage / 100) * $totalMonthlyRevenue;
+                        $category->available_monthly = ($percentage / 100) * $actualMonthlyRevenue;
                     } else {
                         $category->planned_monthly = ($percentage / 100) * $monthlyNetIncome;
+                        $category->available_monthly = ($percentage / 100) * $actualMonthlyNetIncome;
                     }
                     $category->planned_ytd = $category->planned_monthly * $monthsElapsed;
+                    $category->available_ytd = $category->available_monthly * $monthsElapsed;
                 } else {
                     $category->planned_monthly = 0;
                     $category->planned_ytd = 0;
+                    $category->available_monthly = 0;
+                    $category->available_ytd = 0;
                 }
             } else {
                 // Subcategories inherit parent's tier and budget info for display
@@ -508,6 +524,8 @@ class ExpenseController extends Controller
                 $category->calculation_base = $parentCalculationBase;
                 $category->planned_monthly = 0;
                 $category->planned_ytd = 0;
+                $category->available_monthly = 0;
+                $category->available_ytd = 0;
             }
 
             // Set depth for display purposes
@@ -548,6 +566,11 @@ class ExpenseController extends Controller
             'months_elapsed' => $monthsElapsed,
             'is_current_year' => $isCurrentYear,
             'is_future_year' => $isFutureYear,
+            // Actual income from paid invoices
+            'actual_ytd_revenue' => $actualYtdRevenue,
+            'actual_monthly_revenue' => $actualMonthlyRevenue,
+            'actual_ytd_net_income' => $actualYtdNetIncome,
+            'actual_monthly_net_income' => $actualMonthlyNetIncome,
         ];
 
         return view('accounting::expenses.categories', compact('categories', 'parentCategories', 'expenseTypes', 'revenueSummary', 'currentYear', 'availableYears'));
