@@ -1,30 +1,111 @@
 @extends('layouts/layoutMaster')
 
-@section('title', $project->name)
+@section('title', $project->name . ' Dashboard')
 
-@section('page-style')
+@section('vendor-style')
 <style>
-  .project-header {
+  .dashboard-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 0.5rem;
-    padding: 2rem;
+    padding: 1.5rem;
     color: white;
     margin-bottom: 1.5rem;
-  }
-  .stat-card {
-    text-align: center;
-    padding: 1rem;
-  }
-  .stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
   }
   .project-code {
     background: rgba(255,255,255,0.2);
     padding: 0.25rem 0.75rem;
     border-radius: 0.25rem;
     font-family: monospace;
-    font-size: 1rem;
+    font-size: 0.875rem;
+  }
+  .kpi-card {
+    transition: transform 0.2s ease-in-out;
+    border-left: 4px solid transparent;
+  }
+  .kpi-card:hover {
+    transform: translateY(-2px);
+  }
+  .kpi-card.success { border-left-color: #28c76f; }
+  .kpi-card.warning { border-left-color: #ff9f43; }
+  .kpi-card.danger { border-left-color: #ea5455; }
+  .kpi-card.info { border-left-color: #00cfe8; }
+  .kpi-card.primary { border-left-color: #7367f0; }
+  .progress-circle-lg {
+    width: 100px;
+    height: 100px;
+    position: relative;
+  }
+  .progress-circle-lg .progress-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .progress-circle-lg .progress-label {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.625rem;
+    color: #6e6b7b;
+    margin-top: 0.5rem;
+  }
+  .circular-chart-lg {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .health-badge {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .alert-card {
+    border-left: 4px solid;
+  }
+  .alert-card.alert-danger { border-left-color: #ea5455; }
+  .alert-card.alert-warning { border-left-color: #ff9f43; }
+  .alert-card.alert-info { border-left-color: #00cfe8; }
+  .activity-timeline {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.375rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #eee;
+  }
+  .activity-item {
+    position: relative;
+    padding-bottom: 1rem;
+  }
+  .activity-item::before {
+    content: '';
+    position: absolute;
+    left: -1.125rem;
+    top: 0.25rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7367f0;
+  }
+  .activity-item.worklog::before { background: #7367f0; }
+  .activity-item.revenue::before { background: #28c76f; }
+  .activity-item.cost::before { background: #ff9f43; }
+  .mini-stat-label {
+    font-size: 0.75rem;
+    color: #6e6b7b;
+  }
+  .mini-stat-value {
+    font-size: 1.125rem;
+    font-weight: 600;
   }
 </style>
 @endsection
@@ -38,287 +119,249 @@
     </div>
   @endif
 
-  <!-- Project Header -->
-  <div class="project-header">
-    <div class="d-flex justify-content-between align-items-start mb-3">
-      <div>
-        <span class="project-code">{{ $project->code }}</span>
-        @if($project->is_active)
-          <span class="badge bg-success ms-2">Active</span>
-        @else
-          <span class="badge bg-secondary ms-2">Inactive</span>
-        @endif
-        @if($project->needs_monthly_report)
-          <span class="badge bg-info ms-2"><i class="ti ti-report me-1"></i>Monthly Report</span>
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-2">
+          <span class="project-code me-2">{{ $project->code }}</span>
+          @if($dashboard['overview']['health_status'])
+            <span class="health-badge bg-{{ $dashboard['overview']['health_color'] }} me-2" title="{{ $dashboard['overview']['health_label'] }}"></span>
+          @endif
+          @if($project->is_active)
+            <span class="badge bg-success">Active</span>
+          @else
+            <span class="badge bg-secondary">Inactive</span>
+          @endif
+          @if($project->phase)
+            <span class="badge bg-info ms-2">{{ $dashboard['overview']['phase_label'] }}</span>
+          @endif
+        </div>
+        <h2 class="mb-1">{{ $project->name }}</h2>
+        @if($project->customer)
+          <p class="mb-0 opacity-75">
+            <i class="ti ti-building me-1"></i>{{ $project->customer->display_name }}
+            @if($dashboard['overview']['project_manager'])
+              <span class="mx-2">|</span>
+              <i class="ti ti-user me-1"></i>PM: {{ $dashboard['overview']['project_manager'] }}
+            @endif
+          </p>
         @endif
       </div>
-      <div>
-        <a href="{{ route('projects.dashboard', $project) }}" class="btn btn-warning btn-sm">
-          <i class="ti ti-dashboard me-1"></i>Dashboard
-        </a>
-        <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-success btn-sm">
-          <i class="ti ti-chart-pie-2 me-1"></i>Finance
-        </a>
-        <a href="{{ route('projects.tasks', $project) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-subtask me-1"></i>Tasks
-        </a>
-        <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-users me-1"></i>Team
-        </a>
-        <div class="btn-group">
-          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <div class="btn-group mb-2">
+          <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-light btn-sm">
+            <i class="ti ti-chart-pie-2 me-1"></i>Finance
+          </a>
+          <a href="{{ route('projects.tasks', $project) }}" class="btn btn-light btn-sm">
+            <i class="ti ti-subtask me-1"></i>Tasks
+          </a>
+          <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
+            <i class="ti ti-users me-1"></i>Team
+          </a>
+        </div>
+        <div class="btn-group mb-2">
+          <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
             <i class="ti ti-calendar-event me-1"></i>Planning
           </button>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{{ route('projects.planning.milestones', $project) }}"><i class="ti ti-flag me-2"></i>Milestones</a></li>
             <li><a class="dropdown-item" href="{{ route('projects.planning.timeline', $project) }}"><i class="ti ti-chart-line me-2"></i>Timeline</a></li>
             <li><a class="dropdown-item" href="{{ route('projects.planning.time-estimates', $project) }}"><i class="ti ti-clock me-2"></i>Time Estimates</a></li>
             <li><a class="dropdown-item" href="{{ route('projects.planning.risks', $project) }}"><i class="ti ti-alert-triangle me-2"></i>Risks</a></li>
-            <li><a class="dropdown-item" href="{{ route('projects.planning.dependencies', $project) }}"><i class="ti ti-link me-2"></i>Dependencies</a></li>
           </ul>
         </div>
-        <a href="{{ route('accounting.estimates.create', ['project_id' => $project->id]) }}" class="btn btn-light btn-sm">
-          <i class="ti ti-file-invoice me-1"></i>Estimate
-        </a>
-        @can('view-financial-reports')
-        <a href="{{ route('projects.edit', $project) }}" class="btn btn-light btn-sm">
+        <a href="{{ route('projects.edit', $project) }}" class="btn btn-outline-light btn-sm mb-2">
           <i class="ti ti-pencil me-1"></i>Edit
         </a>
-        @endcan
-        <a href="{{ route('projects.index') }}" class="btn btn-outline-light btn-sm">
-          <i class="ti ti-arrow-left me-1"></i>Back
+        <a href="{{ route('projects.index') }}" class="btn btn-outline-light btn-sm mb-2">
+          <i class="ti ti-arrow-left"></i>
         </a>
       </div>
     </div>
-    <h2 class="mb-2">{{ $project->name }}</h2>
-    @if($project->customer)
-      <p class="mb-0 opacity-75">
-        <i class="ti ti-building me-1"></i>{{ $project->customer->display_name }}
-      </p>
-    @endif
-    @if($project->description)
-      <p class="mb-0 mt-2 opacity-75">{{ $project->description }}</p>
-    @endif
   </div>
 
-  <!-- Stats Cards -->
+  <!-- Alerts Section -->
+  @if(count($dashboard['alerts']) > 0)
   <div class="row mb-4">
-    <div class="col-lg col-md-6 mb-3 mb-lg-0">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value text-primary">{{ number_format($lifetimeHours, 1) }}</div>
-          <small class="text-muted">Total Hours (Lifetime)</small>
+    <div class="col-12">
+      @foreach($dashboard['alerts'] as $alert)
+        <div class="alert alert-{{ $alert['type'] }} alert-card d-flex align-items-center mb-2" role="alert">
+          <i class="{{ $alert['icon'] }} me-2"></i>
+          <div>
+            <strong>{{ $alert['title'] }}</strong> - {{ $alert['message'] }}
+          </div>
+        </div>
+      @endforeach
+    </div>
+  </div>
+  @endif
+
+  <!-- KPI Cards Row -->
+  <div class="row mb-4">
+    <!-- Completion Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card kpi-card h-100 {{ $dashboard['progress']['work_progress'] >= 80 ? 'success' : ($dashboard['progress']['work_progress'] >= 50 ? 'info' : 'warning') }}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Completion</h6>
+              <h3 class="mb-0">{{ round($dashboard['progress']['work_progress']) }}%</h3>
+              <small class="text-{{ $dashboard['progress']['schedule_color'] }}">
+                {{ ucfirst(str_replace('_', ' ', $dashboard['progress']['schedule_status'])) }}
+              </small>
+            </div>
+            <div class="progress-circle-lg">
+              <svg viewBox="0 0 36 36" class="circular-chart-lg">
+                <path class="circle-bg" stroke="#eee" stroke-width="3" fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="circle" stroke="{{ $dashboard['progress']['work_progress'] >= 80 ? '#28c76f' : '#7367f0' }}"
+                      stroke-width="3" stroke-linecap="round" fill="none"
+                      stroke-dasharray="{{ $dashboard['progress']['work_progress'] }}, 100"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              </svg>
+            </div>
+          </div>
+          @if($dashboard['progress']['days_remaining'] !== null)
+            <div class="mt-2">
+              <small class="text-muted">
+                @if($dashboard['progress']['is_overdue'])
+                  <span class="text-danger">{{ abs($dashboard['overview']['days_until_deadline']) }} days overdue</span>
+                @else
+                  {{ $dashboard['progress']['days_remaining'] }} days remaining
+                @endif
+              </small>
+            </div>
+          @endif
         </div>
       </div>
     </div>
-    <div class="col-lg col-md-6 mb-3 mb-lg-0">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value text-info">{{ $project->employees->count() }}</div>
-          <small class="text-muted">Team Members</small>
-        </div>
-      </div>
-    </div>
+
+    <!-- Revenue Card -->
     @can('view-financial-reports')
-    <div class="col-lg col-md-6 mb-3 mb-lg-0">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value text-danger">EGP {{ number_format($projectCost, 0) }}</div>
-          <small class="text-muted">Project Cost</small>
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card kpi-card h-100 success">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Revenue</h6>
+          <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['received_revenue'], 0) }}</h3>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <small class="text-muted">
+              of {{ number_format($dashboard['financial']['summary']['total_revenue'], 0) }} total
+            </small>
+            <span class="badge bg-label-{{ $dashboard['financial']['revenue_breakdown']['collection_rate'] >= 80 ? 'success' : 'warning' }}">
+              {{ $dashboard['financial']['revenue_breakdown']['collection_rate'] }}% collected
+            </span>
+          </div>
+          @if($dashboard['financial']['summary']['pending_revenue'] > 0)
+            <small class="text-warning">
+              {{ number_format($dashboard['financial']['summary']['pending_revenue'], 0) }} pending
+            </small>
+          @endif
         </div>
       </div>
     </div>
-    <div class="col-lg col-md-6 mb-3 mb-lg-0">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value text-success">EGP {{ number_format($totalContractValue, 0) }}</div>
-          <small class="text-muted">Contract Value</small>
+
+    <!-- Costs Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'info' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Costs</h6>
+          <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['total_spent'], 0) }}</h3>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <small class="text-muted">
+              of {{ number_format($dashboard['financial']['summary']['total_budget'], 0) }} budget
+            </small>
+            <span class="badge bg-label-{{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'success' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}">
+              {{ $dashboard['financial']['summary']['budget_utilization'] }}% used
+            </span>
+          </div>
+          @if($dashboard['financial']['summary']['budget_remaining'] < 0)
+            <small class="text-danger">
+              {{ number_format(abs($dashboard['financial']['summary']['budget_remaining']), 0) }} over budget
+            </small>
+          @endif
         </div>
       </div>
     </div>
-    <div class="col-lg col-md-6 mb-3 mb-lg-0">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value text-info">EGP {{ number_format($totalPaid, 0) }}</div>
-          <small class="text-muted">Total Paid</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg col-md-6">
-      <div class="card h-100">
-        <div class="card-body stat-card">
-          <div class="stat-value {{ $totalRemaining > 0 ? 'text-warning' : 'text-success' }}">EGP {{ number_format($totalRemaining, 0) }}</div>
-          <small class="text-muted">Remaining</small>
+
+    <!-- Profit Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['is_profitable'] ? 'success' : 'danger' }}">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Profit</h6>
+          <h3 class="mb-0 text-{{ $dashboard['financial']['summary']['gross_profit'] >= 0 ? 'success' : 'danger' }}">
+            {{ number_format($dashboard['financial']['summary']['gross_profit'], 0) }}
+          </h3>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <small class="text-muted">Gross Margin</small>
+            <span class="badge bg-{{ $dashboard['financial']['summary']['gross_margin'] >= 20 ? 'success' : ($dashboard['financial']['summary']['gross_margin'] >= 0 ? 'warning' : 'danger') }}">
+              {{ $dashboard['financial']['summary']['gross_margin'] }}%
+            </span>
+          </div>
+          <small class="text-muted">
+            ROI: {{ $dashboard['financial']['profitability']['roi'] }}%
+          </small>
         </div>
       </div>
     </div>
     @endcan
   </div>
 
-  @can('view-financial-reports')
-  <!-- Contracts Section -->
+  <!-- Second Row: Hours, Team, Issues, Milestones -->
   <div class="row mb-4">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="ti ti-file-text me-2 text-success"></i>Contracts
-            <span class="badge bg-success ms-2">{{ $project->contracts->count() }}</span>
-          </h5>
-          <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
-            <i class="ti ti-plus me-1"></i>Create Contract
-          </a>
-        </div>
-        <div class="card-body">
-          @if($project->contracts->count() > 0)
-            <div class="table-responsive">
-              <table class="table table-sm table-hover">
-                <thead class="table-light">
-                  <tr>
-                    <th>Contract #</th>
-                    <th>Client</th>
-                    <th>Duration</th>
-                    <th class="text-end">Value</th>
-                    <th class="text-end">Paid</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($project->contracts as $contract)
-                    <tr>
-                      <td>
-                        <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-semibold">
-                          {{ $contract->contract_number }}
-                        </a>
-                      </td>
-                      <td>{{ $contract->customer?->display_name ?? $contract->client_name }}</td>
-                      <td>
-                        @if($contract->start_date && $contract->end_date)
-                          {{ $contract->start_date->format('M d, Y') }} - {{ $contract->end_date->format('M d, Y') }}
-                        @elseif($contract->start_date)
-                          From {{ $contract->start_date->format('M d, Y') }}
-                        @else
-                          -
-                        @endif
-                      </td>
-                      <td class="text-end">EGP {{ number_format($contract->total_amount, 0) }}</td>
-                      <td class="text-end">EGP {{ number_format($contract->paid_amount, 0) }}</td>
-                      <td class="text-center">
-                        <span class="badge bg-{{ $contract->status_color }}">
-                          {{ ucfirst($contract->status) }}
-                        </span>
-                      </td>
-                      <td class="text-center">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}">
-                              <i class="ti ti-eye me-1"></i> View Contract
-                            </a>
-                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.show', $contract) }}#payments">
-                              <i class="ti ti-cash me-1"></i> Log Payment
-                            </a>
-                            <a class="dropdown-item" href="{{ route('accounting.income.contracts.edit', $contract) }}">
-                              <i class="ti ti-pencil me-1"></i> Edit Contract
-                            </a>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    @if($contract->payments->count() > 0)
-                      @foreach($contract->payments->take(3) as $payment)
-                        <tr class="table-light">
-                          <td colspan="3" class="ps-4 text-muted small">
-                            <i class="ti ti-receipt me-1"></i>{{ $payment->name ?? 'Payment' }} - {{ $payment->due_date?->format('M d, Y') ?? '-' }}
-                          </td>
-                          <td class="text-end small">EGP {{ number_format($payment->amount, 0) }}</td>
-                          <td class="text-end {{ $payment->status === 'paid' ? 'text-success' : '' }} small">
-                            @if($payment->status === 'paid')
-                              +EGP {{ number_format($payment->paid_amount, 0) }}
-                            @else
-                              -
-                            @endif
-                          </td>
-                          <td class="text-center">
-                            <span class="badge bg-label-{{ $payment->status === 'paid' ? 'success' : ($payment->status === 'pending' ? 'warning' : 'secondary') }}">
-                              {{ ucfirst($payment->status) }}
-                            </span>
-                          </td>
-                          <td></td>
-                        </tr>
-                      @endforeach
-                      @if($contract->payments->count() > 3)
-                        <tr class="table-light">
-                          <td colspan="7" class="text-center small text-muted">
-                            <a href="{{ route('accounting.income.contracts.show', $contract) }}">
-                              View all {{ $contract->payments->count() }} payments
-                            </a>
-                          </td>
-                        </tr>
-                      @endif
-                    @endif
-                  @endforeach
-                </tbody>
-              </table>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="ti ti-clock ti-lg text-primary mb-2"></i>
+          <h3 class="mb-1">{{ number_format($dashboard['progress']['actual_hours'], 1) }}h</h3>
+          <small class="text-muted">Total Hours</small>
+          @if($dashboard['progress']['budgeted_hours'] > 0)
+            <div class="progress mt-2" style="height: 6px;">
+              <div class="progress-bar" role="progressbar" style="width: {{ min(100, $dashboard['progress']['hours_utilization']) }}%"></div>
             </div>
-          @else
-            <div class="text-center py-4">
-              <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-3">No contracts linked to this project yet.</p>
-              <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
-                <i class="ti ti-plus me-1"></i>Create Contract
-              </a>
+            <small class="text-muted">{{ $dashboard['progress']['hours_utilization'] }}% of {{ $dashboard['progress']['budgeted_hours'] }}h budget</small>
+          @endif
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="ti ti-users ti-lg text-info mb-2"></i>
+          <h3 class="mb-1">{{ $dashboard['team']['team_size'] }}</h3>
+          <small class="text-muted">Team Members</small>
+          @if($dashboard['team']['average_allocation'] > 0)
+            <div class="mt-2">
+              <small class="text-muted">Avg. {{ $dashboard['team']['average_allocation'] }}% allocation</small>
             </div>
           @endif
         </div>
       </div>
     </div>
-  </div>
-  @endcan
-
-  <!-- Team Members Section -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="ti ti-users me-2 text-info"></i>Team Members
-            <span class="badge bg-info ms-2">{{ $project->employees->count() }}</span>
-          </h5>
-          <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
-            <i class="ti ti-settings me-1"></i>Manage Team
-          </a>
-        </div>
-        <div class="card-body">
-          @if($project->employees->count() > 0)
-            <div class="row">
-              @foreach($project->employees->sortByDesc('pivot.role') as $employee)
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="d-flex align-items-center p-2 border rounded">
-                    <div class="avatar avatar-sm me-3" style="background-color: {{ '#' . substr(md5($employee->name), 0, 6) }}; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
-                      {{ strtoupper(substr($employee->name, 0, 2)) }}
-                    </div>
-                    <div class="flex-grow-1">
-                      <h6 class="mb-0">{{ $employee->name }}</h6>
-                      <small class="text-muted">{{ $employee->position ?? 'Team Member' }}</small>
-                      @if($employee->pivot->role === 'lead')
-                        <span class="badge bg-label-warning ms-1">Lead</span>
-                      @endif
-                    </div>
-                  </div>
-                </div>
-              @endforeach
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="ti ti-list-check ti-lg text-success mb-2"></i>
+          <h3 class="mb-1">{{ $dashboard['progress']['issues']['done'] }}/{{ $dashboard['progress']['issues']['total'] }}</h3>
+          <small class="text-muted">Issues Completed</small>
+          @if($dashboard['progress']['issues']['total'] > 0)
+            <div class="progress mt-2" style="height: 6px;">
+              <div class="progress-bar bg-success" style="width: {{ $dashboard['progress']['issue_completion'] }}%"></div>
             </div>
-          @else
-            <div class="text-center py-4">
-              <i class="ti ti-users-group display-6 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-3">No team members assigned yet.</p>
-              <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
-                <i class="ti ti-user-plus me-1"></i>Add Team Members
-              </a>
+            <small class="text-muted">{{ $dashboard['progress']['issue_completion'] }}% done</small>
+          @endif
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="ti ti-flag ti-lg text-warning mb-2"></i>
+          <h3 class="mb-1">{{ $dashboard['milestones']['completed'] }}/{{ $dashboard['milestones']['total'] }}</h3>
+          <small class="text-muted">Milestones</small>
+          @if($dashboard['milestones']['overdue'] > 0)
+            <div class="mt-2">
+              <span class="badge bg-danger">{{ $dashboard['milestones']['overdue'] }} overdue</span>
             </div>
           @endif
         </div>
@@ -327,124 +370,174 @@
   </div>
 
   <div class="row">
-    @can('view-financial-reports')
-    <!-- Invoices Section -->
-    <div class="col-lg-6 mb-4">
-      <div class="card h-100">
+    <!-- Left Column: Financial & Progress Details -->
+    <div class="col-lg-8">
+      @can('view-financial-reports')
+      <!-- Financial Summary Card -->
+      <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="ti ti-file-invoice me-2 text-primary"></i>Invoices
-            <span class="badge bg-primary ms-2">{{ $project->invoices->count() }}</span>
-          </h5>
-          <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
-            <i class="ti ti-plus me-1"></i>Create Invoice
+          <h5 class="mb-0"><i class="ti ti-chart-pie me-2 text-primary"></i>Financial Summary</h5>
+          <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-sm btn-outline-primary">
+            View Details
           </a>
         </div>
         <div class="card-body">
-          @if($project->invoices->count() > 0)
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3">Cost Breakdown</h6>
+              @foreach($dashboard['financial']['cost_breakdown']['breakdown'] as $item)
+                @if($item['amount'] > 0)
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center">
+                    <span class="badge bg-label-{{ $item['color'] }} me-2">{{ $item['label'] }}</span>
+                  </div>
+                  <span>{{ number_format($item['amount'], 0) }} ({{ $item['percentage'] }}%)</span>
+                </div>
+                @endif
+              @endforeach
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3">Burn Rate</h6>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Daily</span>
+                <span class="fw-semibold">{{ number_format($dashboard['financial']['burn_rate']['daily'], 0) }}/day</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Monthly</span>
+                <span class="fw-semibold">{{ number_format($dashboard['financial']['burn_rate']['monthly'], 0) }}/mo</span>
+              </div>
+              @if($dashboard['financial']['burn_rate']['runway_days'])
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">Runway</span>
+                <span class="fw-semibold text-{{ $dashboard['financial']['burn_rate']['runway_days'] > 30 ? 'success' : 'warning' }}">
+                  {{ $dashboard['financial']['burn_rate']['runway_days'] }} days
+                </span>
+              </div>
+              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contracts Section -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-file-text me-2 text-success"></i>Contracts
+            <span class="badge bg-success ms-2">{{ $project->contracts->count() }}</span>
+          </h5>
+          <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
+            <i class="ti ti-plus me-1"></i>Create
+          </a>
+        </div>
+        <div class="card-body">
+          @if($project->contracts->count() > 0)
             <div class="table-responsive">
               <table class="table table-sm table-hover">
                 <thead class="table-light">
                   <tr>
-                    <th>Invoice #</th>
-                    <th>Date</th>
-                    <th class="text-end">Amount</th>
+                    <th>Contract</th>
+                    <th class="text-end">Value</th>
                     <th class="text-end">Paid</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($project->invoices as $invoice)
+                  @foreach($project->contracts->take(5) as $contract)
                     <tr>
                       <td>
-                        <a href="{{ route('invoicing.invoices.show', $invoice) }}" class="fw-semibold">
-                          {{ $invoice->invoice_number }}
+                        <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-semibold">
+                          {{ $contract->contract_number }}
                         </a>
+                        <br><small class="text-muted">{{ $contract->customer?->display_name ?? $contract->client_name }}</small>
                       </td>
-                      <td>{{ $invoice->invoice_date->format('M d, Y') }}</td>
-                      <td class="text-end">EGP {{ number_format($invoice->total_amount, 0) }}</td>
-                      <td class="text-end">EGP {{ number_format($invoice->paid_amount, 0) }}</td>
+                      <td class="text-end">{{ number_format($contract->total_amount, 0) }}</td>
+                      <td class="text-end">{{ number_format($contract->paid_amount, 0) }}</td>
                       <td class="text-center">
-                        <span class="badge {{ $invoice->status_badge_class }}">
-                          {{ $invoice->status_display }}
-                        </span>
-                      </td>
-                      <td class="text-center">
-                        <div class="dropdown">
-                          <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}">
-                              <i class="ti ti-eye me-1"></i> View Invoice
-                            </a>
-                            @if($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
-                              <a class="dropdown-item" href="{{ route('invoicing.invoices.show', $invoice) }}#payments">
-                                <i class="ti ti-cash me-1"></i> Log Payment
-                              </a>
-                            @endif
-                            @if($invoice->status === 'draft')
-                              <a class="dropdown-item" href="{{ route('invoicing.invoices.edit', $invoice) }}">
-                                <i class="ti ti-pencil me-1"></i> Edit Invoice
-                              </a>
-                            @endif
-                          </div>
-                        </div>
+                        <span class="badge bg-{{ $contract->status_color }}">{{ ucfirst($contract->status) }}</span>
                       </td>
                     </tr>
-                    @if($invoice->payments->count() > 0)
-                      @foreach($invoice->payments as $payment)
-                        <tr class="table-light">
-                          <td colspan="2" class="ps-4 text-muted small">
-                            <i class="ti ti-receipt me-1"></i>Payment - {{ $payment->payment_date->format('M d, Y') }}
-                          </td>
-                          <td></td>
-                          <td class="text-end text-success small">+EGP {{ number_format($payment->amount, 0) }}</td>
-                          <td class="text-center">
-                            <span class="badge bg-label-success">{{ ucfirst($payment->payment_method ?? 'Other') }}</span>
-                          </td>
-                          <td></td>
-                        </tr>
-                      @endforeach
-                    @endif
                   @endforeach
                 </tbody>
               </table>
             </div>
+            @if($project->contracts->count() > 5)
+              <div class="text-center mt-2">
+                <a href="{{ route('projects.finance.index', $project) }}" class="btn btn-sm btn-outline-secondary">
+                  View all {{ $project->contracts->count() }} contracts
+                </a>
+              </div>
+            @endif
           @else
-            <div class="text-center py-4">
-              <i class="ti ti-file-off display-6 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-3">No invoices linked to this project yet.</p>
-              <a href="{{ route('invoicing.invoices.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-primary">
-                <i class="ti ti-plus me-1"></i>Create Invoice
+            <div class="text-center py-3">
+              <i class="ti ti-file-off ti-lg text-muted mb-2 d-block"></i>
+              <p class="text-muted mb-2">No contracts yet</p>
+              <a href="{{ route('accounting.income.contracts.create', ['project_id' => $project->id, 'customer_id' => $project->customer_id]) }}" class="btn btn-sm btn-success">
+                <i class="ti ti-plus me-1"></i>Create Contract
               </a>
             </div>
           @endif
         </div>
       </div>
-    </div>
-    @endcan
+      @endcan
 
-    <!-- Hours by Employee Section -->
-    <div class="col-lg-6 mb-4">
-      <div class="card h-100">
-        <div class="card-header">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">
-              <i class="ti ti-clock me-2 text-info"></i>Hours by Employee
-            </h5>
-            <span class="badge bg-info">
-              {{ number_format($totalHours, 1) }}h
-              @if($startDate && $endDate)
-                (filtered)
-              @else
-                (lifetime)
-              @endif
-            </span>
+      <!-- Time Estimates Summary -->
+      @if($dashboard['timeEstimates']['total'] > 0)
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="ti ti-clock me-2 text-info"></i>Time Estimates</h5>
+          <a href="{{ route('projects.planning.time-estimates', $project) }}" class="btn btn-sm btn-outline-info">
+            View All
+          </a>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 text-center border-end">
+              <h4 class="mb-1">{{ $dashboard['timeEstimates']['estimated_hours'] }}h</h4>
+              <small class="text-muted">Estimated</small>
+            </div>
+            <div class="col-md-4 text-center border-end">
+              <h4 class="mb-1">{{ $dashboard['timeEstimates']['actual_hours'] }}h</h4>
+              <small class="text-muted">Actual</small>
+            </div>
+            <div class="col-md-4 text-center">
+              <h4 class="mb-1 text-{{ $dashboard['timeEstimates']['hours_variance'] > 0 ? 'danger' : 'success' }}">
+                {{ $dashboard['timeEstimates']['hours_variance'] > 0 ? '+' : '' }}{{ $dashboard['timeEstimates']['hours_variance'] }}h
+              </h4>
+              <small class="text-muted">Variance ({{ $dashboard['timeEstimates']['hours_variance_percentage'] }}%)</small>
+            </div>
           </div>
+          <div class="mt-3">
+            <div class="d-flex justify-content-between mb-2">
+              <span>Completion Rate</span>
+              <span class="fw-semibold">{{ $dashboard['timeEstimates']['completion_rate'] }}%</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" style="width: {{ $dashboard['timeEstimates']['completion_rate'] }}%"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2 small text-muted">
+              <span>{{ $dashboard['timeEstimates']['by_status']['completed'] ?? 0 }} completed</span>
+              <span>{{ $dashboard['timeEstimates']['by_status']['in_progress'] ?? 0 }} in progress</span>
+              <span>{{ $dashboard['timeEstimates']['by_status']['not_started'] ?? 0 }} pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      @endif
+
+      <!-- Hours by Employee -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-0"><i class="ti ti-clock me-2 text-primary"></i>Hours by Employee</h5>
+          </div>
+          <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-sm btn-outline-primary">
+            View All Worklogs
+          </a>
+        </div>
+        <div class="card-body">
           <!-- Date Filter -->
-          <form action="{{ route('projects.show', $project) }}" method="GET" class="row g-2">
+          <form action="{{ route('projects.show', $project) }}" method="GET" class="row g-2 mb-3">
             <div class="col-4">
               <input type="date" name="start_date" class="form-control form-control-sm" value="{{ $startDate }}" placeholder="From">
             </div>
@@ -453,19 +546,14 @@
             </div>
             <div class="col-4">
               <div class="btn-group w-100">
-                <button type="submit" class="btn btn-sm btn-primary">
-                  <i class="ti ti-filter"></i>
-                </button>
+                <button type="submit" class="btn btn-sm btn-primary"><i class="ti ti-filter"></i></button>
                 @if($startDate && $endDate)
-                  <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="ti ti-x"></i>
-                  </a>
+                  <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-secondary"><i class="ti ti-x"></i></a>
                 @endif
               </div>
             </div>
           </form>
-        </div>
-        <div class="card-body">
+
           @if($worklogsByEmployee->count() > 0)
             <div class="table-responsive">
               <table class="table table-sm">
@@ -477,15 +565,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($worklogsByEmployee as $employeeId => $data)
+                  @foreach($worklogsByEmployee->sortByDesc('total_hours')->take(10) as $employeeId => $data)
                     <tr>
                       <td>
                         @if($data['employee'])
-                          <a href="{{ route('hr.employees.show', $data['employee']) }}">
-                            {{ $data['employee']->name }}
-                          </a>
+                          <a href="{{ route('hr.employees.show', $data['employee']) }}">{{ $data['employee']->name }}</a>
                         @else
-                          <span class="text-muted">Unknown (ID: {{ $employeeId }})</span>
+                          <span class="text-muted">Unknown</span>
                         @endif
                       </td>
                       <td class="text-end fw-semibold">{{ number_format($data['total_hours'], 1) }}h</td>
@@ -503,77 +589,195 @@
               </table>
             </div>
           @else
-            <div class="text-center py-4">
-              <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
+            <div class="text-center py-3">
+              <i class="ti ti-clock-off ti-lg text-muted mb-2 d-block"></i>
               <p class="text-muted">No hours logged for this period.</p>
             </div>
           @endif
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Recent Worklogs Section -->
-  <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">
-        <i class="ti ti-list me-2 text-warning"></i>Recent Work Entries
-      </h5>
-      <div>
-        <span class="badge bg-secondary me-2">{{ $worklogs->count() }} entries</span>
-        <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-sm btn-outline-primary">
-          <i class="ti ti-eye me-1"></i>View All
-        </a>
+    <!-- Right Column: Team, Activity, Risks -->
+    <div class="col-lg-4">
+      <!-- Team Card -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="ti ti-users me-2 text-info"></i>Team</h5>
+          <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-outline-info">Manage</a>
+        </div>
+        <div class="card-body">
+          @if($dashboard['team']['project_manager'])
+            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+              <div class="avatar avatar-sm me-2" style="background-color: {{ '#' . substr(md5($dashboard['team']['project_manager']['name']), 0, 6) }}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                {{ strtoupper(substr($dashboard['team']['project_manager']['name'], 0, 2)) }}
+              </div>
+              <div>
+                <strong>{{ $dashboard['team']['project_manager']['name'] }}</strong>
+                <span class="badge bg-warning ms-1">PM</span>
+              </div>
+            </div>
+          @endif
+
+          @if(count($dashboard['team']['top_contributors']) > 0)
+            <h6 class="text-muted mb-2">Top Contributors</h6>
+            @foreach($dashboard['team']['top_contributors'] as $member)
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="d-flex align-items-center">
+                  <div class="avatar avatar-xs me-2" style="background-color: {{ '#' . substr(md5($member['name']), 0, 6) }}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.625rem;">
+                    {{ strtoupper(substr($member['name'], 0, 2)) }}
+                  </div>
+                  <span>{{ $member['name'] }}</span>
+                </div>
+                <span class="badge bg-label-primary">{{ $member['recent_hours'] }}h</span>
+              </div>
+            @endforeach
+          @elseif($project->employees->count() > 0)
+            @foreach($project->employees->take(5) as $employee)
+              <div class="d-flex align-items-center mb-2">
+                <div class="avatar avatar-xs me-2" style="background-color: {{ '#' . substr(md5($employee->name), 0, 6) }}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.625rem;">
+                  {{ strtoupper(substr($employee->name, 0, 2)) }}
+                </div>
+                <span>{{ $employee->name }}</span>
+                @if($employee->pivot->role === 'lead')
+                  <span class="badge bg-label-warning ms-1">Lead</span>
+                @endif
+              </div>
+            @endforeach
+          @else
+            <div class="text-center py-2">
+              <p class="text-muted mb-2">No team assigned</p>
+              <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-sm btn-info">
+                <i class="ti ti-user-plus me-1"></i>Add Members
+              </a>
+            </div>
+          @endif
+        </div>
       </div>
-    </div>
-    <div class="card-body">
-      @if($worklogs->count() > 0)
-        <div class="table-responsive">
-          <table class="table table-sm table-hover">
-            <thead class="table-light">
-              <tr>
-                <th>Date</th>
-                <th>Employee</th>
-                <th>Issue</th>
-                <th>Description</th>
-                <th class="text-end">Hours</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($worklogs->take(20) as $worklog)
-                <tr>
-                  <td>{{ $worklog->worklog_started->format('M d, Y') }}</td>
-                  <td>
-                    @if($worklog->employee)
-                      {{ $worklog->employee->name }}
-                    @else
-                      <span class="text-muted">{{ $worklog->jira_author_name ?? 'Unknown' }}</span>
-                    @endif
-                  </td>
-                  <td>
-                    <span class="badge bg-label-primary">{{ $worklog->issue_key }}</span>
-                  </td>
-                  <td>{{ \Illuminate\Support\Str::limit($worklog->issue_summary ?? $worklog->comment, 50) }}</td>
-                  <td class="text-end fw-semibold">{{ number_format($worklog->time_spent_hours, 1) }}h</td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
+
+      <!-- Risks Card -->
+      @if($dashboard['risks']['total'] > 0)
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="ti ti-alert-triangle me-2 text-{{ $dashboard['risks']['risk_color'] }}"></i>Risks
+            @if($dashboard['risks']['critical'] > 0)
+              <span class="badge bg-danger ms-1">{{ $dashboard['risks']['critical'] }} critical</span>
+            @endif
+          </h5>
+          <a href="{{ route('projects.planning.risks', $project) }}" class="btn btn-sm btn-outline-warning">View All</a>
         </div>
-        @if($worklogs->count() > 20)
-          <div class="text-center mt-3">
-            <a href="{{ route('projects.worklogs', $project) }}" class="btn btn-outline-primary btn-sm">
-              <i class="ti ti-eye me-1"></i>View all {{ $worklogs->count() }} entries
-            </a>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-3">
+            <div class="text-center">
+              <h4 class="mb-0">{{ $dashboard['risks']['active'] }}</h4>
+              <small class="text-muted">Active</small>
+            </div>
+            <div class="text-center">
+              <h4 class="mb-0 text-success">{{ $dashboard['risks']['mitigated'] }}</h4>
+              <small class="text-muted">Mitigated</small>
+            </div>
+            <div class="text-center">
+              <h4 class="mb-0 text-warning">{{ $dashboard['risks']['average_score'] }}</h4>
+              <small class="text-muted">Avg Score</small>
+            </div>
           </div>
-        @endif
-      @else
-        <div class="text-center py-4">
-          <i class="ti ti-clock-off display-6 text-muted mb-3 d-block"></i>
-          <p class="text-muted">No work entries found for this period.</p>
+          @if(count($dashboard['risks']['top_risks']) > 0)
+            <h6 class="text-muted mb-2">Top Risks</h6>
+            @foreach(array_slice($dashboard['risks']['top_risks'], 0, 3) as $risk)
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-truncate" style="max-width: 70%;">{{ $risk['title'] }}</span>
+                <span class="badge bg-{{ $risk['risk_level'] === 'critical' ? 'danger' : ($risk['risk_level'] === 'high' ? 'warning' : 'info') }}">
+                  {{ $risk['risk_score'] }}
+                </span>
+              </div>
+            @endforeach
+          @endif
         </div>
+      </div>
       @endif
+
+      <!-- Milestones Card -->
+      @if($dashboard['milestones']['total'] > 0)
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="ti ti-flag me-2 text-success"></i>Milestones</h5>
+          <a href="{{ route('projects.planning.milestones', $project) }}" class="btn btn-sm btn-outline-success">View All</a>
+        </div>
+        <div class="card-body">
+          <div class="progress mb-3" style="height: 8px;">
+            <div class="progress-bar bg-success" style="width: {{ $dashboard['milestones']['completion_percentage'] }}%"></div>
+          </div>
+          <div class="d-flex justify-content-between mb-3 small text-muted">
+            <span>{{ $dashboard['milestones']['completed'] }} completed</span>
+            <span>{{ $dashboard['milestones']['in_progress'] }} in progress</span>
+            <span>{{ $dashboard['milestones']['pending'] }} pending</span>
+          </div>
+          @if($dashboard['milestones']['next_milestone'])
+            <div class="alert alert-light mb-0">
+              <strong>Next:</strong> {{ $dashboard['milestones']['next_milestone']['name'] }}
+              <br>
+              <small class="text-muted">
+                Due: {{ $dashboard['milestones']['next_milestone']['due_date'] }}
+                @if($dashboard['milestones']['next_milestone']['days_until'] < 0)
+                  <span class="text-danger">({{ abs($dashboard['milestones']['next_milestone']['days_until']) }} days overdue)</span>
+                @elseif($dashboard['milestones']['next_milestone']['days_until'] <= 7)
+                  <span class="text-warning">({{ $dashboard['milestones']['next_milestone']['days_until'] }} days left)</span>
+                @endif
+              </small>
+            </div>
+          @endif
+        </div>
+      </div>
+      @endif
+
+      <!-- Recent Activity -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="ti ti-activity me-2 text-primary"></i>Recent Activity</h5>
+        </div>
+        <div class="card-body">
+          @if(count($dashboard['activity']) > 0)
+            <div class="activity-timeline">
+              @foreach(array_slice($dashboard['activity'], 0, 8) as $activity)
+                <div class="activity-item {{ $activity['type'] }}">
+                  <div class="d-flex justify-content-between">
+                    <small class="fw-semibold">{{ $activity['title'] }}</small>
+                    <small class="text-muted">{{ $activity['date']->diffForHumans() }}</small>
+                  </div>
+                  <small class="text-muted">{{ \Illuminate\Support\Str::limit($activity['description'], 60) }}</small>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <div class="text-center py-3">
+              <i class="ti ti-activity-heartbeat ti-lg text-muted mb-2 d-block"></i>
+              <p class="text-muted">No recent activity</p>
+            </div>
+          @endif
+        </div>
+      </div>
     </div>
   </div>
 </div>
+@endsection
+
+@section('page-script')
+<style>
+  .circular-chart-lg {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .circle-bg {
+    fill: none;
+  }
+  .circle {
+    fill: none;
+    animation: progress 1s ease-out forwards;
+  }
+  @keyframes progress {
+    0% { stroke-dasharray: 0 100; }
+  }
+</style>
 @endsection

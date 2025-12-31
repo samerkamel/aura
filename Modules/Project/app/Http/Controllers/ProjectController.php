@@ -13,6 +13,7 @@ use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectFollowup;
 use Modules\Project\Services\JiraIssueSyncService;
 use Modules\Project\Services\JiraProjectSyncService;
+use Modules\Project\Services\ProjectDashboardService;
 use Modules\Project\Services\ProjectFollowupService;
 use Modules\Project\Services\ProjectFinancialService;
 
@@ -21,7 +22,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of projects.
      */
-    public function index(Request $request): View
+    public function index(Request $request, ProjectDashboardService $dashboardService): View
     {
         // Check if user can view any projects
         if (!Gate::allows('view-all-projects') && !Gate::allows('view-assigned-projects')) {
@@ -29,7 +30,7 @@ class ProjectController extends Controller
         }
 
         // Start with projects accessible by the current user
-        $query = Project::with('customer')
+        $query = Project::with(['customer', 'projectManager', 'employees', 'revenues', 'jiraIssues'])
             ->accessibleByUser(auth()->user());
 
         // Filter by status (default to active only)
@@ -51,6 +52,16 @@ class ProjectController extends Controller
             $query->where('customer_id', $request->customer_id);
         }
 
+        // Filter by health status
+        if ($request->filled('health_status')) {
+            $query->where('health_status', $request->health_status);
+        }
+
+        // Filter by phase
+        if ($request->filled('phase')) {
+            $query->where('phase', $request->phase);
+        }
+
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
@@ -60,14 +71,45 @@ class ProjectController extends Controller
             });
         }
 
-        $projects = $query->orderBy('name')->paginate(20);
+        // Sorting
+        $sortBy = $request->get('sort', 'name');
+        $sortDir = $request->get('dir', 'asc');
+        $allowedSorts = ['name', 'code', 'created_at', 'completion_percentage', 'health_status'];
+        if (in_array($sortBy, $allowedSorts)) {
+            $query->orderBy($sortBy, $sortDir === 'desc' ? 'desc' : 'asc');
+        } else {
+            $query->orderBy('name');
+        }
+
+        $projects = $query->paginate(20);
+
+        // Get project summaries for display
+        $projectSummaries = [];
+        foreach ($projects as $project) {
+            $projectSummaries[$project->id] = $dashboardService->getProjectListSummary($project);
+        }
+
+        // Get portfolio stats for all accessible projects (not just paginated)
+        $allProjectsQuery = Project::accessibleByUser(auth()->user());
+        if ($status === 'active') {
+            $allProjectsQuery->where('is_active', true);
+        } elseif ($status === 'inactive') {
+            $allProjectsQuery->where('is_active', false);
+        }
+        $allProjects = $allProjectsQuery->get();
+        $portfolioStats = $dashboardService->getPortfolioStats($allProjects);
+
         $customers = Customer::active()->orderBy('name')->get();
 
         return view('project::projects.index', [
             'projects' => $projects,
+            'projectSummaries' => $projectSummaries,
+            'portfolioStats' => $portfolioStats,
             'customers' => $customers,
-            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id']),
+            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id', 'health_status', 'phase', 'sort', 'dir']),
             'canViewAll' => Gate::allows('view-all-projects'),
+            'healthStatuses' => Project::HEALTH_STATUSES,
+            'phases' => Project::PHASES,
         ]);
     }
 
@@ -118,13 +160,27 @@ class ProjectController extends Controller
     /**
      * Display the specified project.
      */
-    public function show(Request $request, Project $project): View
+    public function show(Request $request, Project $project, ProjectDashboardService $dashboardService): View
     {
         if (!Gate::allows('view-project', $project)) {
             abort(403, 'You do not have permission to view this project.');
         }
 
-        $project->load(['customer', 'employees', 'invoices.payments', 'invoices.customer', 'contracts.payments', 'contracts.customer']);
+        $project->load([
+            'customer',
+            'employees',
+            'projectManager',
+            'invoices.payments',
+            'invoices.customer',
+            'contracts.payments',
+            'contracts.customer',
+            'milestones',
+            'risks',
+            'timeEstimates',
+        ]);
+
+        // Get comprehensive dashboard data
+        $dashboard = $dashboardService->getDashboardData($project);
 
         // Get worklogs with optional date filtering (default: lifetime/all time)
         $startDate = $request->filled('start_date') ? $request->start_date : null;
@@ -139,7 +195,7 @@ class ProjectController extends Controller
             $worklogsQuery->whereBetween('worklog_started', [$startDate, $endDate]);
         }
 
-        $worklogs = $worklogsQuery->get();
+        $worklogs = $worklogsQuery->limit(100)->get();
 
         // Group worklogs by employee
         $worklogsByEmployee = $worklogs->groupBy('employee_id')->map(function ($employeeWorklogs) {
@@ -151,25 +207,20 @@ class ProjectController extends Controller
         });
 
         // Calculate totals
-        $totalHours = $worklogs->sum('time_spent_hours');
-        $lifetimeHours = $totalHours; // Same as totalHours when no filter, recalculated below if filtered
+        $totalHours = $dashboard['progress']['actual_hours'];
+        $lifetimeHours = $totalHours;
         $totalContractValue = $project->invoices->sum('total_amount');
         $totalPaid = $project->invoices->sum('paid_amount');
         $totalRemaining = $totalContractValue - $totalPaid;
 
-        // If date filter is applied, get lifetime hours separately for the stats card
+        // If date filter is applied, recalculate hours for filtered period
         if ($startDate && $endDate) {
-            $lifetimeHours = \Modules\Payroll\Models\JiraWorklog::where('issue_key', 'LIKE', $project->code . '-%')
-                ->sum('time_spent_hours');
+            $totalHours = $worklogs->sum('time_spent_hours');
         }
-
-        // Calculate project cost from finance section (uses dynamic labor calculation)
-        $financialService = app(ProjectFinancialService::class);
-        $projectCosts = $financialService->getTotalProjectCosts($project);
-        $projectCost = $projectCosts['total'];
 
         return view('project::projects.show', [
             'project' => $project,
+            'dashboard' => $dashboard,
             'worklogs' => $worklogs,
             'worklogsByEmployee' => $worklogsByEmployee,
             'totalHours' => $totalHours,
@@ -177,7 +228,7 @@ class ProjectController extends Controller
             'totalContractValue' => $totalContractValue,
             'totalPaid' => $totalPaid,
             'totalRemaining' => $totalRemaining,
-            'projectCost' => $projectCost,
+            'projectCost' => $dashboard['financial']['summary']['total_spent'],
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
