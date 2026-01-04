@@ -67,10 +67,10 @@
                                 </div>
                             </div>
 
-                            <!-- Amount & Frequency -->
+                            <!-- Amount Section -->
                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <h6 class="card-title mb-0">Amount & Frequency</h6>
+                                    <h6 class="card-title mb-0">Amount</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
@@ -87,6 +87,36 @@
                                             </div>
                                         </div>
 
+                                        @if($expenseSchedule->expense_type === 'one_time')
+                                        <!-- One-time expense date -->
+                                        <div class="col-md-6">
+                                            <label for="expense_date" class="form-label">Expense Date <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control @error('expense_date') is-invalid @enderror"
+                                                   id="expense_date" name="expense_date"
+                                                   value="{{ old('expense_date', $expenseSchedule->expense_date?->format('Y-m-d')) }}">
+                                            @error('expense_date')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="alert alert-info mb-0">
+                                                <i class="ti ti-info-circle me-2"></i>
+                                                <strong>One-time expense:</strong> This expense is not included in cash flow projections. Only recurring expenses appear in forecasts.
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if($expenseSchedule->expense_type === 'recurring')
+                            <!-- Frequency Settings (Recurring Only) -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Frequency Settings</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
                                         <div class="col-md-6">
                                             <label for="frequency_type" class="form-label">Frequency Type <span class="text-danger">*</span></label>
                                             <select class="form-select @error('frequency_type') is-invalid @enderror"
@@ -124,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <!-- Scheduling Options -->
+                            <!-- Scheduling Options (Recurring Only) -->
                             <div class="card mb-4">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">Scheduling Options</h6>
@@ -149,6 +179,7 @@
                                             @error('end_date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
+                                            <small class="text-muted">Leave blank for ongoing expenses</small>
                                         </div>
 
                                         <div class="col-12">
@@ -162,6 +193,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
 
                             <!-- Payment Information (for paid expenses) -->
                             @if($expenseSchedule->payment_status === 'paid' || $expenseSchedule->expense_type === 'one_time')
@@ -341,47 +373,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const frequencyValueInput = document.getElementById('frequency_value');
     const monthlyEquivalentInput = document.getElementById('monthlyEquivalent');
 
-    function calculateMonthlyEquivalent() {
-        const amount = parseFloat(amountInput.value) || 0;
-        const frequencyType = frequencyTypeSelect.value;
-        const frequencyValue = parseInt(frequencyValueInput.value) || 1;
+    // Only set up frequency calculations for recurring expenses
+    if (frequencyTypeSelect && frequencyValueInput && monthlyEquivalentInput) {
+        function calculateMonthlyEquivalent() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const frequencyType = frequencyTypeSelect.value;
+            const frequencyValue = parseInt(frequencyValueInput.value) || 1;
 
-        if (amount > 0 && frequencyType) {
-            let multiplier;
-            switch(frequencyType) {
-                case 'weekly':
-                    multiplier = 4.33 / frequencyValue;
-                    break;
-                case 'bi-weekly':
-                    multiplier = 2.17 / frequencyValue;
-                    break;
-                case 'monthly':
-                    multiplier = 1 / frequencyValue;
-                    break;
-                case 'quarterly':
-                    multiplier = 1 / (frequencyValue * 3);
-                    break;
-                case 'yearly':
-                    multiplier = 1 / (frequencyValue * 12);
-                    break;
-                default:
-                    multiplier = 1;
+            if (amount > 0 && frequencyType) {
+                let multiplier;
+                switch(frequencyType) {
+                    case 'weekly':
+                        multiplier = 4.33 / frequencyValue;
+                        break;
+                    case 'bi-weekly':
+                        multiplier = 2.17 / frequencyValue;
+                        break;
+                    case 'monthly':
+                        multiplier = 1 / frequencyValue;
+                        break;
+                    case 'quarterly':
+                        multiplier = 1 / (frequencyValue * 3);
+                        break;
+                    case 'yearly':
+                        multiplier = 1 / (frequencyValue * 12);
+                        break;
+                    default:
+                        multiplier = 1;
+                }
+
+                const monthlyAmount = (amount * multiplier).toFixed(2);
+                monthlyEquivalentInput.value = monthlyAmount;
+            } else {
+                monthlyEquivalentInput.value = '0.00';
             }
-
-            const monthlyAmount = (amount * multiplier).toFixed(2);
-            monthlyEquivalentInput.value = monthlyAmount;
-        } else {
-            monthlyEquivalentInput.value = '0.00';
         }
+
+        [amountInput, frequencyTypeSelect, frequencyValueInput].forEach(element => {
+            element.addEventListener('input', calculateMonthlyEquivalent);
+            element.addEventListener('change', calculateMonthlyEquivalent);
+        });
+
+        // Initial calculation
+        calculateMonthlyEquivalent();
     }
-
-    [amountInput, frequencyTypeSelect, frequencyValueInput].forEach(element => {
-        element.addEventListener('input', calculateMonthlyEquivalent);
-        element.addEventListener('change', calculateMonthlyEquivalent);
-    });
-
-    // Initial calculation
-    calculateMonthlyEquivalent();
 
     // Attachment handling
     const expenseId = {{ $expenseSchedule->id }};

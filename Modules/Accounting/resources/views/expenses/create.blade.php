@@ -57,6 +57,18 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Info alert that changes based on expense type -->
+                                        <div class="col-12" id="expenseTypeInfo">
+                                            <div class="alert alert-info mb-0" id="recurringInfo">
+                                                <i class="ti ti-info-circle me-2"></i>
+                                                Recurring expenses are included in cash flow projections and forecasts.
+                                            </div>
+                                            <div class="alert alert-warning mb-0 d-none" id="oneTimeInfo">
+                                                <i class="ti ti-alert-circle me-2"></i>
+                                                <strong>Note:</strong> One-time expenses are <strong>not</strong> included in cash flow projections. They are tracked as actual expenses only.
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -331,15 +343,15 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
-                                        <h6>Recurring Expenses</h6>
-                                        <small class="text-muted">Use for regular scheduled expenses like rent, salaries, utilities, etc.</small>
+                                        <h6><i class="ti ti-repeat text-primary me-1"></i>Recurring Expenses</h6>
+                                        <small class="text-muted">Regular scheduled expenses like rent, salaries, utilities. These are <strong>included</strong> in cash flow projections.</small>
                                     </div>
                                     <div class="mb-3">
-                                        <h6>One-time Expenses</h6>
-                                        <small class="text-muted">Use for single occurrence expenses like equipment purchases, repairs, etc.</small>
+                                        <h6><i class="ti ti-calendar-event text-warning me-1"></i>One-time Expenses</h6>
+                                        <small class="text-muted">Single occurrence expenses like equipment purchases, repairs. These are <strong>not</strong> included in projections.</small>
                                     </div>
                                     <div class="mb-0">
-                                        <h6>Subcategories</h6>
+                                        <h6><i class="ti ti-category text-info me-1"></i>Subcategories</h6>
                                         <small class="text-muted">Use subcategories for detailed expense tracking within main categories.</small>
                                     </div>
                                 </div>
@@ -416,11 +428,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle expense type change
     function toggleExpenseType() {
+        const recurringInfo = document.getElementById('recurringInfo');
+        const oneTimeInfo = document.getElementById('oneTimeInfo');
+
         if (expenseTypeOneTime.checked) {
             frequencySettings.style.display = 'none';
             oneTimeDate.style.display = 'block';
             recurringStartDate.style.display = 'none';
             recurringEndDate.style.display = 'none';
+
+            // Show one-time info, hide recurring info
+            recurringInfo.classList.add('d-none');
+            oneTimeInfo.classList.remove('d-none');
 
             // Clear recurring fields
             document.getElementById('frequency_type').value = '';
@@ -432,6 +451,10 @@ document.addEventListener('DOMContentLoaded', function() {
             oneTimeDate.style.display = 'none';
             recurringStartDate.style.display = 'block';
             recurringEndDate.style.display = 'block';
+
+            // Show recurring info, hide one-time info
+            recurringInfo.classList.remove('d-none');
+            oneTimeInfo.classList.add('d-none');
 
             // Clear one-time fields
             document.getElementById('expense_date').value = '';

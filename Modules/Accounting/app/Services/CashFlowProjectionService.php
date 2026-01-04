@@ -37,8 +37,9 @@ class CashFlowProjectionService
         Carbon $endDate,
         string $periodType = 'monthly'
     ): Collection {
-        // Pre-cache active schedules to avoid loading them for each period
-        $this->cachedActiveSchedules = ExpenseSchedule::active()->with('category')->get();
+        // Pre-cache active RECURRING schedules to avoid loading them for each period
+        // Note: One-time expenses are excluded from projections - they're actual expenses, not scheduled
+        $this->cachedActiveSchedules = ExpenseSchedule::active()->recurring()->with('category')->get();
 
         $projections = collect();
         $runningBalance = $this->startingBalance;
@@ -197,7 +198,7 @@ class CashFlowProjectionService
 
         // Scheduled Expenses: Active recurring schedules for future/current periods
         if ($isCurrent || $isFuture) {
-            $activeSchedules = $this->cachedActiveSchedules ?? ExpenseSchedule::active()->with('category')->get();
+            $activeSchedules = $this->cachedActiveSchedules ?? ExpenseSchedule::active()->recurring()->with('category')->get();
 
             foreach ($activeSchedules as $schedule) {
                 $occurrences = $schedule->getOccurrencesInPeriod($periodStart, $periodEnd);
