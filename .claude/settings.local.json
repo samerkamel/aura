@@ -16,7 +16,14 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -100 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log 2>/dev/null | grep -E ''^\\[2026-01-04 13:(4|5)'' -A5 | head -30\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"date && echo ''---'' && tail -20 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"grep -A5 ''\\[2026-01-04'' /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | tail -30\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"head -20 /var/www/vhosts/aura.llc/erp.aura.llc/Modules/Accounting/app/Services/CashFlowProjectionService.php\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"head -20 /var/www/vhosts/aura.llc/erp.aura.llc/Modules/Accounting/app/Services/CashFlowProjectionService.php\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -50 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -E ''^\\[2026-01-04 14:'' -A10 | head -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -70 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep ''ERROR'' -A5\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"curl -I -s -o /dev/null -w ''%{http_code}'' ''http://127.0.0.1/accounting/reports'' -H ''Host: erp.aura.llc''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -10 /var/log/apache2/error.log 2>/dev/null || tail -10 /var/log/nginx/error.log 2>/dev/null || echo ''Checking alternative log locations...''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"grep ''accounting/reports'' /var/www/vhosts/aura.llc/logs/access_ssl.log 2>/dev/null | tail -5\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -20 /var/www/vhosts/aura.llc/logs/error_log 2>/dev/null\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list --path=accounting/reports 2>&1\")"
     ],
     "deny": [],
     "ask": []

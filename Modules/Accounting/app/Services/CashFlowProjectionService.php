@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
 class CashFlowProjectionService
 {
     protected float $startingBalance = 0.0;
+    protected ?Collection $cachedActiveSchedules = null;
 
     /**
      * Set the starting cash balance for projections.
@@ -36,6 +37,9 @@ class CashFlowProjectionService
         Carbon $endDate,
         string $periodType = 'monthly'
     ): Collection {
+        // Pre-cache active schedules to avoid loading them for each period
+        $this->cachedActiveSchedules = ExpenseSchedule::active()->with('category')->get();
+
         $projections = collect();
         $runningBalance = $this->startingBalance;
 
@@ -52,6 +56,9 @@ class CashFlowProjectionService
             $runningBalance = $projection['running_balance'];
             $projections->push($projection);
         }
+
+        // Clear cache after processing
+        $this->cachedActiveSchedules = null;
 
         return $projections;
     }
@@ -190,7 +197,7 @@ class CashFlowProjectionService
 
         // Scheduled Expenses: Active recurring schedules for future/current periods
         if ($isCurrent || $isFuture) {
-            $activeSchedules = ExpenseSchedule::active()->with('category')->get();
+            $activeSchedules = $this->cachedActiveSchedules ?? ExpenseSchedule::active()->with('category')->get();
 
             foreach ($activeSchedules as $schedule) {
                 $occurrences = $schedule->getOccurrencesInPeriod($periodStart, $periodEnd);
