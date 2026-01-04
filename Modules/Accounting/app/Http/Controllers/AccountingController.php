@@ -391,10 +391,16 @@ class AccountingController extends Controller
             'amounts' => $contractsForBreakdown->pluck('total_amount')->toArray(),
         ];
 
+        // Get expense amounts by category from active schedules
+        $expenseCategories = ExpenseCategory::active()->get();
         $expenseBreakdown = [
-            'labels' => ExpenseCategory::active()->pluck('name')->toArray(),
-            'amounts' => ExpenseCategory::active()->pluck('monthly_amount')->toArray(),
-            'colors' => ExpenseCategory::active()->pluck('color')->toArray(),
+            'labels' => $expenseCategories->pluck('name')->toArray(),
+            'amounts' => $expenseCategories->map(function($category) {
+                return ExpenseSchedule::where('category_id', $category->id)
+                    ->where('is_active', true)
+                    ->sum('amount');
+            })->toArray(),
+            'colors' => $expenseCategories->pluck('color')->toArray(),
         ];
 
         // Get upcoming payments for schedule tab
