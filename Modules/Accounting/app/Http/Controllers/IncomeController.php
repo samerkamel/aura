@@ -822,14 +822,14 @@ class IncomeController extends Controller
                 return redirect()->back()->with('error', 'No active invoice sequence found. Please create one first.');
             }
 
-            // Generate invoice number
-            $invoiceNumber = $sequence->generateInvoiceNumber();
+            // Use draft placeholder - real number assigned when invoice is sent
+            $invoiceNumber = Invoice::generateDraftNumber();
 
             // Determine customer info
             $customerId = $contract->customer_id;
             $clientName = $contract->customer ? $contract->customer->name : $contract->client_name;
 
-            // Create the invoice
+            // Create the invoice as draft
             $invoice = Invoice::create([
                 'invoice_number' => $invoiceNumber,
                 'invoice_date' => now()->toDateString(),

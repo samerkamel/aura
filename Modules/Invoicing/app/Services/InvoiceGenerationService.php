@@ -29,14 +29,14 @@ class InvoiceGenerationService
             throw new \Exception('No suitable invoice sequence found for this contract.');
         }
 
-        // Generate invoice number
-        $invoiceNumber = $sequence->generateInvoiceNumber();
+        // Use draft placeholder - real number assigned when invoice is sent
+        $invoiceNumber = Invoice::generateDraftNumber();
 
         // Calculate dates
         $invoiceDate = $options['invoice_date'] ?? now();
         $dueDate = $options['due_date'] ?? $invoiceDate->copy()->addDays(30);
 
-        // Create invoice
+        // Create invoice as draft
         $invoice = Invoice::create([
             'invoice_number' => $invoiceNumber,
             'invoice_date' => $invoiceDate,
@@ -45,7 +45,7 @@ class InvoiceGenerationService
             'tax_amount' => $options['tax_amount'] ?? 0,
             'total_amount' => $contractPayment->amount + ($options['tax_amount'] ?? 0),
             'customer_id' => $contract->customer_id,
-            'business_unit_id' => $contract->business_unit_id,
+            'business_unit_id' => $contract->business_unit_id ?? 1,
             'invoice_sequence_id' => $sequence->id,
             'created_by' => auth()->id(),
             'notes' => $options['notes'] ?? null,
@@ -96,8 +96,8 @@ class InvoiceGenerationService
             throw new \Exception('No suitable invoice sequence found for this contract.');
         }
 
-        // Generate invoice number
-        $invoiceNumber = $sequence->generateInvoiceNumber();
+        // Use draft placeholder - real number assigned when invoice is sent
+        $invoiceNumber = Invoice::generateDraftNumber();
 
         // Calculate dates
         $invoiceDate = $options['invoice_date'] ?? now();
@@ -106,7 +106,7 @@ class InvoiceGenerationService
         // Calculate total from pending payments or full contract amount
         $totalAmount = $options['amount'] ?? $contract->total_amount;
 
-        // Create invoice
+        // Create invoice as draft
         $invoice = Invoice::create([
             'invoice_number' => $invoiceNumber,
             'invoice_date' => $invoiceDate,
@@ -115,7 +115,7 @@ class InvoiceGenerationService
             'tax_amount' => $options['tax_amount'] ?? 0,
             'total_amount' => $totalAmount + ($options['tax_amount'] ?? 0),
             'customer_id' => $contract->customer_id,
-            'business_unit_id' => $contract->business_unit_id,
+            'business_unit_id' => $contract->business_unit_id ?? 1,
             'invoice_sequence_id' => $sequence->id,
             'created_by' => auth()->id(),
             'notes' => $options['notes'] ?? null,

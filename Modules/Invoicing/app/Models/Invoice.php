@@ -320,11 +320,35 @@ class Invoice extends Model
     }
 
     /**
-     * Mark invoice as sent.
+     * Mark invoice as sent and assign invoice number from sequence.
+     * Invoice numbers are only assigned when invoice is issued, not when created as draft.
      */
     public function markAsSent(): void
     {
-        $this->update(['status' => 'sent']);
+        $updateData = ['status' => 'sent'];
+
+        // Assign invoice number if this is a draft (has placeholder number)
+        if ($this->isDraft() && $this->invoiceSequence) {
+            $updateData['invoice_number'] = $this->invoiceSequence->generateInvoiceNumber();
+        }
+
+        $this->update($updateData);
+    }
+
+    /**
+     * Check if invoice is a draft (has placeholder number).
+     */
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft' || str_starts_with($this->invoice_number, 'DRAFT-');
+    }
+
+    /**
+     * Generate a draft placeholder number.
+     */
+    public static function generateDraftNumber(): string
+    {
+        return 'DRAFT-' . now()->format('YmdHis') . '-' . mt_rand(1000, 9999);
     }
 
     /**

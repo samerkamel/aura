@@ -144,7 +144,8 @@ class InvoiceController extends Controller
                 ->withErrors(['invoice_sequence_id' => 'No active invoice sequence found. Please create one first.']);
         }
 
-        $invoiceNumber = $sequence->generateInvoiceNumber();
+        // Use draft placeholder - real number assigned when invoice is sent
+        $invoiceNumber = Invoice::generateDraftNumber();
 
         $invoice = Invoice::create([
             'invoice_number' => $invoiceNumber,

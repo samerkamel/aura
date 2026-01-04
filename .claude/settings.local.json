@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_snapshot"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n// Find the last invoice before today (101426)\n// Renumber 101437 to 101427\n$inv = Modules\\Invoicing\\Models\\Invoice::where(\"\"invoice_number\"\", \"\"101437\"\")->first();\n$inv->invoice_number = \"\"101427\"\";\n$inv->save();\necho \"\"Renumbered #101437 to #101427\"\" . PHP_EOL;\n\n// Reset sequence to 101427\n$seq = Modules\\Invoicing\\Models\\InvoiceSequence::first();\n$seq->current_number = 101427;\n$seq->save();\necho \"\"Sequence set to: 101427\"\" . PHP_EOL;\necho \"\"Next invoice will be: 101428\"\" . PHP_EOL;\n''\")"
     ],
     "deny": [],
     "ask": []
