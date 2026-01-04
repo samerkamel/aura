@@ -1,10 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan cache:clear && php artisan view:clear && php artisan route:clear\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u aura_erp -paura_erp aura_erp -e \"\"SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = ''aura_erp'' AND TABLE_NAME = ''contract_product'' AND CONSTRAINT_TYPE = ''FOREIGN KEY'';\"\"\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && grep -E ''DB_(DATABASE|USERNAME|PASSWORD)'' .env\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u aura_user -paura_password aura_erp -e \"\"SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = ''aura_erp'' AND TABLE_NAME = ''contract_product'' AND CONSTRAINT_TYPE = ''FOREIGN KEY'';\"\"\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && ls -la public/build/assets/ | grep -i apex\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && cat public/build/manifest.json | grep -A5 apex\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan view:clear && php artisan config:clear && php artisan route:clear && php artisan cache:clear\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=\"\"echo \\Illuminate\\Support\\Facades\\Vite::asset(''resources/assets/vendor/libs/apex-charts/apexcharts.js'');\"\"\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"curl -I https://erp.aura.llc/build/assets/apexcharts-CP_VfLCH.js 2>/dev/null | head -5\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"ls -la /var/www/vhosts/aura.llc/erp.aura.llc/public/assets/vendor/libs/apex-charts/ 2>/dev/null || echo ''Directory not found''\")",
+      "Bash(curl:*)",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -30 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A10 ''accounting/reports\\|CashFlow\\|projection''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -50 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | tail -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -100 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | grep -A20 ''exception\\|Error''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -50 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | head -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"grep ''ERROR'' /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | tail -5\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -100 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log 2>/dev/null | grep -E ''^\\[2026-01-04 13:(4|5)'' -A5 | head -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"date && echo ''---'' && tail -20 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"grep -A5 ''\\[2026-01-04'' /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log | tail -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"head -20 /var/www/vhosts/aura.llc/erp.aura.llc/Modules/Accounting/app/Services/CashFlowProjectionService.php\")"
     ],
     "deny": [],
     "ask": []

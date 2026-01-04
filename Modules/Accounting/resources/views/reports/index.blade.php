@@ -69,7 +69,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" value="{{ $startDate }}">
+                        <input type="date" name="start_date" class="form-control" value="{{ $startDate->format('Y-m-d') }}">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Duration</label>
