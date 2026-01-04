@@ -204,6 +204,14 @@ class Employee extends Model
   }
 
   /**
+   * Relationship to hourly rate history records.
+   */
+  public function hourlyRateHistory(): HasMany
+  {
+    return $this->hasMany(EmployeeHourlyRateHistory::class)->orderBy('effective_date', 'desc');
+  }
+
+  /**
    * Get the salary that was effective at a specific date.
    * Falls back to base_salary if no history found.
    */
@@ -268,6 +276,79 @@ class Employee extends Model
   public function getSalaryHistoryWithChanges(): \Illuminate\Support\Collection
   {
     return $this->salaryHistory()
+        ->orderBy('effective_date', 'desc')
+        ->get()
+        ->map(function ($record) {
+            $record->change_percentage = $record->change_percentage;
+            return $record;
+        });
+  }
+
+  /**
+   * Get the hourly rate that was effective at a specific date.
+   * Falls back to hourly_rate if no history found.
+   */
+  public function getHourlyRateAt(Carbon $date): ?float
+  {
+    $rateRecord = $this->hourlyRateHistory()
+        ->effectiveAt($date)
+        ->first();
+
+    return $rateRecord?->hourly_rate ?? $this->hourly_rate;
+  }
+
+  /**
+   * Get the current hourly rate from history (or fallback to hourly_rate).
+   */
+  public function getCurrentHourlyRateFromHistory(): ?float
+  {
+    $currentRate = $this->hourlyRateHistory()
+        ->current()
+        ->first();
+
+    return $currentRate?->hourly_rate ?? $this->hourly_rate;
+  }
+
+  /**
+   * Add a new hourly rate change record.
+   * Automatically closes the previous rate record.
+   */
+  public function addHourlyRateChange(
+    float $newRate,
+    Carbon $effectiveDate,
+    string $reason = 'adjustment',
+    ?string $notes = null,
+    ?int $approvedBy = null
+  ): EmployeeHourlyRateHistory {
+    // Close the current rate record
+    $this->hourlyRateHistory()
+        ->current()
+        ->update(['end_date' => $effectiveDate->copy()->subDay()]);
+
+    // Create new rate record
+    $rateRecord = $this->hourlyRateHistory()->create([
+        'hourly_rate' => $newRate,
+        'currency' => 'EGP',
+        'effective_date' => $effectiveDate,
+        'end_date' => null,
+        'reason' => $reason,
+        'notes' => $notes,
+        'approved_by' => $approvedBy,
+        'created_by' => auth()->id(),
+    ]);
+
+    // Also update the hourly_rate field for backwards compatibility
+    $this->update(['hourly_rate' => $newRate]);
+
+    return $rateRecord;
+  }
+
+  /**
+   * Get hourly rate history with change percentages for display.
+   */
+  public function getHourlyRateHistoryWithChanges(): \Illuminate\Support\Collection
+  {
+    return $this->hourlyRateHistory()
         ->orderBy('effective_date', 'desc')
         ->get()
         ->map(function ($record) {
