@@ -784,6 +784,57 @@
       </div>
     </div>
     @endif
+
+    @if($canViewSalary && $employee->hourlyRateHistory->count() > 0)
+    <!-- Hourly Rate History Section -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0"><i class="ti ti-clock-dollar me-2 text-info"></i>Hourly Rate History</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Effective Date</th>
+                <th>Hourly Rate</th>
+                <th>Change</th>
+                <th>Reason</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($employee->hourlyRateHistory->sortByDesc('effective_date')->take(5) as $history)
+              <tr>
+                <td>{{ $history->effective_date->format('M d, Y') }}</td>
+                <td class="fw-bold">{{ number_format($history->hourly_rate, 2) }} {{ $history->currency }}/hr</td>
+                <td>
+                  @if($history->change_percentage !== null)
+                    @if($history->change_percentage >= 0)
+                      <span class="badge bg-success"><i class="ti ti-arrow-up me-1"></i>+{{ number_format($history->change_percentage, 1) }}%</span>
+                    @else
+                      <span class="badge bg-danger"><i class="ti ti-arrow-down me-1"></i>{{ number_format($history->change_percentage, 1) }}%</span>
+                    @endif
+                  @else
+                    <span class="badge bg-secondary">Initial</span>
+                  @endif
+                </td>
+                <td><small>{{ $history->reason_label }}</small></td>
+                <td>
+                  @if($history->isCurrent())
+                    <span class="badge bg-success">Current</span>
+                  @else
+                    <small class="text-muted">Until {{ $history->end_date?->format('M d, Y') }}</small>
+                  @endif
+                </td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    @endif
   </div>
 </div>
 
