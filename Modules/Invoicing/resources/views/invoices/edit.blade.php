@@ -2,6 +2,14 @@
 
 @section('title', 'Edit Invoice')
 
+@section('vendor-style')
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
+@endsection
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -39,16 +47,9 @@
 
                             <div class="mb-3">
                                 <label class="form-label required">Customer</label>
-                                <select name="customer_id" class="form-select @error('customer_id') is-invalid @enderror" required>
-                                    <option value="">Select Customer</option>
-                                    @foreach($customers as $customer)
-                                        <option value="{{ $customer->id }}" {{ (old('customer_id', $invoice->customer_id) == $customer->id) ? 'selected' : '' }}>
-                                            {{ $customer->name }}
-                                            @if($customer->email)
-                                                - {{ $customer->email }}
-                                            @endif
-                                        </option>
-                                    @endforeach
+                                <select name="customer_id" id="customer_id" class="form-select select2-customer @error('customer_id') is-invalid @enderror" required
+                                        data-selected="{{ old('customer_id', $invoice->customer_id) }}">
+                                    <option value="">Search or select customer...</option>
                                 </select>
                                 @error('customer_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -403,6 +404,61 @@ document.getElementById('exchange_rate').addEventListener('input', function() {
 // Calculate initial totals on page load
 document.addEventListener('DOMContentLoaded', function() {
     calculateGrandTotal();
+
+    // Initialize Select2 for customer dropdown
+    function initCustomerSelect2() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initCustomerSelect2, 50);
+            return;
+        }
+
+        const $select = $('.select2-customer');
+        const preSelected = $select.data('selected');
+
+        $select.select2({
+            placeholder: 'Search or select customer...',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { search: params.term || '' };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.customers ? data.customers.map(function(customer) {
+                            return {
+                                id: customer.id,
+                                text: customer.text,
+                                customerData: customer
+                            };
+                        }) : []
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+
+        // Pre-select customer if provided
+        if (preSelected) {
+            $.ajax({
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json'
+            }).then(function(data) {
+                if (data.customers) {
+                    const customer = data.customers.find(c => c.id == preSelected);
+                    if (customer) {
+                        const option = new Option(customer.text, customer.id, true, true);
+                        $select.append(option).trigger('change');
+                    }
+                }
+            });
+        }
+    }
+
+    initCustomerSelect2();
 });
 </script>
 @endsection

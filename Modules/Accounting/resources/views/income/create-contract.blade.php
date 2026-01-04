@@ -3,11 +3,11 @@
 @section('title', 'Create Contract')
 
 @section('vendor-style')
-<!-- No Select2 needed - using vanilla JS implementation -->
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 @section('vendor-script')
-<!-- No Select2 needed - using vanilla JS implementation -->
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('content')
@@ -40,10 +40,10 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label for="customer_id" class="form-label">Customer <span class="text-danger">*</span></label>
-                                            <div class="d-flex">
-                                                <select class="form-select @error('customer_id') is-invalid @enderror"
-                                                        id="customer_id" name="customer_id" style="width: calc(100% - 40px);" required>
-                                                    <option value="">Select Customer</option>
+                                            <div class="d-flex align-items-center">
+                                                <select class="form-select select2-customer @error('customer_id') is-invalid @enderror"
+                                                        id="customer_id" name="customer_id" style="width: calc(100% - 50px);" required>
+                                                    <option value="">Search or select customer...</option>
                                                 </select>
                                                 <button type="button" class="btn btn-outline-primary ms-2"
                                                         data-bs-toggle="modal" data-bs-target="#addCustomerModal"
@@ -434,61 +434,70 @@
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = 0;
 
-    // Initialize customer dropdown
-    loadCustomers();
+    // Wait for jQuery and Select2 to be available
+    function initSelect2() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initSelect2, 50);
+            return;
+        }
 
-    function loadCustomers() {
-        fetch('{{ route("administration.customers.api.index") }}?' + new URLSearchParams({ search: '' }), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        // Initialize Select2 for customer dropdown with AJAX search
+        const preSelectedCustomerId = '{{ $selectedCustomerId ?? '' }}';
+
+        $('.select2-customer').select2({
+            placeholder: 'Search or select customer...',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term || ''
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.customers ? data.customers.map(function(customer) {
+                            return {
+                                id: customer.id,
+                                text: customer.text,
+                                customerData: customer
+                            };
+                        }) : []
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        }).on('select2:select', function(e) {
+            const data = e.params.data;
+            if (data && data.customerData) {
+                document.getElementById('client_name').value = data.customerData.name || data.text;
+                autoGenerateContractNumber(data.customerData.name || data.text);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('customer_id');
-            select.innerHTML = '<option value="">Select Customer</option>';
+        });
 
-            const preSelectedCustomerId = '{{ $selectedCustomerId ?? '' }}';
-
-            if (data.customers) {
-                data.customers.forEach(function(customer) {
-                    const option = document.createElement('option');
-                    option.value = customer.id;
-                    option.textContent = customer.text;
-                    option.dataset.customerData = JSON.stringify(customer);
-
-                    if (preSelectedCustomerId && customer.id == preSelectedCustomerId) {
-                        option.selected = true;
+        // Pre-select customer if provided
+        if (preSelectedCustomerId) {
+            $.ajax({
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json'
+            }).then(function(data) {
+                if (data.customers) {
+                    const customer = data.customers.find(c => c.id == preSelectedCustomerId);
+                    if (customer) {
+                        const option = new Option(customer.text, customer.id, true, true);
+                        $('.select2-customer').append(option).trigger('change');
+                        document.getElementById('client_name').value = customer.name;
+                        autoGenerateContractNumber(customer.name);
                     }
-
-                    select.appendChild(option);
-                });
-
-                if (preSelectedCustomerId && select.value) {
-                    const selectedOption = select.options[select.selectedIndex];
-                    const customerData = JSON.parse(selectedOption.dataset.customerData || '{}');
-                    document.getElementById('client_name').value = customerData.name || selectedOption.textContent;
-                    autoGenerateContractNumber(customerData.name || selectedOption.textContent);
-                }
-            }
-
-            select.addEventListener('change', function() {
-                if (this.value) {
-                    const customerData = JSON.parse(this.options[this.selectedIndex].dataset.customerData || '{}');
-                    document.getElementById('client_name').value = customerData.name || this.options[this.selectedIndex].textContent;
-                    autoGenerateContractNumber(customerData.name || this.options[this.selectedIndex].textContent);
                 }
             });
-        })
-        .catch(error => {
-            console.error('Failed to load customers:', error);
-            const select = document.getElementById('customer_id');
-            select.innerHTML = '<option value="">Failed to load customers</option>';
-        });
+        }
     }
+
+    initSelect2();
 
     // Handle customer type change in modal
     document.getElementById('modal_type').addEventListener('change', function() {
@@ -536,13 +545,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const select = document.getElementById('customer_id');
-                const newOption = document.createElement('option');
-                newOption.value = data.customer.id;
-                newOption.textContent = data.customer.text;
-                newOption.selected = true;
-                newOption.dataset.customerData = JSON.stringify(data.customer);
-                select.appendChild(newOption);
+                // Add new customer to Select2 and select it
+                const newOption = new Option(data.customer.text, data.customer.id, true, true);
+                $('.select2-customer').append(newOption).trigger('change');
 
                 document.getElementById('client_name').value = data.customer.name;
                 autoGenerateContractNumber(data.customer.name);

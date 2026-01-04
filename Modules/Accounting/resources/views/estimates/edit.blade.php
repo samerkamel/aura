@@ -2,6 +2,14 @@
 
 @section('title', 'Edit Estimate')
 
+@section('vendor-style')
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
+@endsection
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -27,18 +35,10 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="customer_id" class="form-label">Customer</label>
-                                    <select class="form-select @error('customer_id') is-invalid @enderror"
-                                            id="customer_id" name="customer_id">
-                                        <option value="">Select Customer (Optional)</option>
-                                        @foreach($customers as $customer)
-                                            <option value="{{ $customer->id }}"
-                                                    data-name="{{ $customer->display_name }}"
-                                                    data-email="{{ $customer->email }}"
-                                                    data-address="{{ $customer->address }}"
-                                                {{ old('customer_id', $estimate->customer_id) == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->display_name }}
-                                            </option>
-                                        @endforeach
+                                    <select class="form-select select2-customer @error('customer_id') is-invalid @enderror"
+                                            id="customer_id" name="customer_id"
+                                            data-selected="{{ old('customer_id', $estimate->customer_id) }}">
+                                        <option value="">Search or select customer...</option>
                                     </select>
                                     @error('customer_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -380,15 +380,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // Existing items data
     const existingItems = @json($estimate->items);
 
-    // Customer selection autofill
-    document.getElementById('customer_id').addEventListener('change', function() {
-        const selected = this.options[this.selectedIndex];
-        if (selected.value) {
-            document.getElementById('client_name').value = selected.dataset.name || '';
-            document.getElementById('client_email').value = selected.dataset.email || '';
-            document.getElementById('client_address').value = selected.dataset.address || '';
+    // Initialize Select2 for customer dropdown
+    function initCustomerSelect2() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initCustomerSelect2, 50);
+            return;
         }
-    });
+
+        const $select = $('.select2-customer');
+        const preSelected = $select.data('selected');
+
+        $select.select2({
+            placeholder: 'Search or select customer...',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { search: params.term || '' };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.customers ? data.customers.map(function(customer) {
+                            return {
+                                id: customer.id,
+                                text: customer.text,
+                                customerData: customer
+                            };
+                        }) : []
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+
+        // Pre-select customer if provided
+        if (preSelected) {
+            $.ajax({
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json'
+            }).then(function(data) {
+                if (data.customers) {
+                    const customer = data.customers.find(c => c.id == preSelected);
+                    if (customer) {
+                        const option = new Option(customer.text, customer.id, true, true);
+                        $select.append(option).trigger('change');
+                    }
+                }
+            });
+        }
+
+        // Customer selection autofill
+        $select.on('select2:select', function(e) {
+            const customerData = e.params.data.customerData;
+            if (customerData) {
+                document.getElementById('client_name').value = customerData.display_name || customerData.name || '';
+                document.getElementById('client_email').value = customerData.email || '';
+                document.getElementById('client_address').value = customerData.address || '';
+            }
+        });
+
+        $select.on('select2:clear', function() {
+            document.getElementById('client_name').value = '';
+            document.getElementById('client_email').value = '';
+            document.getElementById('client_address').value = '';
+        });
+    }
+
+    initCustomerSelect2();
 
     // VAT rate change
     document.getElementById('vat_rate').addEventListener('change', function() {

@@ -2,6 +2,14 @@
 
 @section('title', 'Edit Project')
 
+@section('vendor-style')
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
+@endsection
+
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
@@ -57,14 +65,10 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="customer_id">Customer</label>
-                <select class="form-select @error('customer_id') is-invalid @enderror"
-                        id="customer_id" name="customer_id">
-                  <option value="">-- No Customer --</option>
-                  @foreach($customers as $customer)
-                    <option value="{{ $customer->id }}" {{ old('customer_id', $project->customer_id) == $customer->id ? 'selected' : '' }}>
-                      {{ $customer->display_name }}
-                    </option>
-                  @endforeach
+                <select class="form-select select2-customer @error('customer_id') is-invalid @enderror"
+                        id="customer_id" name="customer_id"
+                        data-selected="{{ old('customer_id', $project->customer_id) }}">
+                  <option value="">Search or select customer...</option>
                 </select>
                 <div class="form-text">Link this project to a customer for billing purposes</div>
                 @error('customer_id')
@@ -145,4 +149,65 @@
     </div>
   </div>
 </div>
+@endsection
+
+@section('page-script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 for customer dropdown
+    function initCustomerSelect2() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initCustomerSelect2, 50);
+            return;
+        }
+
+        const $select = $('.select2-customer');
+        const preSelected = $select.data('selected');
+
+        $select.select2({
+            placeholder: 'Search or select customer...',
+            allowClear: true,
+            ajax: {
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { search: params.term || '' };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.customers ? data.customers.map(function(customer) {
+                            return {
+                                id: customer.id,
+                                text: customer.text,
+                                customerData: customer
+                            };
+                        }) : []
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+
+        // Pre-select customer if provided
+        if (preSelected) {
+            $.ajax({
+                url: '{{ route("administration.customers.api.index") }}',
+                dataType: 'json'
+            }).then(function(data) {
+                if (data.customers) {
+                    const customer = data.customers.find(c => c.id == preSelected);
+                    if (customer) {
+                        const option = new Option(customer.text, customer.id, true, true);
+                        $select.append(option).trigger('change');
+                    }
+                }
+            });
+        }
+    }
+
+    initCustomerSelect2();
+});
+</script>
 @endsection
