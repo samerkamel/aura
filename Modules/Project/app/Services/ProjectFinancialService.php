@@ -141,8 +141,12 @@ class ProjectFinancialService
                     continue;
                 }
 
+                // Get the salary effective at the time of the worklog (middle of the month)
+                $effectiveDate = Carbon::create($year, $month, 15);
+                $effectiveSalary = $employee->getSalaryAt($effectiveDate) ?? $employee->base_salary;
+
                 // Formula: (Salary / Billable Hours This Month) × Worked Hours × Multiplier
-                $hourlyRate = $employee->base_salary / $billableHoursThisMonth;
+                $hourlyRate = $effectiveSalary / $billableHoursThisMonth;
                 $cost = $hourlyRate * $workedHoursThisMonth * $this->getLaborCostMultiplier();
                 $pmOverhead = $cost * self::PM_OVERHEAD_PERCENTAGE;
 
@@ -151,7 +155,7 @@ class ProjectFinancialService
                     'employee_name' => $employee->name,
                     'month' => $yearMonth,
                     'month_label' => Carbon::createFromFormat('Y-m', $yearMonth)->format('M Y'),
-                    'salary' => $employee->base_salary,
+                    'salary' => $effectiveSalary,
                     'billable_hours' => $billableHoursThisMonth,
                     'worked_hours' => round($workedHoursThisMonth, 2),
                     'hourly_rate' => round($hourlyRate, 2),
@@ -677,7 +681,11 @@ class ProjectFinancialService
 
         $count = 0;
         foreach ($worklogs as $worklog) {
-            $hourlyRate = $worklog->employee->hourly_rate ?? $project->hourly_rate ?? 0;
+            // Get the hourly rate effective at the time of the worklog
+            $employee = $worklog->employee;
+            $worklogDate = $worklog->worklog_started;
+            $hourlyRate = $employee ? $employee->getHourlyRateAt($worklogDate) : ($project->hourly_rate ?? 0);
+            $hourlyRate = $hourlyRate ?? $project->hourly_rate ?? 0;
             $hours = $worklog->time_spent_hours;
             $amount = $hours * $hourlyRate;
 
