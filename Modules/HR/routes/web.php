@@ -25,6 +25,11 @@ Route::prefix('hr')->name('hr.')->group(function () {
     // Salary history routes
     Route::post('salary', [EmployeeController::class, 'updateSalary'])->name('salary.update');
 
+    // Hourly rate history routes
+    Route::post('hourly-rate', [EmployeeController::class, 'updateHourlyRate'])->name('hourly-rate.update');
+    Route::put('hourly-rate-history/{historyId}', [EmployeeController::class, 'updateHourlyRateHistory'])->name('hourly-rate-history.update');
+    Route::delete('hourly-rate-history/{historyId}', [EmployeeController::class, 'deleteHourlyRateHistory'])->name('hourly-rate-history.delete');
+
     // Off-boarding routes
     Route::get('offboarding', [EmployeeController::class, 'showOffboarding'])->name('offboarding.show');
     Route::post('offboarding', [EmployeeController::class, 'processOffboarding'])->name('offboarding.process');

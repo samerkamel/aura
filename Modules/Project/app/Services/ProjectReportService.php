@@ -88,18 +88,22 @@ class ProjectReportService
         $projectTotalHours = 0;
         $projectTotalAmount = 0;
 
+        // Use middle of the period for rate lookup
+        $effectiveDate = $startDate->copy()->addDays($startDate->diffInDays($endDate) / 2);
+
         foreach ($worklogs as $worklog) {
             $employee = $employees->get($worklog->employee_id);
             if (!$employee) {
                 continue;
             }
 
-            // Determine rate: use tracked rate if employee seen before, otherwise use employee default
+            // Determine rate: use tracked rate if employee seen before, otherwise use effective hourly rate
             $rate = 0;
             if (isset($employeeRates[$employee->id])) {
                 $rate = $employeeRates[$employee->id];
-            } elseif ($employee->hourly_rate) {
-                $rate = (float) $employee->hourly_rate;
+            } else {
+                // Get the effective hourly rate at the time of the report period
+                $rate = (float) ($employee->getHourlyRateAt($effectiveDate) ?? $employee->hourly_rate ?? 0);
                 $employeeRates[$employee->id] = $rate;
             }
 

@@ -107,7 +107,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee): View
     {
-        $employee->load(['documents', 'salaryHistory', 'positionRelation']);
+        $employee->load(['documents', 'salaryHistory', 'hourlyRateHistory', 'positionRelation']);
         $canViewSalary = Gate::allows('view-employee-financial');
 
         return view('hr::employees.show', compact('employee', 'canViewSalary'));
@@ -474,5 +474,103 @@ class EmployeeController extends Controller
         return redirect()
             ->route('hr.employees.edit', $employee)
             ->with('success', "Salary updated to " . number_format($newSalary, 2) . " EGP effective " . $effectiveDate->format('M d, Y'));
+    }
+
+    /**
+     * Update employee hourly rate with history tracking.
+     */
+    public function updateHourlyRate(Request $request, Employee $employee): RedirectResponse
+    {
+        // Check permission
+        if (!Gate::allows('edit-employee-financial')) {
+            abort(403, 'You do not have permission to edit hourly rate information.');
+        }
+
+        $request->validate([
+            'new_hourly_rate' => 'required|numeric|min:0',
+            'effective_date' => 'required|date',
+            'reason' => 'required|in:initial,annual_review,promotion,adjustment,correction,other',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $newRate = (float) $request->new_hourly_rate;
+        $effectiveDate = Carbon::parse($request->effective_date);
+
+        // Add hourly rate change with history tracking
+        $employee->addHourlyRateChange(
+            newRate: $newRate,
+            effectiveDate: $effectiveDate,
+            reason: $request->reason,
+            notes: $request->notes,
+            approvedBy: auth()->id()
+        );
+
+        return redirect()
+            ->route('hr.employees.edit', $employee)
+            ->with('success', "Hourly rate updated to " . number_format($newRate, 2) . " EGP/hr effective " . $effectiveDate->format('M d, Y'));
+    }
+
+    /**
+     * Update an existing hourly rate history record.
+     */
+    public function updateHourlyRateHistory(Request $request, Employee $employee, int $historyId): RedirectResponse
+    {
+        // Check permission
+        if (!Gate::allows('edit-employee-financial')) {
+            abort(403, 'You do not have permission to edit hourly rate history.');
+        }
+
+        $history = $employee->hourlyRateHistory()->findOrFail($historyId);
+
+        $request->validate([
+            'hourly_rate' => 'required|numeric|min:0',
+            'effective_date' => 'required|date',
+            'end_date' => 'nullable|date|after:effective_date',
+            'reason' => 'required|in:initial,annual_review,promotion,adjustment,correction,other',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $history->update([
+            'hourly_rate' => $request->hourly_rate,
+            'effective_date' => $request->effective_date,
+            'end_date' => $request->end_date,
+            'reason' => $request->reason,
+            'notes' => $request->notes,
+        ]);
+
+        // If this is the current rate (no end_date), sync with employee's hourly_rate field
+        if (!$history->end_date) {
+            $employee->update(['hourly_rate' => $request->hourly_rate]);
+        }
+
+        return redirect()
+            ->route('hr.employees.show', $employee)
+            ->with('success', "Hourly rate history updated successfully.");
+    }
+
+    /**
+     * Delete an hourly rate history record.
+     */
+    public function deleteHourlyRateHistory(Employee $employee, int $historyId): RedirectResponse
+    {
+        // Check permission
+        if (!Gate::allows('edit-employee-financial')) {
+            abort(403, 'You do not have permission to delete hourly rate history.');
+        }
+
+        $history = $employee->hourlyRateHistory()->findOrFail($historyId);
+
+        // Don't allow deleting the only/current rate
+        if ($employee->hourlyRateHistory()->count() <= 1) {
+            return redirect()
+                ->route('hr.employees.show', $employee)
+                ->with('error', 'Cannot delete the only hourly rate record.');
+        }
+
+        $history->delete();
+
+        return redirect()
+            ->route('hr.employees.show', $employee)
+            ->with('success', 'Hourly rate history record deleted.');
     }
 }

@@ -32,8 +32,11 @@ class FinalPayrollService
         // Calculate working days in the final period
         $workingDays = $this->calculateWorkingDays($lastPayrollDate, $terminationDate);
 
-        // Calculate daily rate based on monthly salary
-        $dailyRate = $this->calculateDailyRate($employee->base_salary);
+        // Get the salary effective at termination date (use salary history if available)
+        $effectiveSalary = $employee->getSalaryAt($terminationDate) ?? $employee->base_salary;
+
+        // Calculate daily rate based on effective monthly salary
+        $dailyRate = $this->calculateDailyRate($effectiveSalary);
 
         // Calculate the pro-rated amount
         $proRatedAmount = $workingDays * $dailyRate;
@@ -41,7 +44,7 @@ class FinalPayrollService
         return [
             'employee_id' => $employee->id,
             'employee_name' => $employee->name,
-            'base_salary' => $employee->base_salary,
+            'base_salary' => $effectiveSalary,
             'last_payroll_date' => $lastPayrollDate->format('Y-m-d'),
             'termination_date' => $terminationDate->format('Y-m-d'),
             'working_days' => $workingDays,

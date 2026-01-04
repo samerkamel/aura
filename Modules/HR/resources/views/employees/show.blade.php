@@ -788,8 +788,13 @@
     @if($canViewSalary && $employee->hourlyRateHistory->count() > 0)
     <!-- Hourly Rate History Section -->
     <div class="card mb-4">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <h6 class="mb-0"><i class="ti ti-clock-dollar me-2 text-info"></i>Hourly Rate History</h6>
+        @can('edit-employee-financial')
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addHourlyRateModal">
+          <i class="ti ti-plus me-1"></i>Add Rate
+        </button>
+        @endcan
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -801,10 +806,13 @@
                 <th>Change</th>
                 <th>Reason</th>
                 <th>Status</th>
+                @can('edit-employee-financial')
+                <th class="text-end">Actions</th>
+                @endcan
               </tr>
             </thead>
             <tbody>
-              @foreach($employee->hourlyRateHistory->sortByDesc('effective_date')->take(5) as $history)
+              @foreach($employee->hourlyRateHistory->sortByDesc('effective_date') as $history)
               <tr>
                 <td>{{ $history->effective_date->format('M d, Y') }}</td>
                 <td class="fw-bold">{{ number_format($history->hourly_rate, 2) }} {{ $history->currency }}/hr</td>
@@ -827,6 +835,24 @@
                     <small class="text-muted">Until {{ $history->end_date?->format('M d, Y') }}</small>
                   @endif
                 </td>
+                @can('edit-employee-financial')
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-outline-primary"
+                    onclick="editHourlyRateHistory({{ $history->id }}, '{{ $history->hourly_rate }}', '{{ $history->effective_date->format('Y-m-d') }}', '{{ $history->end_date?->format('Y-m-d') }}', '{{ $history->reason }}', '{{ addslashes($history->notes ?? '') }}')"
+                    title="Edit">
+                    <i class="ti ti-edit"></i>
+                  </button>
+                  @if($employee->hourlyRateHistory->count() > 1)
+                  <form action="{{ route('hr.employees.hourly-rate-history.delete', [$employee, $history->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this rate record?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </form>
+                  @endif
+                </td>
+                @endcan
               </tr>
               @endforeach
             </tbody>
@@ -1033,10 +1059,121 @@
   </div>
 </div>
 @endcan
+
+@can('edit-employee-financial')
+<!-- Add Hourly Rate Modal -->
+<div class="modal fade" id="addHourlyRateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ route('hr.employees.hourly-rate.update', $employee) }}" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="ti ti-clock-dollar me-2"></i>Add Hourly Rate</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Hourly Rate (EGP) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="new_hourly_rate" step="0.01" min="0" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Effective Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" name="effective_date" value="{{ date('Y-m-d') }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Reason <span class="text-danger">*</span></label>
+            <select class="form-select" name="reason" required>
+              <option value="">Select Reason</option>
+              <option value="initial">Initial Rate</option>
+              <option value="annual_review">Annual Review</option>
+              <option value="promotion">Promotion</option>
+              <option value="adjustment">Adjustment</option>
+              <option value="correction">Correction</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" name="notes" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Hourly Rate History Modal -->
+<div class="modal fade" id="editHourlyRateHistoryModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editHourlyRateHistoryForm" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="ti ti-edit me-2"></i>Edit Hourly Rate History</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Hourly Rate (EGP) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="hourly_rate" id="edit_hourly_rate" step="0.01" min="0" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Effective Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" name="effective_date" id="edit_effective_date" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control" name="end_date" id="edit_end_date">
+            <small class="text-muted">Leave empty for current rate</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Reason <span class="text-danger">*</span></label>
+            <select class="form-select" name="reason" id="edit_reason" required>
+              <option value="">Select Reason</option>
+              <option value="initial">Initial Rate</option>
+              <option value="annual_review">Annual Review</option>
+              <option value="promotion">Promotion</option>
+              <option value="adjustment">Adjustment</option>
+              <option value="correction">Correction</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" name="notes" id="edit_notes" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endcan
+
 @endsection
 
 @section('page-script')
 <script>
+@can('edit-employee-financial')
+function editHourlyRateHistory(historyId, hourlyRate, effectiveDate, endDate, reason, notes) {
+  document.getElementById('editHourlyRateHistoryForm').action = `/hr/employees/{{ $employee->id }}/hourly-rate-history/${historyId}`;
+  document.getElementById('edit_hourly_rate').value = hourlyRate;
+  document.getElementById('edit_effective_date').value = effectiveDate;
+  document.getElementById('edit_end_date').value = endDate || '';
+  document.getElementById('edit_reason').value = reason;
+  document.getElementById('edit_notes').value = notes;
+  new bootstrap.Modal(document.getElementById('editHourlyRateHistoryModal')).show();
+}
+@endcan
+
 function addWfhDateInput() {
   const container = document.getElementById('wfh-dates-container');
   const div = document.createElement('div');

@@ -317,7 +317,8 @@ class PayrollCalculationService
         );
 
         // Calculate final salary based on performance percentage
-        $baseSalary = $employee->base_salary ?? 0;
+        // Use the effective salary at the end of the period for accurate calculation
+        $baseSalary = $employee->getSalaryAt($periodEnd) ?? $employee->base_salary ?? 0;
         $finalSalary = $baseSalary * ($summary['final_performance_percentage'] / 100);
 
         // Create calculation snapshot
