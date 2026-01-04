@@ -90,6 +90,16 @@ class IncomeController extends Controller
     }
 
     /**
+     * Get the next contract number via AJAX.
+     */
+    public function getNextContractNumber(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            'next_number' => Contract::generateContractNumber(),
+        ]);
+    }
+
+    /**
      * Show the form for creating a new contract.
      */
     public function createContract(Request $request): View

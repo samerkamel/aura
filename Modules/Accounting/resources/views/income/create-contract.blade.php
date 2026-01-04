@@ -63,11 +63,11 @@
                                             <label for="contract_number" class="form-label">Contract Number <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('contract_number') is-invalid @enderror"
                                                    id="contract_number" name="contract_number" value="{{ old('contract_number') }}"
-                                                   placeholder="Auto-generated or enter manually">
+                                                   placeholder="Loading..." readonly>
                                             @error('contract_number')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
-                                            <small class="text-muted">Will auto-generate based on client name</small>
+                                            <small class="text-muted">Format: C-YYYYNNN (e.g., C-2026001)</small>
                                         </div>
 
                                         <div class="col-12">
@@ -438,6 +438,29 @@
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = 0;
 
+    // Fetch and populate the next contract number on page load
+    function loadNextContractNumber() {
+        const contractNumberField = document.getElementById('contract_number');
+        if (!contractNumberField.value || contractNumberField.value === '' || contractNumberField.placeholder === 'Loading...') {
+            fetch('{{ route("accounting.income.contracts.next-number") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.next_number && !contractNumberField.value) {
+                        contractNumberField.value = data.next_number;
+                        contractNumberField.placeholder = 'Auto-generated';
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to load contract number:', error);
+                    contractNumberField.placeholder = 'Enter manually';
+                    contractNumberField.removeAttribute('readonly');
+                });
+        }
+    }
+
+    // Load contract number on page load
+    loadNextContractNumber();
+
     // Wait for jQuery and Select2 to be available
     function initSelect2() {
         if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
@@ -478,7 +501,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = e.params.data;
             if (data && data.customerData) {
                 document.getElementById('client_name').value = data.customerData.name || data.text;
-                autoGenerateContractNumber(data.customerData.name || data.text);
             }
         });
 
@@ -494,7 +516,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const option = new Option(customer.text, customer.id, true, true);
                         $('.select2-customer').append(option).trigger('change');
                         document.getElementById('client_name').value = customer.name;
-                        autoGenerateContractNumber(customer.name);
                     }
                 }
             });
@@ -554,7 +575,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('.select2-customer').append(newOption).trigger('change');
 
                 document.getElementById('client_name').value = data.customer.name;
-                autoGenerateContractNumber(data.customer.name);
 
                 bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide();
                 form.reset();
@@ -574,23 +594,6 @@ document.addEventListener('DOMContentLoaded', function() {
             saveBtn.innerHTML = '<i class="ti ti-check me-1"></i>Add Customer';
         });
     });
-
-    function autoGenerateContractNumber(customerName) {
-        const contractNumberField = document.getElementById('contract_number');
-        if (!contractNumberField.value && customerName) {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const customerCode = customerName.toUpperCase()
-                .replace(/[^A-Z0-9\s]/g, '')
-                .split(' ')
-                .map(word => word.substring(0, 3))
-                .join('')
-                .substring(0, 6);
-
-            contractNumberField.value = `CONT-${year}${month}-${customerCode}`;
-        }
-    }
 
     function showToast(type, message) {
         const toastId = 'toast-' + Date.now();

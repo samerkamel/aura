@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Contract routes
             Route::prefix('contracts')->name('contracts.')->group(function () {
                 Route::get('/', [IncomeController::class, 'contracts'])->name('index');
+                Route::get('/next-number', [IncomeController::class, 'getNextContractNumber'])->name('next-number');
                 Route::get('/create', [IncomeController::class, 'createContract'])->name('create');
                 Route::post('/', [IncomeController::class, 'storeContract'])->name('store');
                 Route::get('/{contract}', [IncomeController::class, 'showContract'])->name('show');

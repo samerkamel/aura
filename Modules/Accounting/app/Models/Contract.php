@@ -315,4 +315,38 @@ class Contract extends Model
             default => 'secondary',
         };
     }
+
+    /**
+     * Generate the next contract number.
+     * Format: C-YYYYNNN (e.g., C-2026001, C-2026002)
+     */
+    public static function generateContractNumber(): string
+    {
+        $year = now()->year;
+        $prefix = "C-{$year}";
+
+        // Find the highest sequence number for this year
+        $lastContract = static::where('contract_number', 'LIKE', "{$prefix}%")
+            ->orderByRaw("CAST(SUBSTRING(contract_number, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
+            ->first();
+
+        if ($lastContract) {
+            // Extract the sequence number from the last contract
+            $lastNumber = (int) substr($lastContract->contract_number, strlen($prefix));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        // Format: C-YYYYNNN (3 digits minimum, grows if needed)
+        return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Preview what the next contract number will be.
+     */
+    public static function previewNextContractNumber(): string
+    {
+        return static::generateContractNumber();
+    }
 }
