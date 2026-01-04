@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -30 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -30 /var/www/vhosts/aura.llc/erp.aura.llc/storage/logs/laravel.log\")",
+      "mcp__playwright__browser_click"
     ],
     "deny": [],
     "ask": []

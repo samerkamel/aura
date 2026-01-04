@@ -366,7 +366,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Frequency <span class="text-danger">*</span></label>
-                            <select class="form-select" name="frequency" required>
+                            <select class="form-select" name="frequency_type" id="frequencyType" required>
                                 <option value="">Select frequency</option>
                                 <option value="weekly">Weekly</option>
                                 <option value="bi-weekly">Bi-weekly</option>
@@ -505,10 +505,96 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Preview recurring payments
-    document.getElementById('previewBtn').addEventListener('click', function() {
-        // You can implement preview logic here later
-        alert('Preview functionality will be implemented');
-        document.getElementById('generateBtn').style.display = 'inline-block';
+    const previewBtn = document.getElementById('previewBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const paymentPreview = document.getElementById('paymentPreview');
+    const previewContent = document.getElementById('previewContent');
+    const frequencyTypeSelect = document.getElementById('frequencyType');
+    const frequencyValueInput = document.querySelector('input[name="frequency_value"]');
+    const recurringStartDate = document.querySelector('#recurringPaymentsModal input[name="start_date"]');
+    const recurringEndDate = document.querySelector('#recurringPaymentsModal input[name="end_date"]');
+    const contractAmount = {{ $contract->total_amount }};
+
+    previewBtn.addEventListener('click', function() {
+        const frequencyType = frequencyTypeSelect.value;
+        const frequencyValue = parseInt(frequencyValueInput.value) || 1;
+        const startDateVal = recurringStartDate.value;
+        const endDateVal = recurringEndDate.value;
+
+        if (!frequencyType) {
+            alert('Please select a frequency');
+            return;
+        }
+
+        if (!startDateVal) {
+            alert('Please select a start date');
+            return;
+        }
+
+        if (!endDateVal) {
+            alert('Please select an end date');
+            return;
+        }
+
+        // Calculate payment dates
+        const paymentDates = [];
+        let current = new Date(startDateVal);
+        const endDate = new Date(endDateVal);
+
+        while (current <= endDate) {
+            paymentDates.push(new Date(current));
+
+            // Calculate next date based on frequency
+            switch (frequencyType) {
+                case 'weekly':
+                    current.setDate(current.getDate() + (7 * frequencyValue));
+                    break;
+                case 'bi-weekly':
+                    current.setDate(current.getDate() + (14 * frequencyValue));
+                    break;
+                case 'monthly':
+                    current.setMonth(current.getMonth() + frequencyValue);
+                    break;
+                case 'quarterly':
+                    current.setMonth(current.getMonth() + (3 * frequencyValue));
+                    break;
+                case 'yearly':
+                    current.setFullYear(current.getFullYear() + frequencyValue);
+                    break;
+            }
+        }
+
+        if (paymentDates.length === 0) {
+            alert('No payments can be generated with these dates. Please check your start and end dates.');
+            return;
+        }
+
+        const amountPerPayment = contractAmount / paymentDates.length;
+
+        // Build preview HTML
+        let html = `<p><strong>Total Payments:</strong> ${paymentDates.length}</p>`;
+        html += `<p><strong>Amount Per Payment:</strong> EGP ${amountPerPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>`;
+        html += '<p class="mb-2"><strong>Payment Schedule:</strong></p>';
+        html += '<ul class="list-unstyled mb-0" style="max-height: 150px; overflow-y: auto;">';
+
+        paymentDates.forEach((date, index) => {
+            const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            html += `<li><small>${index + 1}. ${dateStr} - EGP ${amountPerPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</small></li>`;
+        });
+
+        html += '</ul>';
+
+        previewContent.innerHTML = html;
+        paymentPreview.style.display = 'block';
+        generateBtn.style.display = 'inline-block';
+    });
+
+    // Reset preview when inputs change
+    [frequencyTypeSelect, frequencyValueInput, recurringStartDate, recurringEndDate].forEach(el => {
+        el.addEventListener('change', function() {
+            paymentPreview.style.display = 'none';
+            generateBtn.style.display = 'none';
+        });
     });
 });
 
