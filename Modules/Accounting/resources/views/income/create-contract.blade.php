@@ -67,7 +67,7 @@
                                             @error('contract_number')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
-                                            <small class="text-muted">Format: C-YYYYNNN (e.g., C-2026001)</small>
+                                            <small class="text-muted">Format: C-YYYYNNN based on start date year</small>
                                         </div>
 
                                         <div class="col-12">
@@ -438,28 +438,39 @@
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = 0;
 
-    // Fetch and populate the next contract number on page load
-    function loadNextContractNumber() {
+    // Fetch and populate the next contract number based on start date
+    function loadNextContractNumber(startDate = null) {
         const contractNumberField = document.getElementById('contract_number');
-        if (!contractNumberField.value || contractNumberField.value === '' || contractNumberField.placeholder === 'Loading...') {
-            fetch('{{ route("accounting.income.contracts.next-number") }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.next_number && !contractNumberField.value) {
-                        contractNumberField.value = data.next_number;
-                        contractNumberField.placeholder = 'Auto-generated';
-                    }
-                })
-                .catch(error => {
-                    console.error('Failed to load contract number:', error);
-                    contractNumberField.placeholder = 'Enter manually';
-                    contractNumberField.removeAttribute('readonly');
-                });
+
+        // Build URL with start_date parameter if provided
+        let url = '{{ route("accounting.income.contracts.next-number") }}';
+        if (startDate) {
+            url += '?start_date=' + encodeURIComponent(startDate);
         }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.next_number) {
+                    contractNumberField.value = data.next_number;
+                    contractNumberField.placeholder = 'Auto-generated';
+                }
+            })
+            .catch(error => {
+                console.error('Failed to load contract number:', error);
+                contractNumberField.placeholder = 'Enter manually';
+                contractNumberField.removeAttribute('readonly');
+            });
     }
 
-    // Load contract number on page load
-    loadNextContractNumber();
+    // Load contract number on page load with the default start date
+    const startDateField = document.getElementById('start_date');
+    loadNextContractNumber(startDateField.value);
+
+    // Re-fetch contract number when start date changes
+    startDateField.addEventListener('change', function() {
+        loadNextContractNumber(this.value);
+    });
 
     // Wait for jQuery and Select2 to be available
     function initSelect2() {

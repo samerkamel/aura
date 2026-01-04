@@ -91,11 +91,14 @@ class IncomeController extends Controller
 
     /**
      * Get the next contract number via AJAX.
+     * Accepts optional start_date parameter to determine the year.
      */
-    public function getNextContractNumber(): \Illuminate\Http\JsonResponse
+    public function getNextContractNumber(Request $request): \Illuminate\Http\JsonResponse
     {
+        $startDate = $request->query('start_date');
+
         return response()->json([
-            'next_number' => Contract::generateContractNumber(),
+            'next_number' => Contract::generateContractNumber($startDate),
         ]);
     }
 

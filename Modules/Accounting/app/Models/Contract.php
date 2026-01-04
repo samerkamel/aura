@@ -317,12 +317,20 @@ class Contract extends Model
     }
 
     /**
-     * Generate the next contract number.
+     * Generate the next contract number based on start date year.
      * Format: C-YYYYNNN (e.g., C-2026001, C-2026002)
+     *
+     * @param string|Carbon|null $startDate The start date to determine the year
      */
-    public static function generateContractNumber(): string
+    public static function generateContractNumber($startDate = null): string
     {
-        $year = now()->year;
+        // Determine year from start date or current date
+        if ($startDate) {
+            $year = Carbon::parse($startDate)->year;
+        } else {
+            $year = now()->year;
+        }
+
         $prefix = "C-{$year}";
 
         // Find the highest sequence number for this year
@@ -344,9 +352,11 @@ class Contract extends Model
 
     /**
      * Preview what the next contract number will be.
+     *
+     * @param string|null $startDate The start date to determine the year
      */
-    public static function previewNextContractNumber(): string
+    public static function previewNextContractNumber($startDate = null): string
     {
-        return static::generateContractNumber();
+        return static::generateContractNumber($startDate);
     }
 }
