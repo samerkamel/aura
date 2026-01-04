@@ -17,6 +17,7 @@ use Modules\Accounting\Models\CreditNote;
 use Modules\Accounting\Models\CreditNoteItem;
 use Carbon\Carbon;
 use App\Services\ContractRevenueSyncService;
+use Illuminate\Support\Facades\Log;
 
 /**
  * IncomeController
@@ -740,7 +741,7 @@ class IncomeController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error but don't interrupt the payment update process
-            \Log::error('Error updating related invoices when marking payment as paid: ' . $e->getMessage(), [
+            Log::error('Error updating related invoices when marking payment as paid: ' . $e->getMessage(), [
                 'payment_id' => $payment->id,
                 'contract_id' => $payment->contract_id,
             ]);
@@ -792,7 +793,7 @@ class IncomeController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error but don't interrupt the payment update process
-            \Log::error('Error updating related invoices when payment status changed: ' . $e->getMessage(), [
+            Log::error('Error updating related invoices when payment status changed: ' . $e->getMessage(), [
                 'payment_id' => $payment->id,
                 'contract_id' => $payment->contract_id,
             ]);
@@ -872,7 +873,7 @@ class IncomeController extends Controller
                 ->with('success', "Invoice {$invoiceNumber} generated successfully.");
 
         } catch (\Exception $e) {
-            \Log::error('Error generating invoice from payment: ' . $e->getMessage(), [
+            Log::error('Error generating invoice from payment: ' . $e->getMessage(), [
                 'payment_id' => $payment->id,
                 'contract_id' => $contract->id,
             ]);
@@ -914,7 +915,7 @@ class IncomeController extends Controller
                 ->with('success', "Payment linked to invoice {$invoice->invoice_number} successfully.");
 
         } catch (\Exception $e) {
-            \Log::error('Error linking payment to invoice: ' . $e->getMessage(), [
+            Log::error('Error linking payment to invoice: ' . $e->getMessage(), [
                 'payment_id' => $payment->id,
                 'invoice_id' => $request->invoice_id,
             ]);
@@ -1023,7 +1024,7 @@ class IncomeController extends Controller
                 ->with('success', "Payment recorded. Credit note {$creditNote->credit_note_number} created for advance payment. It can be applied to a future invoice.");
 
         } catch (\Exception $e) {
-            \Log::error('Error recording payment without invoice: ' . $e->getMessage(), [
+            Log::error('Error recording payment without invoice: ' . $e->getMessage(), [
                 'payment_id' => $payment->id,
                 'contract_id' => $contract->id,
             ]);
