@@ -845,6 +845,7 @@ class IncomeController extends Controller
                 'customer_id' => $customerId,
                 'project_id' => $contract->projects->first()?->id,
                 'invoice_sequence_id' => $sequence->id,
+                'business_unit_id' => $contract->business_unit_id,
                 'created_by' => auth()->id(),
                 'notes' => "Generated from contract {$contract->contract_number} - {$payment->name}",
                 'reference' => $contract->contract_number,
