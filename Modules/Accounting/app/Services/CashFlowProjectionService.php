@@ -5,6 +5,7 @@ namespace Modules\Accounting\Services;
 use Modules\Accounting\Models\ExpenseSchedule;
 use Modules\Accounting\Models\ContractPayment;
 use Modules\Accounting\Models\CashFlowProjection;
+use Modules\Accounting\Models\Contract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
