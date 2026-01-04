@@ -123,12 +123,9 @@
                                                                     <label class="form-label">Product <span class="text-danger">*</span></label>
                                                                     <select class="form-select allocation-product" name="products[{{ $index }}][product_id]">
                                                                         <option value="">Select product</option>
-                                                                        @php
-                                                                            $products = \App\Models\Department::where('is_active', true)->get();
-                                                                        @endphp
-                                                                        @foreach($products as $dept)
-                                                                            <option value="{{ $dept->id }}" {{ $product->id == $dept->id ? 'selected' : '' }}>
-                                                                                {{ $dept->name }} ({{ $dept->code }})
+                                                                        @foreach($products as $prod)
+                                                                            <option value="{{ $prod->id }}" {{ $product->id == $prod->id ? 'selected' : '' }}>
+                                                                                {{ $prod->name }} {{ $prod->code ? '(' . $prod->code . ')' : '' }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -419,12 +416,9 @@
                         <label class="form-label">Product <span class="text-danger">*</span></label>
                         <select class="form-select allocation-product" name="products[INDEX][product_id]">
                             <option value="">Select product</option>
-                            @php
-                                $products = \App\Models\Department::where('is_active', true)->get();
-                            @endphp
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}">
-                                    {{ $product->name }} ({{ $product->code }})
+                            @foreach($products as $prod)
+                                <option value="{{ $prod->id }}">
+                                    {{ $prod->name }} {{ $prod->code ? '(' . $prod->code . ')' : '' }}
                                 </option>
                             @endforeach
                         </select>

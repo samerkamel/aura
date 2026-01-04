@@ -1,10 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=\"\"echo implode('', '', \\Illuminate\\Support\\Facades\\Schema::getColumnListing(''project_milestones''));\"\"\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan migrate --force && php artisan cache:clear && php artisan view:clear\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=\"\"echo \\Illuminate\\Support\\Facades\\Schema::hasTable(''employee_hourly_rate_history'') ? ''Table exists'' : ''Table does not exist'';\"\"\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=\"\"echo ''Records: '' . \\Illuminate\\Support\\Facades\\DB::table(''employee_hourly_rate_history'')->count();\"\"\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan cache:clear && php artisan view:clear && php artisan route:clear\")"
     ],
     "deny": [],
     "ask": []

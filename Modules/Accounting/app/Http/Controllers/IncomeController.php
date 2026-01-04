@@ -90,8 +90,8 @@ class IncomeController extends Controller
      */
     public function createContract(Request $request): View
     {
-        // Get products/departments
-        $products = \App\Models\Department::where('is_active', true)
+        // Get products for allocation
+        $products = \App\Models\Product::where('is_active', true)
             ->orderBy('name')
             ->get();
 
@@ -133,25 +133,25 @@ class IncomeController extends Controller
             }
         }
 
-        // Handle department allocations
+        // Handle product allocations
         if ($request->has('products') && is_array($request->products)) {
             foreach ($request->products as $allocation) {
                 if (!empty($allocation['product_id']) &&
                     !empty($allocation['allocation_type']) &&
                     (!empty($allocation['allocation_percentage']) || !empty($allocation['allocation_amount']))) {
 
-                    $department = \App\Models\Department::where('id', $allocation['product_id'])
+                    $product = \App\Models\Product::where('id', $allocation['product_id'])
                         ->where('is_active', true)
                         ->first();
 
-                    if (!$department) {
+                    if (!$product) {
                         return redirect()
                             ->back()
                             ->withInput()
                             ->withErrors(['error' => 'Invalid product selected.']);
                     }
 
-                    $contract->departments()->attach($allocation['product_id'], [
+                    $contract->products()->attach($allocation['product_id'], [
                         'allocation_type' => $allocation['allocation_type'],
                         'allocation_percentage' => $allocation['allocation_type'] === 'percentage' ? $allocation['allocation_percentage'] : null,
                         'allocation_amount' => $allocation['allocation_type'] === 'amount' ? $allocation['allocation_amount'] : null,
@@ -212,12 +212,17 @@ class IncomeController extends Controller
      */
     public function editContract(Contract $contract): View
     {
-        $contract->load(['departments', 'projects']);
+        $contract->load(['products', 'projects']);
+
+        // Get all products for allocation dropdown
+        $products = \App\Models\Product::where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
         // Get projects for project selection
         $projects = \Modules\Project\Models\Project::active()->orderBy('name')->get();
 
-        return view('accounting::income.edit-contract', compact('contract', 'projects'));
+        return view('accounting::income.edit-contract', compact('contract', 'products', 'projects'));
     }
 
     /**
@@ -258,18 +263,18 @@ class IncomeController extends Controller
             }
         }
 
-        // Handle department allocations
-        if ($request->has('departments') && is_array($request->departments)) {
-            // First, detach all existing departments
-            $contract->departments()->detach();
+        // Handle product allocations
+        if ($request->has('products') && is_array($request->products)) {
+            // First, detach all existing products
+            $contract->products()->detach();
 
             // Then attach the new ones
-            foreach ($request->departments as $allocation) {
-                if (!empty($allocation['department_id']) &&
+            foreach ($request->products as $allocation) {
+                if (!empty($allocation['product_id']) &&
                     !empty($allocation['allocation_type']) &&
                     (!empty($allocation['allocation_percentage']) || !empty($allocation['allocation_amount']))) {
 
-                    $contract->departments()->attach($allocation['department_id'], [
+                    $contract->products()->attach($allocation['product_id'], [
                         'allocation_type' => $allocation['allocation_type'],
                         'allocation_percentage' => $allocation['allocation_type'] === 'percentage' ? $allocation['allocation_percentage'] : null,
                         'allocation_amount' => $allocation['allocation_type'] === 'amount' ? $allocation['allocation_amount'] : null,
@@ -278,8 +283,8 @@ class IncomeController extends Controller
                 }
             }
         } else {
-            // If no departments are submitted, remove all allocations
-            $contract->departments()->detach();
+            // If no products are submitted, remove all allocations
+            $contract->products()->detach();
         }
 
         return redirect()
