@@ -64,40 +64,9 @@
                             </div>
                         </div>
 
-                        <!-- Access Control -->
+                        <!-- Additional Settings -->
                         <div class="col-md-6">
-                            <h6 class="mb-3">Access Control</h6>
-
-                            <div class="mb-3">
-                                <label class="form-label">Business Unit</label>
-                                <select name="business_unit_id" class="form-select @error('business_unit_id') is-invalid @enderror">
-                                    <option value="">All Business Units</option>
-                                    @foreach($businessUnits as $businessUnit)
-                                        <option value="{{ $businessUnit->id }}" {{ old('business_unit_id') == $businessUnit->id ? 'selected' : '' }}>
-                                            {{ $businessUnit->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('business_unit_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">Restrict to specific business unit (optional)</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Sectors</label>
-                                <select name="sector_ids[]" class="form-select @error('sector_ids') is-invalid @enderror" multiple>
-                                    @foreach($sectors as $sector)
-                                        <option value="{{ $sector->id }}" {{ (old('sector_ids') && in_array($sector->id, old('sector_ids'))) ? 'selected' : '' }}>
-                                            {{ $sector->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('sector_ids')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">Hold Ctrl/Cmd to select multiple. Leave empty for all sectors.</small>
-                            </div>
+                            <h6 class="mb-3">Settings</h6>
 
                             <div class="mb-3">
                                 <div class="form-check">

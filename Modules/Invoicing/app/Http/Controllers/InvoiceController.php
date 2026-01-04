@@ -120,7 +120,7 @@ class InvoiceController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'project_id' => 'nullable|exists:projects,id',
-            'invoice_sequence_id' => 'required|exists:invoice_sequences,id',
+            'invoice_sequence_id' => 'nullable|exists:invoice_sequences,id',
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
             'tax_amount' => 'nullable|numeric|min:0',
@@ -133,7 +133,17 @@ class InvoiceController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        $sequence = InvoiceSequence::findOrFail($request->invoice_sequence_id);
+        // Get sequence - use provided one or auto-select default active sequence
+        $sequence = $request->invoice_sequence_id
+            ? InvoiceSequence::findOrFail($request->invoice_sequence_id)
+            : InvoiceSequence::active()->first();
+
+        if (!$sequence) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['invoice_sequence_id' => 'No active invoice sequence found. Please create one first.']);
+        }
+
         $invoiceNumber = $sequence->generateInvoiceNumber();
 
         $invoice = Invoice::create([
@@ -145,7 +155,7 @@ class InvoiceController extends Controller
             'total_amount' => 0, // Will be calculated from items
             'customer_id' => $request->customer_id,
             'project_id' => $request->project_id,
-            'invoice_sequence_id' => $request->invoice_sequence_id,
+            'invoice_sequence_id' => $sequence->id,
             'created_by' => auth()->id(),
             'notes' => $request->notes,
             'terms_conditions' => $request->terms_conditions,

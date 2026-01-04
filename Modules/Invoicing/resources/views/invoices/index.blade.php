@@ -12,6 +12,15 @@
                     <small class="text-muted">Manage customer invoices and payments</small>
                 </div>
                 <div class="d-flex gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ti ti-settings me-1"></i>Settings
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('invoicing.sequences.index') }}"><i class="ti ti-list-numbers me-2"></i>Invoice Sequences</a></li>
+                            <li><a class="dropdown-item" href="{{ route('invoicing.internal-sequences.index') }}"><i class="ti ti-arrows-exchange me-2"></i>Internal Sequences</a></li>
+                        </ul>
+                    </div>
                     <a href="{{ route('invoicing.internal-transactions.index') }}" class="btn btn-outline-info">
                         <i class="ti ti-building-bank me-1"></i>Internal Transactions
                     </a>

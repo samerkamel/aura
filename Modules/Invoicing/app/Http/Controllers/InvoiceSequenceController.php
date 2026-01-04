@@ -37,10 +37,7 @@ class InvoiceSequenceController extends Controller
             abort(403, 'Unauthorized to create invoice sequences.');
         }
 
-        $businessUnits = BusinessUnit::all();
-        $sectors = Sector::all();
-
-        return view('invoicing::sequences.create', compact('businessUnits', 'sectors'));
+        return view('invoicing::sequences.create');
     }
 
     /**
@@ -103,10 +100,7 @@ class InvoiceSequenceController extends Controller
             abort(403, 'Unauthorized to edit invoice sequences.');
         }
 
-        $businessUnits = BusinessUnit::all();
-        $sectors = Sector::all();
-
-        return view('invoicing::sequences.edit', compact('invoiceSequence', 'businessUnits', 'sectors'));
+        return view('invoicing::sequences.edit', compact('invoiceSequence'));
     }
 
     /**

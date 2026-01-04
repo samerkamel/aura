@@ -45,8 +45,7 @@
                                     <th>Format</th>
                                     <th>Next Number</th>
                                     <th>Current Count</th>
-                                    <th>Business Unit</th>
-                                    <th>Sectors</th>
+                                    <th>Invoices</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -76,20 +75,7 @@
                                         <small class="text-muted">Start: {{ $sequence->starting_number }}</small>
                                     </td>
                                     <td>
-                                        @if($sequence->businessUnit)
-                                            <span class="badge bg-label-primary">{{ $sequence->businessUnit->name }}</span>
-                                        @else
-                                            <span class="text-muted">All Units</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($sequence->sector_ids)
-                                            @foreach($sequence->sectors() as $sector)
-                                                <span class="badge bg-label-secondary me-1">{{ $sector->name }}</span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted">All Sectors</span>
-                                        @endif
+                                        <span class="badge bg-label-info">{{ $sequence->invoices_count ?? $sequence->invoices()->count() }}</span>
                                     </td>
                                     <td>
                                         @if($sequence->is_active)
@@ -212,12 +198,12 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="badge bg-label-warning p-2 me-2 rounded">
-                            <i class="ti ti-building ti-sm"></i>
+                            <i class="ti ti-hash ti-sm"></i>
                         </span>
                     </div>
                     <div class="d-flex flex-column">
-                        <small>Business Units</small>
-                        <h6 class="mb-0">{{ $sequences->where('business_unit_id', '!=', null)->count() }}</h6>
+                        <small>Highest Number</small>
+                        <h6 class="mb-0">{{ $sequences->max('current_number') }}</h6>
                     </div>
                 </div>
             </div>

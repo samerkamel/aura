@@ -65,19 +65,27 @@
                             <h6 class="mb-3">Invoice Information</h6>
 
                             <div class="mb-3">
-                                <label class="form-label required">Invoice Sequence</label>
-                                <select name="invoice_sequence_id" class="form-select @error('invoice_sequence_id') is-invalid @enderror" required>
-                                    <option value="">Auto-select sequence</option>
-                                    @foreach($sequences as $sequence)
-                                        <option value="{{ $sequence->id }}" {{ old('invoice_sequence_id') == $sequence->id ? 'selected' : '' }}>
-                                            {{ $sequence->name }} ({{ $sequence->previewNextInvoiceNumber() }})
+                                <label class="form-label">Invoice Sequence</label>
+                                <select name="invoice_sequence_id" class="form-select @error('invoice_sequence_id') is-invalid @enderror">
+                                    @if($sequences->count() > 1)
+                                        <option value="">Auto-select (default sequence)</option>
+                                    @endif
+                                    @foreach($sequences as $index => $sequence)
+                                        <option value="{{ $sequence->id }}" {{ old('invoice_sequence_id', $sequences->count() === 1 ? $sequence->id : '') == $sequence->id ? 'selected' : '' }}>
+                                            {{ $sequence->name }} (Next: {{ $sequence->previewNextInvoiceNumber() }})
                                         </option>
                                     @endforeach
                                 </select>
                                 @error('invoice_sequence_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Leave blank to auto-select the default sequence</small>
+                                @if($sequences->isEmpty())
+                                    <div class="text-danger mt-1">
+                                        <i class="ti ti-alert-circle me-1"></i>No active sequences. <a href="{{ route('invoicing.sequences.create') }}">Create one</a>
+                                    </div>
+                                @else
+                                    <small class="text-muted">Select sequence or leave default</small>
+                                @endif
                             </div>
 
                             <div class="row">
