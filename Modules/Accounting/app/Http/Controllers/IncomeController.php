@@ -1043,19 +1043,32 @@ class IncomeController extends Controller
         $customerId = $contract->customer_id;
 
         // Fetch unpaid invoices for this customer that aren't already linked to a payment
-        $invoices = Invoice::where(function ($query) use ($customerId, $contract) {
-            if ($customerId) {
-                $query->where('customer_id', $customerId);
-            }
-            // Also check for invoices with reference matching this contract
-            $query->orWhere('reference', $contract->contract_number);
-        })
-        ->whereIn('status', ['draft', 'sent', 'overdue'])
-        ->whereDoesntHave('items', function ($query) {
-            $query->whereNotNull('contract_payment_id');
-        })
-        ->orderBy('invoice_date', 'desc')
-        ->get(['id', 'invoice_number', 'invoice_date', 'total_amount', 'status']);
+        $invoices = Invoice::with('customer')
+            ->where(function ($query) use ($customerId, $contract) {
+                if ($customerId) {
+                    $query->where('customer_id', $customerId);
+                }
+                // Also check for invoices with reference matching this contract
+                $query->orWhere('reference', $contract->contract_number);
+            })
+            ->whereIn('status', ['draft', 'sent', 'overdue'])
+            ->whereDoesntHave('items', function ($query) {
+                $query->whereNotNull('contract_payment_id');
+            })
+            ->orderBy('invoice_date', 'desc')
+            ->get(['id', 'invoice_number', 'invoice_date', 'total_amount', 'status', 'customer_id']);
+
+        // Transform to include customer name
+        $invoices = $invoices->map(function ($invoice) {
+            return [
+                'id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
+                'invoice_date' => $invoice->invoice_date?->format('M d, Y'),
+                'total_amount' => number_format($invoice->total_amount ?? 0, 2),
+                'status' => $invoice->status,
+                'customer_name' => $invoice->customer?->name ?? 'Unknown',
+            ];
+        });
 
         return response()->json($invoices);
     }
