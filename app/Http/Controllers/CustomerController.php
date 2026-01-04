@@ -281,7 +281,7 @@ class CustomerController extends Controller
     public function apiIndex(Request $request): JsonResponse
     {
         try {
-            $query = Customer::active()->orderBy('name');
+            $query = Customer::active()->distinct()->orderBy('name');
 
             if ($request->has('search') && $request->search) {
                 $search = $request->search;
@@ -337,6 +337,33 @@ class CustomerController extends Controller
         ]);
 
         try {
+            // Check for existing customer with same name/company to prevent duplicates
+            $existingQuery = Customer::active();
+            if ($request->type === 'company' && $request->company_name) {
+                $existingQuery->where('company_name', $request->company_name);
+            } else {
+                $existingQuery->where('name', $request->name)
+                    ->where('type', $request->type);
+            }
+
+            $existing = $existingQuery->first();
+            if ($existing) {
+                // Return the existing customer instead of creating a duplicate
+                return response()->json([
+                    'success' => true,
+                    'customer' => [
+                        'id' => $existing->id,
+                        'text' => $existing->display_name . ($existing->email ? ' (' . $existing->email . ')' : ''),
+                        'name' => $existing->name,
+                        'company_name' => $existing->company_name,
+                        'email' => $existing->email,
+                        'type' => $existing->type,
+                    ],
+                    'message' => 'Customer already exists and has been selected.',
+                    'existing' => true
+                ]);
+            }
+
             $customer = Customer::create([
                 'name' => $request->name,
                 'email' => $request->email,
