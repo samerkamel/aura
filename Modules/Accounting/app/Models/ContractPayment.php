@@ -20,6 +20,8 @@ class ContractPayment extends Model
 
     protected $fillable = [
         'contract_id',
+        'invoice_id',
+        'credit_note_id',
         'name',
         'description',
         'amount',
@@ -27,6 +29,9 @@ class ContractPayment extends Model
         'status',
         'paid_date',
         'paid_amount',
+        'payment_received_date',
+        'payment_method',
+        'payment_reference',
         'notes',
         'is_milestone',
         'sequence_number',
@@ -41,6 +46,7 @@ class ContractPayment extends Model
         'paid_amount' => 'decimal:2',
         'due_date' => 'date',
         'paid_date' => 'date',
+        'payment_received_date' => 'date',
         'is_milestone' => 'boolean',
         'sequence_number' => 'integer',
         'synced_to_project' => 'boolean',
@@ -56,11 +62,74 @@ class ContractPayment extends Model
     }
 
     /**
+     * Get the invoice linked to this payment.
+     */
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
+     * Get the credit note linked to this payment (for payments without invoice).
+     */
+    public function creditNote(): BelongsTo
+    {
+        return $this->belongsTo(CreditNote::class);
+    }
+
+    /**
      * Get the invoice item that was created from this contract payment.
      */
     public function invoiceItem(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(\Modules\Invoicing\Models\InvoiceItem::class);
+    }
+
+    /**
+     * Check if payment has a linked invoice.
+     */
+    public function hasInvoice(): bool
+    {
+        return !is_null($this->invoice_id);
+    }
+
+    /**
+     * Check if payment has a credit note (advance payment).
+     */
+    public function hasCreditNote(): bool
+    {
+        return !is_null($this->credit_note_id);
+    }
+
+    /**
+     * Sync status from linked invoice.
+     */
+    public function syncStatusFromInvoice(): void
+    {
+        if (!$this->hasInvoice()) {
+            return;
+        }
+
+        $invoice = $this->invoice;
+        if (!$invoice) {
+            return;
+        }
+
+        $newStatus = match ($invoice->status) {
+            'paid' => 'paid',
+            'cancelled' => 'cancelled',
+            'overdue' => 'overdue',
+            default => 'pending',
+        };
+
+        $updateData = ['status' => $newStatus];
+
+        if ($invoice->status === 'paid') {
+            $updateData['paid_date'] = $invoice->paid_date;
+            $updateData['paid_amount'] = $this->amount;
+        }
+
+        $this->update($updateData);
     }
 
     /**

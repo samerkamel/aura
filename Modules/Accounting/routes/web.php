@@ -122,6 +122,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::patch('/{contract}/payments/{payment}/status', [IncomeController::class, 'updatePaymentStatus'])->name('payments.update-status');
                 Route::delete('/{contract}/payments/{payment}', [IncomeController::class, 'deletePayment'])->name('payments.destroy');
 
+                // Payment-Invoice linking routes
+                Route::post('/{contract}/payments/{payment}/generate-invoice', [IncomeController::class, 'generateInvoiceFromPayment'])->name('payments.generate-invoice');
+                Route::post('/{contract}/payments/{payment}/link-invoice', [IncomeController::class, 'linkPaymentToInvoice'])->name('payments.link-invoice');
+                Route::delete('/{contract}/payments/{payment}/unlink-invoice', [IncomeController::class, 'unlinkPaymentFromInvoice'])->name('payments.unlink-invoice');
+                Route::post('/{contract}/payments/{payment}/record-payment', [IncomeController::class, 'recordPaymentWithoutInvoice'])->name('payments.record-payment');
+                Route::get('/{contract}/available-invoices', [IncomeController::class, 'getAvailableInvoices'])->name('available-invoices');
+                Route::post('/{contract}/sync-payment-statuses', [IncomeController::class, 'syncPaymentStatuses'])->name('sync-payment-statuses');
+
                 // CSV Import routes for contracts
                 Route::get('/import', [IncomeController::class, 'importForm'])->name('import');
                 Route::post('/import', [IncomeController::class, 'import'])->name('import.process');

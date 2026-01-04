@@ -140,7 +140,7 @@
                                     <th>Amount</th>
                                     <th>Due Date</th>
                                     <th>Status</th>
-                                    <th>Type</th>
+                                    <th>Invoice/Credit</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -183,29 +183,85 @@
                                         <span class="badge {{ $payment->status_badge_class }}">
                                             {{ $payment->status_display }}
                                         </span>
+                                        @if($payment->is_milestone)
+                                            <br><small class="text-muted">Milestone</small>
+                                        @endif
                                     </td>
                                     <td>
-                                        <span class="badge {{ $payment->is_milestone ? 'bg-info' : 'bg-secondary' }}">
-                                            {{ $payment->is_milestone ? 'Milestone' : 'Recurring' }}
-                                        </span>
+                                        @if($payment->invoice_id && $payment->invoice)
+                                            <a href="{{ route('invoicing.invoices.show', $payment->invoice) }}" class="text-decoration-none">
+                                                <span class="badge bg-{{ $payment->invoice->status_badge_class }}">
+                                                    <i class="ti ti-file-invoice me-1"></i>{{ $payment->invoice->invoice_number }}
+                                                </span>
+                                            </a>
+                                            <br><small class="text-{{ $payment->invoice->status === 'paid' ? 'success' : 'muted' }}">
+                                                {{ ucfirst($payment->invoice->status) }}
+                                            </small>
+                                        @elseif($payment->credit_note_id && $payment->creditNote)
+                                            <a href="{{ route('accounting.credit-notes.show', $payment->creditNote) }}" class="text-decoration-none">
+                                                <span class="badge bg-info">
+                                                    <i class="ti ti-receipt-refund me-1"></i>{{ $payment->creditNote->credit_note_number }}
+                                                </span>
+                                            </a>
+                                            <br><small class="text-info">Credit Note</small>
+                                        @else
+                                            <span class="badge bg-label-secondary">
+                                                <i class="ti ti-file-off me-1"></i>No Invoice
+                                            </span>
+                                        @endif
                                     </td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 Actions
                                             </button>
-                                            <ul class="dropdown-menu">
+                                            <ul class="dropdown-menu dropdown-menu-end">
                                                 @if(!$payment->due_date)
                                                     <li><a class="dropdown-item" href="#" onclick="schedulePayment({{ $payment->id }})">
                                                         <i class="ti ti-calendar-plus me-2"></i>Schedule Date
                                                     </a></li>
                                                     <li><hr class="dropdown-divider"></li>
                                                 @endif
-                                                @if($payment->status === 'pending' && $payment->due_date)
+
+                                                {{-- Invoice Actions --}}
+                                                @if(!$payment->invoice_id && !$payment->credit_note_id)
+                                                    <li class="dropdown-header">Invoice Actions</li>
+                                                    <li><a class="dropdown-item" href="#" onclick="generateInvoice({{ $payment->id }})">
+                                                        <i class="ti ti-file-plus me-2"></i>Generate Invoice
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="openLinkInvoiceModal({{ $payment->id }})">
+                                                        <i class="ti ti-link me-2"></i>Link to Invoice
+                                                    </a></li>
+                                                    @if($payment->status !== 'paid')
+                                                        <li><a class="dropdown-item" href="#" onclick="openRecordPaymentModal({{ $payment->id }}, '{{ $payment->name }}', {{ $payment->amount }})">
+                                                            <i class="ti ti-cash me-2"></i>Record Payment (Credit Note)
+                                                        </a></li>
+                                                    @endif
+                                                    <li><hr class="dropdown-divider"></li>
+                                                @elseif($payment->invoice_id)
+                                                    <li class="dropdown-header">Invoice Actions</li>
+                                                    <li><a class="dropdown-item" href="{{ route('invoicing.invoices.show', $payment->invoice) }}">
+                                                        <i class="ti ti-eye me-2"></i>View Invoice
+                                                    </a></li>
+                                                    <li><a class="dropdown-item text-warning" href="#" onclick="unlinkInvoice({{ $payment->id }})">
+                                                        <i class="ti ti-unlink me-2"></i>Unlink Invoice
+                                                    </a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                @elseif($payment->credit_note_id)
+                                                    <li class="dropdown-header">Credit Note</li>
+                                                    <li><a class="dropdown-item" href="{{ route('accounting.credit-notes.show', $payment->creditNote) }}">
+                                                        <i class="ti ti-eye me-2"></i>View Credit Note
+                                                    </a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                @endif
+
+                                                {{-- Payment Status Actions --}}
+                                                @if($payment->status === 'pending' && $payment->due_date && !$payment->invoice_id)
                                                     <li><a class="dropdown-item" href="#" onclick="markAsPaid({{ $payment->id }})">
                                                         <i class="ti ti-check me-2"></i>Mark as Paid
                                                     </a></li>
                                                 @endif
+
                                                 <li><a class="dropdown-item" href="#" onclick="editPayment({{ $payment->id }})">
                                                     <i class="ti ti-edit me-2"></i>Edit
                                                 </a></li>
@@ -407,6 +463,121 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-outline-primary" id="previewBtn">Preview</button>
                     <button type="submit" class="btn btn-primary" style="display: none;" id="generateBtn">Generate Payments</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Link Invoice Modal -->
+<div class="modal fade" id="linkInvoiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Link to Existing Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="linkInvoiceForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="ti ti-info-circle me-2"></i>
+                        Select an existing invoice to link to this payment. The payment status will sync with the invoice status.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Invoice <span class="text-danger">*</span></label>
+                        <select class="form-select" name="invoice_id" id="invoiceSelect" required>
+                            <option value="">Loading invoices...</option>
+                        </select>
+                    </div>
+
+                    <div id="invoiceDetails" style="display: none;" class="alert alert-light">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Invoice Total:</small>
+                                <div id="invoiceTotal" class="fw-bold"></div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Status:</small>
+                                <div id="invoiceStatus"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-link me-1"></i>Link Invoice
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Record Payment Modal (Credit Note) -->
+<div class="modal fade" id="recordPaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Payment Without Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="recordPaymentForm" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="ti ti-alert-triangle me-2"></i>
+                        <strong>Advance Payment:</strong> This will create a credit note that can be applied to a future invoice.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Payment</label>
+                        <input type="text" class="form-control" id="paymentNameDisplay" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">EGP</span>
+                            <input type="text" class="form-control" id="paymentAmountDisplay" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Payment Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="payment_date" required value="{{ now()->format('Y-m-d') }}">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <select class="form-select" name="payment_method">
+                                <option value="">Select method</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                                <option value="check">Check</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Reference Number</label>
+                            <input type="text" class="form-control" name="payment_reference" placeholder="e.g., Transfer #123">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2" placeholder="Optional payment notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="ti ti-cash me-1"></i>Record Payment
+                    </button>
                 </div>
             </form>
         </div>
@@ -666,6 +837,121 @@ function deletePayment(paymentId) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = `/accounting/income/contracts/{{ $contract->id }}/payments/${paymentId}`;
+
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+
+        form.appendChild(csrfToken);
+        form.appendChild(methodInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Invoice Integration Functions
+function generateInvoice(paymentId) {
+    if (confirm('Generate a new invoice from this payment? The payment will be linked to the new invoice.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/accounting/income/contracts/{{ $contract->id }}/payments/${paymentId}/generate-invoice`;
+
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function openLinkInvoiceModal(paymentId) {
+    const modal = new bootstrap.Modal(document.getElementById('linkInvoiceModal'));
+    const form = document.getElementById('linkInvoiceForm');
+    const select = document.getElementById('invoiceSelect');
+    const detailsDiv = document.getElementById('invoiceDetails');
+
+    // Reset and set form action
+    form.action = `/accounting/income/contracts/{{ $contract->id }}/payments/${paymentId}/link-invoice`;
+    select.innerHTML = '<option value="">Loading invoices...</option>';
+    detailsDiv.style.display = 'none';
+
+    // Load available invoices
+    fetch(`/accounting/income/contracts/{{ $contract->id }}/available-invoices`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                select.innerHTML = '<option value="">No available invoices found</option>';
+            } else {
+                let options = '<option value="">Select an invoice</option>';
+                data.forEach(invoice => {
+                    options += `<option value="${invoice.id}" data-total="${invoice.total}" data-status="${invoice.status}">
+                        ${invoice.invoice_number} - ${invoice.customer_name} (EGP ${parseFloat(invoice.total).toLocaleString('en-US', {minimumFractionDigits: 2})})
+                    </option>`;
+                });
+                select.innerHTML = options;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading invoices:', error);
+            select.innerHTML = '<option value="">Error loading invoices</option>';
+        });
+
+    // Handle invoice selection to show details
+    select.onchange = function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            document.getElementById('invoiceTotal').textContent = 'EGP ' + parseFloat(selectedOption.dataset.total).toLocaleString('en-US', {minimumFractionDigits: 2});
+            const statusBadge = getStatusBadge(selectedOption.dataset.status);
+            document.getElementById('invoiceStatus').innerHTML = statusBadge;
+            detailsDiv.style.display = 'block';
+        } else {
+            detailsDiv.style.display = 'none';
+        }
+    };
+
+    modal.show();
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'draft': '<span class="badge bg-secondary">Draft</span>',
+        'sent': '<span class="badge bg-info">Sent</span>',
+        'paid': '<span class="badge bg-success">Paid</span>',
+        'overdue': '<span class="badge bg-danger">Overdue</span>',
+        'cancelled': '<span class="badge bg-dark">Cancelled</span>',
+        'partial': '<span class="badge bg-warning">Partial</span>'
+    };
+    return badges[status] || `<span class="badge bg-secondary">${status}</span>`;
+}
+
+function openRecordPaymentModal(paymentId, paymentName, paymentAmount) {
+    const modal = new bootstrap.Modal(document.getElementById('recordPaymentModal'));
+    const form = document.getElementById('recordPaymentForm');
+
+    // Set form action
+    form.action = `/accounting/income/contracts/{{ $contract->id }}/payments/${paymentId}/record-payment`;
+
+    // Populate display fields
+    document.getElementById('paymentNameDisplay').value = paymentName;
+    document.getElementById('paymentAmountDisplay').value = parseFloat(paymentAmount).toLocaleString('en-US', {minimumFractionDigits: 2});
+
+    modal.show();
+}
+
+function unlinkInvoice(paymentId) {
+    if (confirm('Are you sure you want to unlink this invoice from the payment? The payment status will be reset to pending.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/accounting/income/contracts/{{ $contract->id }}/payments/${paymentId}/unlink-invoice`;
 
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';

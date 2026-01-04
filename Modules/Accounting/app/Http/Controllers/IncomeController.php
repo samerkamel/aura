@@ -12,6 +12,9 @@ use Modules\Accounting\Http\Requests\StoreContractRequest;
 use Modules\Accounting\Http\Requests\UpdateContractRequest;
 use Modules\Invoicing\Models\Invoice;
 use Modules\Invoicing\Models\InvoiceItem;
+use Modules\Invoicing\Models\InvoiceSequence;
+use Modules\Accounting\Models\CreditNote;
+use Modules\Accounting\Models\CreditNoteItem;
 use Carbon\Carbon;
 use App\Services\ContractRevenueSyncService;
 
@@ -794,5 +797,283 @@ class IncomeController extends Controller
                 'contract_id' => $payment->contract_id,
             ]);
         }
+    }
+
+    /**
+     * Generate invoice from payment milestone.
+     */
+    public function generateInvoiceFromPayment(Request $request, Contract $contract, ContractPayment $payment): RedirectResponse
+    {
+        // Validate the payment belongs to this contract
+        if ($payment->contract_id !== $contract->id) {
+            return redirect()->back()->with('error', 'Invalid payment.');
+        }
+
+        // Check if payment already has an invoice
+        if ($payment->hasInvoice()) {
+            return redirect()->back()->with('error', 'This payment already has a linked invoice.');
+        }
+
+        try {
+            // Get invoice sequence
+            $sequence = InvoiceSequence::active()->first();
+            if (!$sequence) {
+                return redirect()->back()->with('error', 'No active invoice sequence found. Please create one first.');
+            }
+
+            // Generate invoice number
+            $invoiceNumber = $sequence->generateInvoiceNumber();
+
+            // Determine customer info
+            $customerId = $contract->customer_id;
+            $clientName = $contract->customer ? $contract->customer->name : $contract->client_name;
+
+            // Create the invoice
+            $invoice = Invoice::create([
+                'invoice_number' => $invoiceNumber,
+                'invoice_date' => now()->toDateString(),
+                'due_date' => $payment->due_date ?? now()->addDays(30)->toDateString(),
+                'subtotal' => $payment->amount,
+                'tax_amount' => 0,
+                'total_amount' => $payment->amount,
+                'currency' => 'EGP',
+                'exchange_rate' => 1,
+                'subtotal_in_base' => $payment->amount,
+                'total_in_base' => $payment->amount,
+                'status' => 'draft',
+                'customer_id' => $customerId,
+                'project_id' => $contract->projects->first()?->id,
+                'invoice_sequence_id' => $sequence->id,
+                'created_by' => auth()->id(),
+                'notes' => "Generated from contract {$contract->contract_number} - {$payment->name}",
+                'reference' => $contract->contract_number,
+            ]);
+
+            // Create invoice item
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'description' => $payment->name,
+                'long_description' => $payment->description ?? "Payment milestone for contract {$contract->contract_number}",
+                'quantity' => 1,
+                'unit_price' => $payment->amount,
+                'unit' => 'service',
+                'tax_rate' => 0,
+                'tax_amount' => 0,
+                'total' => $payment->amount,
+                'sort_order' => 1,
+                'contract_payment_id' => $payment->id,
+            ]);
+
+            // Link invoice to payment
+            $payment->update(['invoice_id' => $invoice->id]);
+
+            return redirect()
+                ->back()
+                ->with('success', "Invoice {$invoiceNumber} generated successfully.");
+
+        } catch (\Exception $e) {
+            \Log::error('Error generating invoice from payment: ' . $e->getMessage(), [
+                'payment_id' => $payment->id,
+                'contract_id' => $contract->id,
+            ]);
+
+            return redirect()->back()->with('error', 'Error generating invoice: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Link payment to existing invoice.
+     */
+    public function linkPaymentToInvoice(Request $request, Contract $contract, ContractPayment $payment): RedirectResponse
+    {
+        $request->validate([
+            'invoice_id' => 'required|exists:invoices,id',
+        ]);
+
+        // Validate the payment belongs to this contract
+        if ($payment->contract_id !== $contract->id) {
+            return redirect()->back()->with('error', 'Invalid payment.');
+        }
+
+        // Check if payment already has an invoice
+        if ($payment->hasInvoice()) {
+            return redirect()->back()->with('error', 'This payment already has a linked invoice.');
+        }
+
+        try {
+            $invoice = Invoice::findOrFail($request->invoice_id);
+
+            // Link invoice to payment
+            $payment->update(['invoice_id' => $invoice->id]);
+
+            // Sync payment status from invoice
+            $payment->syncStatusFromInvoice();
+
+            return redirect()
+                ->back()
+                ->with('success', "Payment linked to invoice {$invoice->invoice_number} successfully.");
+
+        } catch (\Exception $e) {
+            \Log::error('Error linking payment to invoice: ' . $e->getMessage(), [
+                'payment_id' => $payment->id,
+                'invoice_id' => $request->invoice_id,
+            ]);
+
+            return redirect()->back()->with('error', 'Error linking invoice: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Unlink invoice from payment.
+     */
+    public function unlinkPaymentFromInvoice(Contract $contract, ContractPayment $payment): RedirectResponse
+    {
+        // Validate the payment belongs to this contract
+        if ($payment->contract_id !== $contract->id) {
+            return redirect()->back()->with('error', 'Invalid payment.');
+        }
+
+        if (!$payment->hasInvoice()) {
+            return redirect()->back()->with('error', 'This payment has no linked invoice.');
+        }
+
+        $invoiceNumber = $payment->invoice?->invoice_number;
+
+        // Unlink invoice
+        $payment->update(['invoice_id' => null]);
+
+        return redirect()
+            ->back()
+            ->with('success', "Invoice {$invoiceNumber} unlinked from payment successfully.");
+    }
+
+    /**
+     * Record payment without invoice (creates credit note for advance payment).
+     */
+    public function recordPaymentWithoutInvoice(Request $request, Contract $contract, ContractPayment $payment): RedirectResponse
+    {
+        $request->validate([
+            'payment_date' => 'required|date',
+            'payment_method' => 'nullable|string|max:50',
+            'payment_reference' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        // Validate the payment belongs to this contract
+        if ($payment->contract_id !== $contract->id) {
+            return redirect()->back()->with('error', 'Invalid payment.');
+        }
+
+        try {
+            // Determine customer info
+            $customerId = $contract->customer_id;
+            $clientName = $contract->customer ? $contract->customer->name : $contract->client_name;
+            $clientEmail = $contract->customer?->email;
+            $clientAddress = $contract->customer?->billing_address;
+
+            // Create credit note for advance payment
+            $creditNote = CreditNote::create([
+                'credit_note_number' => CreditNote::generateNumber(),
+                'customer_id' => $customerId,
+                'project_id' => $contract->projects->first()?->id,
+                'client_name' => $clientName,
+                'client_email' => $clientEmail,
+                'client_address' => $clientAddress,
+                'credit_note_date' => $request->payment_date,
+                'reference' => "Advance payment - {$contract->contract_number}",
+                'status' => 'open',
+                'subtotal' => $payment->amount,
+                'tax_rate' => 0,
+                'tax_amount' => 0,
+                'total' => $payment->amount,
+                'applied_amount' => 0,
+                'remaining_credits' => $payment->amount,
+                'notes' => $request->notes ?? "Advance payment for {$payment->name}",
+                'internal_notes' => "Auto-generated from contract payment. Contract: {$contract->contract_number}, Payment: {$payment->name}",
+                'created_by' => auth()->id(),
+            ]);
+
+            // Create credit note item
+            CreditNoteItem::create([
+                'credit_note_id' => $creditNote->id,
+                'description' => "Advance payment - {$payment->name}",
+                'quantity' => 1,
+                'unit_price' => $payment->amount,
+                'amount' => $payment->amount,
+                'sort_order' => 1,
+            ]);
+
+            // Update payment with credit note link and mark as paid
+            $payment->update([
+                'credit_note_id' => $creditNote->id,
+                'status' => 'paid',
+                'paid_date' => $request->payment_date,
+                'paid_amount' => $payment->amount,
+                'payment_received_date' => $request->payment_date,
+                'payment_method' => $request->payment_method,
+                'payment_reference' => $request->payment_reference,
+                'notes' => $request->notes,
+            ]);
+
+            // Sync payment to project revenue if linked
+            $this->syncService->onPaymentPaid($payment);
+
+            return redirect()
+                ->back()
+                ->with('success', "Payment recorded. Credit note {$creditNote->credit_note_number} created for advance payment. It can be applied to a future invoice.");
+
+        } catch (\Exception $e) {
+            \Log::error('Error recording payment without invoice: ' . $e->getMessage(), [
+                'payment_id' => $payment->id,
+                'contract_id' => $contract->id,
+            ]);
+
+            return redirect()->back()->with('error', 'Error recording payment: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get available invoices for linking to a payment.
+     */
+    public function getAvailableInvoices(Contract $contract)
+    {
+        // Get customer ID from contract
+        $customerId = $contract->customer_id;
+
+        // Fetch unpaid invoices for this customer that aren't already linked to a payment
+        $invoices = Invoice::where(function ($query) use ($customerId, $contract) {
+            if ($customerId) {
+                $query->where('customer_id', $customerId);
+            }
+            // Also check for invoices with reference matching this contract
+            $query->orWhere('reference', $contract->contract_number);
+        })
+        ->whereIn('status', ['draft', 'sent', 'overdue'])
+        ->whereDoesntHave('items', function ($query) {
+            $query->whereNotNull('contract_payment_id');
+        })
+        ->orderBy('invoice_date', 'desc')
+        ->get(['id', 'invoice_number', 'invoice_date', 'total_amount', 'status']);
+
+        return response()->json($invoices);
+    }
+
+    /**
+     * Sync all payment statuses from their linked invoices.
+     */
+    public function syncPaymentStatuses(Contract $contract): RedirectResponse
+    {
+        $updatedCount = 0;
+
+        foreach ($contract->payments as $payment) {
+            if ($payment->hasInvoice()) {
+                $payment->syncStatusFromInvoice();
+                $updatedCount++;
+            }
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', "Synced status for {$updatedCount} payments from their linked invoices.");
     }
 }
