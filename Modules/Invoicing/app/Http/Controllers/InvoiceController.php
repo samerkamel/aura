@@ -156,6 +156,7 @@ class InvoiceController extends Controller
             'customer_id' => $request->customer_id,
             'project_id' => $request->project_id,
             'invoice_sequence_id' => $sequence->id,
+            'business_unit_id' => $sequence->business_unit_id ?? 1, // Default to Head Office
             'created_by' => auth()->id(),
             'notes' => $request->notes,
             'terms_conditions' => $request->terms_conditions,
