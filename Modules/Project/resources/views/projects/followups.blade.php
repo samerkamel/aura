@@ -78,13 +78,46 @@
 
   <!-- Projects Needing Follow-up -->
   <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">
-        <i class="ti ti-phone-call me-2"></i>Projects Needing Follow-up
-      </h5>
-      <div>
-        <span class="badge bg-primary">{{ $summary['total'] }} Active Projects</span>
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <h5 class="mb-0">
+          <i class="ti ti-phone-call me-2"></i>Projects Needing Follow-up
+        </h5>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <!-- Activity Period Filter -->
+          <form id="filterForm" method="GET" action="{{ route('projects.followups') }}" class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 text-nowrap">Activity Period:</label>
+            <select class="form-select form-select-sm" name="activity_days" onchange="document.getElementById('filterForm').submit()" style="width: auto;">
+              @foreach($filters['activity_periods'] as $days => $label)
+                <option value="{{ $days }}" {{ $filters['activity_days'] == $days ? 'selected' : '' }}>
+                  {{ $label }}
+                </option>
+              @endforeach
+            </select>
+
+            <!-- Show All Active Toggle -->
+            <div class="form-check form-switch ms-3 mb-0">
+              <input class="form-check-input" type="checkbox" id="showAllActive" name="show_all_active" value="1"
+                     {{ $filters['show_all_active'] ? 'checked' : '' }}
+                     onchange="document.getElementById('filterForm').submit()">
+              <label class="form-check-label text-nowrap" for="showAllActive">Show all active</label>
+            </div>
+          </form>
+
+          <span class="badge bg-primary">{{ $summary['total'] }} Projects</span>
+        </div>
       </div>
+      @if(!$filters['show_all_active'])
+        <small class="text-muted mt-2 d-block">
+          <i class="ti ti-info-circle me-1"></i>
+          Showing projects with activity in the last {{ $filters['activity_periods'][$filters['activity_days']] }} or with pending follow-ups.
+        </small>
+      @else
+        <small class="text-muted mt-2 d-block">
+          <i class="ti ti-info-circle me-1"></i>
+          Showing all active projects regardless of recent activity.
+        </small>
+      @endif
     </div>
     <div class="card-body">
       @if (session('success'))

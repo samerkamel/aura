@@ -583,17 +583,26 @@ class ProjectController extends Controller
     /**
      * Display the follow-ups dashboard.
      */
-    public function followups(ProjectFollowupService $followupService): View
+    public function followups(Request $request, ProjectFollowupService $followupService): View
     {
         if (!Gate::allows('manage-project-followups')) {
             abort(403, 'You do not have permission to access project follow-ups.');
         }
 
-        $dashboard = $followupService->getFollowupDashboard();
+        $activityDays = (int) $request->get('activity_days', 60);
+        $showAllActive = $request->boolean('show_all_active', false);
+
+        // Validate activity_days is in allowed list
+        if (!array_key_exists($activityDays, ProjectFollowupService::ACTIVITY_PERIODS)) {
+            $activityDays = 60;
+        }
+
+        $dashboard = $followupService->getFollowupDashboard($activityDays, $showAllActive);
 
         return view('project::projects.followups', [
             'projects' => $dashboard['projects'],
             'summary' => $dashboard['summary'],
+            'filters' => $dashboard['filters'],
         ]);
     }
 

@@ -18,26 +18,50 @@ class ProjectFollowupService
     protected const DUE_SOON_DAYS = 3;
 
     /**
+     * Activity period options for filtering.
+     */
+    public const ACTIVITY_PERIODS = [
+        30 => '30 days',
+        60 => '60 days',
+        90 => '90 days',
+        180 => '6 months',
+        365 => '1 year',
+    ];
+
+    /**
+     * Default activity period in days.
+     */
+    protected const DEFAULT_ACTIVITY_DAYS = 60;
+
+    /**
      * Get projects needing follow-up.
      * Returns projects that:
      * - Are active AND
-     * - Have recent activity (worklogs in past 30 days) OR
+     * - Have recent activity (worklogs in past X days) OR
      * - Have follow-up status as overdue or due_soon
+     *
+     * @param int $activityDays Number of days to look back for activity
+     * @param bool $showAllActive If true, show all active projects regardless of activity
      */
-    public function getProjectsNeedingFollowup(): Collection
+    public function getProjectsNeedingFollowup(int $activityDays = self::DEFAULT_ACTIVITY_DAYS, bool $showAllActive = false): Collection
     {
-        // Get project codes with recent worklogs
-        $activeProjectCodes = JiraWorklog::where('worklog_started', '>=', now()->subDays(30))
-            ->selectRaw('SUBSTRING_INDEX(issue_key, "-", 1) as project_code')
-            ->distinct()
-            ->pluck('project_code');
+        $query = Project::where('is_active', true)
+            ->with(['customer', 'latestFollowup']);
 
-        return Project::where('is_active', true)
-            ->where(function ($query) use ($activeProjectCodes) {
-                $query->whereIn('code', $activeProjectCodes)
+        if (!$showAllActive) {
+            // Get project codes with recent worklogs
+            $activeProjectCodes = JiraWorklog::where('worklog_started', '>=', now()->subDays($activityDays))
+                ->selectRaw('SUBSTRING_INDEX(issue_key, "-", 1) as project_code')
+                ->distinct()
+                ->pluck('project_code');
+
+            $query->where(function ($q) use ($activeProjectCodes) {
+                $q->whereIn('code', $activeProjectCodes)
                     ->orWhereIn('followup_status', ['overdue', 'due_soon']);
-            })
-            ->with(['customer', 'latestFollowup'])
+            });
+        }
+
+        return $query
             ->orderByRaw("FIELD(followup_status, 'overdue', 'due_soon', 'none', 'up_to_date')")
             ->orderBy('next_followup_date')
             ->get();
@@ -45,10 +69,13 @@ class ProjectFollowupService
 
     /**
      * Get all projects with their follow-up status for the follow-ups page.
+     *
+     * @param int $activityDays Number of days to look back for activity
+     * @param bool $showAllActive If true, show all active projects regardless of activity
      */
-    public function getFollowupDashboard(): array
+    public function getFollowupDashboard(int $activityDays = self::DEFAULT_ACTIVITY_DAYS, bool $showAllActive = false): array
     {
-        $projects = $this->getProjectsNeedingFollowup();
+        $projects = $this->getProjectsNeedingFollowup($activityDays, $showAllActive);
 
         $overdue = $projects->where('followup_status', 'overdue');
         $dueSoon = $projects->where('followup_status', 'due_soon');
@@ -63,6 +90,11 @@ class ProjectFollowupService
                 'up_to_date' => $upToDate->count(),
                 'no_followups' => $none->count(),
                 'total' => $projects->count(),
+            ],
+            'filters' => [
+                'activity_days' => $activityDays,
+                'show_all_active' => $showAllActive,
+                'activity_periods' => self::ACTIVITY_PERIODS,
             ],
         ];
     }
