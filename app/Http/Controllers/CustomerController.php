@@ -281,7 +281,7 @@ class CustomerController extends Controller
     public function apiIndex(Request $request): JsonResponse
     {
         try {
-            $query = Customer::active();
+            $query = Customer::active()->orderBy('name');
 
             if ($request->has('search') && $request->search) {
                 $search = $request->search;
@@ -290,9 +290,12 @@ class CustomerController extends Controller
                       ->orWhere('company_name', 'like', '%' . $search . '%')
                       ->orWhere('email', 'like', '%' . $search . '%');
                 });
+                // Limit results when searching to prevent too many matches
+                $query->limit(50);
             }
 
-            $customers = $query->limit(20)->get(['id', 'name', 'company_name', 'email', 'type']);
+            // No limit when loading all customers for dropdown
+            $customers = $query->get(['id', 'name', 'company_name', 'email', 'type']);
 
             return response()->json([
                 'success' => true,
