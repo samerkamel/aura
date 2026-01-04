@@ -305,7 +305,7 @@ class AccountingController extends Controller
             ->setStartingBalance($totalAccountBalance)
             ->generateProjections($startDate, $endDate, $selectedPeriod);
 
-        // Prepare projection data for tables
+        // Prepare projection data for tables with actual vs expected breakdown
         $projectionData = $projections->map(function($projection, $index) use ($selectedPeriod) {
             return [
                 'period' => $selectedPeriod === 'weekly'
@@ -314,16 +314,38 @@ class AccountingController extends Controller
                 'dates' => $selectedPeriod === 'monthly'
                     ? $projection['projection_date']->format('M 1 - ') . $projection['projection_date']->copy()->endOfMonth()->format('M j, Y')
                     : null,
+                'period_type' => $projection['period_type_label'] ?? 'unknown',
+
+                // Income breakdown
+                'actual_income' => $projection['actual_income'] ?? 0,
+                'expected_income' => $projection['expected_income'] ?? 0,
                 'income' => $projection['projected_income'],
+
+                // Contracts breakdown
+                'actual_contracts' => $projection['actual_contracts'] ?? 0,
+                'expected_contracts' => $projection['expected_contracts'] ?? 0,
+                'contracts' => $projection['total_contracts'] ?? 0,
+
+                // Expenses breakdown
+                'actual_expenses' => $projection['actual_expenses'] ?? 0,
+                'scheduled_expenses' => $projection['scheduled_expenses'] ?? 0,
                 'expenses' => $projection['projected_expenses'],
+
                 'netFlow' => $projection['net_flow'],
             ];
         });
 
-        // Calculate summary data
+        // Calculate summary data with actual vs expected breakdown
         $summaryData = [
             'totalIncome' => $projections->sum('projected_income'),
+            'actualIncome' => $projections->sum('actual_income'),
+            'expectedIncome' => $projections->sum('expected_income'),
             'totalExpenses' => $projections->sum('projected_expenses'),
+            'actualExpenses' => $projections->sum('actual_expenses'),
+            'scheduledExpenses' => $projections->sum('scheduled_expenses'),
+            'totalContracts' => $projections->sum('total_contracts'),
+            'actualContracts' => $projections->sum('actual_contracts'),
+            'expectedContracts' => $projections->sum('expected_contracts'),
             'netCashFlow' => $projections->sum('net_flow'),
             'avgMonthly' => $projections->avg('net_flow'),
         ];
@@ -335,12 +357,17 @@ class AccountingController extends Controller
                 return $deficit;
             });
 
-        // Chart data
+        // Chart data with actual vs expected breakdown
         $chartData = [
+            'actualIncome' => $projections->pluck('actual_income')->toArray(),
+            'expectedIncome' => $projections->pluck('expected_income')->toArray(),
             'income' => $projections->pluck('projected_income')->toArray(),
+            'actualExpenses' => $projections->pluck('actual_expenses')->toArray(),
+            'scheduledExpenses' => $projections->pluck('scheduled_expenses')->toArray(),
             'expenses' => $projections->pluck('projected_expenses')->toArray(),
             'netFlow' => $projections->pluck('net_flow')->toArray(),
             'periods' => $projectionData->pluck('period')->toArray(),
+            'periodTypes' => $projections->pluck('period_type_label')->toArray(),
         ];
 
         // Breakdowns

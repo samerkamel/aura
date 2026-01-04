@@ -92,6 +92,7 @@ class CashFlowProjectionService
 
     /**
      * Calculate projection for a single period.
+     * Now includes actual vs expected data based on period timing.
      */
     protected function calculateProjectionForPeriod(
         Carbon $startDate,
@@ -99,38 +100,113 @@ class CashFlowProjectionService
         string $periodType,
         float $previousBalance
     ): array {
-        // Get all active schedules for this period
-        $expenseSchedules = ExpenseSchedule::activeInPeriod($startDate, $endDate)->get();
-        $contractPayments = ContractPayment::with('contract')
-            ->where('status', 'pending')
-            ->where('due_date', '>=', $startDate)
-            ->where('due_date', '<=', $endDate)
-            ->get();
+        $now = now();
+        $periodStart = $startDate->copy()->startOfDay();
+        $periodEnd = $endDate->copy()->endOfDay();
 
-        // Calculate total income and expenses
-        $totalIncome = 0;
-        $totalExpenses = 0;
+        // Determine period type: past, current, or future
+        $isPast = $periodEnd->lt($now->copy()->startOfDay());
+        $isCurrent = $periodStart->lte($now) && $periodEnd->gte($now);
+        $isFuture = $periodStart->gt($now);
+
+        // Initialize data structures
+        $actualIncome = 0;
+        $expectedIncome = 0;
+        $actualExpenses = 0;
+        $scheduledExpenses = 0;
+        $actualContracts = 0;
+        $expectedContracts = 0;
         $incomeBreakdown = [];
         $expenseBreakdown = [];
 
-        // Calculate income from contract payments
-        foreach ($contractPayments as $payment) {
-            $totalIncome += $payment->amount;
+        // =====================
+        // INCOME CALCULATIONS
+        // =====================
 
-            $contractName = $payment->contract->client_name ?? 'Unknown';
-            $incomeBreakdown[$contractName] = ($incomeBreakdown[$contractName] ?? 0) + $payment->amount;
+        // Actual Income: Paid contract payments in this period
+        if ($isPast || $isCurrent) {
+            $paidPayments = ContractPayment::with('contract')
+                ->where('status', 'paid')
+                ->whereBetween('paid_date', [$periodStart, $periodEnd])
+                ->get();
+
+            foreach ($paidPayments as $payment) {
+                $actualIncome += $payment->paid_amount ?? $payment->amount;
+                $contractName = $payment->contract->client_name ?? 'Unknown';
+                $incomeBreakdown[$contractName] = ($incomeBreakdown[$contractName] ?? 0) + ($payment->paid_amount ?? $payment->amount);
+            }
         }
 
-        // Calculate expenses
-        foreach ($expenseSchedules as $schedule) {
-            $occurrences = $schedule->getOccurrencesInPeriod($startDate, $endDate);
-            $scheduleAmount = count($occurrences) * $schedule->amount;
-            $totalExpenses += $scheduleAmount;
+        // Expected Income: Pending payments with due dates in this period
+        if ($isCurrent || $isFuture) {
+            $pendingPayments = ContractPayment::with('contract')
+                ->where('status', 'pending')
+                ->whereBetween('due_date', [$periodStart, $periodEnd])
+                ->get();
 
-            $categoryName = $schedule->category->name ?? 'Uncategorized';
-            $expenseBreakdown[$categoryName] = ($expenseBreakdown[$categoryName] ?? 0) + $scheduleAmount;
+            foreach ($pendingPayments as $payment) {
+                $expectedIncome += $payment->amount;
+                $contractName = $payment->contract->client_name ?? 'Unknown';
+                $incomeBreakdown[$contractName . ' (Expected)'] = ($incomeBreakdown[$contractName . ' (Expected)'] ?? 0) + $payment->amount;
+            }
         }
 
+        // =====================
+        // CONTRACT CALCULATIONS
+        // =====================
+
+        // Actual Contracts: Approved/Active contracts with start_date in this period
+        if ($isPast || $isCurrent) {
+            $actualContracts = Contract::whereIn('status', ['approved', 'active'])
+                ->whereBetween('start_date', [$periodStart, $periodEnd])
+                ->sum('total_amount');
+        }
+
+        // Expected Contracts: Draft contracts with start_date in this period
+        if ($isCurrent || $isFuture) {
+            $expectedContracts = Contract::where('status', 'draft')
+                ->whereBetween('start_date', [$periodStart, $periodEnd])
+                ->sum('total_amount');
+        }
+
+        // =====================
+        // EXPENSE CALCULATIONS
+        // =====================
+
+        // Actual Expenses: Paid expenses in this period
+        if ($isPast || $isCurrent) {
+            $paidExpenses = ExpenseSchedule::where('payment_status', 'paid')
+                ->whereBetween('paid_date', [$periodStart, $periodEnd])
+                ->with('category')
+                ->get();
+
+            foreach ($paidExpenses as $expense) {
+                $actualExpenses += $expense->paid_amount ?? $expense->amount;
+                $categoryName = $expense->category->name ?? 'Uncategorized';
+                $expenseBreakdown[$categoryName] = ($expenseBreakdown[$categoryName] ?? 0) + ($expense->paid_amount ?? $expense->amount);
+            }
+        }
+
+        // Scheduled Expenses: Active recurring schedules for future/current periods
+        if ($isCurrent || $isFuture) {
+            $activeSchedules = ExpenseSchedule::active()->with('category')->get();
+
+            foreach ($activeSchedules as $schedule) {
+                $occurrences = $schedule->getOccurrencesInPeriod($periodStart, $periodEnd);
+                $scheduleAmount = count($occurrences) * $schedule->amount;
+
+                if ($scheduleAmount > 0) {
+                    $scheduledExpenses += $scheduleAmount;
+                    $categoryName = ($schedule->category->name ?? 'Uncategorized') . ' (Scheduled)';
+                    $expenseBreakdown[$categoryName] = ($expenseBreakdown[$categoryName] ?? 0) + $scheduleAmount;
+                }
+            }
+        }
+
+        // Calculate totals
+        $totalIncome = $actualIncome + $expectedIncome;
+        $totalExpenses = $actualExpenses + $scheduledExpenses;
+        $totalContracts = $actualContracts + $expectedContracts;
         $netFlow = $totalIncome - $totalExpenses;
         $runningBalance = $previousBalance + $netFlow;
         $hasDeficit = $netFlow < 0;
@@ -139,8 +215,24 @@ class CashFlowProjectionService
             'projection_date' => $periodType === 'weekly'
                 ? $startDate->copy()->startOfWeek()
                 : ($periodType === 'monthly' ? $startDate->copy()->startOfMonth() : $startDate->copy()),
+            'period_type_label' => $isPast ? 'past' : ($isCurrent ? 'current' : 'future'),
+
+            // Income breakdown
+            'actual_income' => $actualIncome,
+            'expected_income' => $expectedIncome,
             'projected_income' => $totalIncome,
+
+            // Contracts breakdown
+            'actual_contracts' => $actualContracts,
+            'expected_contracts' => $expectedContracts,
+            'total_contracts' => $totalContracts,
+
+            // Expenses breakdown
+            'actual_expenses' => $actualExpenses,
+            'scheduled_expenses' => $scheduledExpenses,
             'projected_expenses' => $totalExpenses,
+
+            // Totals
             'net_flow' => $netFlow,
             'running_balance' => $runningBalance,
             'has_deficit' => $hasDeficit,

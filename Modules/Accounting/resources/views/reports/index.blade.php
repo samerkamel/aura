@@ -126,8 +126,12 @@
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h5 class="card-title text-nowrap mb-2">Total Income</h5>
-                                            <h4 class="text-success mb-2">{{ number_format($summaryData['totalIncome'], 2) }} EGP</h4>
-                                            <small class="text-muted">Over {{ $duration }} periods</small>
+                                            <h4 class="text-success mb-1">{{ number_format($summaryData['totalIncome'], 2) }} EGP</h4>
+                                            <div class="small">
+                                                <span class="text-success"><i class="ti ti-check"></i> Actual: {{ number_format($summaryData['actualIncome'] ?? 0, 2) }}</span>
+                                                <br>
+                                                <span class="text-warning"><i class="ti ti-clock"></i> Expected: {{ number_format($summaryData['expectedIncome'] ?? 0, 2) }}</span>
+                                            </div>
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded bg-success">
@@ -145,8 +149,12 @@
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h5 class="card-title text-nowrap mb-2">Total Expenses</h5>
-                                            <h4 class="text-danger mb-2">{{ number_format($summaryData['totalExpenses'], 2) }} EGP</h4>
-                                            <small class="text-muted">Over {{ $duration }} periods</small>
+                                            <h4 class="text-danger mb-1">{{ number_format($summaryData['totalExpenses'], 2) }} EGP</h4>
+                                            <div class="small">
+                                                <span class="text-danger"><i class="ti ti-check"></i> Actual: {{ number_format($summaryData['actualExpenses'] ?? 0, 2) }}</span>
+                                                <br>
+                                                <span class="text-warning"><i class="ti ti-clock"></i> Scheduled: {{ number_format($summaryData['scheduledExpenses'] ?? 0, 2) }}</span>
+                                            </div>
                                         </div>
                                         <div class="avatar">
                                             <span class="avatar-initial rounded bg-danger">
@@ -163,15 +171,17 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="card-title text-nowrap mb-2">Net Cash Flow</h5>
-                                            <h4 class="mb-2 {{ $summaryData['netCashFlow'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                                {{ number_format($summaryData['netCashFlow'], 2) }} EGP
-                                            </h4>
-                                            <small class="text-muted">Total projected</small>
+                                            <h5 class="card-title text-nowrap mb-2">Total Contracts</h5>
+                                            <h4 class="text-primary mb-1">{{ number_format($summaryData['totalContracts'] ?? 0, 2) }} EGP</h4>
+                                            <div class="small">
+                                                <span class="text-primary"><i class="ti ti-check"></i> Actual: {{ number_format($summaryData['actualContracts'] ?? 0, 2) }}</span>
+                                                <br>
+                                                <span class="text-warning"><i class="ti ti-clock"></i> Expected: {{ number_format($summaryData['expectedContracts'] ?? 0, 2) }}</span>
+                                            </div>
                                         </div>
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded {{ $summaryData['netCashFlow'] >= 0 ? 'bg-primary' : 'bg-warning' }}">
-                                                <i class="ti ti-wallet ti-sm"></i>
+                                            <span class="avatar-initial rounded bg-primary">
+                                                <i class="ti ti-file-invoice ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -184,15 +194,17 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="card-title text-nowrap mb-2">Avg. Monthly</h5>
-                                            <h4 class="mb-2 {{ $summaryData['avgMonthly'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                                {{ number_format($summaryData['avgMonthly'], 2) }} EGP
+                                            <h5 class="card-title text-nowrap mb-2">Net Cash Flow</h5>
+                                            <h4 class="mb-1 {{ $summaryData['netCashFlow'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                                {{ number_format($summaryData['netCashFlow'], 2) }} EGP
                                             </h4>
-                                            <small class="text-muted">Average per period</small>
+                                            <div class="small">
+                                                <span class="text-muted">Avg: {{ number_format($summaryData['avgMonthly'], 2) }} / period</span>
+                                            </div>
                                         </div>
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded bg-info">
-                                                <i class="ti ti-chart-bar ti-sm"></i>
+                                            <span class="avatar-initial rounded {{ $summaryData['netCashFlow'] >= 0 ? 'bg-success' : 'bg-warning' }}">
+                                                <i class="ti ti-wallet ti-sm"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -241,58 +253,116 @@
                 <!-- Projections Tab -->
                 <div class="tab-pane fade" id="projections" role="tabpanel">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">Detailed Cash Flow Projections</h5>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-light text-dark"><i class="ti ti-circle-filled text-muted me-1" style="font-size: 8px;"></i> Past</span>
+                                <span class="badge bg-light text-primary"><i class="ti ti-circle-filled text-primary me-1" style="font-size: 8px;"></i> Current</span>
+                                <span class="badge bg-light text-secondary"><i class="ti ti-circle-filled text-secondary me-1" style="font-size: 8px;"></i> Future</span>
+                            </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr>
-                                        <th>Period</th>
-                                        <th class="text-end">Income</th>
-                                        <th class="text-end">Expenses</th>
-                                        <th class="text-end">Net Flow</th>
-                                        <th class="text-end">Running Balance</th>
-                                        <th class="text-center">Status</th>
+                                    <tr class="table-light">
+                                        <th rowspan="2" class="align-middle">Period</th>
+                                        <th colspan="3" class="text-center border-start bg-success-subtle">Income</th>
+                                        <th colspan="3" class="text-center border-start bg-primary-subtle">Contracts</th>
+                                        <th colspan="3" class="text-center border-start bg-danger-subtle">Expenses</th>
+                                        <th rowspan="2" class="text-end align-middle border-start">Net Flow</th>
+                                        <th rowspan="2" class="text-end align-middle">Balance</th>
+                                    </tr>
+                                    <tr class="table-light small">
+                                        <th class="text-end border-start">Actual</th>
+                                        <th class="text-end">Expected</th>
+                                        <th class="text-end">Total</th>
+                                        <th class="text-end border-start">Actual</th>
+                                        <th class="text-end">Expected</th>
+                                        <th class="text-end">Total</th>
+                                        <th class="text-end border-start">Actual</th>
+                                        <th class="text-end">Scheduled</th>
+                                        <th class="text-end">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php $runningBalance = 0; @endphp
                                     @foreach($projectionData as $index => $period)
-                                        @php $runningBalance += $period['netFlow']; @endphp
-                                        <tr class="{{ $period['netFlow'] < 0 ? 'table-warning' : '' }}">
+                                        @php
+                                            $runningBalance += $period['netFlow'];
+                                            $periodType = $period['period_type'] ?? 'unknown';
+                                            $rowClass = $periodType === 'current' ? 'table-info' : ($periodType === 'past' ? '' : 'table-light');
+                                        @endphp
+                                        <tr class="{{ $rowClass }} {{ $period['netFlow'] < 0 ? 'border-start border-warning border-3' : '' }}">
                                             <td>
                                                 <strong>{{ $period['period'] }}</strong>
+                                                @if($periodType === 'current')
+                                                    <span class="badge bg-primary ms-1">Current</span>
+                                                @elseif($periodType === 'past')
+                                                    <span class="badge bg-secondary ms-1">Past</span>
+                                                @endif
                                                 <br><small class="text-muted">{{ $period['dates'] ?? '' }}</small>
                                             </td>
-                                            <td class="text-end text-success">
-                                                <strong>{{ number_format($period['income'], 2) }} EGP</strong>
+                                            <!-- Income columns -->
+                                            <td class="text-end border-start {{ $period['actual_income'] > 0 ? 'text-success' : 'text-muted' }}">
+                                                {{ $period['actual_income'] > 0 ? number_format($period['actual_income'], 0) : '-' }}
                                             </td>
-                                            <td class="text-end text-danger">
-                                                <strong>{{ number_format($period['expenses'], 2) }} EGP</strong>
+                                            <td class="text-end {{ $period['expected_income'] > 0 ? 'text-warning' : 'text-muted' }}">
+                                                {{ $period['expected_income'] > 0 ? number_format($period['expected_income'], 0) : '-' }}
                                             </td>
-                                            <td class="text-end">
+                                            <td class="text-end text-success fw-bold">
+                                                {{ number_format($period['income'], 0) }}
+                                            </td>
+                                            <!-- Contracts columns -->
+                                            <td class="text-end border-start {{ $period['actual_contracts'] > 0 ? 'text-primary' : 'text-muted' }}">
+                                                {{ $period['actual_contracts'] > 0 ? number_format($period['actual_contracts'], 0) : '-' }}
+                                            </td>
+                                            <td class="text-end {{ $period['expected_contracts'] > 0 ? 'text-warning' : 'text-muted' }}">
+                                                {{ $period['expected_contracts'] > 0 ? number_format($period['expected_contracts'], 0) : '-' }}
+                                            </td>
+                                            <td class="text-end text-primary fw-bold">
+                                                {{ number_format($period['contracts'] ?? 0, 0) }}
+                                            </td>
+                                            <!-- Expenses columns -->
+                                            <td class="text-end border-start {{ $period['actual_expenses'] > 0 ? 'text-danger' : 'text-muted' }}">
+                                                {{ $period['actual_expenses'] > 0 ? number_format($period['actual_expenses'], 0) : '-' }}
+                                            </td>
+                                            <td class="text-end {{ $period['scheduled_expenses'] > 0 ? 'text-warning' : 'text-muted' }}">
+                                                {{ $period['scheduled_expenses'] > 0 ? number_format($period['scheduled_expenses'], 0) : '-' }}
+                                            </td>
+                                            <td class="text-end text-danger fw-bold">
+                                                {{ number_format($period['expenses'], 0) }}
+                                            </td>
+                                            <!-- Net Flow -->
+                                            <td class="text-end border-start">
                                                 <strong class="{{ $period['netFlow'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                                    {{ number_format($period['netFlow'], 2) }} EGP
+                                                    {{ number_format($period['netFlow'], 0) }}
                                                 </strong>
                                             </td>
+                                            <!-- Running Balance -->
                                             <td class="text-end">
                                                 <strong class="{{ $runningBalance >= 0 ? 'text-primary' : 'text-danger' }}">
-                                                    {{ number_format($runningBalance, 2) }} EGP
+                                                    {{ number_format($runningBalance, 0) }}
                                                 </strong>
-                                            </td>
-                                            <td class="text-center">
-                                                @if($period['netFlow'] < 0)
-                                                    <span class="badge bg-warning">Deficit</span>
-                                                @elseif($runningBalance < 0)
-                                                    <span class="badge bg-danger">Negative</span>
-                                                @else
-                                                    <span class="badge bg-success">Positive</span>
-                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot class="table-dark">
+                                    <tr>
+                                        <th>TOTALS</th>
+                                        <th class="text-end">{{ number_format($summaryData['actualIncome'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['expectedIncome'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['totalIncome'], 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['actualContracts'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['expectedContracts'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['totalContracts'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['actualExpenses'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['scheduledExpenses'] ?? 0, 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['totalExpenses'], 0) }}</th>
+                                        <th class="text-end">{{ number_format($summaryData['netCashFlow'], 0) }}</th>
+                                        <th class="text-end">-</th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -454,27 +524,41 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Main Cash Flow Chart
+    // Main Cash Flow Chart with Actual vs Expected breakdown
     const mainChartOptions = {
         series: [{
-            name: 'Income',
+            name: 'Actual Income',
             type: 'column',
-            data: @json($chartData['income'] ?? [])
+            data: @json($chartData['actualIncome'] ?? [])
         }, {
-            name: 'Expenses',
+            name: 'Expected Income',
             type: 'column',
-            data: @json($chartData['expenses'] ?? [])
+            data: @json($chartData['expectedIncome'] ?? [])
+        }, {
+            name: 'Actual Expenses',
+            type: 'column',
+            data: @json($chartData['actualExpenses'] ?? []).map(v => -v)
+        }, {
+            name: 'Scheduled Expenses',
+            type: 'column',
+            data: @json($chartData['scheduledExpenses'] ?? []).map(v => -v)
         }, {
             name: 'Net Flow',
             type: 'line',
             data: @json($chartData['netFlow'] ?? [])
         }],
         chart: {
-            height: 400,
+            height: 450,
             type: 'line',
-            toolbar: { show: false }
+            stacked: false,
+            toolbar: { show: true }
         },
-        colors: ['#28c76f', '#ea5455', '#00cfe8'],
+        plotOptions: {
+            bar: {
+                columnWidth: '60%'
+            }
+        },
+        colors: ['#28c76f', '#82e0aa', '#ea5455', '#f5b7b1', '#7367f0'],
         xaxis: {
             categories: @json($chartData['periods'] ?? [])
         },
@@ -486,7 +570,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         stroke: {
-            width: [0, 0, 3]
+            width: [0, 0, 0, 0, 3]
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'center'
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            y: {
+                formatter: function(val) {
+                    return Math.abs(val).toLocaleString() + ' EGP';
+                }
+            }
         }
     };
 
