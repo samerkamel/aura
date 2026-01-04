@@ -2,8 +2,17 @@
 
 @section('title', 'Cash Flow Dashboard')
 
-@section('page-script')
-<script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+@section('vendor-style')
+@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
+<script>
+    if (typeof ApexCharts === 'undefined') {
+        document.write('<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"><\/script>');
+    }
+</script>
 @endsection
 
 @section('content')
