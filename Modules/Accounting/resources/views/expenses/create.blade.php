@@ -385,30 +385,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const paidAmountField = document.getElementById('paid_amount');
 
     // Category and subcategory data
-    const categoriesByType = @json($expenseTypes->mapWithKeys(function($type) {
-        return [$type->id => $type->activeCategories->map(function($category) {
-            return ['id' => $category->id, 'name' => $category->name, 'color' => $category->color];
-        })];
-    }));
+    @php
+        $categoriesByTypeData = $expenseTypes->mapWithKeys(function($type) {
+            return [$type->id => $type->activeCategories->map(function($category) {
+                return ['id' => $category->id, 'name' => $category->name, 'color' => $category->color];
+            })];
+        });
 
-    // Build subcategories with all nested levels using allDescendants
-    const subcategoriesByCategory = @json($categories->mapWithKeys(function($category) {
-        // Get all descendants recursively with depth indication
-        $allSubs = collect();
-        $addDescendants = function($parent, $depth = 0) use (&$addDescendants, &$allSubs) {
-            foreach ($parent->subcategories()->active()->orderBy('sort_order')->orderBy('name')->get() as $sub) {
-                $prefix = str_repeat('── ', $depth);
-                $allSubs->push([
-                    'id' => $sub->id,
-                    'name' => $prefix . $sub->name,
-                    'depth' => $depth
-                ]);
-                $addDescendants($sub, $depth + 1);
-            }
-        };
-        $addDescendants($category);
-        return [$category->id => $allSubs];
-    }));
+        // Build subcategories with all nested levels
+        $subcategoriesByCategoryData = [];
+        foreach ($categories as $category) {
+            $allSubs = collect();
+            $addDescendants = function($parent, $depth = 0) use (&$addDescendants, &$allSubs) {
+                foreach ($parent->subcategories()->active()->orderBy('sort_order')->orderBy('name')->get() as $sub) {
+                    $prefix = str_repeat('── ', $depth);
+                    $allSubs->push([
+                        'id' => $sub->id,
+                        'name' => $prefix . $sub->name,
+                        'depth' => $depth
+                    ]);
+                    $addDescendants($sub, $depth + 1);
+                }
+            };
+            $addDescendants($category);
+            $subcategoriesByCategoryData[$category->id] = $allSubs;
+        }
+    @endphp
+    const categoriesByType = @json($categoriesByTypeData);
+    const subcategoriesByCategory = @json($subcategoriesByCategoryData);
 
     // Handle expense type change
     function toggleExpenseType() {
