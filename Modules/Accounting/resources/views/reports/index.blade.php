@@ -60,24 +60,21 @@
             <div class="card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-3">
+                        <label class="form-label">Fiscal Year</label>
+                        <select name="fiscal_year" class="form-select" id="fiscalYearSelect">
+                            @foreach($availableFiscalYears as $fy)
+                                <option value="{{ $fy['value'] }}" {{ $selectedFiscalYear === $fy['value'] ? 'selected' : '' }}>
+                                    {{ $fy['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Report Period</label>
                         <select name="period" class="form-select" id="periodSelect">
                             <option value="monthly" {{ $selectedPeriod === 'monthly' ? 'selected' : '' }}>Monthly</option>
                             <option value="weekly" {{ $selectedPeriod === 'weekly' ? 'selected' : '' }}>Weekly</option>
                             <option value="quarterly" {{ $selectedPeriod === 'quarterly' ? 'selected' : '' }}>Quarterly</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" value="{{ $startDate->format('Y-m-d') }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Duration</label>
-                        <select name="duration" class="form-select">
-                            <option value="6" {{ $duration == 6 ? 'selected' : '' }}>6 periods</option>
-                            <option value="12" {{ $duration == 12 ? 'selected' : '' }}>12 periods</option>
-                            <option value="18" {{ $duration == 18 ? 'selected' : '' }}>18 periods</option>
-                            <option value="24" {{ $duration == 24 ? 'selected' : '' }}>24 periods</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -88,12 +85,16 @@
                             <option value="deficit" {{ $reportType === 'deficit' ? 'selected' : '' }}>Deficit Analysis</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
+                    <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="ti ti-refresh me-1"></i>Generate
+                            <i class="ti ti-refresh me-1"></i>Generate Report
                         </button>
                     </div>
                 </form>
+                <div class="mt-2 text-muted small">
+                    <i class="ti ti-calendar me-1"></i>
+                    Showing data from {{ $startDate->format('M d, Y') }} to {{ $endDate->format('M d, Y') }}
+                </div>
             </div>
         </div>
 

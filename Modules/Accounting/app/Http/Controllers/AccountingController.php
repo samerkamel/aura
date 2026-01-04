@@ -281,21 +281,34 @@ class AccountingController extends Controller
             return $this->exportReport($request);
         }
 
-        // Parse parameters
+        // Get company settings for fiscal year configuration
+        $companySettings = CompanySetting::getSettings();
+
+        // Parse parameters - Limit to fiscal year only
         $selectedPeriod = $request->input('period', 'monthly');
-        $startDate = $request->input('start_date')
-            ? Carbon::parse($request->input('start_date'))
-            : now()->startOfYear();
-        $duration = (int) $request->input('duration', 12);
         $reportType = $request->input('type', 'projection');
 
-        // Calculate end date based on duration
-        $endDate = match($selectedPeriod) {
-            'weekly' => $startDate->copy()->addWeeks($duration),
-            'monthly' => $startDate->copy()->addMonths($duration),
-            'quarterly' => $startDate->copy()->addMonths($duration * 3),
-            default => $startDate->copy()->addMonths($duration),
-        };
+        // Get available fiscal years (current + past 3 years)
+        $currentFiscalYearStart = $companySettings->getFiscalYearStart();
+        $availableFiscalYears = [];
+        for ($i = 0; $i <= 3; $i++) {
+            $fyStart = $currentFiscalYearStart->copy()->subYears($i);
+            $fyEnd = $fyStart->copy()->addYear()->subDay();
+            $availableFiscalYears[] = [
+                'value' => $fyStart->format('Y-m-d'),
+                'label' => 'FY ' . $fyStart->format('Y') . '-' . $fyEnd->format('Y'),
+                'start' => $fyStart,
+                'end' => $fyEnd,
+            ];
+        }
+
+        // Get selected fiscal year (default to current)
+        $selectedFiscalYear = $request->input('fiscal_year', $currentFiscalYearStart->format('Y-m-d'));
+        $selectedFY = collect($availableFiscalYears)->firstWhere('value', $selectedFiscalYear);
+
+        // Set date range to fiscal year boundaries
+        $startDate = $selectedFY ? Carbon::parse($selectedFY['value']) : $currentFiscalYearStart->copy();
+        $endDate = $selectedFY ? Carbon::parse($selectedFY['end']) : $currentFiscalYearStart->copy()->addYear()->subDay();
 
         // Get starting balance from accounts
         $totalAccountBalance = Account::active()->sum('current_balance');
@@ -423,9 +436,11 @@ class AccountingController extends Controller
 
         return view('accounting::reports.index', compact(
             'selectedPeriod',
-            'startDate',
-            'duration',
             'reportType',
+            'availableFiscalYears',
+            'selectedFiscalYear',
+            'startDate',
+            'endDate',
             'projectionData',
             'summaryData',
             'deficitPeriods',

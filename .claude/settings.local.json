@@ -23,7 +23,8 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -10 /var/log/apache2/error.log 2>/dev/null || tail -10 /var/log/nginx/error.log 2>/dev/null || echo ''Checking alternative log locations...''\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"grep ''accounting/reports'' /var/www/vhosts/aura.llc/logs/access_ssl.log 2>/dev/null | tail -5\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"tail -20 /var/www/vhosts/aura.llc/logs/error_log 2>/dev/null\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list --path=accounting/reports 2>&1\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list --path=accounting/reports 2>&1\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n$schedules = \\Modules\\Accounting\\Models\\ExpenseSchedule::active()->get();\necho \"\"Active schedules count: \"\" . $schedules->count() . PHP_EOL;\nforeach ($schedules as $s) {\n    echo \"\"ID: \"\" . $s->id . \"\" | Name: \"\" . $s->name . \"\" | Start: \"\" . $s->start_date . \"\" | Freq: \"\" . $s->frequency_type . \"\":\"\" . $s->frequency_value . PHP_EOL;\n}\n''\")"
     ],
     "deny": [],
     "ask": []
