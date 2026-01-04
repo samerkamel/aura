@@ -8,6 +8,12 @@
 
 @section('vendor-script')
 @vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
+<!-- Fallback CDN if Vite asset fails -->
+<script>
+    if (typeof ApexCharts === 'undefined') {
+        document.write('<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"><\/script>');
+    }
+</script>
 @endsection
 
 @section('content')
