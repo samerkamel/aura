@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan cache:clear && php artisan view:clear && php artisan route:clear\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan cache:clear && php artisan view:clear && php artisan route:clear\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u aura_erp -paura_erp aura_erp -e \"\"SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = ''aura_erp'' AND TABLE_NAME = ''contract_product'' AND CONSTRAINT_TYPE = ''FOREIGN KEY'';\"\"\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && grep -E ''DB_(DATABASE|USERNAME|PASSWORD)'' .env\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u aura_user -paura_password aura_erp -e \"\"SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = ''aura_erp'' AND TABLE_NAME = ''contract_product'' AND CONSTRAINT_TYPE = ''FOREIGN KEY'';\"\"\")"
     ],
     "deny": [],
     "ask": []

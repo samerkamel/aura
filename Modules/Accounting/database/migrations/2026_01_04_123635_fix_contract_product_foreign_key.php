@@ -15,28 +15,11 @@ return new class extends Migration
         // First, clear any existing data that might have invalid references
         DB::table('contract_product')->truncate();
 
-        // Drop the old foreign key that references departments
-        Schema::table('contract_product', function (Blueprint $table) {
-            // Drop the foreign key constraint (try both possible names)
-            try {
-                $table->dropForeign(['product_id']);
-            } catch (\Exception $e) {
-                // Try alternative constraint name
-                try {
-                    $table->dropForeign('contract_department_department_id_foreign');
-                } catch (\Exception $e2) {
-                    // Constraint might not exist
-                }
-            }
-        });
+        // Drop the old foreign key that references departments using raw SQL
+        DB::statement('ALTER TABLE `contract_product` DROP FOREIGN KEY `contract_department_department_id_foreign`');
 
         // Add the correct foreign key that references products
-        Schema::table('contract_product', function (Blueprint $table) {
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('products')
-                ->onDelete('cascade');
-        });
+        DB::statement('ALTER TABLE `contract_product` ADD CONSTRAINT `contract_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE');
     }
 
     /**
@@ -44,15 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contract_product', function (Blueprint $table) {
-            $table->dropForeign(['product_id']);
-        });
-
-        Schema::table('contract_product', function (Blueprint $table) {
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('departments')
-                ->onDelete('cascade');
-        });
+        DB::statement('ALTER TABLE `contract_product` DROP FOREIGN KEY `contract_product_product_id_foreign`');
+        DB::statement('ALTER TABLE `contract_product` ADD CONSTRAINT `contract_department_department_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `departments` (`id`) ON DELETE CASCADE');
     }
 };
