@@ -201,12 +201,16 @@
                                 <div class="card-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                            <label for="start_date" class="form-label">
+                                                Start Date <span class="text-danger">*</span>
+                                                <i class="ti ti-info-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="This date determines which month this contract appears in on the Income Sheet"></i>
+                                            </label>
                                             <input type="date" class="form-control @error('start_date') is-invalid @enderror"
-                                                   id="start_date" name="start_date" value="{{ old('start_date') }}">
+                                                   id="start_date" name="start_date" value="{{ old('start_date', now()->format('Y-m-d')) }}">
                                             @error('start_date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
+                                            <small class="text-muted">Used for Income Sheet monthly grouping</small>
                                         </div>
 
                                         <div class="col-md-6">

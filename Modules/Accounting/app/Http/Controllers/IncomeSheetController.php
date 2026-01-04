@@ -109,16 +109,16 @@ class IncomeSheetController extends Controller
             $monthEnd = now()->setYear($currentYear)->setMonth($month)->endOfMonth();
             $monthEndDate = now()->setYear($currentYear)->setMonth($month)->endOfMonth();
 
-            // Contracts (Approved/Active contracts created in this month)
+            // Contracts (Approved/Active contracts with start_date in this month)
             $months[$month]['contracts'] = $contracts->clone()
                 ->whereIn('status', ['approved', 'active'])
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->whereBetween('start_date', [$monthStart, $monthEnd])
                 ->sum('total_amount');
 
-            // Expected Contracts (Draft contracts created in this month)
+            // Expected Contracts (Draft contracts with start_date in this month)
             $months[$month]['expected_contracts'] = $contracts->clone()
                 ->where('status', 'draft')
-                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->whereBetween('start_date', [$monthStart, $monthEnd])
                 ->sum('total_amount');
 
             // Income (Paid contract payments in this month)
@@ -156,7 +156,7 @@ class IncomeSheetController extends Controller
             // Balance (Outstanding balance = approved contracts - paid income up to this month)
             $totalApprovedContracts = $contracts->clone()
                 ->whereIn('status', ['approved', 'active'])
-                ->where('created_at', '<=', $monthEndDate)
+                ->where('start_date', '<=', $monthEndDate)
                 ->sum('total_amount');
 
             $totalPaidIncome = $contracts->clone()

@@ -52,7 +52,17 @@
                                     @endif
                                 </td>
                             </tr>
+                            <tr>
+                                <td class="text-muted">Created:</td>
+                                <td>
+                                    <small class="text-muted">{{ $contract->created_at->format('M d, Y \a\t h:i A') }}</small>
+                                </td>
+                            </tr>
                         </table>
+                        <div class="alert alert-info py-2 mt-2">
+                            <i class="ti ti-info-circle me-1"></i>
+                            <small><strong>Note:</strong> The <strong>Start Date</strong> determines which month this contract appears in on the Income Sheet. Edit the contract to change the income recognition month.</small>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <h6>Payment Summary</h6>
