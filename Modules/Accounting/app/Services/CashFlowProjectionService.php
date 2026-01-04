@@ -257,32 +257,37 @@ class CashFlowProjectionService
         $periods = [];
         $current = $startDate->copy();
 
-        while ($current->lte($endDate)) {
+        // Safety counter to prevent infinite loops
+        $maxPeriods = 100;
+        $count = 0;
+
+        while ($current->lte($endDate) && $count < $maxPeriods) {
+            $count++;
             $periodStart = $current->copy();
 
-            $periodEnd = match($periodType) {
+            // Calculate the natural end of the period
+            $naturalPeriodEnd = match($periodType) {
                 'daily' => $current->copy()->endOfDay(),
                 'weekly' => $current->copy()->endOfWeek(),
                 'monthly' => $current->copy()->endOfMonth(),
                 default => $current->copy()->endOfMonth(),
             };
 
-            // Don't exceed the end date
-            if ($periodEnd->gt($endDate)) {
-                $periodEnd = $endDate->copy();
-            }
+            // Limit to end date if period extends beyond
+            $periodEnd = $naturalPeriodEnd->gt($endDate) ? $endDate->copy() : $naturalPeriodEnd;
 
             $periods[] = [
                 'start' => $periodStart,
                 'end' => $periodEnd,
             ];
 
-            // Move to next period
+            // Move to next period using the NATURAL period end (not the limited one)
+            // This prevents infinite loops when end date is mid-period
             $current = match($periodType) {
-                'daily' => $periodEnd->copy()->addDay()->startOfDay(),
-                'weekly' => $periodEnd->copy()->addDay()->startOfWeek(),
-                'monthly' => $periodEnd->copy()->addDay()->startOfMonth(),
-                default => $periodEnd->copy()->addDay()->startOfMonth(),
+                'daily' => $naturalPeriodEnd->copy()->addDay()->startOfDay(),
+                'weekly' => $naturalPeriodEnd->copy()->addDay()->startOfWeek(),
+                'monthly' => $naturalPeriodEnd->copy()->addDay()->startOfMonth(),
+                default => $naturalPeriodEnd->copy()->addDay()->startOfMonth(),
             };
         }
 
