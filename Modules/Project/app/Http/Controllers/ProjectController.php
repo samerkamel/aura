@@ -99,7 +99,7 @@ class ProjectController extends Controller
         }
 
         // Generate list of available financial years (from earliest project to current year + 1)
-        $earliestYear = Project::min(\DB::raw('YEAR(created_at)')) ?? now()->year;
+        $earliestYear = Project::min(DB::raw('YEAR(created_at)')) ?? now()->year;
         $financialYears = range(now()->year + 1, $earliestYear);
 
         // Get portfolio stats using optimized aggregation with financial year filter
