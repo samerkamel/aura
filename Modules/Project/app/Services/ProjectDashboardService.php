@@ -637,9 +637,8 @@ class ProjectDashboardService
             ->selectRaw('COALESCE(SUM(amount_received), 0) as total_revenue')
             ->first();
 
-        // Get total hours and labor costs from worklogs
+        // Get total hours from worklogs
         $totalHours = 0;
-        $laborCosts = 0;
         if ($projectCodes->isNotEmpty()) {
             $worklogStats = DB::table('jira_worklogs')
                 ->where(function ($q) use ($projectCodes) {
@@ -647,19 +646,33 @@ class ProjectDashboardService
                         $q->orWhere('issue_key', 'LIKE', $code . '-%');
                     }
                 })
-                ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours, COALESCE(SUM(total_cost), 0) as labor_costs')
+                ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours')
                 ->first();
 
             $totalHours = $worklogStats->total_hours ?? 0;
-            $laborCosts = $worklogStats->labor_costs ?? 0;
         }
 
-        // Get direct costs
+        // Calculate labor costs using ProjectFinancialService for accuracy
+        // This includes the proper formula: (Salary/BillableHours) * WorkedHours * Multiplier + PM Overhead
+        $financialService = app(ProjectFinancialService::class);
+        $totalLaborCosts = 0;
+        $totalPmOverhead = 0;
+
+        // Get projects for labor cost calculation
+        $projects = (clone $baseQuery)->get();
+        foreach ($projects as $project) {
+            $laborCosts = $financialService->calculateLaborCostsFromWorklogs($project);
+            $totalLaborCosts += $laborCosts['subtotal'];
+            $totalPmOverhead += $laborCosts['pm_overhead'];
+        }
+
+        // Get direct costs (non-labor) from project_costs table
         $directCosts = DB::table('project_costs')
             ->whereIn('project_id', $projectIds)
+            ->where('cost_type', '!=', 'labor') // Exclude labor since we calculate it dynamically
             ->sum('amount') ?? 0;
 
-        $totalCosts = $laborCosts + $directCosts;
+        $totalCosts = $totalLaborCosts + $totalPmOverhead + $directCosts;
         $totalRevenue = $revenueStats->total_revenue ?? 0;
         $totalProfit = $totalRevenue - $totalCosts;
         $overallMargin = $totalRevenue > 0 ? round(($totalProfit / $totalRevenue) * 100, 1) : 0;
@@ -675,6 +688,9 @@ class ProjectDashboardService
             ],
             'total_revenue' => round($totalRevenue, 2),
             'total_costs' => round($totalCosts, 2),
+            'labor_costs' => round($totalLaborCosts, 2),
+            'pm_overhead' => round($totalPmOverhead, 2),
+            'direct_costs' => round($directCosts, 2),
             'total_profit' => round($totalProfit, 2),
             'overall_margin' => $overallMargin,
             'total_hours' => round($totalHours, 1),
