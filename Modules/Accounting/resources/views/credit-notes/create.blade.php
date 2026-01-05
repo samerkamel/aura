@@ -106,6 +106,12 @@
                         <div class="card-body">
                             <div class="row g-3">
                                 <div class="col-md-4">
+                                    <label for="credit_note_number_display" class="form-label">Credit Note #</label>
+                                    <input type="text" class="form-control bg-light" id="credit_note_number_display" readonly>
+                                    <small class="text-muted">Auto-generated based on date</small>
+                                </div>
+
+                                <div class="col-md-4">
                                     <label for="credit_note_date" class="form-label">Credit Note Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control @error('credit_note_date') is-invalid @enderror"
                                            id="credit_note_date" name="credit_note_date"
@@ -453,6 +459,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('tax_rate').addEventListener('change', function() {
         document.getElementById('taxRateDisplay').textContent = this.value;
         calculateTotals();
+    });
+
+    // Credit note number auto-generation based on date
+    const creditNoteDateField = document.getElementById('credit_note_date');
+    const creditNoteNumberField = document.getElementById('credit_note_number_display');
+
+    function loadNextCreditNoteNumber(creditNoteDate = null) {
+        let url = '{{ route("accounting.credit-notes.next-number") }}';
+        if (creditNoteDate) {
+            url += '?credit_note_date=' + encodeURIComponent(creditNoteDate);
+        }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.next_number) {
+                    creditNoteNumberField.value = data.next_number;
+                }
+            })
+            .catch(error => console.error('Error fetching credit note number:', error));
+    }
+
+    // Load initial credit note number based on current date
+    loadNextCreditNoteNumber(creditNoteDateField.value);
+
+    // Update credit note number when date changes
+    creditNoteDateField.addEventListener('change', function() {
+        loadNextCreditNoteNumber(this.value);
     });
 
     // Add initial item

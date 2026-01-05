@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 /**
  * CreditNote Model
@@ -158,20 +159,36 @@ class CreditNote extends Model
     }
 
     /**
-     * Generate a new credit note number.
+     * Generate a new credit note number based on issue date.
+     *
+     * @param string|null $creditNoteDate The credit note date (date of issuance)
+     * @return string Credit note number in format CN-YYYYNNN (e.g., CN-2026001)
      */
-    public static function generateNumber(): string
+    public static function generateNumber($creditNoteDate = null): string
     {
-        $year = now()->year;
-        $lastCreditNote = static::whereYear('created_at', $year)
-            ->orderByDesc('id')
+        // Determine year from credit note date or current date
+        if ($creditNoteDate) {
+            $year = Carbon::parse($creditNoteDate)->year;
+        } else {
+            $year = now()->year;
+        }
+
+        $prefix = "CN-{$year}";
+
+        // Find the highest sequence number for this year
+        $lastCreditNote = static::where('credit_note_number', 'LIKE', "{$prefix}%")
+            ->orderByRaw("CAST(SUBSTRING(credit_note_number, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
             ->first();
 
-        $sequence = $lastCreditNote
-            ? (int) substr($lastCreditNote->credit_note_number, -4) + 1
-            : 1;
+        if ($lastCreditNote) {
+            // Extract the sequence number from the last credit note
+            $lastNumber = (int) substr($lastCreditNote->credit_note_number, strlen($prefix));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
 
-        return sprintf('CN-%d-%04d', $year, $sequence);
+        return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**

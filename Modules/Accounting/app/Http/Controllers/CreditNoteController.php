@@ -133,8 +133,8 @@ class CreditNoteController extends Controller
 
         DB::beginTransaction();
         try {
-            // Generate credit note number
-            $validated['credit_note_number'] = CreditNote::generateNumber();
+            // Generate credit note number based on credit note date
+            $validated['credit_note_number'] = CreditNote::generateNumber($validated['credit_note_date']);
             $validated['created_by'] = auth()->id();
             $validated['status'] = 'draft';
 
@@ -376,6 +376,18 @@ class CreditNoteController extends Controller
         $pdf->setPaper('A4');
 
         return $pdf->download('credit-note-' . $creditNote->credit_note_number . '.pdf');
+    }
+
+    /**
+     * Get next credit note number based on date.
+     */
+    public function getNextCreditNoteNumber(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $creditNoteDate = $request->query('credit_note_date');
+
+        return response()->json([
+            'next_number' => CreditNote::generateNumber($creditNoteDate),
+        ]);
     }
 
     /**

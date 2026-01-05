@@ -162,6 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/create', [CreditNoteController::class, 'create'])->name('create');
             Route::post('/', [CreditNoteController::class, 'store'])->name('store');
             Route::get('/customer-invoices', [CreditNoteController::class, 'getCustomerInvoices'])->name('customer-invoices');
+            Route::get('/next-number', [CreditNoteController::class, 'getNextCreditNoteNumber'])->name('next-number');
             Route::get('/{creditNote}', [CreditNoteController::class, 'show'])->name('show');
             Route::get('/{creditNote}/edit', [CreditNoteController::class, 'edit'])->name('edit');
             Route::put('/{creditNote}', [CreditNoteController::class, 'update'])->name('update');
