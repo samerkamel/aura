@@ -82,7 +82,7 @@
           <div class="d-flex justify-content-between">
             <div>
               <h3 class="fw-bold mb-1">{{ number_format($portfolioStats['total_revenue'], 0) }}</h3>
-              <span class="text-muted">Total Revenue</span>
+              <span class="text-muted">Revenue {{ $selectedFY ? "($selectedFY)" : '(All Time)' }}</span>
             </div>
             <div class="avatar avatar-sm bg-label-success rounded-circle">
               <span class="avatar-initial"><i class="ti ti-currency-dollar"></i></span>
@@ -102,7 +102,7 @@
           <div class="d-flex justify-content-between">
             <div>
               <h3 class="fw-bold mb-1">{{ number_format($portfolioStats['total_profit'], 0) }}</h3>
-              <span class="text-muted">Total Profit</span>
+              <span class="text-muted">Profit {{ $selectedFY ? "($selectedFY)" : '(All Time)' }}</span>
             </div>
             <div class="avatar avatar-sm bg-label-{{ $portfolioStats['total_profit'] >= 0 ? 'success' : 'danger' }} rounded-circle">
               <span class="avatar-initial"><i class="ti ti-chart-line"></i></span>
@@ -120,7 +120,7 @@
           <div class="d-flex justify-content-between">
             <div>
               <h3 class="fw-bold mb-1">{{ number_format($portfolioStats['total_hours'], 0) }}h</h3>
-              <span class="text-muted">Total Hours</span>
+              <span class="text-muted">Hours {{ $selectedFY ? "($selectedFY)" : '(All Time)' }}</span>
             </div>
             <div class="avatar avatar-sm bg-label-info rounded-circle">
               <span class="avatar-initial"><i class="ti ti-clock"></i></span>
@@ -156,6 +156,16 @@
               </div>
             </div>
             <div class="d-flex gap-2">
+              <!-- Financial Year Filter -->
+              <div class="d-flex align-items-center gap-2">
+                <label class="mb-0 text-muted small">FY:</label>
+                <select class="form-select form-select-sm" style="width: auto;" id="fyFilter" onchange="applyFYFilter(this.value)">
+                  @foreach($financialYears as $year)
+                    <option value="{{ $year }}" {{ $selectedFY == $year ? 'selected' : '' }}>{{ $year }}</option>
+                  @endforeach
+                  <option value="all" {{ !$selectedFY ? 'selected' : '' }}>All Time</option>
+                </select>
+              </div>
               <div class="dropdown">
                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                   <i class="ti ti-apps me-1"></i>Tools
@@ -460,4 +470,15 @@
     0% { stroke-dasharray: 0 100; }
   }
 </style>
+<script>
+function applyFYFilter(year) {
+    const url = new URL(window.location.href);
+    if (year === 'all') {
+        url.searchParams.delete('fy');
+    } else {
+        url.searchParams.set('fy', year);
+    }
+    window.location.href = url.toString();
+}
+</script>
 @endsection

@@ -604,9 +604,20 @@ class ProjectDashboardService
     /**
      * Get portfolio stats using optimized database aggregation.
      * Uses single queries instead of N+1 queries.
+     *
+     * @param string $status Filter by project status (active/inactive/all)
+     * @param mixed $user User for access control
+     * @param int|null $financialYear Financial year to filter by (null for all time)
      */
-    public function getPortfolioStatsOptimized(string $status, $user): array
+    public function getPortfolioStatsOptimized(string $status, $user, ?int $financialYear = null): array
     {
+        // Determine date range for financial year (calendar year: Jan 1 - Dec 31)
+        $startDate = null;
+        $endDate = null;
+        if ($financialYear) {
+            $startDate = Carbon::create($financialYear, 1, 1)->startOfDay();
+            $endDate = Carbon::create($financialYear, 12, 31)->endOfDay();
+        }
         // Build base query for accessible projects
         $baseQuery = Project::accessibleByUser($user);
 
@@ -632,20 +643,28 @@ class ProjectDashboardService
         $projectCodes = (clone $baseQuery)->pluck('code');
 
         // Get revenue totals in single query
-        $revenueStats = DB::table('project_revenues')
-            ->whereIn('project_id', $projectIds)
+        $revenueQuery = DB::table('project_revenues')
+            ->whereIn('project_id', $projectIds);
+        if ($startDate && $endDate) {
+            $revenueQuery->whereBetween('revenue_date', [$startDate, $endDate]);
+        }
+        $revenueStats = $revenueQuery
             ->selectRaw('COALESCE(SUM(amount_received), 0) as total_revenue')
             ->first();
 
         // Get total hours from worklogs
         $totalHours = 0;
         if ($projectCodes->isNotEmpty()) {
-            $worklogStats = DB::table('jira_worklogs')
+            $worklogQuery = DB::table('jira_worklogs')
                 ->where(function ($q) use ($projectCodes) {
                     foreach ($projectCodes as $code) {
                         $q->orWhere('issue_key', 'LIKE', $code . '-%');
                     }
-                })
+                });
+            if ($startDate && $endDate) {
+                $worklogQuery->whereBetween('worklog_started', [$startDate, $endDate]);
+            }
+            $worklogStats = $worklogQuery
                 ->selectRaw('COALESCE(SUM(time_spent_hours), 0) as total_hours')
                 ->first();
 
@@ -661,16 +680,19 @@ class ProjectDashboardService
         // Get projects for labor cost calculation
         $projects = (clone $baseQuery)->get();
         foreach ($projects as $project) {
-            $laborCosts = $financialService->calculateLaborCostsFromWorklogs($project);
+            $laborCosts = $financialService->calculateLaborCostsFromWorklogs($project, $startDate, $endDate);
             $totalLaborCosts += $laborCosts['subtotal'];
             $totalPmOverhead += $laborCosts['pm_overhead'];
         }
 
         // Get direct costs (non-labor) from project_costs table
-        $directCosts = DB::table('project_costs')
+        $directCostsQuery = DB::table('project_costs')
             ->whereIn('project_id', $projectIds)
-            ->where('cost_type', '!=', 'labor') // Exclude labor since we calculate it dynamically
-            ->sum('amount') ?? 0;
+            ->where('cost_type', '!=', 'labor'); // Exclude labor since we calculate it dynamically
+        if ($startDate && $endDate) {
+            $directCostsQuery->whereBetween('cost_date', [$startDate, $endDate]);
+        }
+        $directCosts = $directCostsQuery->sum('amount') ?? 0;
 
         $totalCosts = $totalLaborCosts + $totalPmOverhead + $directCosts;
         $totalRevenue = $revenueStats->total_revenue ?? 0;
@@ -696,6 +718,7 @@ class ProjectDashboardService
             'total_hours' => round($totalHours, 1),
             'average_completion' => round($stats->avg_completion ?? 0, 1),
             'overdue_count' => (int) ($stats->overdue_count ?? 0),
+            'financial_year' => $financialYear,
         ];
     }
 

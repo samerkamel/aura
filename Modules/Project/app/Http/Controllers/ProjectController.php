@@ -89,8 +89,20 @@ class ProjectController extends Controller
 
         $projects = $query->paginate(20);
 
-        // Get portfolio stats using optimized aggregation (single query)
-        $portfolioStats = $dashboardService->getPortfolioStatsOptimized($status, auth()->user());
+        // Financial year filter (default to current year, 'all' for all time)
+        $financialYear = null;
+        if ($request->filled('fy')) {
+            $financialYear = $request->fy === 'all' ? null : (int) $request->fy;
+        } else {
+            $financialYear = now()->year; // Default to current year
+        }
+
+        // Generate list of available financial years (from earliest project to current year + 1)
+        $earliestYear = Project::min(\DB::raw('YEAR(created_at)')) ?? now()->year;
+        $financialYears = range(now()->year + 1, $earliestYear);
+
+        // Get portfolio stats using optimized aggregation with financial year filter
+        $portfolioStats = $dashboardService->getPortfolioStatsOptimized($status, auth()->user(), $financialYear);
 
         $customers = Customer::active()->orderBy('name')->get(['id', 'name', 'company_name']);
 
@@ -98,10 +110,12 @@ class ProjectController extends Controller
             'projects' => $projects,
             'portfolioStats' => $portfolioStats,
             'customers' => $customers,
-            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id', 'health_status', 'phase', 'sort', 'dir']),
+            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id', 'health_status', 'phase', 'sort', 'dir', 'fy']),
             'canViewAll' => Gate::allows('view-all-projects'),
             'healthStatuses' => Project::HEALTH_STATUSES,
             'phases' => Project::PHASES,
+            'financialYears' => $financialYears,
+            'selectedFY' => $financialYear,
         ]);
     }
 
