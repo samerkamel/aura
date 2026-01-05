@@ -541,6 +541,12 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltips.forEach(tooltip => {
         new bootstrap.Tooltip(tooltip);
     });
+
+    // Enable subcategory select before form submission to ensure value is sent
+    // Disabled form elements are not submitted in HTML forms
+    document.querySelector('form').addEventListener('submit', function() {
+        subcategorySelect.disabled = false;
+    });
 });
 </script>
 @endsection
