@@ -37,7 +37,7 @@
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio" name="expense_type"
                                                                id="expenseTypeRecurring" value="recurring"
-                                                               {{ old('expense_type', 'recurring') === 'recurring' ? 'checked' : '' }}>
+                                                               {{ old('expense_type') === 'recurring' ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="expenseTypeRecurring">
                                                             <strong>Recurring Expense</strong>
                                                             <br><small class="text-muted">Regular scheduled expenses (rent, salaries, etc.)</small>
@@ -48,7 +48,7 @@
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio" name="expense_type"
                                                                id="expenseTypeOneTime" value="one_time"
-                                                               {{ old('expense_type') === 'one_time' ? 'checked' : '' }}>
+                                                               {{ old('expense_type', 'one_time') === 'one_time' ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="expenseTypeOneTime">
                                                             <strong>One-time Expense</strong>
                                                             <br><small class="text-muted">Single occurrence expenses (equipment, repairs, etc.)</small>
