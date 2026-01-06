@@ -156,7 +156,8 @@
                 @endforeach
               </select>
             </form>
-            <span class="nav-month">{{ $startDate->format('F Y') }}</span>
+            <span class="nav-month">{{ $months[$month] }} {{ $year }}</span>
+            <small class="text-muted ms-2">({{ $startDate->format('d M Y') }} - {{ $endDate->format('d M Y') }})</small>
           </div>
 
           <!-- Next Month -->
@@ -284,7 +285,7 @@
       <div class="card-header">
         <h6 class="mb-0">
           <i class="ti ti-chart-pie me-2"></i>Monthly Summary
-          <span class="badge bg-label-secondary ms-2">{{ $startDate->format('F Y') }}</span>
+          <span class="badge bg-label-secondary ms-2">{{ $months[$month] }} {{ $year }} ({{ $startDate->format('d M') }} - {{ $endDate->format('d M') }})</span>
         </h6>
       </div>
       <div class="card-body">

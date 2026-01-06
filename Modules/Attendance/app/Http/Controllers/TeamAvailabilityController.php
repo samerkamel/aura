@@ -24,9 +24,9 @@ class TeamAvailabilityController extends Controller
         $month = $request->input('month', now()->month);
         $year = $request->input('year', now()->year);
 
-        // Create start and end dates for the month
-        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
+        // Create start and end dates for the payroll cycle (26th prev month to 25th current month)
+        $startDate = Carbon::create($year, $month, 26)->subMonth(); // 26th of previous month
+        $endDate = Carbon::create($year, $month, 25); // 25th of current month
 
         // Get all days in the month
         $days = [];
@@ -116,6 +116,7 @@ class TeamAvailabilityController extends Controller
             'years' => $years,
             'publicHolidays' => $publicHolidays,
             'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
