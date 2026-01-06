@@ -193,12 +193,9 @@
                   </li>
                 </ul>
               </div>
-              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline" id="jiraSyncForm">
-                @csrf
-                <button type="submit" class="btn btn-outline-primary btn-sm" id="jiraSyncBtn" onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-1\'></span>Syncing...'; this.disabled=true; document.getElementById('jiraSyncForm').submit();">
-                  <i class="ti ti-refresh me-1"></i>Sync All from Jira
-                </button>
-              </form>
+              <button type="button" class="btn btn-outline-primary btn-sm" id="jiraSyncBtn" onclick="startJiraSync()">
+                <i class="ti ti-refresh me-1"></i>Sync All from Jira
+              </button>
               <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm">
                 <i class="ti ti-plus me-1"></i>Add Project
               </a>
@@ -432,12 +429,9 @@
               <a href="{{ route('projects.create') }}" class="btn btn-primary">
                 <i class="ti ti-plus me-1"></i>Create Project
               </a>
-              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline" id="jiraSyncForm2">
-                @csrf
-                <button type="submit" class="btn btn-outline-primary" onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-1\'></span>Syncing...'; this.disabled=true; document.getElementById('jiraSyncForm2').submit();">
-                  <i class="ti ti-refresh me-1"></i>Sync All from Jira
-                </button>
-              </form>
+              <button type="button" class="btn btn-outline-primary" onclick="startJiraSync()">
+                <i class="ti ti-refresh me-1"></i>Sync All from Jira
+              </button>
             </div>
           </div>
         </div>
@@ -451,6 +445,77 @@
       {{ $projects->withQueryString()->links() }}
     </div>
   @endif
+</div>
+
+<!-- Jira Sync Progress Modal -->
+<div class="modal fade" id="jiraSyncModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ti ti-refresh me-2"></i>Syncing from Jira
+        </h5>
+      </div>
+      <div class="modal-body">
+        <!-- Overall Progress -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="fw-semibold" id="syncPhaseText">Initializing...</span>
+            <span id="syncProgressPercent">0%</span>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" id="syncProgressBar" role="progressbar" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Current Step -->
+        <div class="border rounded p-3 bg-light" id="syncStatusContainer">
+          <div class="d-flex align-items-center mb-2">
+            <span class="spinner-border spinner-border-sm me-2" id="syncSpinner"></span>
+            <span id="syncCurrentStep">Preparing sync...</span>
+          </div>
+          <small class="text-muted" id="syncDetails"></small>
+        </div>
+
+        <!-- Results Summary (shown when complete) -->
+        <div id="syncResultsSummary" class="mt-3" style="display: none;">
+          <h6 class="mb-3">Sync Results</h6>
+          <div class="row g-2">
+            <div class="col-4">
+              <div class="border rounded p-2 text-center">
+                <div class="fw-bold text-primary" id="resultProjects">-</div>
+                <small class="text-muted">Projects</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border rounded p-2 text-center">
+                <div class="fw-bold text-success" id="resultIssues">-</div>
+                <small class="text-muted">Issues</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border rounded p-2 text-center">
+                <div class="fw-bold text-info" id="resultWorklogs">-</div>
+                <small class="text-muted">Worklogs</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="syncErrorContainer" class="alert alert-danger mt-3" style="display: none;">
+          <i class="ti ti-alert-circle me-1"></i>
+          <span id="syncErrorMessage"></span>
+        </div>
+      </div>
+      <div class="modal-footer" id="syncModalFooter" style="display: none;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="location.reload()">
+          <i class="ti ti-refresh me-1"></i>Refresh Page
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -482,6 +547,192 @@ function applyFYFilter(year) {
         url.searchParams.set('fy', year);
     }
     window.location.href = url.toString();
+}
+
+// Jira Sync AJAX Functions
+let syncModal = null;
+let syncResults = {
+    projects: { created: 0, updated: 0 },
+    issues: { total: 0, created: 0, updated: 0 },
+    worklogs: { imported: 0, skipped: 0 }
+};
+
+function startJiraSync() {
+    // Reset results
+    syncResults = {
+        projects: { created: 0, updated: 0 },
+        issues: { total: 0, created: 0, updated: 0 },
+        worklogs: { imported: 0, skipped: 0 }
+    };
+
+    // Show modal
+    syncModal = new bootstrap.Modal(document.getElementById('jiraSyncModal'));
+    syncModal.show();
+
+    // Reset UI
+    document.getElementById('syncProgressBar').style.width = '0%';
+    document.getElementById('syncProgressPercent').textContent = '0%';
+    document.getElementById('syncPhaseText').textContent = 'Starting sync...';
+    document.getElementById('syncCurrentStep').textContent = 'Preparing...';
+    document.getElementById('syncDetails').textContent = '';
+    document.getElementById('syncResultsSummary').style.display = 'none';
+    document.getElementById('syncErrorContainer').style.display = 'none';
+    document.getElementById('syncModalFooter').style.display = 'none';
+    document.getElementById('syncSpinner').style.display = 'inline-block';
+
+    // Start the sync process
+    syncProjects();
+}
+
+function updateProgress(percent, phase, step, details = '') {
+    document.getElementById('syncProgressBar').style.width = percent + '%';
+    document.getElementById('syncProgressPercent').textContent = percent + '%';
+    document.getElementById('syncPhaseText').textContent = phase;
+    document.getElementById('syncCurrentStep').textContent = step;
+    document.getElementById('syncDetails').textContent = details;
+}
+
+function showError(message) {
+    document.getElementById('syncErrorContainer').style.display = 'block';
+    document.getElementById('syncErrorMessage').textContent = message;
+    document.getElementById('syncSpinner').style.display = 'none';
+    document.getElementById('syncModalFooter').style.display = 'flex';
+}
+
+function showComplete() {
+    document.getElementById('syncSpinner').style.display = 'none';
+    document.getElementById('syncCurrentStep').textContent = 'Sync completed successfully!';
+    document.getElementById('syncDetails').textContent = '';
+
+    // Show results
+    document.getElementById('resultProjects').textContent =
+        (syncResults.projects.created + syncResults.projects.updated) + ' synced';
+    document.getElementById('resultIssues').textContent =
+        syncResults.issues.total + ' synced';
+    document.getElementById('resultWorklogs').textContent =
+        syncResults.worklogs.imported + ' imported';
+
+    document.getElementById('syncResultsSummary').style.display = 'block';
+    document.getElementById('syncModalFooter').style.display = 'flex';
+}
+
+async function syncProjects() {
+    updateProgress(5, 'Phase 1/3: Projects', 'Syncing projects from Jira...', 'Fetching project list from Jira API');
+
+    try {
+        const response = await fetch('{{ route("projects.sync-jira.projects") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            showError(data.error || 'Failed to sync projects');
+            return;
+        }
+
+        syncResults.projects = data.projects;
+        updateProgress(15, 'Phase 1/3: Projects', 'Projects synced!',
+            `Created: ${data.projects.created}, Updated: ${data.projects.updated}`);
+
+        // Now sync issues for each project
+        if (data.active_projects && data.active_projects.length > 0) {
+            await syncIssues(data.active_projects);
+        } else {
+            // No projects, skip to worklogs
+            await syncWorklogs();
+        }
+
+    } catch (error) {
+        showError('Network error: ' + error.message);
+    }
+}
+
+async function syncIssues(projects) {
+    const totalProjects = projects.length;
+    let completedProjects = 0;
+
+    updateProgress(20, 'Phase 2/3: Issues', `Syncing issues for ${totalProjects} projects...`, '');
+
+    for (const project of projects) {
+        completedProjects++;
+        const progressPercent = 20 + Math.round((completedProjects / totalProjects) * 50);
+
+        updateProgress(
+            progressPercent,
+            'Phase 2/3: Issues',
+            `Syncing issues: ${project.code} (${completedProjects}/${totalProjects})`,
+            `Project: ${project.name}`
+        );
+
+        try {
+            const response = await fetch('{{ route("projects.sync-jira.issues") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ project_id: project.id })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.issues) {
+                syncResults.issues.total += data.issues.total || 0;
+                syncResults.issues.created += data.issues.created || 0;
+                syncResults.issues.updated += data.issues.updated || 0;
+            }
+            // Continue even if individual project fails
+
+        } catch (error) {
+            // Log but continue with other projects
+            console.error(`Error syncing ${project.code}:`, error);
+        }
+    }
+
+    updateProgress(75, 'Phase 2/3: Issues', 'Issues synced!',
+        `Total: ${syncResults.issues.total} issues processed`);
+
+    // Now sync worklogs
+    await syncWorklogs();
+}
+
+async function syncWorklogs() {
+    updateProgress(80, 'Phase 3/3: Worklogs', 'Syncing worklogs...', 'Fetching worklogs from the last 90 days');
+
+    try {
+        const response = await fetch('{{ route("projects.sync-jira.worklogs") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ days: 90 })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            showError(data.error || 'Failed to sync worklogs');
+            return;
+        }
+
+        syncResults.worklogs = data.worklogs;
+        updateProgress(100, 'Complete', 'All syncs completed!',
+            `Imported: ${data.worklogs.imported}, Skipped: ${data.worklogs.skipped}`);
+
+        showComplete();
+
+    } catch (error) {
+        showError('Network error syncing worklogs: ' + error.message);
+    }
 }
 </script>
 @endsection

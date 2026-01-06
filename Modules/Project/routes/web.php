@@ -29,8 +29,11 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/create', [ProjectController::class, 'create'])->name('create');
     Route::post('/', [ProjectController::class, 'store'])->name('store');
 
-    // Jira Sync
+    // Jira Sync (AJAX endpoints for batch sync)
     Route::post('/sync-jira', [ProjectController::class, 'syncFromJira'])->name('sync-jira');
+    Route::post('/sync-jira/projects', [ProjectController::class, 'syncJiraGetProjects'])->name('sync-jira.projects');
+    Route::post('/sync-jira/issues', [ProjectController::class, 'syncJiraProjectIssues'])->name('sync-jira.issues');
+    Route::post('/sync-jira/worklogs', [ProjectController::class, 'syncJiraWorklogs'])->name('sync-jira.worklogs');
 
     // Follow-ups (must come BEFORE /{project} dynamic route)
     Route::get('/followups', [ProjectController::class, 'followups'])->name('followups');

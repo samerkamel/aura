@@ -396,74 +396,124 @@ class ProjectController extends Controller
     /**
      * Sync projects from Jira.
      */
-    public function syncFromJira(
-        JiraProjectSyncService $projectSyncService,
-        JiraIssueSyncService $issueSyncService,
-        \Modules\Payroll\Services\JiraBillableHoursService $worklogSyncService
-    ): RedirectResponse {
-        if (!Gate::allows('sync-project-jira')) {
-            abort(403, 'You do not have permission to sync projects from Jira.');
-        }
-
-        $messages = [];
-        $hasErrors = false;
-
-        // 1. Sync Projects
-        try {
-            $projectResults = $projectSyncService->syncProjects();
-            $messages[] = "Projects: {$projectResults['created']} created, {$projectResults['updated']} updated";
-            if (!empty($projectResults['errors'])) {
-                $hasErrors = true;
-            }
-        } catch (\Exception $e) {
-            $messages[] = "Projects sync failed: " . $e->getMessage();
-            $hasErrors = true;
-        }
-
-        // 2. Sync Issues for all active projects
-        $issueStats = ['total' => 0, 'created' => 0, 'updated' => 0];
-        try {
-            $activeProjects = Project::where('phase', '!=', 'closure')
-                ->orWhereNull('phase')
-                ->whereNotNull('code')
-                ->get();
-
-            foreach ($activeProjects as $project) {
-                try {
-                    $issueResults = $issueSyncService->syncProjectIssues($project, 500);
-                    $issueStats['total'] += $issueResults['total'];
-                    $issueStats['created'] += $issueResults['created'];
-                    $issueStats['updated'] += $issueResults['updated'];
-                } catch (\Exception $e) {
-                    // Continue with other projects
-                    \Log::warning("Failed to sync issues for project {$project->code}: " . $e->getMessage());
-                }
-            }
-            $messages[] = "Issues: {$issueStats['created']} created, {$issueStats['updated']} updated (from {$activeProjects->count()} projects)";
-        } catch (\Exception $e) {
-            $messages[] = "Issues sync failed: " . $e->getMessage();
-            $hasErrors = true;
-        }
-
-        // 3. Sync Worklogs (last 90 days)
-        try {
-            $startDate = now()->subDays(90);
-            $endDate = now();
-            $worklogResults = $worklogSyncService->syncBillableHours($startDate, $endDate);
-            $messages[] = "Worklogs: {$worklogResults['imported']} imported, {$worklogResults['skipped']} skipped (last 90 days)";
-            if (!empty($worklogResults['errors'])) {
-                $hasErrors = true;
-            }
-        } catch (\Exception $e) {
-            $messages[] = "Worklogs sync failed: " . $e->getMessage();
-            $hasErrors = true;
-        }
-
-        $fullMessage = "Jira Sync Complete:\n• " . implode("\n• ", $messages);
-
+    /**
+     * Old sync method - redirects to new AJAX-based sync
+     */
+    public function syncFromJira(): RedirectResponse
+    {
+        // This will be handled by AJAX now, just redirect back
         return redirect()
             ->route('projects.index')
-            ->with($hasErrors ? 'warning' : 'success', $fullMessage);
+            ->with('info', 'Please use the Sync button which now shows progress.');
+    }
+
+    /**
+     * AJAX: Get list of projects to sync
+     */
+    public function syncJiraGetProjects(JiraProjectSyncService $projectSyncService): \Illuminate\Http\JsonResponse
+    {
+        if (!Gate::allows('sync-project-jira')) {
+            return response()->json(['error' => 'Permission denied'], 403);
+        }
+
+        try {
+            $results = $projectSyncService->syncProjects();
+
+            // Get list of active projects for issue sync
+            $activeProjects = Project::where(function ($q) {
+                    $q->where('phase', '!=', 'closure')->orWhereNull('phase');
+                })
+                ->whereNotNull('code')
+                ->orderBy('name')
+                ->get(['id', 'code', 'name']);
+
+            return response()->json([
+                'success' => true,
+                'projects' => [
+                    'created' => $results['created'],
+                    'updated' => $results['updated'],
+                ],
+                'active_projects' => $activeProjects->map(fn($p) => [
+                    'id' => $p->id,
+                    'code' => $p->code,
+                    'name' => $p->name,
+                ])->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * AJAX: Sync issues for a single project
+     */
+    public function syncJiraProjectIssues(Request $request, JiraIssueSyncService $issueSyncService): \Illuminate\Http\JsonResponse
+    {
+        if (!Gate::allows('sync-project-jira')) {
+            return response()->json(['error' => 'Permission denied'], 403);
+        }
+
+        $projectId = $request->input('project_id');
+        $project = Project::find($projectId);
+
+        if (!$project) {
+            return response()->json(['success' => false, 'error' => 'Project not found'], 404);
+        }
+
+        try {
+            $results = $issueSyncService->syncProjectIssues($project, 500);
+
+            return response()->json([
+                'success' => true,
+                'project' => $project->code,
+                'issues' => [
+                    'total' => $results['total'],
+                    'created' => $results['created'],
+                    'updated' => $results['updated'],
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'project' => $project->code,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * AJAX: Sync worklogs for a date range
+     */
+    public function syncJiraWorklogs(Request $request, \Modules\Payroll\Services\JiraBillableHoursService $worklogSyncService): \Illuminate\Http\JsonResponse
+    {
+        if (!Gate::allows('sync-project-jira')) {
+            return response()->json(['error' => 'Permission denied'], 403);
+        }
+
+        try {
+            $days = $request->input('days', 90);
+            $startDate = now()->subDays($days);
+            $endDate = now();
+
+            $results = $worklogSyncService->syncBillableHours($startDate, $endDate);
+
+            return response()->json([
+                'success' => true,
+                'worklogs' => [
+                    'imported' => $results['imported'],
+                    'skipped' => $results['skipped'],
+                    'failed' => $results['failed'] ?? 0,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
