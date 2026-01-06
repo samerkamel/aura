@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan view:clear\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git pull && php artisan view:clear\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git pull && php artisan view:clear\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && ls -la Modules/Project/database/migrations/ | grep pm_notifications\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan migrate:status | grep pm_notifications\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n$users = DB::table(\"\"users\"\")->limit(5)->get([\"\"id\"\", \"\"name\"\", \"\"email\"\"]);\nforeach ($users as $u) {\n    echo $u->id . \"\": \"\" . $u->email . \"\" (\"\" . $u->name . \"\")\"\" . PHP_EOL;\n}\n''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$users = DB::table(\"\"users\"\")->limit(5)->get([\"\"id\"\", \"\"name\"\", \"\"email\"\"]);\nforeach ($users as $u) {\n    echo $u->id . \"\": \"\" . $u->email . \"\" (\"\" . $u->name . \"\")\"\" . PHP_EOL;\n}\n''\")"
     ],
     "deny": [],
     "ask": []

@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PMNotification extends Model
 {
+    /**
+     * The table associated with the model.
+     */
+    protected $table = 'pm_notifications';
+
     protected $fillable = [
         'user_id',
         'project_id',
