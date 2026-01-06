@@ -226,11 +226,10 @@ class InvoiceController extends Controller
 
         $customers = Customer::orderBy('name')->get();
         $sequences = InvoiceSequence::active()->get();
-        $projects = Project::active()->orderBy('name')->get();
 
-        $invoice->load(['items', 'customer', 'project']);
+        $invoice->load(['items.project', 'customer', 'project']);
 
-        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'sequences', 'projects'));
+        return view('invoicing::invoices.edit', compact('invoice', 'customers', 'sequences'));
     }
 
     /**
@@ -537,6 +536,56 @@ class InvoiceController extends Controller
         return redirect()
             ->route('invoicing.invoices.link-projects')
             ->with('success', "Successfully linked {$updatedCount} invoice(s) to projects.");
+    }
+
+    /**
+     * Get projects by customer (AJAX endpoint for Select2).
+     */
+    public function getProjectsByCustomer(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $customerId = $request->get('customer_id');
+        $search = $request->get('search', '');
+
+        $query = Project::query();
+
+        // Filter by customer if provided
+        if ($customerId) {
+            $query->where('customer_id', $customerId);
+        }
+
+        // Search by code or name
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $query->orderBy('name')->get();
+
+        // Format for Select2
+        $results = $projects->map(function ($project) {
+            $statusLabel = '';
+            if (!$project->is_active) {
+                $statusLabel = ' [INACTIVE]';
+            } elseif ($project->phase === 'closure') {
+                $statusLabel = ' [CLOSED]';
+            }
+
+            return [
+                'id' => $project->id,
+                'text' => "[{$project->code}] {$project->name}{$statusLabel}",
+                'code' => $project->code,
+                'name' => $project->name,
+                'is_active' => $project->is_active,
+                'phase' => $project->phase,
+            ];
+        });
+
+        return response()->json([
+            'results' => $results,
+            'pagination' => ['more' => false],
+        ]);
     }
 
     /**

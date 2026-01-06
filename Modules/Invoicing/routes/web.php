@@ -29,6 +29,9 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
         Route::get('/link-projects', [InvoiceController::class, 'linkProjects'])->name('link-projects');
         Route::post('/link-projects', [InvoiceController::class, 'updateProjectLinks'])->name('update-project-links');
 
+        // API: Get projects by customer (for AJAX)
+        Route::get('/api/projects-by-customer', [InvoiceController::class, 'getProjectsByCustomer'])->name('api.projects-by-customer');
+
         Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('show');
         Route::get('/{invoice}/edit', [InvoiceController::class, 'edit'])->name('edit');
         Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('update');

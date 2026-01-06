@@ -6,6 +6,20 @@
 @vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
+@section('page-style')
+<style>
+/* Constrain Select2 dropdown width */
+.select2-container--default .select2-dropdown {
+    max-width: 400px;
+}
+.select2-container--default .select2-results__option {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+@endsection
+
 @section('vendor-script')
 @vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
@@ -58,18 +72,28 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Project</label>
-                                <select name="project_id" class="form-select @error('project_id') is-invalid @enderror">
+                                <select name="project_id" id="project_id" class="form-select select2-project @error('project_id') is-invalid @enderror"
+                                        data-selected="{{ old('project_id', $invoice->project_id) }}"
+                                        data-customer-id="{{ old('customer_id', $invoice->customer_id) }}">
                                     <option value="">No Project</option>
-                                    @foreach($projects as $project)
-                                        <option value="{{ $project->id }}" {{ (old('project_id', $invoice->project_id) == $project->id) ? 'selected' : '' }}>
-                                            [{{ $project->code }}] {{ $project->name }}
+                                    @if($invoice->project)
+                                        @php
+                                            $statusLabel = '';
+                                            if (!$invoice->project->is_active) {
+                                                $statusLabel = ' [INACTIVE]';
+                                            } elseif ($invoice->project->phase === 'closure') {
+                                                $statusLabel = ' [CLOSED]';
+                                            }
+                                        @endphp
+                                        <option value="{{ $invoice->project->id }}" selected>
+                                            [{{ $invoice->project->code }}] {{ $invoice->project->name }}{{ $statusLabel }}
                                         </option>
-                                    @endforeach
+                                    @endif
                                 </select>
                                 @error('project_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Link this invoice to a project</small>
+                                <small class="text-muted">Link this invoice to a project (filtered by customer)</small>
                             </div>
                         </div>
 
@@ -162,13 +186,22 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Project</label>
-                                        <select name="items[{{ $index }}][project_id]" class="form-select form-select-sm item-project">
+                                        <select name="items[{{ $index }}][project_id]" class="form-select form-select-sm item-project"
+                                                data-selected="{{ old('items.'.$index.'.project_id', $item->project_id) }}">
                                             <option value="">No Project</option>
-                                            @foreach($projects as $project)
-                                                <option value="{{ $project->id }}" {{ (old('items.'.$index.'.project_id', $item->project_id) == $project->id) ? 'selected' : '' }}>
-                                                    {{ $project->code ?? $project->name }}
+                                            @if($item->project)
+                                                @php
+                                                    $itemStatusLabel = '';
+                                                    if (!$item->project->is_active) {
+                                                        $itemStatusLabel = ' [INACTIVE]';
+                                                    } elseif ($item->project->phase === 'closure') {
+                                                        $itemStatusLabel = ' [CLOSED]';
+                                                    }
+                                                @endphp
+                                                <option value="{{ $item->project->id }}" selected>
+                                                    [{{ $item->project->code }}] {{ $item->project->name }}{{ $itemStatusLabel }}
                                                 </option>
-                                            @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="col-md-1">
@@ -277,13 +310,18 @@
 <script>
 let itemIndex = {{ $invoice->items->count() }};
 
-// Projects data for dynamic item creation
-const projectsData = @json($projects->map(fn($p) => ['id' => $p->id, 'code' => $p->code, 'name' => $p->name]));
+// Projects data for dynamic item creation (will be loaded from customer's projects)
+let projectsData = [];
+
+// Initialize with customer's projects if invoice has a customer
+@if($invoice->customer_id)
+    // Will be loaded via AJAX on page init
+@endif
 
 function getProjectOptions() {
     let options = '<option value="">No Project</option>';
     projectsData.forEach(p => {
-        options += `<option value="${p.id}">${p.code || p.name}</option>`;
+        options += `<option value="${p.id}">${p.text || '[' + p.code + '] ' + p.name}</option>`;
     });
     return options;
 }
@@ -485,6 +523,100 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     initCustomerSelect2();
+    initProjectSelect2();
+
+    // Load initial projects for current customer
+    @if($invoice->customer_id)
+        updateItemProjectOptions({{ $invoice->customer_id }});
+    @endif
+
+    // When customer changes, reload project dropdown
+    $('.select2-customer').on('change', function() {
+        const customerId = $(this).val();
+        const $projectSelect = $('.select2-project');
+
+        // Clear current selection
+        $projectSelect.val(null).trigger('change');
+
+        // Re-initialize with new customer
+        $projectSelect.data('customer-id', customerId);
+
+        // Update item-level project dropdowns
+        updateItemProjectOptions(customerId);
+    });
+
+    // Initialize project Select2 with AJAX
+    function initProjectSelect2() {
+        const $select = $('.select2-project');
+        const preSelected = $select.data('selected');
+        const customerId = $select.data('customer-id');
+
+        $select.select2({
+            placeholder: 'Search projects...',
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: '{{ route("invoicing.invoices.api.projects-by-customer") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term || '',
+                        customer_id: $('.select2-customer').val() || $select.data('customer-id')
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.results || []
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+
+        // Pre-select project if provided (already in the option)
+        // The option is already rendered in the blade template
+    }
+
+    // Update item-level project dropdowns when customer changes
+    function updateItemProjectOptions(customerId) {
+        if (!customerId) {
+            // Clear all item project dropdowns
+            $('.item-project').each(function() {
+                $(this).html('<option value="">No Project</option>');
+            });
+            // Update projectsData for new items
+            window.projectsData = [];
+            return;
+        }
+
+        // Fetch projects for customer
+        $.ajax({
+            url: '{{ route("invoicing.invoices.api.projects-by-customer") }}',
+            data: { customer_id: customerId },
+            dataType: 'json'
+        }).then(function(data) {
+            // Update projectsData for new items
+            window.projectsData = (data.results || []).map(p => ({
+                id: p.id,
+                code: p.code,
+                name: p.name,
+                text: p.text
+            }));
+
+            // Update existing item dropdowns
+            $('.item-project').each(function() {
+                const currentVal = $(this).val();
+                let options = '<option value="">No Project</option>';
+                (data.results || []).forEach(p => {
+                    const selected = currentVal == p.id ? 'selected' : '';
+                    options += `<option value="${p.id}" ${selected}>${p.text}</option>`;
+                });
+                $(this).html(options);
+            });
+        });
+    }
 });
 </script>
 @endsection
