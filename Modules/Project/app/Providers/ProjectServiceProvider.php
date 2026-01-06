@@ -47,6 +47,7 @@ class ProjectServiceProvider extends ServiceProvider
             \Modules\Project\Console\Commands\CalculateProjectHealth::class,
             \Modules\Project\Console\Commands\SyncJiraProjects::class,
             \Modules\Project\Console\Commands\SyncJiraIssues::class,
+            \Modules\Project\Console\Commands\CheckPMNotifications::class,
         ]);
     }
 
@@ -69,6 +70,12 @@ class ProjectServiceProvider extends ServiceProvider
                 ->cron('15 */3 * * *') // At minute 15 past every 3rd hour
                 ->withoutOverlapping()
                 ->appendOutputTo(storage_path('logs/jira-sync.log'));
+
+            // Check PM notifications every hour
+            $schedule->command('pm:check-notifications --quiet')
+                ->hourly()
+                ->withoutOverlapping()
+                ->appendOutputTo(storage_path('logs/pm-notifications.log'));
         });
     }
 

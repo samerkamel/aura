@@ -8,6 +8,7 @@ use Modules\Project\Http\Controllers\ProjectReportController;
 use Modules\Project\Http\Controllers\ProjectPlanningController;
 use Modules\Project\Http\Controllers\ProjectTemplateController;
 use Modules\Project\Http\Controllers\CapacityPlanningController;
+use Modules\Project\Http\Controllers\PMDashboardController;
 
 Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group(function () {
     // Project Templates (must come before dynamic {project} routes)
@@ -60,6 +61,20 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::prefix('capacity')->name('capacity.')->group(function () {
         Route::get('/', [CapacityPlanningController::class, 'index'])->name('index');
         Route::get('/api/heatmap', [CapacityPlanningController::class, 'apiHeatmapData'])->name('api.heatmap');
+    });
+
+    // PM Dashboard (Command Center) - must come BEFORE /{project} dynamic route
+    Route::prefix('pm-dashboard')->name('pm-dashboard.')->group(function () {
+        Route::get('/', [PMDashboardController::class, 'index'])->name('index');
+        Route::get('/calendar', [PMDashboardController::class, 'calendar'])->name('calendar');
+        Route::get('/notifications', [PMDashboardController::class, 'notifications'])->name('notifications');
+        Route::get('/api/notifications', [PMDashboardController::class, 'getNotifications'])->name('api.notifications');
+        Route::get('/api/calendar-events', [PMDashboardController::class, 'calendar'])->name('api.calendar-events');
+        Route::get('/api/data', [PMDashboardController::class, 'dashboardData'])->name('data');
+        Route::post('/notifications/mark-read', [PMDashboardController::class, 'markNotificationRead'])->name('notifications.mark-read');
+        Route::post('/notifications/mark-all-read', [PMDashboardController::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read');
+        Route::post('/notifications/dismiss', [PMDashboardController::class, 'dismissNotification'])->name('notifications.dismiss');
+        Route::post('/quick-followup', [PMDashboardController::class, 'quickFollowup'])->name('quick-followup');
     });
 
     // Project CRUD with dynamic {project} parameter (must come AFTER static routes)

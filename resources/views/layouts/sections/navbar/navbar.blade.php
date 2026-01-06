@@ -164,200 +164,49 @@ $companySettings = CompanySetting::getSettings();
           </li>
           <!-- Quick links -->
 
-          <!-- Notification -->
-          <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2">
+          <!-- PM Notifications -->
+          <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2" id="pm-notifications-dropdown">
             <a class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
               <span class="position-relative">
                 <i class="ti ti-bell ti-md"></i>
-                <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
+                <span class="badge rounded-pill bg-danger badge-dot badge-notifications border pm-notification-badge d-none"></span>
               </span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end p-0">
+            <ul class="dropdown-menu dropdown-menu-end p-0" style="min-width: 380px;">
               <li class="dropdown-menu-header border-bottom">
                 <div class="dropdown-header d-flex align-items-center py-3">
-                  <h6 class="mb-0 me-auto">Notification</h6>
+                  <h6 class="mb-0 me-auto">Notifications</h6>
                   <div class="d-flex align-items-center h6 mb-0">
-                    <span class="badge bg-label-primary me-2">8 New</span>
-                    <a href="javascript:void(0)" class="btn btn-text-secondary rounded-pill btn-icon dropdown-notifications-all" data-bs-toggle="tooltip" data-bs-placement="top" title="Mark all as read"><i class="ti ti-mail-opened text-heading"></i></a>
+                    <span class="badge bg-label-primary me-2 pm-notification-count">0 New</span>
+                    <a href="javascript:void(0)" class="btn btn-text-secondary rounded-pill btn-icon pm-mark-all-read" data-bs-toggle="tooltip" data-bs-placement="top" title="Mark all as read">
+                      <i class="ti ti-mail-opened text-heading"></i>
+                    </a>
                   </div>
                 </div>
               </li>
-              <li class="dropdown-notifications-list scrollable-container">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <img src="{{asset('assets/img/avatars/1.png')}}" alt class="rounded-circle">
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="small mb-1">Congratulation Lettie 🎉</h6>
-                        <small class="mb-1 d-block text-body">Won the monthly best seller gold badge</small>
-                        <small class="text-muted">1h ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
+              <li class="dropdown-notifications-list scrollable-container" style="max-height: 400px;">
+                <ul class="list-group list-group-flush pm-notifications-list">
+                  <li class="list-group-item text-center py-4 pm-notifications-loading">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
                     </div>
                   </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">Charles Franklin</h6>
-                        <small class="mb-1 d-block text-body">Accepted your connection</small>
-                        <small class="text-muted">12hr ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <img src="{{asset('assets/img/avatars/2.png')}}" alt class="rounded-circle">
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">New Message ✉️</h6>
-                        <small class="mb-1 d-block text-body">You have new message from Natalie</small>
-                        <small class="text-muted">1h ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <span class="avatar-initial rounded-circle bg-label-success"><i class="ti ti-shopping-cart"></i></span>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">Whoo! You have new order 🛒 </h6>
-                        <small class="mb-1 d-block text-body">ACME Inc. made new order $1,154</small>
-                        <small class="text-muted">1 day ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <img src="{{asset('assets/img/avatars/9.png')}}" alt class="rounded-circle">
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">Application has been approved 🚀 </h6>
-                        <small class="mb-1 d-block text-body">Your ABC project application has been approved.</small>
-                        <small class="text-muted">2 days ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <span class="avatar-initial rounded-circle bg-label-success"><i class="ti ti-chart-pie"></i></span>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">Monthly report is generated</h6>
-                        <small class="mb-1 d-block text-body">July monthly financial report is generated </small>
-                        <small class="text-muted">3 days ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <img src="{{asset('assets/img/avatars/5.png')}}" alt class="rounded-circle">
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">Send connection request</h6>
-                        <small class="mb-1 d-block text-body">Peter sent you connection request</small>
-                        <small class="text-muted">4 days ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <img src="{{asset('assets/img/avatars/6.png')}}" alt class="rounded-circle">
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">New message from Jane</h6>
-                        <small class="mb-1 d-block text-body">Your have new message from Jane</small>
-                        <small class="text-muted">5 days ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                    <div class="d-flex">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar">
-                          <span class="avatar-initial rounded-circle bg-label-warning"><i class="ti ti-alert-triangle"></i></span>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1">
-                        <h6 class="mb-1 small">CPU is running high</h6>
-                        <small class="mb-1 d-block text-body">CPU Utilization Percent is currently at 88.63%,</small>
-                        <small class="text-muted">5 days ago</small>
-                      </div>
-                      <div class="flex-shrink-0 dropdown-notifications-actions">
-                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
-                      </div>
-                    </div>
+                  <li class="list-group-item text-center py-4 pm-notifications-empty d-none">
+                    <i class="ti ti-bell-off text-muted mb-2" style="font-size: 2rem;"></i>
+                    <p class="text-muted mb-0">No notifications</p>
                   </li>
                 </ul>
               </li>
               <li class="border-top">
-                <div class="d-grid p-4">
-                  <a class="btn btn-primary btn-sm d-flex" href="javascript:void(0);">
+                <div class="d-grid p-3">
+                  <a class="btn btn-primary btn-sm d-flex justify-content-center align-items-center" href="{{ route('projects.pm-dashboard.notifications') }}">
                     <small class="align-middle">View all notifications</small>
                   </a>
                 </div>
               </li>
             </ul>
           </li>
-          <!--/ Notification -->
+          <!--/ PM Notifications -->
 
           <!-- User -->
           <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -787,6 +636,324 @@ $companySettings = CompanySetting::getSettings();
         console.error('Error adding shortcut:', error);
         alert('Failed to add shortcut');
       });
+    }
+  });
+  </script>
+  @endpush
+  @endonce
+
+  @once
+  @push('pricing-script')
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // PM Notifications
+    const pmNotificationBadge = document.querySelector('.pm-notification-badge');
+    const pmNotificationCount = document.querySelector('.pm-notification-count');
+    const pmNotificationsList = document.querySelector('.pm-notifications-list');
+    const pmNotificationsLoading = document.querySelector('.pm-notifications-loading');
+    const pmNotificationsEmpty = document.querySelector('.pm-notifications-empty');
+    const pmMarkAllReadBtn = document.querySelector('.pm-mark-all-read');
+    const pmNotificationsDropdown = document.getElementById('pm-notifications-dropdown');
+
+    let pmNotifications = [];
+    let notificationsFetched = false;
+
+    // Fetch notifications when dropdown is opened
+    if (pmNotificationsDropdown) {
+      pmNotificationsDropdown.addEventListener('show.bs.dropdown', function() {
+        loadPMNotifications();
+      });
+    }
+
+    // Mark all as read
+    if (pmMarkAllReadBtn) {
+      pmMarkAllReadBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        markAllNotificationsRead();
+      });
+    }
+
+    // Load notification count on page load
+    loadNotificationCount();
+
+    // Refresh notification count every 2 minutes
+    setInterval(loadNotificationCount, 120000);
+
+    function loadNotificationCount() {
+      fetch('{{ route("projects.pm-dashboard.api.notifications") }}?count_only=1', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const count = data.unread_count || 0;
+        updateBadge(count);
+      })
+      .catch(error => {
+        console.error('Error loading notification count:', error);
+      });
+    }
+
+    function loadPMNotifications() {
+      if (pmNotificationsLoading) pmNotificationsLoading.classList.remove('d-none');
+      if (pmNotificationsEmpty) pmNotificationsEmpty.classList.add('d-none');
+
+      // Clear existing notifications (except loading and empty states)
+      const existingItems = pmNotificationsList.querySelectorAll('.pm-notification-item');
+      existingItems.forEach(item => item.remove());
+
+      fetch('{{ route("projects.pm-dashboard.api.notifications") }}', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        pmNotifications = data.notifications || [];
+        notificationsFetched = true;
+        renderPMNotifications();
+        updateBadge(data.unread_count || 0);
+      })
+      .catch(error => {
+        console.error('Error loading PM notifications:', error);
+        if (pmNotificationsLoading) pmNotificationsLoading.classList.add('d-none');
+        if (pmNotificationsEmpty) pmNotificationsEmpty.classList.remove('d-none');
+      });
+    }
+
+    function renderPMNotifications() {
+      if (pmNotificationsLoading) pmNotificationsLoading.classList.add('d-none');
+
+      if (pmNotifications.length === 0) {
+        if (pmNotificationsEmpty) pmNotificationsEmpty.classList.remove('d-none');
+        return;
+      }
+
+      if (pmNotificationsEmpty) pmNotificationsEmpty.classList.add('d-none');
+
+      pmNotifications.slice(0, 10).forEach(notification => {
+        const item = createNotificationItem(notification);
+        pmNotificationsList.appendChild(item);
+      });
+    }
+
+    function createNotificationItem(notification) {
+      const item = document.createElement('li');
+      item.className = 'list-group-item list-group-item-action dropdown-notifications-item pm-notification-item' + (notification.read_at ? ' marked-as-read' : '');
+      item.dataset.id = notification.id;
+
+      const priorityColors = {
+        'urgent': 'danger',
+        'high': 'warning',
+        'normal': 'primary',
+        'low': 'secondary'
+      };
+
+      const typeIcons = {
+        'followup_overdue': 'ti-alert-circle',
+        'followup_upcoming': 'ti-calendar-event',
+        'milestone_overdue': 'ti-flag-2',
+        'milestone_upcoming': 'ti-flag',
+        'payment_overdue': 'ti-currency-dollar-off',
+        'payment_upcoming': 'ti-currency-dollar',
+        'health_alert': 'ti-heart-broken',
+        'stale_project': 'ti-clock-pause'
+      };
+
+      const priorityColor = notification.priority_color || priorityColors[notification.priority] || 'primary';
+      const typeIcon = notification.type_icon || typeIcons[notification.type] || 'ti-bell';
+      const timeAgo = notification.created_at; // Already formatted by server
+
+      item.innerHTML = `
+        <div class="d-flex">
+          <div class="flex-shrink-0 me-3">
+            <div class="avatar">
+              <span class="avatar-initial rounded-circle bg-label-${priorityColor}">
+                <i class="ti ${typeIcon}"></i>
+              </span>
+            </div>
+          </div>
+          <div class="flex-grow-1">
+            <h6 class="small mb-1">${escapeHtml(notification.title)}</h6>
+            <small class="mb-1 d-block text-body">${escapeHtml(notification.message).substring(0, 80)}${notification.message.length > 80 ? '...' : ''}</small>
+            <small class="text-muted">${timeAgo}</small>
+          </div>
+          <div class="flex-shrink-0 dropdown-notifications-actions">
+            <a href="javascript:void(0);" class="dropdown-notifications-read" data-id="${notification.id}">
+              <span class="badge badge-dot"></span>
+            </a>
+            <a href="javascript:void(0);" class="dropdown-notifications-archive" data-id="${notification.id}">
+              <span class="ti ti-x"></span>
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Add click handler for the notification
+      item.addEventListener('click', function(e) {
+        if (e.target.closest('.dropdown-notifications-read') || e.target.closest('.dropdown-notifications-archive')) {
+          return;
+        }
+        if (notification.action_url) {
+          markNotificationRead(notification.id, function() {
+            window.location.href = notification.action_url;
+          });
+        }
+      });
+
+      // Mark as read handler
+      const readBtn = item.querySelector('.dropdown-notifications-read');
+      if (readBtn) {
+        readBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          markNotificationRead(notification.id);
+        });
+      }
+
+      // Dismiss handler
+      const archiveBtn = item.querySelector('.dropdown-notifications-archive');
+      if (archiveBtn) {
+        archiveBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dismissNotification(notification.id);
+        });
+      }
+
+      return item;
+    }
+
+    function markNotificationRead(id, callback) {
+      fetch('{{ route("projects.pm-dashboard.notifications.mark-read") }}', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ notification_id: id })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update local state
+          const notification = pmNotifications.find(n => n.id === id);
+          if (notification) {
+            notification.read_at = new Date().toISOString();
+          }
+
+          // Update UI
+          const item = pmNotificationsList.querySelector(`.pm-notification-item[data-id="${id}"]`);
+          if (item) {
+            item.classList.add('marked-as-read');
+          }
+
+          // Update badge
+          loadNotificationCount();
+
+          if (callback) callback();
+        }
+      })
+      .catch(error => console.error('Error marking notification as read:', error));
+    }
+
+    function dismissNotification(id) {
+      fetch('{{ route("projects.pm-dashboard.notifications.dismiss") }}', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ notification_id: id })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Remove from local state
+          pmNotifications = pmNotifications.filter(n => n.id !== id);
+
+          // Remove from UI
+          const item = pmNotificationsList.querySelector(`.pm-notification-item[data-id="${id}"]`);
+          if (item) {
+            item.remove();
+          }
+
+          // Update badge
+          loadNotificationCount();
+
+          // Show empty state if no more notifications
+          if (pmNotifications.length === 0) {
+            if (pmNotificationsEmpty) pmNotificationsEmpty.classList.remove('d-none');
+          }
+        }
+      })
+      .catch(error => console.error('Error dismissing notification:', error));
+    }
+
+    function markAllNotificationsRead() {
+      fetch('{{ route("projects.pm-dashboard.notifications.mark-all-read") }}', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update all local notifications
+          pmNotifications.forEach(n => n.read_at = new Date().toISOString());
+
+          // Update UI
+          const items = pmNotificationsList.querySelectorAll('.pm-notification-item');
+          items.forEach(item => item.classList.add('marked-as-read'));
+
+          // Update badge
+          updateBadge(0);
+        }
+      })
+      .catch(error => console.error('Error marking all notifications as read:', error));
+    }
+
+    function updateBadge(count) {
+      if (pmNotificationBadge) {
+        if (count > 0) {
+          pmNotificationBadge.classList.remove('d-none');
+        } else {
+          pmNotificationBadge.classList.add('d-none');
+        }
+      }
+      if (pmNotificationCount) {
+        pmNotificationCount.textContent = count + ' New';
+      }
+    }
+
+    function formatTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+
+      if (seconds < 60) return 'Just now';
+      if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+      if (seconds < 604800) return Math.floor(seconds / 86400) + 'd ago';
+      return date.toLocaleDateString();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
   });
   </script>
