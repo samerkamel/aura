@@ -97,6 +97,52 @@
 
             <div class="row">
               <div class="col-md-6 mb-3">
+                <label class="form-label" for="phase">Project Phase</label>
+                <select class="form-select @error('phase') is-invalid @enderror" id="phase" name="phase">
+                  <option value="">Select phase...</option>
+                  @foreach($phases as $value => $label)
+                    <option value="{{ $value }}" {{ old('phase', $project->phase) === $value ? 'selected' : '' }}>
+                      {{ $label }}
+                    </option>
+                  @endforeach
+                </select>
+                @if($suggestedPhase)
+                  <div class="form-text">
+                    <span class="badge bg-label-{{ $suggestedPhase['confidence'] === 'high' ? 'success' : ($suggestedPhase['confidence'] === 'medium' ? 'warning' : 'secondary') }} me-1">
+                      <i class="ti ti-bulb ti-xs me-1"></i>Suggested: {{ $phases[$suggestedPhase['phase']] }}
+                    </span>
+                    <small class="text-muted">{{ $suggestedPhase['reason'] }}</small>
+                    @if($project->phase !== $suggestedPhase['phase'])
+                      <button type="button" class="btn btn-link btn-sm p-0 ms-2" onclick="document.getElementById('phase').value='{{ $suggestedPhase['phase'] }}'">
+                        Apply
+                      </button>
+                    @endif
+                  </div>
+                @endif
+                @error('phase')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="health_status">Health Status</label>
+                <select class="form-select @error('health_status') is-invalid @enderror" id="health_status" name="health_status">
+                  <option value="">Select health status...</option>
+                  @foreach($healthStatuses as $value => $label)
+                    <option value="{{ $value }}" {{ old('health_status', $project->health_status) === $value ? 'selected' : '' }}>
+                      {{ $label }}
+                    </option>
+                  @endforeach
+                </select>
+                <div class="form-text">Current health status of the project</div>
+                @error('health_status')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 <div class="form-check form-switch">
                   <input class="form-check-input" type="checkbox" id="needs_monthly_report"
                          name="needs_monthly_report" value="1"

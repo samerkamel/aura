@@ -284,10 +284,68 @@ class ProjectController extends Controller
 
         $customers = Customer::active()->orderBy('name')->get();
 
+        // Calculate suggested phase based on project data
+        $suggestedPhase = $this->calculateSuggestedPhase($project);
+
         return view('project::projects.edit', [
             'project' => $project,
             'customers' => $customers,
+            'phases' => Project::PHASES,
+            'healthStatuses' => Project::HEALTH_STATUSES,
+            'suggestedPhase' => $suggestedPhase,
         ]);
+    }
+
+    /**
+     * Calculate suggested phase based on project metrics.
+     */
+    private function calculateSuggestedPhase(Project $project): array
+    {
+        $completion = $project->completion_percentage ?? 0;
+        $totalHours = $project->total_hours ?? 0;
+        $hasContract = $project->contracts()->exists();
+        $openIssues = $project->jiraIssues()->whereNotIn('status', ['Done', 'Closed', 'Resolved'])->count();
+        $totalIssues = $project->jiraIssues()->count();
+        $closedIssuesRatio = $totalIssues > 0 ? (($totalIssues - $openIssues) / $totalIssues) * 100 : 0;
+
+        // Determine suggested phase and reason
+        if ($completion >= 100 && $openIssues === 0) {
+            return [
+                'phase' => 'closure',
+                'reason' => '100% complete with no open issues',
+                'confidence' => 'high',
+            ];
+        }
+
+        if ($completion >= 80 || $closedIssuesRatio >= 80) {
+            return [
+                'phase' => 'monitoring',
+                'reason' => sprintf('%.0f%% complete, %.0f%% issues resolved', $completion, $closedIssuesRatio),
+                'confidence' => 'medium',
+            ];
+        }
+
+        if ($totalHours > 0 || $completion > 0 || $openIssues > 0) {
+            return [
+                'phase' => 'execution',
+                'reason' => sprintf('Active work: %.1f hours logged, %d open issues', $totalHours, $openIssues),
+                'confidence' => 'high',
+            ];
+        }
+
+        if ($hasContract) {
+            return [
+                'phase' => 'planning',
+                'reason' => 'Has contract but no work logged yet',
+                'confidence' => 'medium',
+            ];
+        }
+
+        return [
+            'phase' => 'initiation',
+            'reason' => 'New project with no activity',
+            'confidence' => 'low',
+        ];
     }
 
     /**
@@ -304,6 +362,8 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:20|unique:projects,code,' . $project->id,
             'description' => 'nullable|string',
+            'phase' => 'nullable|in:' . implode(',', array_keys(Project::PHASES)),
+            'health_status' => 'nullable|in:' . implode(',', array_keys(Project::HEALTH_STATUSES)),
             'needs_monthly_report' => 'boolean',
             'is_active' => 'boolean',
         ]);
