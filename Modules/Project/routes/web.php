@@ -93,6 +93,12 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/tasks/bulk-create', [ProjectController::class, 'bulkCreateTasks'])->name('bulk-create-tasks');
     Route::post('/{project}/tasks/bulk', [ProjectController::class, 'storeBulkTasks'])->name('store-bulk-tasks');
 
+    // Individual issue management (AJAX)
+    Route::get('/{project}/tasks/{issue}/details', [ProjectController::class, 'getIssueDetails'])->name('issue-details');
+    Route::get('/{project}/tasks/{issue}/transitions', [ProjectController::class, 'getIssueTransitions'])->name('issue-transitions');
+    Route::post('/{project}/tasks/{issue}/update-field', [ProjectController::class, 'updateIssueField'])->name('update-issue-field');
+    Route::post('/{project}/tasks/{issue}/transition', [ProjectController::class, 'transitionIssue'])->name('transition-issue');
+
     // Project Dashboard routes
     Route::get('/{project}/dashboard', [ProjectDashboardController::class, 'index'])->name('dashboard');
     Route::post('/{project}/dashboard/refresh-health', [ProjectDashboardController::class, 'refreshHealth'])->name('refresh-health');

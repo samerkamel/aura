@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use Modules\HR\Models\Employee;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectFollowup;
+use Modules\Project\Models\JiraIssue;
 use Modules\Project\Services\JiraIssueSyncService;
 use Modules\Project\Services\JiraProjectSyncService;
 use Modules\Project\Services\ProjectDashboardService;
@@ -1126,6 +1127,123 @@ class ProjectController extends Controller
         return redirect()
             ->route('projects.tasks', $project)
             ->with($status, $message);
+    }
+
+    /**
+     * Get issue details for modal display.
+     */
+    public function getIssueDetails(Project $project, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Get fresh details from Jira
+        $details = $issueSyncService->getIssueDetails($issue->issue_key);
+
+        if (!$details) {
+            // Fallback to local data
+            $details = [
+                'key' => $issue->issue_key,
+                'summary' => $issue->summary,
+                'description' => $issue->description,
+                'status' => $issue->status,
+                'issue_type' => $issue->issue_type,
+                'priority' => $issue->priority,
+                'epic_key' => $issue->epic_key,
+                'story_points' => $issue->story_points,
+                'labels' => $issue->labels ?? [],
+                'components' => $issue->components ?? [],
+                'due_date' => $issue->due_date?->format('Y-m-d'),
+                'created_at' => $issue->jira_created_at?->toIso8601String(),
+                'updated_at' => $issue->jira_updated_at?->toIso8601String(),
+            ];
+        }
+
+        return response()->json($details);
+    }
+
+    /**
+     * Get available transitions for an issue.
+     */
+    public function getIssueTransitions(Project $project, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $transitions = $issueSyncService->getIssueTransitions($issue->issue_key);
+
+        return response()->json([
+            'current_status' => $issue->status,
+            'transitions' => $transitions,
+        ]);
+    }
+
+    /**
+     * Update an issue field in Jira.
+     */
+    public function updateIssueField(Request $request, Project $project, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'field' => 'required|string|in:assignee,priority,due_date,story_points',
+            'value' => 'nullable',
+        ]);
+
+        try {
+            $result = $issueSyncService->updateIssueField(
+                $issue->issue_key,
+                $validated['field'],
+                $validated['value']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Field updated successfully',
+                'issue' => $result['local_issue'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * Transition an issue to a new status.
+     */
+    public function transitionIssue(Request $request, Project $project, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'transition_id' => 'required|string',
+        ]);
+
+        try {
+            $result = $issueSyncService->transitionIssue(
+                $issue->issue_key,
+                $validated['transition_id']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'issue' => $result['local_issue'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**

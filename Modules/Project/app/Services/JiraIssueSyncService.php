@@ -622,4 +622,221 @@ class JiraIssueSyncService
             ];
         })->toArray();
     }
+
+    /**
+     * Update an issue field in Jira.
+     */
+    public function updateIssueField(string $issueKey, string $field, $value): array
+    {
+        if (!$this->isConfigured()) {
+            throw new \Exception('Jira is not configured.');
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/issue/' . $issueKey;
+
+        // Build the update payload based on field type
+        $updateData = $this->buildUpdatePayload($field, $value);
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->put($url, $updateData);
+
+        if (!$response->successful()) {
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['errors'] ?? $errorBody['errorMessages'] ?? $response->body();
+            Log::error('Jira API error updating issue', [
+                'issue_key' => $issueKey,
+                'field' => $field,
+                'status' => $response->status(),
+                'body' => $errorMessage,
+            ]);
+            throw new \Exception('Failed to update issue: ' . json_encode($errorMessage));
+        }
+
+        // Sync the updated issue back
+        $localIssue = $this->syncIssue($issueKey);
+
+        return [
+            'success' => true,
+            'issue_key' => $issueKey,
+            'field' => $field,
+            'local_issue' => $localIssue,
+        ];
+    }
+
+    /**
+     * Build the update payload for Jira API.
+     */
+    protected function buildUpdatePayload(string $field, $value): array
+    {
+        $payload = ['fields' => []];
+
+        switch ($field) {
+            case 'assignee':
+                $payload['fields']['assignee'] = $value ? ['accountId' => $value] : null;
+                break;
+
+            case 'priority':
+                $payload['fields']['priority'] = $value ? ['name' => $value] : null;
+                break;
+
+            case 'due_date':
+            case 'duedate':
+                $payload['fields']['duedate'] = $value ?: null;
+                break;
+
+            case 'story_points':
+                // Story points is usually customfield_10016, but can vary
+                $payload['fields']['customfield_10016'] = $value ? (float) $value : null;
+                break;
+
+            case 'summary':
+                $payload['fields']['summary'] = $value;
+                break;
+
+            case 'description':
+                $payload['fields']['description'] = $value ? [
+                    'type' => 'doc',
+                    'version' => 1,
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [['type' => 'text', 'text' => $value]],
+                        ],
+                    ],
+                ] : null;
+                break;
+
+            case 'labels':
+                $payload['fields']['labels'] = is_array($value) ? $value : [];
+                break;
+
+            default:
+                $payload['fields'][$field] = $value;
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Transition an issue to a new status.
+     */
+    public function transitionIssue(string $issueKey, string $transitionId): array
+    {
+        if (!$this->isConfigured()) {
+            throw new \Exception('Jira is not configured.');
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/issue/' . $issueKey . '/transitions';
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->post($url, [
+                'transition' => ['id' => $transitionId],
+            ]);
+
+        if (!$response->successful()) {
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['errors'] ?? $errorBody['errorMessages'] ?? $response->body();
+            Log::error('Jira API error transitioning issue', [
+                'issue_key' => $issueKey,
+                'transition_id' => $transitionId,
+                'status' => $response->status(),
+                'body' => $errorMessage,
+            ]);
+            throw new \Exception('Failed to transition issue: ' . json_encode($errorMessage));
+        }
+
+        // Sync the updated issue back
+        $localIssue = $this->syncIssue($issueKey);
+
+        return [
+            'success' => true,
+            'issue_key' => $issueKey,
+            'local_issue' => $localIssue,
+        ];
+    }
+
+    /**
+     * Get available transitions for an issue.
+     */
+    public function getIssueTransitions(string $issueKey): array
+    {
+        if (!$this->isConfigured()) {
+            return [];
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/issue/' . $issueKey . '/transitions';
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->get($url);
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        $transitions = $response->json()['transitions'] ?? [];
+
+        return collect($transitions)->map(function ($transition) {
+            return [
+                'id' => $transition['id'],
+                'name' => $transition['name'],
+                'to_status' => $transition['to']['name'] ?? $transition['name'],
+                'to_category' => $transition['to']['statusCategory']['key'] ?? 'indeterminate',
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Get issue details with all fields.
+     */
+    public function getIssueDetails(string $issueKey): ?array
+    {
+        if (!$this->isConfigured()) {
+            return null;
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/issue/' . $issueKey;
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->get($url, [
+                'fields' => 'summary,description,status,issuetype,priority,assignee,reporter,parent,customfield_10014,customfield_10016,duedate,labels,components,created,updated,comment',
+            ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $data = $response->json();
+        $fields = $data['fields'];
+
+        return [
+            'key' => $data['key'],
+            'id' => $data['id'],
+            'summary' => $fields['summary'] ?? '',
+            'description' => $this->extractDescription($fields['description'] ?? null),
+            'status' => $fields['status']['name'] ?? 'Unknown',
+            'status_category' => $fields['status']['statusCategory']['key'] ?? 'indeterminate',
+            'issue_type' => $fields['issuetype']['name'] ?? 'Task',
+            'priority' => $fields['priority']['name'] ?? null,
+            'assignee' => $fields['assignee'] ? [
+                'account_id' => $fields['assignee']['accountId'],
+                'display_name' => $fields['assignee']['displayName'],
+                'avatar_url' => $fields['assignee']['avatarUrls']['24x24'] ?? null,
+            ] : null,
+            'reporter' => $fields['reporter'] ? [
+                'display_name' => $fields['reporter']['displayName'],
+            ] : null,
+            'epic_key' => $fields['customfield_10014'] ?? null,
+            'story_points' => $fields['customfield_10016'] ?? null,
+            'due_date' => $fields['duedate'] ?? null,
+            'labels' => $fields['labels'] ?? [],
+            'components' => array_map(fn($c) => $c['name'], $fields['components'] ?? []),
+            'created_at' => $fields['created'] ?? null,
+            'updated_at' => $fields['updated'] ?? null,
+            'comments_count' => $fields['comment']['total'] ?? 0,
+        ];
+    }
 }

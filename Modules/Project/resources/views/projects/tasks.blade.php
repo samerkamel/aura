@@ -129,6 +129,96 @@
     width: 60px;
     height: 60px;
   }
+  /* List view enhancements */
+  .summary-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .summary-link:hover {
+    color: #667eea;
+  }
+  .issue-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+  }
+  .issue-label {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    background: #e9ecef;
+    border-radius: 0.25rem;
+    color: #495057;
+  }
+  .epic-link {
+    font-size: 0.75rem;
+    color: #7c3aed;
+    font-weight: 500;
+  }
+  /* Inline editing */
+  .editable-field {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.15s;
+  }
+  .editable-field:hover {
+    background: #f0f4ff;
+  }
+  .inline-edit-select {
+    min-width: 120px;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .inline-edit-input {
+    width: 100px;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .inline-edit-date {
+    width: 130px;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .saving-indicator {
+    display: none;
+  }
+  .saving-indicator.active {
+    display: inline-block;
+  }
+  .story-points-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    background: #e9ecef;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .list-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+  }
+  .list-table td {
+    vertical-align: middle;
+    font-size: 0.875rem;
+  }
+  .component-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 0.25rem;
+  }
+  .dates-small {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
 </style>
 @endsection
 
@@ -338,22 +428,26 @@
     <div class="card">
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-hover mb-0">
+          <table class="table table-hover mb-0 list-table">
             <thead class="table-light">
               <tr>
-                <th style="width: 60px;">Type</th>
-                <th style="width: 100px;">Key</th>
-                <th>Summary</th>
-                <th style="width: 120px;">Status</th>
-                <th style="width: 100px;">Priority</th>
-                <th style="width: 140px;">Assignee</th>
+                <th style="width: 40px;">Type</th>
+                <th style="width: 90px;">Key</th>
+                <th style="min-width: 250px;">Summary</th>
+                <th style="width: 90px;">Epic</th>
+                <th style="width: 110px;">Status</th>
+                <th style="width: 90px;">Priority</th>
+                <th style="width: 130px;">Assignee</th>
                 <th style="width: 100px;">Due Date</th>
-                <th style="width: 50px;"></th>
+                <th style="width: 50px;">SP</th>
+                <th style="width: 90px;">Components</th>
+                <th style="width: 140px;">Dates</th>
+                <th style="width: 40px;"></th>
               </tr>
             </thead>
             <tbody>
               @forelse($issues as $issue)
-                <tr class="{{ $issue->isOverdue() ? 'table-danger' : '' }}">
+                <tr class="{{ $issue->isOverdue() ? 'table-danger' : '' }}" data-issue-id="{{ $issue->id }}" data-issue-key="{{ $issue->issue_key }}">
                   <td>
                     <span class="issue-type-icon bg-{{ $issue->issue_type_color }}" title="{{ $issue->issue_type }}">
                       <i class="ti {{ $issue->issue_type_icon }} text-white"></i>
@@ -365,48 +459,120 @@
                     </a>
                   </td>
                   <td>
-                    <a href="{{ $issue->jira_url }}" target="_blank" class="text-body text-decoration-none">
-                      {{ Str::limit($issue->summary, 60) }}
-                    </a>
+                    <div>
+                      @if($issue->description)
+                        <span class="summary-link" data-issue-id="{{ $issue->id }}" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+                          {{ Str::limit($issue->summary, 60) }}
+                        </span>
+                      @else
+                        <span>{{ Str::limit($issue->summary, 60) }}</span>
+                      @endif
+                    </div>
+                    @if($issue->labels && count($issue->labels) > 0)
+                      <div class="issue-labels">
+                        @foreach(array_slice($issue->labels, 0, 3) as $label)
+                          <span class="issue-label">{{ $label }}</span>
+                        @endforeach
+                        @if(count($issue->labels) > 3)
+                          <span class="issue-label">+{{ count($issue->labels) - 3 }}</span>
+                        @endif
+                      </div>
+                    @endif
                   </td>
                   <td>
-                    <span class="badge bg-{{ $issue->status_color }}">{{ $issue->status }}</span>
-                  </td>
-                  <td>
-                    @if($issue->priority)
-                      <span class="badge bg-{{ $issue->priority_color }}">{{ $issue->priority }}</span>
+                    @if($issue->epic_key)
+                      <a href="https://aura-llc.atlassian.net/browse/{{ $issue->epic_key }}" target="_blank" class="epic-link text-decoration-none">
+                        {{ $issue->epic_key }}
+                      </a>
                     @else
                       <span class="text-muted">-</span>
                     @endif
                   </td>
                   <td>
-                    @if($issue->assignee)
-                      <span class="issue-assignee-avatar me-1">{{ substr($issue->assignee->name, 0, 2) }}</span>
-                      <small>{{ $issue->assignee->name }}</small>
-                    @elseif($issue->assignee_email)
-                      <small class="text-muted">{{ Str::before($issue->assignee_email, '@') }}</small>
-                    @else
-                      <span class="text-muted">Unassigned</span>
-                    @endif
+                    <div class="editable-field status-field" data-field="status" data-current="{{ $issue->status }}">
+                      <span class="badge bg-{{ $issue->status_color }}">{{ $issue->status }}</span>
+                      <i class="ti ti-chevron-down ms-1" style="font-size: 0.7rem;"></i>
+                      <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
+                    </div>
                   </td>
                   <td>
-                    @if($issue->due_date)
-                      <span class="{{ $issue->isOverdue() ? 'text-danger fw-bold' : '' }}">
-                        {{ $issue->due_date->format('M d') }}
-                      </span>
+                    <div class="editable-field priority-field" data-field="priority" data-current="{{ $issue->priority }}">
+                      @if($issue->priority)
+                        <span class="badge bg-{{ $issue->priority_color }}">{{ $issue->priority }}</span>
+                      @else
+                        <span class="text-muted">None</span>
+                      @endif
+                      <i class="ti ti-chevron-down ms-1" style="font-size: 0.7rem;"></i>
+                      <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="editable-field assignee-field" data-field="assignee" data-current="{{ $issue->assignee_email }}">
+                      @if($issue->assignee)
+                        <span class="issue-assignee-avatar me-1">{{ substr($issue->assignee->name, 0, 2) }}</span>
+                        <small>{{ Str::limit($issue->assignee->name, 12) }}</small>
+                      @elseif($issue->assignee_email)
+                        <small>{{ Str::before($issue->assignee_email, '@') }}</small>
+                      @else
+                        <span class="text-muted">Unassigned</span>
+                      @endif
+                      <i class="ti ti-chevron-down ms-1" style="font-size: 0.7rem;"></i>
+                      <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="editable-field due-date-field" data-field="due_date" data-current="{{ $issue->due_date?->format('Y-m-d') }}">
+                      @if($issue->due_date)
+                        <span class="{{ $issue->isOverdue() ? 'text-danger fw-bold' : '' }}">
+                          {{ $issue->due_date->format('M d') }}
+                        </span>
+                      @else
+                        <span class="text-muted">Set date</span>
+                      @endif
+                      <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="editable-field story-points-field" data-field="story_points" data-current="{{ $issue->story_points }}">
+                      @if($issue->story_points)
+                        <span class="story-points-display">{{ $issue->story_points }}</span>
+                      @else
+                        <span class="text-muted">-</span>
+                      @endif
+                      <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    @if($issue->components && count($issue->components) > 0)
+                      <div class="d-flex flex-wrap gap-1">
+                        @foreach(array_slice($issue->components, 0, 2) as $component)
+                          <span class="component-badge">{{ Str::limit($component, 10) }}</span>
+                        @endforeach
+                        @if(count($issue->components) > 2)
+                          <span class="component-badge">+{{ count($issue->components) - 2 }}</span>
+                        @endif
+                      </div>
                     @else
                       <span class="text-muted">-</span>
                     @endif
                   </td>
+                  <td class="dates-small">
+                    <div title="Created: {{ $issue->jira_created_at?->format('Y-m-d H:i') }}">
+                      <i class="ti ti-clock me-1"></i>{{ $issue->jira_created_at?->format('M d') }}
+                    </div>
+                    <div title="Updated: {{ $issue->jira_updated_at?->format('Y-m-d H:i') }}">
+                      <i class="ti ti-refresh me-1"></i>{{ $issue->jira_updated_at?->format('M d') }}
+                    </div>
+                  </td>
                   <td>
-                    <a href="{{ $issue->jira_url }}" target="_blank" class="btn btn-sm btn-icon btn-outline-secondary">
+                    <a href="{{ $issue->jira_url }}" target="_blank" class="btn btn-sm btn-icon btn-outline-secondary" title="Open in Jira">
                       <i class="ti ti-external-link"></i>
                     </a>
                   </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="8" class="text-center py-4 text-muted">
+                  <td colspan="12" class="text-center py-4 text-muted">
                     No issues match your filters.
                   </td>
                 </tr>
@@ -417,6 +583,45 @@
       </div>
     </div>
   @endif
+
+  <!-- Description Modal -->
+  <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="descriptionModalLabel">
+            <span id="descriptionModalIssueKey" class="issue-key me-2"></span>
+            <span id="descriptionModalSummary"></span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="descriptionLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <div id="descriptionContent" style="display: none;">
+            <div id="descriptionText" class="mb-3" style="white-space: pre-wrap;"></div>
+            <hr>
+            <div class="row text-muted small">
+              <div class="col-md-6">
+                <strong>Created:</strong> <span id="descCreated"></span>
+              </div>
+              <div class="col-md-6">
+                <strong>Updated:</strong> <span id="descUpdated"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" id="descriptionJiraLink" target="_blank" class="btn btn-primary">
+            <i class="ti ti-external-link me-1"></i>Open in Jira
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Create Task Modal -->
   <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
@@ -496,6 +701,10 @@
 @section('page-script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  const projectId = {{ $project->id }};
+  let jiraOptions = null;
+  let activeEditField = null;
+
   // Add click handler for kanban cards to open in Jira
   document.querySelectorAll('.kanban-card[data-jira-url]').forEach(function(card) {
     card.addEventListener('click', function() {
@@ -503,7 +712,395 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // ==========================================
+  // Description Modal
+  // ==========================================
+  const descriptionModal = document.getElementById('descriptionModal');
+  if (descriptionModal) {
+    descriptionModal.addEventListener('show.bs.modal', function(event) {
+      const trigger = event.relatedTarget;
+      if (!trigger) return;
+
+      const issueId = trigger.dataset.issueId;
+      const row = trigger.closest('tr');
+      const issueKey = row.dataset.issueKey;
+
+      document.getElementById('descriptionLoading').style.display = 'block';
+      document.getElementById('descriptionContent').style.display = 'none';
+      document.getElementById('descriptionModalIssueKey').textContent = issueKey;
+      document.getElementById('descriptionModalSummary').textContent = trigger.textContent.trim();
+      document.getElementById('descriptionJiraLink').href = `https://aura-llc.atlassian.net/browse/${issueKey}`;
+
+      fetch(`/projects/${projectId}/tasks/${issueId}/details`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('descriptionLoading').style.display = 'none';
+          document.getElementById('descriptionContent').style.display = 'block';
+          document.getElementById('descriptionText').textContent = data.description || 'No description available.';
+          document.getElementById('descCreated').textContent = data.jira_created_at || '-';
+          document.getElementById('descUpdated').textContent = data.jira_updated_at || '-';
+        })
+        .catch(error => {
+          document.getElementById('descriptionLoading').style.display = 'none';
+          document.getElementById('descriptionContent').style.display = 'block';
+          document.getElementById('descriptionText').textContent = 'Failed to load description.';
+        });
+    });
+  }
+
+  // ==========================================
+  // Inline Editing
+  // ==========================================
+
+  // Load Jira options once for inline editing
+  function loadJiraOptionsForEditing() {
+    if (jiraOptions) return Promise.resolve(jiraOptions);
+
+    return fetch('{{ route("projects.create-task", $project) }}')
+      .then(response => response.json())
+      .then(data => {
+        jiraOptions = data;
+        return data;
+      });
+  }
+
+  // Close any active inline edit
+  function closeActiveEdit() {
+    if (activeEditField) {
+      const editContainer = activeEditField.querySelector('.inline-edit-container');
+      if (editContainer) {
+        editContainer.remove();
+      }
+      activeEditField.style.display = '';
+      activeEditField = null;
+    }
+  }
+
+  // Handle clicks outside to close edit
+  document.addEventListener('click', function(e) {
+    if (activeEditField && !activeEditField.contains(e.target)) {
+      closeActiveEdit();
+    }
+  });
+
+  // Status field click handler
+  document.querySelectorAll('.status-field').forEach(function(field) {
+    field.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (activeEditField === this) return;
+      closeActiveEdit();
+
+      const row = this.closest('tr');
+      const issueId = row.dataset.issueId;
+      const savingIndicator = this.querySelector('.saving-indicator');
+
+      // Show loading in field
+      savingIndicator.classList.add('active');
+
+      // Fetch available transitions
+      fetch(`/projects/${projectId}/tasks/${issueId}/transitions`)
+        .then(response => response.json())
+        .then(data => {
+          savingIndicator.classList.remove('active');
+
+          if (!data.transitions || data.transitions.length === 0) {
+            Swal.fire('No Transitions', 'No status transitions available for this issue.', 'info');
+            return;
+          }
+
+          // Create dropdown
+          const select = document.createElement('select');
+          select.className = 'form-select form-select-sm inline-edit-select';
+          select.innerHTML = '<option value="">-- Select Status --</option>';
+
+          data.transitions.forEach(function(transition) {
+            const option = document.createElement('option');
+            option.value = transition.id;
+            option.textContent = transition.name;
+            select.appendChild(option);
+          });
+
+          const container = document.createElement('div');
+          container.className = 'inline-edit-container';
+          container.appendChild(select);
+
+          this.style.display = 'none';
+          this.parentNode.appendChild(container);
+          activeEditField = this;
+          select.focus();
+
+          select.addEventListener('change', function() {
+            if (!this.value) return;
+
+            savingIndicator.classList.add('active');
+            container.remove();
+            field.style.display = '';
+
+            fetch(`/projects/${projectId}/tasks/${issueId}/transition`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              },
+              body: JSON.stringify({ transition_id: this.value })
+            })
+            .then(response => response.json())
+            .then(data => {
+              savingIndicator.classList.remove('active');
+              if (data.success) {
+                location.reload();
+              } else {
+                Swal.fire('Error', data.error || 'Failed to update status', 'error');
+              }
+            })
+            .catch(error => {
+              savingIndicator.classList.remove('active');
+              Swal.fire('Error', 'Failed to update status', 'error');
+            });
+
+            activeEditField = null;
+          });
+
+          select.addEventListener('blur', function() {
+            setTimeout(() => {
+              container.remove();
+              field.style.display = '';
+              activeEditField = null;
+            }, 200);
+          });
+        })
+        .catch(error => {
+          savingIndicator.classList.remove('active');
+          Swal.fire('Error', 'Failed to load transitions', 'error');
+        });
+    });
+  });
+
+  // Priority field click handler
+  document.querySelectorAll('.priority-field').forEach(function(field) {
+    field.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (activeEditField === this) return;
+      closeActiveEdit();
+
+      const row = this.closest('tr');
+      const issueId = row.dataset.issueId;
+      const currentValue = this.dataset.current;
+      const savingIndicator = this.querySelector('.saving-indicator');
+
+      loadJiraOptionsForEditing().then(function(options) {
+        const select = document.createElement('select');
+        select.className = 'form-select form-select-sm inline-edit-select';
+        select.innerHTML = '<option value="">None</option>';
+
+        options.priorities.forEach(function(priority) {
+          const option = document.createElement('option');
+          option.value = priority;
+          option.textContent = priority;
+          if (priority === currentValue) option.selected = true;
+          select.appendChild(option);
+        });
+
+        const container = document.createElement('div');
+        container.className = 'inline-edit-container';
+        container.appendChild(select);
+
+        field.style.display = 'none';
+        field.parentNode.appendChild(container);
+        activeEditField = field;
+        select.focus();
+
+        select.addEventListener('change', function() {
+          saveFieldUpdate(issueId, 'priority', this.value, field, container, savingIndicator);
+        });
+
+        select.addEventListener('blur', function() {
+          setTimeout(() => {
+            container.remove();
+            field.style.display = '';
+            activeEditField = null;
+          }, 200);
+        });
+      });
+    });
+  });
+
+  // Assignee field click handler
+  document.querySelectorAll('.assignee-field').forEach(function(field) {
+    field.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (activeEditField === this) return;
+      closeActiveEdit();
+
+      const row = this.closest('tr');
+      const issueId = row.dataset.issueId;
+      const currentValue = this.dataset.current;
+      const savingIndicator = this.querySelector('.saving-indicator');
+
+      loadJiraOptionsForEditing().then(function(options) {
+        const select = document.createElement('select');
+        select.className = 'form-select form-select-sm inline-edit-select';
+        select.innerHTML = '<option value="">Unassigned</option>';
+
+        options.assignees.forEach(function(user) {
+          const option = document.createElement('option');
+          option.value = user.account_id;
+          option.textContent = user.display_name;
+          if (user.email === currentValue) option.selected = true;
+          select.appendChild(option);
+        });
+
+        const container = document.createElement('div');
+        container.className = 'inline-edit-container';
+        container.appendChild(select);
+
+        field.style.display = 'none';
+        field.parentNode.appendChild(container);
+        activeEditField = field;
+        select.focus();
+
+        select.addEventListener('change', function() {
+          saveFieldUpdate(issueId, 'assignee', this.value, field, container, savingIndicator);
+        });
+
+        select.addEventListener('blur', function() {
+          setTimeout(() => {
+            container.remove();
+            field.style.display = '';
+            activeEditField = null;
+          }, 200);
+        });
+      });
+    });
+  });
+
+  // Due date field click handler
+  document.querySelectorAll('.due-date-field').forEach(function(field) {
+    field.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (activeEditField === this) return;
+      closeActiveEdit();
+
+      const row = this.closest('tr');
+      const issueId = row.dataset.issueId;
+      const currentValue = this.dataset.current || '';
+      const savingIndicator = this.querySelector('.saving-indicator');
+
+      const input = document.createElement('input');
+      input.type = 'date';
+      input.className = 'form-control form-control-sm inline-edit-date';
+      input.value = currentValue;
+
+      const container = document.createElement('div');
+      container.className = 'inline-edit-container';
+      container.appendChild(input);
+
+      field.style.display = 'none';
+      field.parentNode.appendChild(container);
+      activeEditField = field;
+      input.focus();
+
+      input.addEventListener('change', function() {
+        saveFieldUpdate(issueId, 'due_date', this.value, field, container, savingIndicator);
+      });
+
+      input.addEventListener('blur', function() {
+        setTimeout(() => {
+          container.remove();
+          field.style.display = '';
+          activeEditField = null;
+        }, 200);
+      });
+    });
+  });
+
+  // Story points field click handler
+  document.querySelectorAll('.story-points-field').forEach(function(field) {
+    field.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (activeEditField === this) return;
+      closeActiveEdit();
+
+      const row = this.closest('tr');
+      const issueId = row.dataset.issueId;
+      const currentValue = this.dataset.current || '';
+      const savingIndicator = this.querySelector('.saving-indicator');
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'form-control form-control-sm inline-edit-input';
+      input.value = currentValue;
+      input.min = 0;
+      input.max = 100;
+      input.step = 1;
+      input.style.width = '60px';
+
+      const container = document.createElement('div');
+      container.className = 'inline-edit-container';
+      container.appendChild(input);
+
+      field.style.display = 'none';
+      field.parentNode.appendChild(container);
+      activeEditField = field;
+      input.focus();
+      input.select();
+
+      input.addEventListener('blur', function() {
+        const newValue = this.value ? parseInt(this.value) : null;
+        if (newValue !== parseInt(currentValue)) {
+          saveFieldUpdate(issueId, 'story_points', newValue, field, container, savingIndicator);
+        } else {
+          container.remove();
+          field.style.display = '';
+          activeEditField = null;
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          this.blur();
+        } else if (e.key === 'Escape') {
+          container.remove();
+          field.style.display = '';
+          activeEditField = null;
+        }
+      });
+    });
+  });
+
+  // Generic save field update function
+  function saveFieldUpdate(issueId, field, value, fieldElement, container, savingIndicator) {
+    container.remove();
+    fieldElement.style.display = '';
+    savingIndicator.classList.add('active');
+    activeEditField = null;
+
+    fetch(`/projects/${projectId}/tasks/${issueId}/update-field`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({ field: field, value: value })
+    })
+    .then(response => response.json())
+    .then(data => {
+      savingIndicator.classList.remove('active');
+      if (data.success) {
+        location.reload();
+      } else {
+        Swal.fire('Error', data.error || 'Failed to update field', 'error');
+      }
+    })
+    .catch(error => {
+      savingIndicator.classList.remove('active');
+      Swal.fire('Error', 'Failed to update field', 'error');
+    });
+  }
+
+  // ==========================================
   // Create Task Modal handling
+  // ==========================================
   const createTaskModal = document.getElementById('createTaskModal');
   let jiraOptionsLoaded = false;
 
@@ -534,6 +1131,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return response.json();
       })
       .then(data => {
+        // Store for inline editing
+        jiraOptions = data;
+
         // Populate issue types
         const issueTypeSelect = document.getElementById('issue_type');
         issueTypeSelect.innerHTML = '';
