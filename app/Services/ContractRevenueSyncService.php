@@ -25,7 +25,7 @@ class ContractRevenueSyncService
      * Sync all payments from a contract to its linked projects.
      *
      * Creates project revenue entries for each contract payment
-     * for all projects linked to the contract.
+     * for all projects linked to the contract, using allocation data.
      */
     public function syncContractToProjects(Contract $contract): array
     {
@@ -46,8 +46,11 @@ class ContractRevenueSyncService
 
         try {
             foreach ($projects as $project) {
+                // Calculate allocation ratio for this project
+                $allocationRatio = $this->getProjectAllocationRatio($contract, $project);
+
                 foreach ($contract->payments as $payment) {
-                    $result = $this->syncPaymentToProject($payment, $project);
+                    $result = $this->syncPaymentToProject($payment, $project, $allocationRatio);
                     if ($result['success']) {
                         $synced++;
                     } else {
@@ -80,10 +83,50 @@ class ContractRevenueSyncService
     }
 
     /**
-     * Sync a single contract payment to a project as revenue.
+     * Get allocation ratio for a project from a contract.
+     *
+     * Returns a ratio (0 to 1) representing the project's share of the contract.
+     * If no allocation is set, defaults to equal distribution.
      */
-    public function syncPaymentToProject(ContractPayment $payment, Project $project): array
+    protected function getProjectAllocationRatio(Contract $contract, Project $project): float
     {
+        $pivot = $contract->projects()->where('project_id', $project->id)->first()?->pivot;
+
+        if (!$pivot) {
+            // No pivot means no allocation defined - use equal distribution
+            $projectCount = $contract->projects->count();
+            return $projectCount > 0 ? 1 / $projectCount : 1;
+        }
+
+        // Check if allocation data exists
+        if ($pivot->allocation_type === 'percentage' && $pivot->allocation_percentage) {
+            return $pivot->allocation_percentage / 100;
+        }
+
+        if ($pivot->allocation_type === 'amount' && $pivot->allocation_amount && $contract->total_amount > 0) {
+            return $pivot->allocation_amount / $contract->total_amount;
+        }
+
+        // No allocation set - use equal distribution
+        $projectCount = $contract->projects->count();
+        return $projectCount > 0 ? 1 / $projectCount : 1;
+    }
+
+    /**
+     * Sync a single contract payment to a project as revenue.
+     *
+     * @param ContractPayment $payment The payment to sync
+     * @param Project $project The target project
+     * @param float|null $allocationRatio Optional allocation ratio (0 to 1). If not provided, calculated from pivot.
+     */
+    public function syncPaymentToProject(ContractPayment $payment, Project $project, ?float $allocationRatio = null): array
+    {
+        // Calculate allocation ratio if not provided
+        if ($allocationRatio === null) {
+            $contract = $payment->contract;
+            $allocationRatio = $this->getProjectAllocationRatio($contract, $project);
+        }
+
         // Check if already synced
         $existingRevenue = ProjectRevenue::where('contract_payment_id', $payment->id)
             ->where('project_id', $project->id)
@@ -91,48 +134,61 @@ class ContractRevenueSyncService
 
         if ($existingRevenue) {
             // Update existing revenue
-            return $this->updateExistingRevenue($existingRevenue, $payment);
+            return $this->updateExistingRevenue($existingRevenue, $payment, $allocationRatio);
         }
 
         // Create new revenue
-        return $this->createRevenueFromPayment($payment, $project);
+        return $this->createRevenueFromPayment($payment, $project, $allocationRatio);
     }
 
     /**
      * Create a project revenue from a contract payment.
+     *
+     * @param ContractPayment $payment The payment to create revenue from
+     * @param Project $project The target project
+     * @param float $allocationRatio The allocation ratio (0 to 1) for this project
      */
-    protected function createRevenueFromPayment(ContractPayment $payment, Project $project): array
+    protected function createRevenueFromPayment(ContractPayment $payment, Project $project, float $allocationRatio = 1.0): array
     {
         try {
+            // Calculate allocated amounts based on ratio
+            $allocatedAmount = round($payment->amount * $allocationRatio, 2);
+            $allocatedReceived = round(($payment->paid_amount ?? 0) * $allocationRatio, 2);
+
             $revenue = ProjectRevenue::create([
                 'project_id' => $project->id,
                 'contract_id' => $payment->contract_id,
                 'contract_payment_id' => $payment->id,
                 'revenue_type' => $payment->is_milestone ? 'milestone' : 'contract',
                 'description' => $payment->name,
-                'notes' => $payment->description,
-                'amount' => $payment->amount,
+                'notes' => $payment->description . ($allocationRatio < 1 ? " (Allocated " . round($allocationRatio * 100, 1) . "%)" : ''),
+                'amount' => $allocatedAmount,
                 'revenue_date' => $payment->due_date ?? now(),
                 'due_date' => $payment->due_date,
                 'status' => $this->mapPaymentStatusToRevenueStatus($payment->status),
-                'amount_received' => $payment->paid_amount ?? 0,
+                'amount_received' => $allocatedReceived,
                 'received_date' => $payment->paid_date,
                 'synced_from_contract' => true,
                 'synced_at' => now(),
                 'created_by' => auth()->id(),
             ]);
 
-            // Update payment with revenue link
-            $payment->update([
-                'project_revenue_id' => $revenue->id,
-                'synced_to_project' => true,
-                'synced_to_project_at' => now(),
-            ]);
+            // Update payment with revenue link (only if this is the primary/first project)
+            // For multi-project allocations, we can't link to a single revenue
+            if ($payment->project_revenue_id === null) {
+                $payment->update([
+                    'project_revenue_id' => $revenue->id,
+                    'synced_to_project' => true,
+                    'synced_to_project_at' => now(),
+                ]);
+            }
 
             Log::info('Contract payment synced to project revenue', [
                 'payment_id' => $payment->id,
                 'project_id' => $project->id,
                 'revenue_id' => $revenue->id,
+                'allocation_ratio' => $allocationRatio,
+                'allocated_amount' => $allocatedAmount,
             ]);
 
             return [
@@ -156,18 +212,26 @@ class ContractRevenueSyncService
 
     /**
      * Update an existing project revenue from contract payment.
+     *
+     * @param ProjectRevenue $revenue The revenue to update
+     * @param ContractPayment $payment The source payment
+     * @param float $allocationRatio The allocation ratio (0 to 1) for this project
      */
-    protected function updateExistingRevenue(ProjectRevenue $revenue, ContractPayment $payment): array
+    protected function updateExistingRevenue(ProjectRevenue $revenue, ContractPayment $payment, float $allocationRatio = 1.0): array
     {
         try {
+            // Calculate allocated amounts based on ratio
+            $allocatedAmount = round($payment->amount * $allocationRatio, 2);
+            $allocatedReceived = round(($payment->paid_amount ?? 0) * $allocationRatio, 2);
+
             $revenue->update([
                 'revenue_type' => $payment->is_milestone ? 'milestone' : 'contract',
                 'description' => $payment->name,
-                'notes' => $payment->description,
-                'amount' => $payment->amount,
+                'notes' => $payment->description . ($allocationRatio < 1 ? " (Allocated " . round($allocationRatio * 100, 1) . "%)" : ''),
+                'amount' => $allocatedAmount,
                 'due_date' => $payment->due_date,
                 'status' => $this->mapPaymentStatusToRevenueStatus($payment->status),
-                'amount_received' => $payment->paid_amount ?? 0,
+                'amount_received' => $allocatedReceived,
                 'received_date' => $payment->paid_date,
                 'synced_at' => now(),
             ]);
