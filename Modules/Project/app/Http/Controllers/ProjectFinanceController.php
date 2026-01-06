@@ -42,8 +42,8 @@ class ProjectFinanceController extends Controller
             ],
             'invoices' => [
                 'count' => $project->invoices()->count(),
-                'total_value' => $project->invoices()->sum('total_amount'),
-                'paid' => $project->invoices()->sum('paid_amount'),
+                'total_value' => $project->total_invoices_in_base, // Uses base currency (EGP)
+                'paid' => $project->total_paid_in_base, // Uses base currency (EGP)
             ],
             'expenses' => [
                 'count' => ExpenseSchedule::where('project_id', $project->id)->count(),
@@ -489,12 +489,26 @@ class ProjectFinanceController extends Controller
         // Combine and deduplicate
         $invoices = $directInvoices->merge($pivotInvoices)->unique('id')->values();
 
-        // Calculate totals
+        // Calculate totals in base currency (EGP)
+        $getInvoiceValueInBase = function ($invoice) {
+            if ($invoice->currency !== 'EGP' && $invoice->total_in_base > 0) {
+                return $invoice->total_in_base;
+            }
+            return $invoice->total_amount;
+        };
+
+        $getPaidInBase = function ($invoice) {
+            if ($invoice->currency !== 'EGP' && $invoice->exchange_rate > 0) {
+                return $invoice->paid_amount * $invoice->exchange_rate;
+            }
+            return $invoice->paid_amount;
+        };
+
         $totals = [
-            'total_invoiced' => $invoices->sum('total_amount'),
-            'total_paid' => $invoices->sum('paid_amount'),
-            'total_pending' => $invoices->where('status', '!=', 'paid')->sum('total_amount') - $invoices->where('status', '!=', 'paid')->sum('paid_amount'),
-            'total_overdue' => $invoices->where('status', 'overdue')->sum('total_amount'),
+            'total_invoiced' => $invoices->sum($getInvoiceValueInBase),
+            'total_paid' => $invoices->sum($getPaidInBase),
+            'total_pending' => $invoices->where('status', '!=', 'paid')->sum($getInvoiceValueInBase) - $invoices->where('status', '!=', 'paid')->sum($getPaidInBase),
+            'total_overdue' => $invoices->where('status', 'overdue')->sum($getInvoiceValueInBase),
         ];
 
         return view('project::projects.finance.invoices', compact('project', 'invoices', 'totals'));

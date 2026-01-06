@@ -246,11 +246,11 @@ class ProjectController extends Controller
             ];
         });
 
-        // Calculate totals
+        // Calculate totals - use base currency (EGP) for proper currency conversion
         $totalHours = $dashboard['progress']['actual_hours'];
         $lifetimeHours = $totalHours;
-        $totalContractValue = $project->invoices->sum('total_amount');
-        $totalPaid = $project->invoices->sum('paid_amount');
+        $totalContractValue = $project->total_contract_value; // Converts foreign currency to EGP
+        $totalPaid = $project->total_paid; // Converts foreign currency to EGP
         $totalRemaining = $totalContractValue - $totalPaid;
 
         // If date filter is applied, recalculate hours for filtered period

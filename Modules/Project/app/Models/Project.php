@@ -542,19 +542,49 @@ class Project extends Model
     }
 
     /**
-     * Get total contract value for this project.
+     * Get total contract value for this project (in base currency EGP).
+     * Uses total_in_base for foreign currency invoices, total_amount for EGP invoices.
      */
     public function getTotalContractValueAttribute()
     {
-        return $this->invoices()->sum('total_amount');
+        return $this->invoices->sum(function ($invoice) {
+            // Use total_in_base if available (foreign currency), otherwise use total_amount (EGP)
+            if ($invoice->currency !== 'EGP' && $invoice->total_in_base > 0) {
+                return $invoice->total_in_base;
+            }
+            return $invoice->total_amount;
+        });
     }
 
     /**
-     * Get total paid amount for this project.
+     * Get total paid amount for this project (in base currency EGP).
+     * Converts paid_amount using exchange_rate for foreign currency invoices.
      */
     public function getTotalPaidAttribute()
     {
-        return $this->invoices()->sum('paid_amount');
+        return $this->invoices->sum(function ($invoice) {
+            // For foreign currency invoices, convert paid_amount using exchange_rate
+            if ($invoice->currency !== 'EGP' && $invoice->exchange_rate > 0) {
+                return $invoice->paid_amount * $invoice->exchange_rate;
+            }
+            return $invoice->paid_amount;
+        });
+    }
+
+    /**
+     * Get total invoice value in base currency (EGP) - alias for consistency.
+     */
+    public function getTotalInvoicesInBaseAttribute(): float
+    {
+        return $this->total_contract_value;
+    }
+
+    /**
+     * Get total paid in base currency (EGP) - alias for consistency.
+     */
+    public function getTotalPaidInBaseAttribute(): float
+    {
+        return $this->total_paid;
     }
 
     /**
