@@ -48,8 +48,8 @@ class IncomeController extends Controller
             abort(403, 'Unauthorized to view contracts.');
         }
 
-        // Get contracts with their payments
-        $query = Contract::with(['payments', 'customer']);
+        // Get contracts with their payments, customer and projects
+        $query = Contract::with(['payments', 'customer', 'projects']);
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {

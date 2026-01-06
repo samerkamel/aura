@@ -78,11 +78,11 @@
                             <th>
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
-                            <th>Contract Details</th>
-                            <th>Client</th>
+                            <th>Contract #</th>
+                            <th>Client / Project</th>
                             <th>Amount</th>
                             <th>Duration</th>
-                            <th>Income Schedules</th>
+                            <th>Payments</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -94,30 +94,45 @@
                                     <input type="checkbox" class="form-check-input contract-checkbox" value="{{ $contract->id }}">
                                 </td>
                                 <td>
-                                    <div>
-                                        <strong>{{ $contract->contract_number }}</strong>
-                                        @if($contract->description)
-                                            <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($contract->description, 50) }}</small>
-                                        @endif
-                                    </div>
+                                    <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-bold text-primary">
+                                        {{ $contract->contract_number }}
+                                    </a>
+                                    @if($contract->description)
+                                        <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($contract->description, 30) }}</small>
+                                    @endif
                                 </td>
                                 <td>
                                     <div>
-                                        <strong>{{ $contract->client_name }}</strong>
-                                        @if($contract->contact_info && isset($contract->contact_info['email']))
-                                            <br><small class="text-muted">{{ $contract->contact_info['email'] }}</small>
+                                        @if($contract->customer)
+                                            <a href="{{ route('administration.customers.show', $contract->customer) }}" class="fw-semibold">
+                                                {{ $contract->client_name }}
+                                            </a>
+                                        @else
+                                            <span class="fw-semibold">{{ $contract->client_name }}</span>
+                                        @endif
+                                        @if($contract->projects->isNotEmpty())
+                                            <div class="mt-1">
+                                                @foreach($contract->projects->take(2) as $project)
+                                                    <a href="{{ route('projects.show', $project) }}" class="badge bg-label-primary me-1" title="{{ $project->name }}">
+                                                        <i class="ti ti-folder ti-xs me-1"></i>{{ $project->code ?? \Illuminate\Support\Str::limit($project->name, 15) }}
+                                                    </a>
+                                                @endforeach
+                                                @if($contract->projects->count() > 2)
+                                                    <span class="badge bg-label-secondary">+{{ $contract->projects->count() - 2 }} more</span>
+                                                @endif
+                                            </div>
                                         @endif
                                     </div>
                                 </td>
                                 <td>
                                     <strong class="text-success">{{ number_format($contract->total_amount, 2) }} EGP</strong>
-                                    @if($contract->monthly_income > 0)
-                                        <br><small class="text-muted">{{ number_format($contract->monthly_income, 2) }} EGP/month</small>
-                                    @endif
+                                    <br><small class="text-muted">
+                                        Paid: {{ number_format($contract->paid_amount, 2) }} EGP
+                                    </small>
                                 </td>
                                 <td>
                                     <div>
-                                        <strong>{{ $contract->start_date->format('M j, Y') }}</strong>
+                                        <span>{{ $contract->start_date->format('M j, Y') }}</span>
                                         @if($contract->end_date)
                                             <br><small class="text-muted">to {{ $contract->end_date->format('M j, Y') }}</small>
                                         @else
@@ -127,14 +142,17 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex flex-column gap-1">
-                                        <span class="badge bg-info">{{ $contract->payments->count() }} Total</span>
-                                        <span class="badge bg-success">{{ $contract->payments->where('status', '!=', 'cancelled')->count() }} Active</span>
+                                        <span class="badge bg-label-info">{{ $contract->payments->count() }} Total</span>
+                                        <span class="badge bg-label-success">{{ $contract->payments->where('status', 'paid')->count() }} Paid</span>
                                     </div>
                                 </td>
                                 <td>
                                     <span class="badge bg-{{ $contract->status === 'active' ? 'success' : ($contract->status === 'completed' ? 'info' : ($contract->status === 'cancelled' ? 'danger' : 'warning')) }}">
                                         {{ \Illuminate\Support\Str::ucfirst($contract->status) }}
                                     </span>
+                                    @if(!$contract->is_active)
+                                        <br><small class="text-muted">Inactive</small>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="dropdown">
