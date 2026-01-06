@@ -404,4 +404,28 @@ class InvoiceController extends Controller
             ->back()
             ->with('success', 'Invoice cancelled.');
     }
+
+    /**
+     * Sync invoice to project revenues.
+     */
+    public function syncToProjects(Invoice $invoice): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            abort(403, 'Unauthorized to sync invoices.');
+        }
+
+        $syncService = app(\App\Services\InvoiceProjectSyncService::class);
+
+        $result = $syncService->syncInvoiceToProjects($invoice);
+
+        if ($result['success']) {
+            return redirect()
+                ->back()
+                ->with('success', $result['message']);
+        }
+
+        return redirect()
+            ->back()
+            ->with('warning', $result['message']);
+    }
 }

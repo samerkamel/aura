@@ -17,6 +17,19 @@
                             <i class="ti ti-edit me-1"></i>Edit
                         </a>
                     @endif
+                    @php
+                        $hasProjectAllocations = $invoice->projects->count() > 0
+                            || $invoice->items->whereNotNull('project_id')->count() > 0
+                            || $invoice->project_id;
+                    @endphp
+                    @if($hasProjectAllocations)
+                    <form action="{{ route('invoicing.invoices.sync-to-projects', $invoice) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-info" title="Sync to project revenues">
+                            <i class="ti ti-refresh me-1"></i>Sync to Projects
+                        </button>
+                    </form>
+                    @endif
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             <i class="ti ti-dots-vertical me-1"></i>Actions
@@ -290,6 +303,112 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                @endif
+
+                <!-- Linked Projects -->
+                @php
+                    // Collect all project allocations
+                    $projectAllocations = collect();
+
+                    // From invoice_project pivot
+                    foreach ($invoice->projects as $project) {
+                        $projectAllocations[$project->id] = [
+                            'project' => $project,
+                            'amount' => $project->pivot->allocated_amount ?? 0,
+                            'source' => 'pivot',
+                        ];
+                    }
+
+                    // From line items (if pivot is empty)
+                    if ($projectAllocations->isEmpty()) {
+                        $itemAllocations = $invoice->items->whereNotNull('project_id')
+                            ->groupBy('project_id')
+                            ->map(function ($items, $projectId) {
+                                return [
+                                    'project' => $items->first()->project,
+                                    'amount' => $items->sum('total'),
+                                    'source' => 'line_items',
+                                ];
+                            });
+                        $projectAllocations = $itemAllocations;
+                    }
+
+                    // From invoice-level project_id (if still empty)
+                    if ($projectAllocations->isEmpty() && $invoice->project_id && $invoice->project) {
+                        $projectAllocations[$invoice->project_id] = [
+                            'project' => $invoice->project,
+                            'amount' => $invoice->total_amount,
+                            'source' => 'invoice',
+                        ];
+                    }
+                @endphp
+
+                @if($projectAllocations->isNotEmpty())
+                <div class="mt-4">
+                    <h6 class="mb-3"><i class="ti ti-briefcase me-1"></i>Linked Projects</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Allocated Amount</th>
+                                    <th>Source</th>
+                                    <th>Sync Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($projectAllocations as $alloc)
+                                @php
+                                    $project = $alloc['project'];
+                                    if (!$project) continue;
+
+                                    // Check if synced to project revenue
+                                    $syncedRevenue = \Modules\Project\Models\ProjectRevenue::where('invoice_id', $invoice->id)
+                                        ->where('project_id', $project->id)
+                                        ->first();
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('projects.finance.index', $project) }}" class="text-decoration-none">
+                                            <strong>{{ $project->name }}</strong>
+                                        </a>
+                                        <br><small class="text-muted">{{ $project->code }}</small>
+                                    </td>
+                                    <td>
+                                        <strong>{{ number_format($alloc['amount'], 2) }} {{ $invoice->currency }}</strong>
+                                    </td>
+                                    <td>
+                                        @if($alloc['source'] === 'pivot')
+                                            <span class="badge bg-label-primary">Manual Allocation</span>
+                                        @elseif($alloc['source'] === 'line_items')
+                                            <span class="badge bg-label-info">Line Items</span>
+                                        @else
+                                            <span class="badge bg-label-secondary">Invoice Level</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($syncedRevenue)
+                                            <span class="badge bg-success">
+                                                <i class="ti ti-check me-1"></i>Synced
+                                            </span>
+                                            <br><small class="text-muted">{{ $syncedRevenue->synced_at?->format('M j, Y') }}</small>
+                                        @else
+                                            <span class="badge bg-warning">
+                                                <i class="ti ti-alert-triangle me-1"></i>Not Synced
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="ti ti-info-circle me-1"></i>
+                        Project revenues are automatically synced when invoices are sent or paid.
+                        Use "Sync to Projects" button to manually refresh revenues.
+                    </small>
                 </div>
                 @endif
             </div>

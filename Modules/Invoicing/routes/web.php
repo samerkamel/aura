@@ -34,6 +34,9 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
         Route::post('/{invoice}/pay', [InvoiceController::class, 'markAsPaid'])->name('pay');
         Route::post('/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('cancel');
 
+        // Project revenue sync
+        Route::post('/{invoice}/sync-to-projects', [InvoiceController::class, 'syncToProjects'])->name('sync-to-projects');
+
         // Invoice generation from contract payments
         Route::get('/generate/from-payment/{contractPayment}', [InvoiceController::class, 'generateFromPayment'])->name('generate.payment');
         Route::post('/generate/from-payments', [InvoiceController::class, 'generateFromPayments'])->name('generate.payments');
