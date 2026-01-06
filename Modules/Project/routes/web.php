@@ -38,6 +38,10 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     // Follow-ups (must come BEFORE /{project} dynamic route)
     Route::get('/followups', [ProjectController::class, 'followups'])->name('followups');
 
+    // Mass customer linking (must come BEFORE /{project} dynamic route)
+    Route::get('/link-customers', [ProjectController::class, 'linkCustomers'])->name('link-customers');
+    Route::post('/link-customers', [ProjectController::class, 'updateCustomerLinks'])->name('update-customer-links');
+
     // Reports (must come BEFORE /{project} dynamic route)
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ProjectReportController::class, 'index'])->name('index');

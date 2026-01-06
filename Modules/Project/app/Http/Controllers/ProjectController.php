@@ -986,4 +986,104 @@ class ProjectController extends Controller
             'summary' => $summary,
         ]);
     }
+
+    /**
+     * Display the mass customer linking page.
+     */
+    public function linkCustomers(Request $request): View
+    {
+        if (!Gate::allows('view-all-projects')) {
+            abort(403, 'You do not have permission to link projects to customers.');
+        }
+
+        // Get all customers
+        $customers = Customer::active()
+            ->withCount('projects')
+            ->orderBy('name')
+            ->get();
+
+        // Build query for projects
+        $query = Project::with('customer:id,name,company_name')
+            ->orderBy('name');
+
+        // Filter by phase
+        $phaseFilter = $request->get('phase', 'active');
+        if ($phaseFilter === 'active') {
+            $query->where(function ($q) {
+                $q->where('phase', '!=', 'closure')->orWhereNull('phase');
+            });
+        } elseif ($phaseFilter === 'closure') {
+            $query->where('phase', 'closure');
+        } elseif ($phaseFilter !== 'all') {
+            $query->where('phase', $phaseFilter);
+        }
+
+        // Filter by current customer
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        // Filter unlinked only
+        if ($request->get('unlinked_only', '1') === '1') {
+            $query->whereNull('customer_id');
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $query->paginate(50)->withQueryString();
+
+        return view('project::projects.link-customers', [
+            'projects' => $projects,
+            'customers' => $customers,
+            'phaseFilter' => $phaseFilter,
+            'phases' => Project::PHASES,
+        ]);
+    }
+
+    /**
+     * Update customer links for multiple projects.
+     */
+    public function updateCustomerLinks(Request $request): RedirectResponse
+    {
+        if (!Gate::allows('view-all-projects')) {
+            abort(403, 'You do not have permission to link projects to customers.');
+        }
+
+        $validated = $request->validate([
+            'links' => 'required|array',
+            'links.*.project_id' => 'required|exists:projects,id',
+            'links.*.customer_id' => 'nullable|exists:customers,id',
+        ]);
+
+        $updatedCount = 0;
+
+        foreach ($validated['links'] as $link) {
+            $project = Project::find($link['project_id']);
+            $newCustomerId = $link['customer_id'] ?: null;
+
+            // Only update if changed
+            if ($project->customer_id !== $newCustomerId) {
+                $project->customer_id = $newCustomerId;
+                $project->save();
+                $updatedCount++;
+            }
+        }
+
+        if ($updatedCount > 0) {
+            return redirect()
+                ->back()
+                ->with('success', "Successfully updated customer links for {$updatedCount} project(s).");
+        }
+
+        return redirect()
+            ->back()
+            ->with('info', 'No changes were made.');
+    }
 }

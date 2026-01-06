@@ -172,6 +172,12 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
+                    <a class="dropdown-item" href="{{ route('projects.link-customers') }}">
+                      <i class="ti ti-link me-2"></i>Link to Customers
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
                     <a class="dropdown-item" href="{{ route('projects.templates.index') }}">
                       <i class="ti ti-template me-2"></i>Project Templates
                     </a>
