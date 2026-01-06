@@ -127,7 +127,7 @@
                         <div id="invoice-items">
                             <div class="invoice-item border rounded p-3 mb-3">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label required">Description</label>
                                         <input type="text" name="items[0][description]" class="form-control @error('items.0.description') is-invalid @enderror"
                                                value="{{ old('items.0.description') }}" required>
@@ -136,7 +136,18 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="form-label required">Quantity</label>
+                                        <label class="form-label">Project</label>
+                                        <select name="items[0][project_id]" class="form-select form-select-sm item-project">
+                                            <option value="">No Project</option>
+                                            @foreach($projects as $project)
+                                                <option value="{{ $project->id }}" {{ old('items.0.project_id') == $project->id ? 'selected' : '' }}>
+                                                    {{ $project->code ?? $project->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label class="form-label required">Qty</label>
                                         <input type="number" name="items[0][quantity]" class="form-control item-quantity @error('items.0.quantity') is-invalid @enderror"
                                                value="{{ old('items.0.quantity', 1) }}" min="0.01" step="0.01" required onchange="calculateItemTotal(this)">
                                         @error('items.0.quantity')
@@ -152,7 +163,7 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="form-label">Tax Rate (%)</label>
+                                        <label class="form-label">Tax %</label>
                                         <input type="number" name="items[0][tax_rate]" class="form-control item-tax @error('items.0.tax_rate') is-invalid @enderror"
                                                value="{{ old('items.0.tax_rate', 0) }}" min="0" max="100" step="0.01" onchange="calculateItemTotal(this)">
                                         @error('items.0.tax_rate')
@@ -163,8 +174,7 @@
                                         <label class="form-label">Total</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control item-total" readonly value="0.00">
-                                            <span class="input-group-text">EGP</span>
-                                            <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeInvoiceItem(this)" title="Remove Item">
                                                 <i class="ti ti-trash"></i>
                                             </button>
                                         </div>
@@ -232,18 +242,35 @@
 <script>
 let itemIndex = 1;
 
+// Projects data for dynamic item creation
+const projectsData = @json($projects->map(fn($p) => ['id' => $p->id, 'code' => $p->code, 'name' => $p->name]));
+
+function getProjectOptions() {
+    let options = '<option value="">No Project</option>';
+    projectsData.forEach(p => {
+        options += `<option value="${p.id}">${p.code || p.name}</option>`;
+    });
+    return options;
+}
+
 function addInvoiceItem() {
     const itemsContainer = document.getElementById('invoice-items');
     const newItem = document.createElement('div');
     newItem.className = 'invoice-item border rounded p-3 mb-3';
     newItem.innerHTML = `
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label required">Description</label>
                 <input type="text" name="items[${itemIndex}][description]" class="form-control" required>
             </div>
             <div class="col-md-2">
-                <label class="form-label required">Quantity</label>
+                <label class="form-label">Project</label>
+                <select name="items[${itemIndex}][project_id]" class="form-select form-select-sm item-project">
+                    ${getProjectOptions()}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label required">Qty</label>
                 <input type="number" name="items[${itemIndex}][quantity]" class="form-control item-quantity"
                        value="1" min="0.01" step="0.01" required onchange="calculateItemTotal(this)">
             </div>
@@ -253,7 +280,7 @@ function addInvoiceItem() {
                        min="0.01" step="0.01" required onchange="calculateItemTotal(this)">
             </div>
             <div class="col-md-2">
-                <label class="form-label">Tax Rate (%)</label>
+                <label class="form-label">Tax %</label>
                 <input type="number" name="items[${itemIndex}][tax_rate]" class="form-control item-tax"
                        value="0" min="0" max="100" step="0.01" onchange="calculateItemTotal(this)">
             </div>
@@ -261,8 +288,7 @@ function addInvoiceItem() {
                 <label class="form-label">Total</label>
                 <div class="input-group">
                     <input type="text" class="form-control item-total" readonly value="0.00">
-                    <span class="input-group-text">EGP</span>
-                    <button type="button" class="btn btn-outline-danger" onclick="removeInvoiceItem(this)" title="Remove Item">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeInvoiceItem(this)" title="Remove Item">
                         <i class="ti ti-trash"></i>
                     </button>
                 </div>

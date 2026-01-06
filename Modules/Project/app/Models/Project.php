@@ -348,11 +348,40 @@ class Project extends Model
     }
 
     /**
-     * Get all invoices for this project.
+     * Get all invoices directly linked to this project (single project - backward compatibility).
      */
     public function invoices()
     {
         return $this->hasMany(\Modules\Invoicing\Models\Invoice::class);
+    }
+
+    /**
+     * Get all invoices allocated to this project (many-to-many through pivot).
+     */
+    public function allocatedInvoices()
+    {
+        return $this->belongsToMany(\Modules\Invoicing\Models\Invoice::class, 'invoice_project')
+            ->withPivot(['allocated_amount', 'notes'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get total invoice amount allocated to this project.
+     */
+    public function getTotalInvoicesAllocatedValueAttribute(): float
+    {
+        return $this->allocatedInvoices->sum('pivot.allocated_amount');
+    }
+
+    /**
+     * Get all invoices for this project (combined direct + allocated).
+     */
+    public function getAllInvoicesAttribute()
+    {
+        $directInvoices = $this->invoices;
+        $allocatedInvoices = $this->allocatedInvoices;
+
+        return $directInvoices->merge($allocatedInvoices)->unique('id');
     }
 
     /**

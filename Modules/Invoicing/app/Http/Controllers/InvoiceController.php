@@ -131,6 +131,7 @@ class InvoiceController extends Controller
             'items.*.description' => 'required|string',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.project_id' => 'nullable|exists:projects,id',
         ]);
 
         // Get sequence - use provided one or auto-select default active sequence
@@ -171,11 +172,15 @@ class InvoiceController extends Controller
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
                 'total' => $item['quantity'] * $item['unit_price'],
+                'project_id' => $item['project_id'] ?? null,
             ]);
         }
 
         // Calculate totals
         $invoice->calculateTotals();
+
+        // Recalculate project allocations based on line items
+        $invoice->recalculateProjectAllocations();
 
         // Handle action parameter for Save & Send
         if ($request->action === 'send') {
@@ -258,6 +263,7 @@ class InvoiceController extends Controller
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.tax_rate' => 'nullable|numeric|min:0|max:100',
+            'items.*.project_id' => 'nullable|exists:projects,id',
         ]);
 
         $invoice->update([
@@ -287,11 +293,15 @@ class InvoiceController extends Controller
                 'tax_rate' => $taxRate,
                 'tax_amount' => $taxAmount,
                 'total' => $subtotal + $taxAmount,
+                'project_id' => $item['project_id'] ?? null,
             ]);
         }
 
         // Calculate totals
         $invoice->calculateTotals();
+
+        // Recalculate project allocations based on line items
+        $invoice->recalculateProjectAllocations();
 
         // Handle action parameter for Save & Send
         if ($request->action === 'send') {

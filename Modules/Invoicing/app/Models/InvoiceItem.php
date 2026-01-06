@@ -28,6 +28,7 @@ class InvoiceItem extends Model
         'total',
         'sort_order',
         'contract_payment_id',
+        'project_id',
     ];
 
     protected $casts = [
@@ -53,6 +54,14 @@ class InvoiceItem extends Model
     public function contractPayment(): BelongsTo
     {
         return $this->belongsTo(\Modules\Accounting\Models\ContractPayment::class);
+    }
+
+    /**
+     * Get the project this item is allocated to (if any).
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Project\Models\Project::class);
     }
 
     /**

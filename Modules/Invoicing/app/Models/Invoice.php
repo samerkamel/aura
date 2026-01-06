@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
@@ -134,11 +135,76 @@ class Invoice extends Model
     }
 
     /**
-     * Get the project this invoice belongs to.
+     * Get the project this invoice belongs to (single project - for backward compatibility).
      */
     public function project(): BelongsTo
     {
         return $this->belongsTo(\Modules\Project\Models\Project::class);
+    }
+
+    /**
+     * Get all projects this invoice is allocated to (many-to-many).
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(\Modules\Project\Models\Project::class, 'invoice_project')
+            ->withPivot(['allocated_amount', 'notes'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the primary project (either from direct link or first allocated project).
+     */
+    public function getPrimaryProjectAttribute(): ?\Modules\Project\Models\Project
+    {
+        // First check direct project_id (backward compatibility)
+        if ($this->project_id) {
+            return $this->project;
+        }
+
+        // Otherwise return first allocated project
+        return $this->projects->first();
+    }
+
+    /**
+     * Recalculate project allocations based on line items.
+     *
+     * Groups line items by project and updates the invoice_project pivot table
+     * with the sum of line item totals per project.
+     */
+    public function recalculateProjectAllocations(): void
+    {
+        // Get allocations from line items grouped by project
+        $allocations = $this->items()
+            ->whereNotNull('project_id')
+            ->selectRaw('project_id, SUM(total) as total_amount')
+            ->groupBy('project_id')
+            ->pluck('total_amount', 'project_id')
+            ->toArray();
+
+        // Sync projects with their allocated amounts
+        $syncData = [];
+        foreach ($allocations as $projectId => $amount) {
+            $syncData[$projectId] = ['allocated_amount' => $amount];
+        }
+
+        $this->projects()->sync($syncData);
+    }
+
+    /**
+     * Get total allocated amount across all projects.
+     */
+    public function getTotalAllocatedAmountAttribute(): float
+    {
+        return $this->projects->sum('pivot.allocated_amount');
+    }
+
+    /**
+     * Get unallocated amount (difference between total and allocated).
+     */
+    public function getUnallocatedAmountAttribute(): float
+    {
+        return max(0, $this->total_amount - $this->total_allocated_amount);
     }
 
     /**
