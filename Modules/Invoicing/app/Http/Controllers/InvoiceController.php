@@ -461,14 +461,11 @@ class InvoiceController extends Controller
 
         $invoices = $query->orderBy('invoice_date', 'desc')->paginate(50);
 
-        // Get all customers with their active projects count
-        $customers = Customer::withCount(['projects' => function ($q) {
-            $q->where('is_active', true);
-        }])->orderBy('name')->get();
+        // Get all customers with their projects count (all projects, not just active)
+        $customers = Customer::withCount('projects')->orderBy('name')->get();
 
-        // Get all active projects grouped by customer
-        $projects = Project::active()
-            ->orderBy('customer_id')
+        // Get ALL projects grouped by customer (including inactive and all phases)
+        $projects = Project::orderBy('customer_id')
             ->orderBy('name')
             ->get()
             ->groupBy('customer_id');

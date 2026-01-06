@@ -2,6 +2,14 @@
 
 @section('title', 'Link Invoices to Projects')
 
+@section('vendor-style')
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
+@endsection
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -102,7 +110,7 @@
                                         <th>Date</th>
                                         <th class="text-end">Amount</th>
                                         <th>Status</th>
-                                        <th style="min-width: 250px;">Link to Project</th>
+                                        <th style="min-width: 350px;">Link to Project</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -147,18 +155,28 @@
                                             <td>
                                                 @if($customerProjects->count() > 0)
                                                     <select name="links[{{ $index }}][project_id]"
-                                                            class="form-select form-select-sm project-select"
+                                                            class="form-select form-select-sm project-select select2"
                                                             data-invoice-id="{{ $invoice->id }}"
                                                             data-customer-id="{{ $customerId }}"
                                                             data-original-value="{{ $invoice->project_id }}"
                                                             data-auto-suggestion="{{ $hasAutoSuggestion ? $suggestion['project_id'] : '' }}"
-                                                            onchange="trackChange(this)">
+                                                            data-placeholder="Search projects...">
                                                         <option value="">-- Select Project --</option>
                                                         @foreach($customerProjects as $project)
+                                                            @php
+                                                                $statusLabel = '';
+                                                                if (!$project->is_active) {
+                                                                    $statusLabel = '[INACTIVE]';
+                                                                } elseif ($project->phase === 'closure') {
+                                                                    $statusLabel = '[CLOSED]';
+                                                                }
+                                                            @endphp
                                                             <option value="{{ $project->id }}"
                                                                 {{ $invoice->project_id == $project->id ? 'selected' : '' }}
-                                                                {{ $hasAutoSuggestion && $suggestion['project_id'] == $project->id ? 'data-suggested="true"' : '' }}>
-                                                                {{ $project->code }} - {{ $project->name }}
+                                                                {{ $hasAutoSuggestion && $suggestion['project_id'] == $project->id ? 'data-suggested="true"' : '' }}
+                                                                data-status="{{ $project->is_active ? 'active' : 'inactive' }}"
+                                                                data-phase="{{ $project->phase }}">
+                                                                {{ $project->code }} - {{ $project->name }} {{ $statusLabel }}
                                                                 @if($hasAutoSuggestion && $suggestion['project_id'] == $project->id)
                                                                     (suggested)
                                                                 @endif
@@ -270,19 +288,38 @@
 <script>
 let changedSelects = new Set();
 
+$(document).ready(function() {
+    // Initialize Select2 for all project selects
+    $('.project-select.select2').each(function() {
+        $(this).select2({
+            placeholder: 'Search projects...',
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true
+        });
+    });
+
+    // Handle Select2 change event
+    $('.project-select.select2').on('change', function() {
+        trackChange(this);
+    });
+});
+
 function trackChange(select) {
     const invoiceId = select.dataset.invoiceId;
     const originalValue = select.dataset.originalValue || '';
     const currentValue = select.value;
 
+    // Get the Select2 container for visual feedback
+    const $select = $(select);
+    const $container = $select.next('.select2-container');
+
     if (currentValue !== originalValue) {
         changedSelects.add(invoiceId);
-        select.classList.add('border-success');
-        select.classList.add('border-2');
+        $container.addClass('border border-success border-2 rounded');
     } else {
         changedSelects.delete(invoiceId);
-        select.classList.remove('border-success');
-        select.classList.remove('border-2');
+        $container.removeClass('border border-success border-2 rounded');
     }
 
     updateUI();
@@ -311,8 +348,8 @@ function autoSelectAll() {
 
         // Only auto-select if no project is currently selected and we have a suggestion
         if (!originalValue && autoSuggestion) {
-            select.value = autoSuggestion;
-            trackChange(select);
+            // Use Select2's API to set value
+            $(select).val(autoSuggestion).trigger('change');
         }
     });
 }
