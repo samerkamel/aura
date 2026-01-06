@@ -19,6 +19,14 @@
                     <a href="{{ route('accounting.income.contracts.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i>Back
                     </a>
+                    @if($contract->projects->count() > 0)
+                    <form action="{{ route('accounting.income.contracts.sync-to-projects', $contract) }}" method="POST" class="d-inline" id="syncProjectsForm">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-info" title="Sync payments to project revenues">
+                            <i class="ti ti-refresh me-1"></i>Sync to Projects
+                        </button>
+                    </form>
+                    @endif
                     <a href="{{ route('accounting.income.contracts.edit', $contract) }}" class="btn btn-primary">
                         <i class="ti ti-edit me-1"></i>Edit Contract
                     </a>
@@ -110,6 +118,80 @@
                 <div class="mt-3">
                     <h6>Description</h6>
                     <p class="text-muted">{{ $contract->description }}</p>
+                </div>
+                @endif
+
+                @if($contract->projects->count() > 0)
+                <div class="mt-4">
+                    <h6><i class="ti ti-briefcase me-1"></i>Linked Projects</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Allocation</th>
+                                    <th>Amount</th>
+                                    <th>Sync Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($contract->projects as $project)
+                                @php
+                                    $pivot = $project->pivot;
+                                    $allocationType = $pivot->allocation_type ?? 'percentage';
+                                    $allocationValue = $allocationType === 'percentage'
+                                        ? ($pivot->allocation_percentage ?? 100)
+                                        : ($pivot->allocation_amount ?? $contract->total_amount);
+                                    $allocatedAmount = $allocationType === 'percentage'
+                                        ? $contract->total_amount * ($allocationValue / 100)
+                                        : $allocationValue;
+
+                                    // Check if revenues exist for this contract-project combination
+                                    $syncedRevenues = \Modules\Project\Models\ProjectRevenue::where('contract_id', $contract->id)
+                                        ->where('project_id', $project->id)
+                                        ->count();
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('projects.finance.index', $project) }}" class="text-decoration-none">
+                                            <strong>{{ $project->name }}</strong>
+                                        </a>
+                                        <br><small class="text-muted">{{ $project->code }}</small>
+                                    </td>
+                                    <td>
+                                        @if($allocationType === 'percentage')
+                                            {{ number_format($allocationValue, 1) }}%
+                                        @else
+                                            Fixed Amount
+                                        @endif
+                                        @if($pivot->is_primary)
+                                            <span class="badge bg-primary ms-1">Primary</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <strong>EGP {{ number_format($allocatedAmount, 2) }}</strong>
+                                    </td>
+                                    <td>
+                                        @if($syncedRevenues > 0)
+                                            <span class="badge bg-success">
+                                                <i class="ti ti-check me-1"></i>Synced ({{ $syncedRevenues }})
+                                            </span>
+                                        @else
+                                            <span class="badge bg-warning">
+                                                <i class="ti ti-alert-triangle me-1"></i>Not Synced
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="ti ti-info-circle me-1"></i>
+                        Project revenues are automatically synced when payments are created, updated, or marked as paid.
+                        Use "Sync to Projects" button to manually refresh all revenues.
+                    </small>
                 </div>
                 @endif
             </div>

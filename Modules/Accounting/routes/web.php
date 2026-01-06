@@ -131,6 +131,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/{contract}/available-invoices', [IncomeController::class, 'getAvailableInvoices'])->name('available-invoices');
                 Route::post('/{contract}/sync-payment-statuses', [IncomeController::class, 'syncPaymentStatuses'])->name('sync-payment-statuses');
 
+                // Project Revenue Sync route
+                Route::post('/{contract}/sync-to-projects', [IncomeController::class, 'syncContractToProjects'])->name('sync-to-projects');
+
                 // CSV Import routes for contracts
                 Route::get('/import', [IncomeController::class, 'importForm'])->name('import');
                 Route::post('/import', [IncomeController::class, 'import'])->name('import.process');

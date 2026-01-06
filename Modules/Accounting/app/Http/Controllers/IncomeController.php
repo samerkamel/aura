@@ -1134,4 +1134,50 @@ class IncomeController extends Controller
             ->back()
             ->with('success', "Synced status for {$updatedCount} payments from their linked invoices.");
     }
+
+    /**
+     * Sync contract payments to project revenues.
+     * Uses the ContractRevenueSyncService to create/update ProjectRevenue entries.
+     */
+    public function syncContractToProjects(Contract $contract): RedirectResponse
+    {
+        $syncService = app(\App\Services\ContractRevenueSyncService::class);
+
+        $contract->load(['payments', 'projects']);
+
+        if ($contract->projects->isEmpty()) {
+            return redirect()
+                ->back()
+                ->with('warning', 'No projects linked to this contract. Please add projects in the contract edit page first.');
+        }
+
+        $syncedCount = 0;
+        $errorCount = 0;
+
+        foreach ($contract->payments as $payment) {
+            foreach ($contract->projects as $project) {
+                try {
+                    $result = $syncService->syncPaymentToProject($payment, $project);
+                    if ($result['success']) {
+                        $syncedCount++;
+                    } else {
+                        $errorCount++;
+                    }
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Error syncing payment {$payment->id} to project {$project->id}", [
+                        'error' => $e->getMessage(),
+                    ]);
+                    $errorCount++;
+                }
+            }
+        }
+
+        $message = "Synced {$syncedCount} payment-project combinations to project revenues.";
+        if ($errorCount > 0) {
+            $message .= " ({$errorCount} errors - check logs for details)";
+            return redirect()->back()->with('warning', $message);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
 }
