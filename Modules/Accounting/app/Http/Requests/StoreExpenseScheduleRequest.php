@@ -23,6 +23,10 @@ class StoreExpenseScheduleRequest extends FormRequest
             'expense_type' => 'required|in:recurring,one_time',
             'business_unit_id' => 'nullable|exists:business_units,id',
 
+            // Project linking fields
+            'project_id' => 'nullable|exists:projects,id',
+            'auto_sync_to_project' => 'boolean',
+
             // Payment fields
             'mark_as_paid' => 'boolean',
             'paid_from_account_id' => 'required_if:mark_as_paid,1|nullable|exists:accounts,id',

@@ -204,8 +204,14 @@ class ExpenseController extends Controller
             $validatedData['start_date'] = $validatedData['expense_date'] ?? now();
         }
 
-        // Remove the mark_as_paid field as it's not in the database
+        // Handle project linking
+        if (!empty($validatedData['project_id'])) {
+            $validatedData['is_project_expense'] = (bool) ($validatedData['auto_sync_to_project'] ?? true);
+        }
+
+        // Remove fields not in database
         unset($validatedData['mark_as_paid']);
+        unset($validatedData['auto_sync_to_project']);
 
         $expenseSchedule = ExpenseSchedule::create($validatedData);
 
@@ -296,7 +302,26 @@ class ExpenseController extends Controller
      */
     public function update(UpdateExpenseScheduleRequest $request, ExpenseSchedule $expenseSchedule): RedirectResponse
     {
-        $expenseSchedule->update($request->validated());
+        $validatedData = $request->validated();
+
+        // Handle project linking
+        if (!empty($validatedData['project_id'])) {
+            // If sync_to_project is checked or project was just linked, set is_project_expense
+            $validatedData['is_project_expense'] = (bool) ($validatedData['sync_to_project'] ?? $expenseSchedule->is_project_expense);
+
+            // If sync_to_project is checked and not already synced, sync now
+            if ($request->input('sync_to_project') && !$expenseSchedule->project_cost_id) {
+                $validatedData['is_project_expense'] = true;
+            }
+        } else {
+            // Project was unlinked - the observer will handle cleaning up
+            $validatedData['is_project_expense'] = false;
+        }
+
+        // Remove sync_to_project as it's not in database
+        unset($validatedData['sync_to_project']);
+
+        $expenseSchedule->update($validatedData);
 
         return redirect()
             ->route('accounting.expenses.show', $expenseSchedule)

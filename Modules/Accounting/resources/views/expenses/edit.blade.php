@@ -262,8 +262,56 @@
                             @endif
                         </div>
 
-                        <!-- Current Status Panel -->
+                        <!-- Sidebar -->
                         <div class="col-lg-4">
+                            <!-- Project Linking -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0"><i class="ti ti-briefcase me-1"></i>Project Linking</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="project_id" class="form-label">Link to Project</label>
+                                        <select class="form-select @error('project_id') is-invalid @enderror"
+                                                id="project_id" name="project_id">
+                                            <option value="">No project (general expense)</option>
+                                            @foreach(\Modules\Project\Models\Project::active()->orderBy('name')->get() as $project)
+                                                <option value="{{ $project->id }}" {{ old('project_id', $expenseSchedule->project_id) == $project->id ? 'selected' : '' }}>
+                                                    {{ $project->code }} - {{ $project->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('project_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">Link this expense to a project to track project costs.</small>
+                                    </div>
+
+                                    @if($expenseSchedule->project_id && $expenseSchedule->project_cost_id)
+                                        <div class="alert alert-success mb-3 py-2">
+                                            <i class="ti ti-check me-1"></i>
+                                            Synced to project cost
+                                            @if($expenseSchedule->projectCost)
+                                                <br><small>Amount: {{ number_format($expenseSchedule->projectCost->amount, 2) }} EGP</small>
+                                            @endif
+                                        </div>
+                                    @elseif($expenseSchedule->project_id)
+                                        <div class="alert alert-warning mb-3 py-2">
+                                            <i class="ti ti-alert-triangle me-1"></i>
+                                            Not synced to project cost
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="sync_to_project"
+                                                   id="syncToProject" value="1">
+                                            <label class="form-check-label" for="syncToProject">
+                                                Sync to project cost on save
+                                            </label>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Current Status Panel -->
                             <div class="card mb-4">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">Current Status</h6>

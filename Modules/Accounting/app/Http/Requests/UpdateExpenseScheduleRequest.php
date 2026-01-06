@@ -26,6 +26,9 @@ class UpdateExpenseScheduleRequest extends FormRequest
             'skip_weekends' => 'boolean',
             'excluded_dates' => 'nullable|array',
             'excluded_dates.*' => 'date',
+            // Project linking fields
+            'project_id' => 'nullable|exists:projects,id',
+            'sync_to_project' => 'boolean',
             // Payment fields (for paid expenses)
             'paid_from_account_id' => 'nullable|exists:accounts,id',
             'paid_date' => 'nullable|date',
