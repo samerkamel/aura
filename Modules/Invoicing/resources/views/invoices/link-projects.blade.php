@@ -288,7 +288,20 @@
 <script>
 let changedSelects = new Set();
 
-$(document).ready(function() {
+// Wait for jQuery and Select2 to be available
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if jQuery is available, if not wait a bit
+    const initSelect2 = function() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initSelect2, 100);
+            return;
+        }
+        initializeProjectSelects();
+    };
+    initSelect2();
+});
+
+function initializeProjectSelects() {
     // Initialize Select2 for all project selects
     $('.project-select.select2').each(function() {
         $(this).select2({
@@ -303,7 +316,7 @@ $(document).ready(function() {
     $('.project-select.select2').on('change', function() {
         trackChange(this);
     });
-});
+}
 
 function trackChange(selectElement) {
     // Get the actual select element
