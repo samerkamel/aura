@@ -34,7 +34,7 @@ class TeamAvailabilityController extends Controller
         }
 
         // Get active employees
-        $employees = Employee::where('is_active', true)
+        $employees = Employee::active()
             ->orderBy('name')
             ->get();
 
