@@ -24,6 +24,11 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
         Route::get('/', [InvoiceController::class, 'index'])->name('index');
         Route::get('/create', [InvoiceController::class, 'create'])->name('create');
         Route::post('/', [InvoiceController::class, 'store'])->name('store');
+
+        // Mass project linking (must be before {invoice} routes)
+        Route::get('/link-projects', [InvoiceController::class, 'linkProjects'])->name('link-projects');
+        Route::post('/link-projects', [InvoiceController::class, 'updateProjectLinks'])->name('update-project-links');
+
         Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('show');
         Route::get('/{invoice}/edit', [InvoiceController::class, 'edit'])->name('edit');
         Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('update');
@@ -36,6 +41,9 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
 
         // Project revenue sync
         Route::post('/{invoice}/sync-to-projects', [InvoiceController::class, 'syncToProjects'])->name('sync-to-projects');
+
+        // Quick project link (AJAX)
+        Route::post('/{invoice}/quick-link-project', [InvoiceController::class, 'quickLinkProject'])->name('quick-link-project');
 
         // Invoice generation from contract payments
         Route::get('/generate/from-payment/{contractPayment}', [InvoiceController::class, 'generateFromPayment'])->name('generate.payment');

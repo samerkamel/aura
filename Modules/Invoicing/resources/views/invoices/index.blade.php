@@ -12,6 +12,9 @@
                     <small class="text-muted">Manage customer invoices and payments</small>
                 </div>
                 <div class="d-flex gap-2">
+                    <a href="{{ route('invoicing.invoices.link-projects') }}" class="btn btn-outline-success">
+                        <i class="ti ti-link me-1"></i>Link to Projects
+                    </a>
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="ti ti-settings me-1"></i>Settings
@@ -144,6 +147,7 @@
                                             Amount {!! $getSortIcon('total_amount') !!}
                                         </a>
                                     </th>
+                                    <th>Project</th>
                                     <th>
                                         <a href="{{ $getSortUrl('status') }}" class="text-decoration-none text-dark d-flex align-items-center gap-1">
                                             Status {!! $getSortIcon('status') !!}
@@ -191,6 +195,15 @@
                                         <span class="fw-semibold">{{ number_format($invoice->total_amount, 2) }} EGP</span>
                                         @if($invoice->paid_amount > 0 && $invoice->status !== 'paid')
                                             <br><small class="text-success">Paid: {{ number_format($invoice->paid_amount, 2) }} EGP</small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($invoice->project)
+                                            <a href="{{ route('projects.show', $invoice->project) }}" class="badge bg-label-primary">
+                                                {{ $invoice->project->code }}
+                                            </a>
+                                        @else
+                                            <span class="text-muted">-</span>
                                         @endif
                                     </td>
                                     <td>

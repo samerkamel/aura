@@ -22,7 +22,7 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to view invoices.');
         }
 
-        $query = Invoice::with(['customer', 'invoiceSequence']);
+        $query = Invoice::with(['customer', 'invoiceSequence', 'project']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {
@@ -427,5 +427,145 @@ class InvoiceController extends Controller
         return redirect()
             ->back()
             ->with('warning', $result['message']);
+    }
+
+    /**
+     * Show the mass project linking page.
+     */
+    public function linkProjects(Request $request): View
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            abort(403, 'Unauthorized to link invoices to projects.');
+        }
+
+        $query = Invoice::with(['customer', 'project'])
+            ->whereIn('status', ['draft', 'sent', 'paid', 'overdue']);
+
+        // Filter by customer
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        // Filter to show only unlinked invoices
+        if ($request->get('unlinked_only', true)) {
+            $query->whereNull('project_id');
+        }
+
+        // Date range filtering
+        if ($request->filled('date_from')) {
+            $query->where('invoice_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('invoice_date', '<=', $request->date_to);
+        }
+
+        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(50);
+
+        // Get all customers with their active projects count
+        $customers = Customer::withCount(['projects' => function ($q) {
+            $q->where('is_active', true);
+        }])->orderBy('name')->get();
+
+        // Get all active projects grouped by customer
+        $projects = Project::active()
+            ->orderBy('customer_id')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('customer_id');
+
+        // Build customer project suggestions (for auto-select)
+        $customerProjectSuggestions = [];
+        foreach ($customers as $customer) {
+            $customerProjects = $projects->get($customer->id, collect());
+            if ($customerProjects->count() === 1) {
+                // Single project - auto-suggest
+                $customerProjectSuggestions[$customer->id] = [
+                    'project_id' => $customerProjects->first()->id,
+                    'project_code' => $customerProjects->first()->code,
+                    'project_name' => $customerProjects->first()->name,
+                    'auto_select' => true,
+                ];
+            } elseif ($customerProjects->count() > 1) {
+                $customerProjectSuggestions[$customer->id] = [
+                    'projects' => $customerProjects,
+                    'auto_select' => false,
+                ];
+            }
+        }
+
+        return view('invoicing::invoices.link-projects', compact(
+            'invoices',
+            'customers',
+            'projects',
+            'customerProjectSuggestions'
+        ));
+    }
+
+    /**
+     * Mass update invoice project links.
+     */
+    public function updateProjectLinks(Request $request): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            abort(403, 'Unauthorized to link invoices to projects.');
+        }
+
+        $request->validate([
+            'links' => 'required|array',
+            'links.*.invoice_id' => 'required|exists:invoices,id',
+            'links.*.project_id' => 'nullable|exists:projects,id',
+        ]);
+
+        $updatedCount = 0;
+        $syncService = app(\App\Services\InvoiceProjectSyncService::class);
+
+        foreach ($request->links as $link) {
+            if (empty($link['project_id'])) {
+                continue;
+            }
+
+            $invoice = Invoice::find($link['invoice_id']);
+            if ($invoice && $invoice->project_id != $link['project_id']) {
+                $invoice->update(['project_id' => $link['project_id']]);
+
+                // Sync to project revenues if invoice is sent or paid
+                if (in_array($invoice->status, ['sent', 'paid', 'overdue'])) {
+                    $syncService->syncInvoiceToProjects($invoice);
+                }
+
+                $updatedCount++;
+            }
+        }
+
+        return redirect()
+            ->route('invoicing.invoices.link-projects')
+            ->with('success', "Successfully linked {$updatedCount} invoice(s) to projects.");
+    }
+
+    /**
+     * Quick link a single invoice to a project (AJAX).
+     */
+    public function quickLinkProject(Request $request, Invoice $invoice)
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'project_id' => 'nullable|exists:projects,id',
+        ]);
+
+        $invoice->update(['project_id' => $request->project_id]);
+
+        // Sync to project revenues if invoice is sent or paid
+        if ($request->project_id && in_array($invoice->status, ['sent', 'paid', 'overdue'])) {
+            $syncService = app(\App\Services\InvoiceProjectSyncService::class);
+            $syncService->syncInvoiceToProjects($invoice);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $request->project_id ? 'Invoice linked to project.' : 'Project link removed.',
+        ]);
     }
 }
