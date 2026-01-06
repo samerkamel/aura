@@ -347,14 +347,17 @@ function updateUI() {
 }
 
 function autoSelectAll() {
-    document.querySelectorAll('.project-select').forEach(select => {
-        const autoSuggestion = select.dataset.autoSuggestion;
-        const originalValue = select.dataset.originalValue || '';
+    $('.project-select').each(function() {
+        const $select = $(this);
+        const autoSuggestion = String($select.data('auto-suggestion') || '');
+        const originalValue = String($select.data('original-value') || '');
+
+        console.log('Auto-select check:', $select.data('invoice-id'), 'suggestion:', autoSuggestion, 'original:', originalValue);
 
         // Only auto-select if no project is currently selected and we have a suggestion
         if (!originalValue && autoSuggestion) {
-            // Use Select2's API to set value
-            $(select).val(autoSuggestion).trigger('change');
+            // Use Select2's API to set value and trigger change
+            $select.val(autoSuggestion).trigger('change');
         }
     });
 }
