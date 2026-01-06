@@ -322,7 +322,7 @@
                 @if($project->customer)
                   <small class="text-muted">
                     <a href="{{ route('administration.customers.show', $project->customer) }}" class="text-muted">
-                      {{ $project->customer->display_name }}
+                      {{ $project->customer->company_name ?: $project->customer->name }}
                     </a>
                   </small>
                 @endif
