@@ -988,6 +988,63 @@ class ProjectController extends Controller
     }
 
     /**
+     * Show the create task form for a project.
+     */
+    public function createTask(Project $project, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-project', $project)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if (empty($project->code)) {
+            return response()->json(['error' => 'Project has no Jira project code'], 400);
+        }
+
+        // Get issue types, priorities, and assignable users from Jira
+        $issueTypes = $issueSyncService->getProjectIssueTypes($project->code);
+        $priorities = $issueSyncService->getPriorities();
+        $assignees = $issueSyncService->getAssignableUsers($project->code);
+
+        return response()->json([
+            'issue_types' => $issueTypes,
+            'priorities' => $priorities,
+            'assignees' => $assignees,
+        ]);
+    }
+
+    /**
+     * Store a new task in Jira and sync it back.
+     */
+    public function storeTask(Request $request, Project $project, JiraIssueSyncService $issueSyncService): RedirectResponse
+    {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to create tasks for this project.');
+        }
+
+        $validated = $request->validate([
+            'summary' => 'required|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'issue_type' => 'required|string',
+            'priority' => 'nullable|string',
+            'due_date' => 'nullable|date',
+            'assignee_account_id' => 'nullable|string',
+        ]);
+
+        try {
+            $result = $issueSyncService->createIssueInJira($project, $validated);
+
+            return redirect()
+                ->route('projects.tasks', $project)
+                ->with('success', "Task {$result['issue_key']} created successfully in Jira.");
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create task: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Display the mass customer linking page.
      */
     public function linkCustomers(Request $request): View

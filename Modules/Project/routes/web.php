@@ -88,6 +88,8 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/tasks', [ProjectController::class, 'tasks'])->name('tasks');
     Route::post('/{project}/tasks/sync', [ProjectController::class, 'syncIssues'])->name('sync-issues');
     Route::get('/{project}/tasks/issues', [ProjectController::class, 'getProjectIssues'])->name('get-issues');
+    Route::get('/{project}/tasks/create', [ProjectController::class, 'createTask'])->name('create-task');
+    Route::post('/{project}/tasks', [ProjectController::class, 'storeTask'])->name('store-task');
 
     // Project Dashboard routes
     Route::get('/{project}/dashboard', [ProjectDashboardController::class, 'index'])->name('dashboard');

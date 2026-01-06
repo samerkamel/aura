@@ -166,9 +166,12 @@
         @endif
       </div>
       <div class="d-flex gap-2">
+        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+          <i class="ti ti-plus me-1"></i>Create Task
+        </button>
         <form action="{{ route('projects.sync-issues', $project) }}" method="POST" class="d-inline">
           @csrf
-          <button type="submit" class="btn btn-light btn-sm">
+          <button type="submit" class="btn btn-outline-light btn-sm">
             <i class="ti ti-refresh me-1"></i>Sync from Jira
           </button>
         </form>
@@ -409,6 +412,79 @@
       </div>
     </div>
   @endif
+
+  <!-- Create Task Modal -->
+  <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form action="{{ route('projects.store-task', $project) }}" method="POST" id="createTaskForm">
+          @csrf
+          <div class="modal-header">
+            <h5 class="modal-title" id="createTaskModalLabel">
+              <i class="ti ti-plus me-2"></i>Create Task in Jira
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="modalLoadingState" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="text-muted mt-2">Loading Jira options...</p>
+            </div>
+            <div id="modalFormContent" style="display: none;">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="summary" class="form-label">Summary <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="summary" name="summary" required maxlength="255" placeholder="Brief description of the task">
+                </div>
+                <div class="col-md-6">
+                  <label for="issue_type" class="form-label">Issue Type <span class="text-danger">*</span></label>
+                  <select class="form-select" id="issue_type" name="issue_type" required>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="priority" class="form-label">Priority</label>
+                  <select class="form-select" id="priority" name="priority">
+                    <option value="">-- Select Priority --</option>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="assignee_account_id" class="form-label">Assignee</label>
+                  <select class="form-select" id="assignee_account_id" name="assignee_account_id">
+                    <option value="">-- Unassigned --</option>
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="due_date" class="form-label">Due Date</label>
+                  <input type="date" class="form-control" id="due_date" name="due_date">
+                </div>
+                <div class="col-12">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="4" maxlength="5000" placeholder="Detailed description of the task..."></textarea>
+                </div>
+              </div>
+            </div>
+            <div id="modalErrorState" style="display: none;">
+              <div class="alert alert-danger mb-0">
+                <i class="ti ti-alert-circle me-2"></i>
+                <span id="modalErrorMessage">Failed to load Jira options.</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submitTaskBtn" disabled>
+              <i class="ti ti-send me-1"></i>Create in Jira
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -420,6 +496,94 @@ document.addEventListener('DOMContentLoaded', function() {
     card.addEventListener('click', function() {
       window.open(this.dataset.jiraUrl, '_blank');
     });
+  });
+
+  // Create Task Modal handling
+  const createTaskModal = document.getElementById('createTaskModal');
+  let jiraOptionsLoaded = false;
+
+  createTaskModal.addEventListener('show.bs.modal', function() {
+    if (!jiraOptionsLoaded) {
+      loadJiraOptions();
+    }
+  });
+
+  function loadJiraOptions() {
+    const loadingState = document.getElementById('modalLoadingState');
+    const formContent = document.getElementById('modalFormContent');
+    const errorState = document.getElementById('modalErrorState');
+    const submitBtn = document.getElementById('submitTaskBtn');
+
+    loadingState.style.display = 'block';
+    formContent.style.display = 'none';
+    errorState.style.display = 'none';
+    submitBtn.disabled = true;
+
+    fetch('{{ route("projects.create-task", $project) }}')
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(data => {
+            throw new Error(data.error || 'Failed to load options');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Populate issue types
+        const issueTypeSelect = document.getElementById('issue_type');
+        issueTypeSelect.innerHTML = '';
+        data.issue_types.forEach(function(type) {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type;
+          if (type === 'Task') option.selected = true;
+          issueTypeSelect.appendChild(option);
+        });
+
+        // Populate priorities
+        const prioritySelect = document.getElementById('priority');
+        prioritySelect.innerHTML = '<option value="">-- Select Priority --</option>';
+        data.priorities.forEach(function(priority) {
+          const option = document.createElement('option');
+          option.value = priority;
+          option.textContent = priority;
+          if (priority === 'Medium') option.selected = true;
+          prioritySelect.appendChild(option);
+        });
+
+        // Populate assignees
+        const assigneeSelect = document.getElementById('assignee_account_id');
+        assigneeSelect.innerHTML = '<option value="">-- Unassigned --</option>';
+        data.assignees.forEach(function(user) {
+          const option = document.createElement('option');
+          option.value = user.account_id;
+          option.textContent = user.display_name;
+          assigneeSelect.appendChild(option);
+        });
+
+        loadingState.style.display = 'none';
+        formContent.style.display = 'block';
+        submitBtn.disabled = false;
+        jiraOptionsLoaded = true;
+      })
+      .catch(error => {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        document.getElementById('modalErrorMessage').textContent = error.message;
+      });
+  }
+
+  // Form submission with loading state
+  const createTaskForm = document.getElementById('createTaskForm');
+  createTaskForm.addEventListener('submit', function() {
+    const submitBtn = document.getElementById('submitTaskBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Creating...';
+  });
+
+  // Reset modal on close
+  createTaskModal.addEventListener('hidden.bs.modal', function() {
+    createTaskForm.reset();
   });
 });
 </script>

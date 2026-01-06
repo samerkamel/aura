@@ -1,11 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_type",
-      "mcp__playwright__browser_click",
-      "mcp__playwright__browser_take_screenshot",
-      "mcp__playwright__browser_close"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan view:clear\")"
     ],
     "deny": [],
     "ask": []

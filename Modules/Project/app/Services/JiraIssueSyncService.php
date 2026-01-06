@@ -424,4 +424,202 @@ class JiraIssueSyncService
 
         return JiraIssue::where('issue_key', $issueKey)->first();
     }
+
+    /**
+     * Create a new issue in Jira and sync it back.
+     */
+    public function createIssueInJira(Project $project, array $data): array
+    {
+        if (!$this->isConfigured()) {
+            throw new \Exception('Jira is not configured. Please configure Jira settings first.');
+        }
+
+        if (empty($project->code)) {
+            throw new \Exception('Project has no Jira project key/code.');
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/issue';
+
+        // Build the request body
+        $issueData = [
+            'fields' => [
+                'project' => [
+                    'key' => $project->code,
+                ],
+                'summary' => $data['summary'],
+                'issuetype' => [
+                    'name' => $data['issue_type'] ?? 'Task',
+                ],
+            ],
+        ];
+
+        // Add description if provided (Jira API v3 uses ADF format)
+        if (!empty($data['description'])) {
+            $issueData['fields']['description'] = [
+                'type' => 'doc',
+                'version' => 1,
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => $data['description'],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        // Add priority if provided
+        if (!empty($data['priority'])) {
+            $issueData['fields']['priority'] = [
+                'name' => $data['priority'],
+            ];
+        }
+
+        // Add due date if provided
+        if (!empty($data['due_date'])) {
+            $issueData['fields']['duedate'] = $data['due_date'];
+        }
+
+        // Add assignee if provided (need account ID)
+        if (!empty($data['assignee_account_id'])) {
+            $issueData['fields']['assignee'] = [
+                'accountId' => $data['assignee_account_id'],
+            ];
+        }
+
+        // Add labels if provided
+        if (!empty($data['labels']) && is_array($data['labels'])) {
+            $issueData['fields']['labels'] = $data['labels'];
+        }
+
+        Log::info('Creating Jira issue', [
+            'project' => $project->code,
+            'summary' => $data['summary'],
+        ]);
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->post($url, $issueData);
+
+        if (!$response->successful()) {
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['errors'] ?? $errorBody['errorMessages'] ?? $response->body();
+            Log::error('Jira API error creating issue', [
+                'status' => $response->status(),
+                'body' => $errorMessage,
+            ]);
+            throw new \Exception('Failed to create issue in Jira: ' . json_encode($errorMessage));
+        }
+
+        $createdIssue = $response->json();
+        $issueKey = $createdIssue['key'];
+
+        Log::info('Jira issue created', [
+            'issue_key' => $issueKey,
+            'issue_id' => $createdIssue['id'],
+        ]);
+
+        // Sync the created issue back to our system
+        $localIssue = $this->syncIssue($issueKey);
+
+        return [
+            'success' => true,
+            'issue_key' => $issueKey,
+            'issue_id' => $createdIssue['id'],
+            'jira_url' => rtrim($this->baseUrl, '/') . '/browse/' . $issueKey,
+            'local_issue' => $localIssue,
+        ];
+    }
+
+    /**
+     * Get available issue types for a project from Jira.
+     */
+    public function getProjectIssueTypes(string $projectCode): array
+    {
+        if (!$this->isConfigured()) {
+            return [];
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/project/' . $projectCode;
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->get($url);
+
+        if (!$response->successful()) {
+            return ['Task', 'Bug', 'Story', 'Epic']; // Default fallback
+        }
+
+        $projectData = $response->json();
+
+        // Get issue types from project
+        $issueTypes = [];
+        if (isset($projectData['issueTypes'])) {
+            foreach ($projectData['issueTypes'] as $type) {
+                if (!($type['subtask'] ?? false)) { // Exclude subtasks
+                    $issueTypes[] = $type['name'];
+                }
+            }
+        }
+
+        return !empty($issueTypes) ? $issueTypes : ['Task', 'Bug', 'Story', 'Epic'];
+    }
+
+    /**
+     * Get available priorities from Jira.
+     */
+    public function getPriorities(): array
+    {
+        if (!$this->isConfigured()) {
+            return [];
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/priority';
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->get($url);
+
+        if (!$response->successful()) {
+            return ['Highest', 'High', 'Medium', 'Low', 'Lowest']; // Default fallback
+        }
+
+        return collect($response->json())->pluck('name')->toArray();
+    }
+
+    /**
+     * Get assignable users for a project from Jira.
+     */
+    public function getAssignableUsers(string $projectCode): array
+    {
+        if (!$this->isConfigured()) {
+            return [];
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/rest/api/3/user/assignable/search';
+
+        $response = Http::withBasicAuth($this->email, $this->apiToken)
+            ->timeout(30)
+            ->get($url, [
+                'project' => $projectCode,
+                'maxResults' => 100,
+            ]);
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return collect($response->json())->map(function ($user) {
+            return [
+                'account_id' => $user['accountId'],
+                'display_name' => $user['displayName'],
+                'email' => $user['emailAddress'] ?? null,
+                'avatar_url' => $user['avatarUrls']['24x24'] ?? null,
+            ];
+        })->toArray();
+    }
 }
