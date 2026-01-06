@@ -119,10 +119,13 @@
     color: #6c757d;
   }
   .keyboard-hint kbd {
-    background: #e9ecef;
-    padding: 0.1rem 0.4rem;
-    border-radius: 0.2rem;
+    background: #495057;
+    color: #fff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
     font-size: 0.7rem;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
 </style>
 @endsection
