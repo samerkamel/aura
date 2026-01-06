@@ -407,7 +407,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <a href="{{ route('accounting.contracts.show', $payment->contract_id) }}" class="btn btn-sm btn-icon btn-outline-primary">
+                                <a href="{{ route('accounting.income.contracts.show', $payment->contract_id) }}" class="btn btn-sm btn-icon btn-outline-primary">
                                     <i class="ti ti-external-link"></i>
                                 </a>
                             </div>
