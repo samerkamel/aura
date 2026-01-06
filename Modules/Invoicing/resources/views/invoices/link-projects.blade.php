@@ -306,18 +306,19 @@ $(document).ready(function() {
 });
 
 function trackChange(selectElement) {
-    // Handle both native element and jQuery wrapped element
+    // Get the actual select element
     const select = selectElement.jquery ? selectElement[0] : selectElement;
     const $select = $(select);
 
-    const invoiceId = $select.data('invoice-id');
-    const originalValue = String($select.data('original-value') || '');
-    const currentValue = String($select.val() || '');
+    // Use attr() to read directly from DOM (data() can have caching issues)
+    const invoiceId = $select.attr('data-invoice-id');
+    const originalValue = $select.attr('data-original-value') || '';
+    const currentValue = $select.val() || '';
 
     // Get the Select2 container for visual feedback
     const $container = $select.next('.select2-container');
 
-    console.log('Track change:', invoiceId, 'original:', originalValue, 'current:', currentValue);
+    console.log('Track change - invoiceId:', invoiceId, 'original:', originalValue, 'current:', currentValue, 'changed:', currentValue !== originalValue);
 
     if (currentValue !== originalValue) {
         changedSelects.add(invoiceId);
@@ -327,6 +328,7 @@ function trackChange(selectElement) {
         $container.removeClass('border border-success border-2 rounded');
     }
 
+    console.log('Changed selects:', Array.from(changedSelects));
     updateUI();
 }
 
@@ -349,15 +351,16 @@ function updateUI() {
 function autoSelectAll() {
     $('.project-select').each(function() {
         const $select = $(this);
-        const autoSuggestion = String($select.data('auto-suggestion') || '');
-        const originalValue = String($select.data('original-value') || '');
+        const autoSuggestion = $select.attr('data-auto-suggestion') || '';
+        const originalValue = $select.attr('data-original-value') || '';
 
-        console.log('Auto-select check:', $select.data('invoice-id'), 'suggestion:', autoSuggestion, 'original:', originalValue);
+        console.log('Auto-select check - invoiceId:', $select.attr('data-invoice-id'), 'suggestion:', autoSuggestion, 'original:', originalValue);
 
         // Only auto-select if no project is currently selected and we have a suggestion
         if (!originalValue && autoSuggestion) {
             // Use Select2's API to set value and trigger change
             $select.val(autoSuggestion).trigger('change');
+            console.log('Auto-selected project:', autoSuggestion, 'for invoice:', $select.attr('data-invoice-id'));
         }
     });
 }
