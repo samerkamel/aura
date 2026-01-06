@@ -100,8 +100,8 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Client</th>
-                            <th>Contract</th>
+                            <th>Contract #</th>
+                            <th>Client / Project</th>
                             <th>Value</th>
                             <th>Duration</th>
                             <th>Payment Progress</th>
@@ -113,16 +113,33 @@
                         @forelse($contracts as $contract)
                             <tr>
                                 <td>
-                                    <div>
-                                        <strong>{{ $contract->client_name }}</strong>
-                                        <br><small class="text-muted">{{ $contract->contract_number }}</small>
-                                    </div>
+                                    <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-bold text-primary">
+                                        {{ $contract->contract_number }}
+                                    </a>
+                                    @if($contract->description)
+                                        <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($contract->description, 30) }}</small>
+                                    @endif
                                 </td>
                                 <td>
                                     <div>
-                                        <strong>{{ \Illuminate\Support\Str::limit($contract->description, 40) }}</strong>
-                                        @if($contract->notes)
-                                            <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($contract->notes, 30) }}</small>
+                                        @if($contract->customer)
+                                            <a href="{{ route('administration.customers.show', $contract->customer) }}" class="fw-semibold">
+                                                {{ $contract->client_name }}
+                                            </a>
+                                        @else
+                                            <span class="fw-semibold">{{ $contract->client_name }}</span>
+                                        @endif
+                                        @if($contract->projects->isNotEmpty())
+                                            <div class="mt-1">
+                                                @foreach($contract->projects->take(2) as $project)
+                                                    <a href="{{ route('projects.show', $project) }}" class="badge bg-label-primary me-1" title="{{ $project->name }}">
+                                                        <i class="ti ti-folder ti-xs me-1"></i>{{ $project->code ?? \Illuminate\Support\Str::limit($project->name, 15) }}
+                                                    </a>
+                                                @endforeach
+                                                @if($contract->projects->count() > 2)
+                                                    <span class="badge bg-label-secondary">+{{ $contract->projects->count() - 2 }} more</span>
+                                                @endif
+                                            </div>
                                         @endif
                                     </div>
                                 </td>

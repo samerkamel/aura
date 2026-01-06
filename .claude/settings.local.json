@@ -11,7 +11,11 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan migrate --force && php artisan optimize:clear\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && ls -la Modules/Accounting/database/migrations/ | grep 2026_01_06\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n$columns = DB::select(\"\"DESCRIBE contract_project\"\");\nforeach ($columns as $col) {\n    echo $col->Field . \"\" | \"\" . $col->Type . PHP_EOL;\n}\n''\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$columns = DB::select(\"\"DESCRIBE contract_project\"\");\nforeach ($columns as $col) {\n    echo $col->Field . \"\" | \"\" . $col->Type . PHP_EOL;\n}\n''\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$columns = DB::select(\"\"DESCRIBE contract_project\"\");\nforeach ($columns as $col) {\n    echo $col->Field . \"\" | \"\" . $col->Type . PHP_EOL;\n}\n''\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && head -100 Modules/Accounting/resources/views/income/contracts.blade.php | tail -30\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan view:clear && php artisan cache:clear && rm -rf storage/framework/views/*\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"systemctl restart php8.2-fpm 2>/dev/null || systemctl restart php-fpm 2>/dev/null || service php8.2-fpm restart 2>/dev/null || echo ''Trying plesk...''; plesk bin php_handler --reread 2>/dev/null\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list | grep ''accounting.income'' | head -20\")"
     ],
     "deny": [],
     "ask": []
