@@ -11,6 +11,7 @@ use Modules\Attendance\Http\Controllers\AttendanceImportController;
 use Modules\Attendance\Http\Controllers\ManualAttendanceController;
 use Modules\Attendance\Http\Controllers\MissingAttendanceController;
 use Modules\Attendance\Http\Controllers\IncompleteAttendanceController;
+use Modules\Attendance\Http\Controllers\TeamAvailabilityController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
   Route::resource('attendances', AttendanceController::class)->names('attendance');
@@ -22,6 +23,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Attendance Summary (yearly view)
     Route::get('summary', [AttendanceController::class, 'summary'])->name('summary');
+
+    // Team Availability Calendar
+    Route::get('team-availability', [TeamAvailabilityController::class, 'index'])->name('team-availability');
     Route::get('settings', [AttendanceSettingsController::class, 'index'])->name('settings.index');
     Route::put('settings', [AttendanceSettingsController::class, 'update'])->name('settings.update');
 
