@@ -11,6 +11,7 @@ use Modules\Project\Models\ProjectCost;
 use Modules\Project\Models\ProjectRevenue;
 use Modules\Project\Services\ProjectFinancialService;
 use Modules\HR\Models\Employee;
+use Modules\Accounting\Models\ExpenseSchedule;
 
 class ProjectFinanceController extends Controller
 {
@@ -32,7 +33,26 @@ class ProjectFinanceController extends Controller
 
         $dashboard = $this->financialService->getFinancialDashboard($project);
 
-        return view('project::projects.finance.index', compact('project', 'dashboard'));
+        // Get linked documents summary
+        $linkedDocuments = [
+            'contracts' => [
+                'count' => $project->contracts()->count(),
+                'total_value' => $project->contracts()->sum('total_amount'),
+                'paid' => $project->contracts()->get()->sum('paid_amount'),
+            ],
+            'invoices' => [
+                'count' => $project->invoices()->count(),
+                'total_value' => $project->invoices()->sum('total_amount'),
+                'paid' => $project->invoices()->sum('paid_amount'),
+            ],
+            'expenses' => [
+                'count' => ExpenseSchedule::where('project_id', $project->id)->count(),
+                'total_value' => ExpenseSchedule::where('project_id', $project->id)->sum('amount'),
+                'paid' => ExpenseSchedule::where('project_id', $project->id)->where('payment_status', 'paid')->sum('paid_amount'),
+            ],
+        ];
+
+        return view('project::projects.finance.index', compact('project', 'dashboard', 'linkedDocuments'));
     }
 
     /**
@@ -416,5 +436,95 @@ class ProjectFinanceController extends Controller
 
         return redirect()->route('projects.finance.costs', $project)
             ->with('success', "Generated {$count} labor cost entries from worklogs.");
+    }
+
+    /**
+     * View linked contracts for the project.
+     */
+    public function contracts(Project $project)
+    {
+        if (!Gate::allows('view-project-finance', $project)) {
+            abort(403, 'You do not have permission to view project finances.');
+        }
+
+        $contracts = $project->contracts()
+            ->with(['payments' => fn($q) => $q->orderBy('sequence_number'), 'customer'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Calculate totals
+        $totals = [
+            'contract_value' => $contracts->sum('total_amount'),
+            'paid_amount' => $contracts->sum('paid_amount'),
+            'pending_amount' => $contracts->sum('pending_amount'),
+        ];
+
+        return view('project::projects.finance.contracts', compact('project', 'contracts', 'totals'));
+    }
+
+    /**
+     * View linked invoices for the project.
+     */
+    public function invoices(Project $project)
+    {
+        if (!Gate::allows('view-project-finance', $project)) {
+            abort(403, 'You do not have permission to view project finances.');
+        }
+
+        // Get invoices directly linked to project
+        $directInvoices = $project->invoices()
+            ->with(['customer', 'items'])
+            ->orderByDesc('invoice_date')
+            ->get();
+
+        // Get invoices linked via pivot table (if many-to-many exists)
+        $pivotInvoices = collect();
+        if (method_exists($project, 'invoicesMany')) {
+            $pivotInvoices = $project->invoicesMany()
+                ->with(['customer', 'items'])
+                ->orderByDesc('invoice_date')
+                ->get();
+        }
+
+        // Combine and deduplicate
+        $invoices = $directInvoices->merge($pivotInvoices)->unique('id')->values();
+
+        // Calculate totals
+        $totals = [
+            'total_invoiced' => $invoices->sum('total_amount'),
+            'total_paid' => $invoices->sum('paid_amount'),
+            'total_pending' => $invoices->where('status', '!=', 'paid')->sum('total_amount') - $invoices->where('status', '!=', 'paid')->sum('paid_amount'),
+            'total_overdue' => $invoices->where('status', 'overdue')->sum('total_amount'),
+        ];
+
+        return view('project::projects.finance.invoices', compact('project', 'invoices', 'totals'));
+    }
+
+    /**
+     * View linked expenses for the project.
+     */
+    public function expenses(Project $project)
+    {
+        if (!Gate::allows('view-project-finance', $project)) {
+            abort(403, 'You do not have permission to view project finances.');
+        }
+
+        $expenses = ExpenseSchedule::where('project_id', $project->id)
+            ->with(['category', 'subcategory', 'expenseType'])
+            ->orderByDesc('start_date')
+            ->paginate(20);
+
+        // Calculate totals
+        $totals = [
+            'total_amount' => ExpenseSchedule::where('project_id', $project->id)->sum('amount'),
+            'paid_amount' => ExpenseSchedule::where('project_id', $project->id)
+                ->where('payment_status', 'paid')
+                ->sum('paid_amount'),
+            'pending_amount' => ExpenseSchedule::where('project_id', $project->id)
+                ->where('payment_status', '!=', 'paid')
+                ->sum('amount'),
+        ];
+
+        return view('project::projects.finance.expenses', compact('project', 'expenses', 'totals'));
     }
 }

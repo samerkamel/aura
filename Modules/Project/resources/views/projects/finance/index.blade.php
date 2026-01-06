@@ -16,18 +16,28 @@
             <h4 class="mb-1">Financial Dashboard</h4>
             <p class="text-muted mb-0">{{ $project->name }}</p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('projects.finance.budgets', $project) }}" class="btn btn-outline-primary">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('projects.finance.budgets', $project) }}" class="btn btn-outline-primary btn-sm">
                 <i class="ti ti-wallet me-1"></i> Budgets
             </a>
-            <a href="{{ route('projects.finance.costs', $project) }}" class="btn btn-outline-warning">
+            <a href="{{ route('projects.finance.costs', $project) }}" class="btn btn-outline-warning btn-sm">
                 <i class="ti ti-receipt me-1"></i> Costs
             </a>
-            <a href="{{ route('projects.finance.revenues', $project) }}" class="btn btn-outline-success">
+            <a href="{{ route('projects.finance.revenues', $project) }}" class="btn btn-outline-success btn-sm">
                 <i class="ti ti-cash me-1"></i> Revenue
             </a>
-            <a href="{{ route('projects.finance.profitability', $project) }}" class="btn btn-outline-info">
+            <a href="{{ route('projects.finance.profitability', $project) }}" class="btn btn-outline-info btn-sm">
                 <i class="ti ti-chart-bar me-1"></i> Profitability
+            </a>
+            <div class="vr mx-1"></div>
+            <a href="{{ route('projects.finance.contracts', $project) }}" class="btn btn-outline-secondary btn-sm">
+                <i class="ti ti-file-text me-1"></i> Contracts
+            </a>
+            <a href="{{ route('projects.finance.invoices', $project) }}" class="btn btn-outline-secondary btn-sm">
+                <i class="ti ti-file-invoice me-1"></i> Invoices
+            </a>
+            <a href="{{ route('projects.finance.expenses', $project) }}" class="btn btn-outline-secondary btn-sm">
+                <i class="ti ti-report-money me-1"></i> Expenses
             </a>
         </div>
     </div>
@@ -227,6 +237,81 @@
                                 </div>
                             @endif
                         @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linked Financial Documents -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Linked Financial Documents</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <!-- Contracts -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                <span class="avatar avatar-lg me-3">
+                                    <span class="avatar-initial bg-label-primary rounded"><i class="ti ti-file-text ti-24px"></i></span>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <a href="{{ route('projects.finance.contracts', $project) }}" class="h6 mb-0 d-block">
+                                        {{ $linkedDocuments['contracts']['count'] }} Contracts
+                                    </a>
+                                    <small class="text-muted">
+                                        Value: {{ number_format($linkedDocuments['contracts']['total_value'], 0) }}
+                                        <br>Paid: {{ number_format($linkedDocuments['contracts']['paid'], 0) }}
+                                    </small>
+                                </div>
+                                <a href="{{ route('projects.finance.contracts', $project) }}" class="btn btn-sm btn-icon btn-outline-primary">
+                                    <i class="ti ti-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Invoices -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                <span class="avatar avatar-lg me-3">
+                                    <span class="avatar-initial bg-label-info rounded"><i class="ti ti-file-invoice ti-24px"></i></span>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <a href="{{ route('projects.finance.invoices', $project) }}" class="h6 mb-0 d-block">
+                                        {{ $linkedDocuments['invoices']['count'] }} Invoices
+                                    </a>
+                                    <small class="text-muted">
+                                        Value: {{ number_format($linkedDocuments['invoices']['total_value'], 0) }}
+                                        <br>Paid: {{ number_format($linkedDocuments['invoices']['paid'], 0) }}
+                                    </small>
+                                </div>
+                                <a href="{{ route('projects.finance.invoices', $project) }}" class="btn btn-sm btn-icon btn-outline-info">
+                                    <i class="ti ti-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Expenses -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                <span class="avatar avatar-lg me-3">
+                                    <span class="avatar-initial bg-label-warning rounded"><i class="ti ti-report-money ti-24px"></i></span>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <a href="{{ route('projects.finance.expenses', $project) }}" class="h6 mb-0 d-block">
+                                        {{ $linkedDocuments['expenses']['count'] }} Expenses
+                                    </a>
+                                    <small class="text-muted">
+                                        Value: {{ number_format($linkedDocuments['expenses']['total_value'], 0) }}
+                                        <br>Paid: {{ number_format($linkedDocuments['expenses']['paid'], 0) }}
+                                    </small>
+                                </div>
+                                <a href="{{ route('projects.finance.expenses', $project) }}" class="btn btn-sm btn-icon btn-outline-warning">
+                                    <i class="ti ti-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

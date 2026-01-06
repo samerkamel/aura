@@ -120,6 +120,11 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         // Profitability
         Route::get('/profitability', [ProjectFinanceController::class, 'profitability'])->name('profitability');
 
+        // Linked Financial Documents
+        Route::get('/contracts', [ProjectFinanceController::class, 'contracts'])->name('contracts');
+        Route::get('/invoices', [ProjectFinanceController::class, 'invoices'])->name('invoices');
+        Route::get('/expenses', [ProjectFinanceController::class, 'expenses'])->name('expenses');
+
         // API endpoints
         Route::get('/api/summary', [ProjectFinanceController::class, 'apiSummary'])->name('api.summary');
         Route::get('/api/trend', [ProjectFinanceController::class, 'apiMonthlyTrend'])->name('api.trend');
