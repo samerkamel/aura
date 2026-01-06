@@ -82,7 +82,7 @@ class InvoiceController extends Controller
             'overdue' => Invoice::where('status', 'overdue')->count(),
         ];
 
-        $customers = Customer::orderBy('name')->get();
+        $customers = Customer::orderByRaw('COALESCE(NULLIF(company_name, ""), name)')->get();
         $accounts = \Modules\Accounting\Models\Account::active()->orderBy('name')->get();
 
         return view('invoicing::invoices.index', compact('invoices', 'stats', 'customers', 'accounts'));
@@ -97,7 +97,7 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to create invoices.');
         }
 
-        $customers = Customer::orderBy('name')->get();
+        $customers = Customer::orderByRaw('COALESCE(NULLIF(company_name, ""), name)')->get();
         $sequences = InvoiceSequence::active()->get();
         $projects = Project::active()->orderBy('name')->get();
 
@@ -224,7 +224,7 @@ class InvoiceController extends Controller
             abort(403, 'Only draft invoices can be edited.');
         }
 
-        $customers = Customer::orderBy('name')->get();
+        $customers = Customer::orderByRaw('COALESCE(NULLIF(company_name, ""), name)')->get();
         $sequences = InvoiceSequence::active()->get();
 
         $invoice->load(['items.project', 'customer', 'project']);
