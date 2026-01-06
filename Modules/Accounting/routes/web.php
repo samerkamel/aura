@@ -156,6 +156,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{estimate}/approve', [EstimateController::class, 'markAsApproved'])->name('approve');
             Route::post('/{estimate}/reject', [EstimateController::class, 'markAsRejected'])->name('reject');
             Route::post('/{estimate}/convert', [EstimateController::class, 'convertToContract'])->name('convert');
+            Route::post('/{estimate}/convert-with-project', [EstimateController::class, 'convertToContractWithProject'])->name('convert-with-project');
             Route::get('/{estimate}/pdf', [EstimateController::class, 'exportPdf'])->name('pdf');
         });
 

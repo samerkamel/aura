@@ -225,12 +225,9 @@
                             @endif
 
                             @if($estimate->canBeConverted())
-                                <form action="{{ route('accounting.estimates.convert', $estimate) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="ti ti-transform me-1"></i>Convert to Contract
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#convertToContractModal">
+                                    <i class="ti ti-transform me-1"></i>Convert to Contract
+                                </button>
                             @endif
 
                             @if($estimate->status === 'draft')
@@ -340,4 +337,9 @@
         </div>
     </div>
 </div>
+
+{{-- Include Convert Modal --}}
+@if($estimate->canBeConverted())
+    @include('accounting::estimates.partials.convert-modal')
+@endif
 @endsection

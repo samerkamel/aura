@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Response;
 use Modules\Accounting\Models\Estimate;
 use Modules\Accounting\Services\EstimateService;
+use Modules\Accounting\Services\EstimateConversionService;
 use Modules\Settings\Models\CompanySetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -293,7 +294,7 @@ class EstimateController extends Controller
     }
 
     /**
-     * Convert estimate to contract.
+     * Convert estimate to contract (simple, without project options).
      */
     public function convertToContract(Estimate $estimate): RedirectResponse
     {
@@ -305,6 +306,56 @@ class EstimateController extends Controller
             return redirect()->route('accounting.estimates.show', $estimate)
                 ->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Convert estimate to contract with project linking options.
+     */
+    public function convertToContractWithProject(Request $request, Estimate $estimate, EstimateConversionService $conversionService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'project_action' => 'required|in:none,link_existing,create_new',
+            'project_id' => 'nullable|exists:projects,id',
+            'linked_project_id' => 'nullable|exists:projects,id',
+            'project_name' => 'nullable|string|max:255',
+            'project_code' => 'nullable|string|max:50|unique:projects,code',
+            'allocation_type' => 'nullable|in:percentage,amount',
+            'allocation_value' => 'nullable|numeric|min:0',
+            'contract_start_date' => 'nullable|date',
+            'sync_to_project' => 'nullable|boolean',
+        ]);
+
+        // Determine the project ID based on action
+        $projectId = null;
+        if ($validated['project_action'] === 'link_existing') {
+            $projectId = $validated['project_id'] ?? $validated['linked_project_id'] ?? null;
+        }
+
+        $options = [
+            'project_action' => $validated['project_action'],
+            'project_id' => $projectId,
+            'project_name' => $validated['project_name'] ?? null,
+            'project_code' => $validated['project_code'] ?? null,
+            'allocation_type' => $validated['allocation_type'] ?? 'percentage',
+            'allocation_value' => $validated['allocation_value'] ?? 100,
+            'contract_start_date' => $validated['contract_start_date'] ?? now()->toDateString(),
+            'sync_to_project' => isset($validated['sync_to_project']) ? (bool) $validated['sync_to_project'] : true,
+        ];
+
+        $result = $conversionService->convertToContractWithProject($estimate, $options);
+
+        if (!$result['success']) {
+            return redirect()->route('accounting.estimates.show', $estimate)
+                ->with('error', $result['message']);
+        }
+
+        $message = 'Estimate converted to contract successfully.';
+        if ($result['project']) {
+            $message .= ' Linked to project: ' . $result['project']->name;
+        }
+
+        return redirect()->route('accounting.income.contracts.show', $result['contract'])
+            ->with('success', $message);
     }
 
     /**
