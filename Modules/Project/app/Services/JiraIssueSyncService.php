@@ -353,7 +353,7 @@ class JiraIssueSyncService
     /**
      * Get issues with filters.
      */
-    public function getFilteredIssues(Project $project, array $filters = []): Collection
+    public function getFilteredIssues(Project $project, array $filters = [], string $sortBy = 'issue_key', string $sortDir = 'asc'): Collection
     {
         $query = $project->jiraIssues()->with('assignee');
 
@@ -381,10 +381,34 @@ class JiraIssueSyncService
             });
         }
 
-        $sortBy = $filters['sort_by'] ?? 'jira_updated_at';
-        $sortDir = $filters['sort_dir'] ?? 'desc';
+        // Validate sort direction
+        $sortDir = strtolower($sortDir) === 'desc' ? 'desc' : 'asc';
 
-        return $query->orderBy($sortBy, $sortDir)->get();
+        // Validate and apply sorting
+        $validSortColumns = [
+            'issue_key', 'summary', 'issue_type', 'status', 'priority',
+            'due_date', 'story_points', 'epic_key', 'jira_created_at', 'jira_updated_at'
+        ];
+
+        // Handle assignee sorting specially (join with employees table)
+        if ($sortBy === 'assignee') {
+            $query->leftJoin('employees', 'jira_issues.assignee_employee_id', '=', 'employees.id')
+                ->select('jira_issues.*')
+                ->orderByRaw("COALESCE(employees.name, jira_issues.assignee_email, 'zzz') {$sortDir}");
+        } elseif (in_array($sortBy, $validSortColumns)) {
+            // Handle null values - put them at the end for asc, beginning for desc
+            if (in_array($sortBy, ['due_date', 'story_points', 'epic_key', 'priority'])) {
+                $nullPosition = $sortDir === 'asc' ? 'LAST' : 'FIRST';
+                $query->orderByRaw("CASE WHEN {$sortBy} IS NULL THEN 1 ELSE 0 END, {$sortBy} {$sortDir}");
+            } else {
+                $query->orderBy($sortBy, $sortDir);
+            }
+        } else {
+            // Default sort
+            $query->orderBy('issue_key', 'asc');
+        }
+
+        return $query->get();
     }
 
     /**

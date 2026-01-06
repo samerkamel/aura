@@ -892,15 +892,17 @@ class ProjectController extends Controller
         // Get issue summary
         $summary = $issueSyncService->getProjectIssueSummary($project);
 
-        // Get filters
+        // Get filters and sort params
         $filters = $request->only(['status_category', 'issue_type', 'assignee_employee_id', 'priority', 'search', 'view']);
         $view = $filters['view'] ?? 'kanban';
+        $sort = $request->get('sort', 'issue_key');
+        $direction = $request->get('direction', 'asc');
 
         // Get issues based on view type
         if ($view === 'kanban') {
             $issues = $issueSyncService->getIssuesForKanban($project);
         } else {
-            $issues = $issueSyncService->getFilteredIssues($project, $filters);
+            $issues = $issueSyncService->getFilteredIssues($project, $filters, $sort, $direction);
         }
 
         // Get filter options

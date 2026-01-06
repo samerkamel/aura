@@ -219,11 +219,34 @@
     font-size: 0.75rem;
     color: #6c757d;
   }
+  /* Sortable headers */
+  .sortable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .sortable:hover {
+    background: #e9ecef;
+  }
+  .sortable .sort-icon {
+    opacity: 0.3;
+    margin-left: 0.25rem;
+  }
+  .sortable.sorted-asc .sort-icon,
+  .sortable.sorted-desc .sort-icon {
+    opacity: 1;
+  }
+  .sortable.sorted-asc .sort-icon::before {
+    content: "\eb37";
+  }
+  .sortable.sorted-desc .sort-icon::before {
+    content: "\eb3a";
+  }
 </style>
 @endsection
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="flex-grow-1 container-p-y px-4">
   @if (session('success'))
     <div class="alert alert-success alert-dismissible mb-4" role="alert">
       {{ session('success') }}
@@ -431,17 +454,17 @@
           <table class="table table-hover mb-0 list-table">
             <thead class="table-light">
               <tr>
-                <th style="width: 40px;">Type</th>
-                <th style="width: 90px;">Key</th>
-                <th style="min-width: 250px;">Summary</th>
-                <th style="width: 90px;">Epic</th>
-                <th style="width: 110px;">Status</th>
-                <th style="width: 90px;">Priority</th>
-                <th style="width: 130px;">Assignee</th>
-                <th style="width: 100px;">Due Date</th>
-                <th style="width: 50px;">SP</th>
+                <th style="width: 40px;" class="sortable" data-sort="issue_type">Type<i class="ti sort-icon"></i></th>
+                <th style="width: 90px;" class="sortable" data-sort="issue_key">Key<i class="ti sort-icon"></i></th>
+                <th style="min-width: 250px;" class="sortable" data-sort="summary">Summary<i class="ti sort-icon"></i></th>
+                <th style="width: 90px;" class="sortable" data-sort="epic_key">Epic<i class="ti sort-icon"></i></th>
+                <th style="width: 110px;" class="sortable" data-sort="status">Status<i class="ti sort-icon"></i></th>
+                <th style="width: 90px;" class="sortable" data-sort="priority">Priority<i class="ti sort-icon"></i></th>
+                <th style="width: 130px;" class="sortable" data-sort="assignee">Assignee<i class="ti sort-icon"></i></th>
+                <th style="width: 100px;" class="sortable" data-sort="due_date">Due Date<i class="ti sort-icon"></i></th>
+                <th style="width: 50px;" class="sortable" data-sort="story_points">SP<i class="ti sort-icon"></i></th>
                 <th style="width: 90px;">Components</th>
-                <th style="width: 140px;">Dates</th>
+                <th style="width: 100px;" class="sortable" data-sort="jira_created_at">Created<i class="ti sort-icon"></i></th>
                 <th style="width: 40px;"></th>
               </tr>
             </thead>
@@ -556,13 +579,8 @@
                       <span class="text-muted">-</span>
                     @endif
                   </td>
-                  <td class="dates-small">
-                    <div title="Created: {{ $issue->jira_created_at?->format('Y-m-d H:i') }}">
-                      <i class="ti ti-clock me-1"></i>{{ $issue->jira_created_at?->format('M d') }}
-                    </div>
-                    <div title="Updated: {{ $issue->jira_updated_at?->format('Y-m-d H:i') }}">
-                      <i class="ti ti-refresh me-1"></i>{{ $issue->jira_updated_at?->format('M d') }}
-                    </div>
+                  <td class="dates-small" title="Created: {{ $issue->jira_created_at?->format('Y-m-d H:i') }}&#10;Updated: {{ $issue->jira_updated_at?->format('Y-m-d H:i') }}">
+                    {{ $issue->jira_created_at?->format('M d, Y') }}
                   </td>
                   <td>
                     <a href="{{ $issue->jira_url }}" target="_blank" class="btn btn-sm btn-icon btn-outline-secondary" title="Open in Jira">
@@ -709,6 +727,42 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.kanban-card[data-jira-url]').forEach(function(card) {
     card.addEventListener('click', function() {
       window.open(this.dataset.jiraUrl, '_blank');
+    });
+  });
+
+  // ==========================================
+  // Column Sorting
+  // ==========================================
+  const sortableHeaders = document.querySelectorAll('.sortable');
+  let currentSort = { column: null, direction: 'asc' };
+
+  // Check URL for existing sort params
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('sort')) {
+    currentSort.column = urlParams.get('sort');
+    currentSort.direction = urlParams.get('direction') || 'asc';
+    // Highlight current sorted column
+    const sortedHeader = document.querySelector(`.sortable[data-sort="${currentSort.column}"]`);
+    if (sortedHeader) {
+      sortedHeader.classList.add(currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  }
+
+  sortableHeaders.forEach(header => {
+    header.addEventListener('click', function() {
+      const sortColumn = this.dataset.sort;
+      let direction = 'asc';
+
+      // If clicking same column, toggle direction
+      if (currentSort.column === sortColumn) {
+        direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      }
+
+      // Update URL with sort params
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort', sortColumn);
+      url.searchParams.set('direction', direction);
+      window.location.href = url.toString();
     });
   });
 
