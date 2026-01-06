@@ -893,8 +893,14 @@ class ProjectController extends Controller
         $summary = $issueSyncService->getProjectIssueSummary($project);
 
         // Get filters and sort params
-        $filters = $request->only(['status_category', 'issue_type', 'assignee_employee_id', 'priority', 'search', 'view']);
-        $view = $filters['view'] ?? 'kanban';
+        $filters = [
+            'search' => $request->get('search'),
+            'exclude_statuses' => $request->get('exclude_statuses', []),
+            'priorities' => $request->get('priorities', []),
+            'assignees' => $request->get('assignees', []),
+            'view' => $request->get('view', 'kanban'),
+        ];
+        $view = $filters['view'];
         $sort = $request->get('sort', 'issue_key');
         $direction = $request->get('direction', 'asc');
 
@@ -906,6 +912,7 @@ class ProjectController extends Controller
         }
 
         // Get filter options
+        $statuses = $project->jiraIssues()->distinct()->pluck('status')->sort()->values();
         $issueTypes = $project->jiraIssues()->distinct()->pluck('issue_type')->sort()->values();
         $priorities = $project->jiraIssues()->distinct()->whereNotNull('priority')->pluck('priority')->sort()->values();
         $assignees = Employee::whereIn('id', $project->jiraIssues()->whereNotNull('assignee_employee_id')->pluck('assignee_employee_id'))
@@ -918,6 +925,7 @@ class ProjectController extends Controller
             'summary' => $summary,
             'filters' => $filters,
             'view' => $view,
+            'statuses' => $statuses,
             'issueTypes' => $issueTypes,
             'priorities' => $priorities,
             'assignees' => $assignees,

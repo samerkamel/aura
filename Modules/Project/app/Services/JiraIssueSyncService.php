@@ -357,6 +357,41 @@ class JiraIssueSyncService
     {
         $query = $project->jiraIssues()->with('assignee');
 
+        // Exclude specific statuses (multiselect)
+        if (!empty($filters['exclude_statuses']) && is_array($filters['exclude_statuses'])) {
+            $query->whereNotIn('status', $filters['exclude_statuses']);
+        }
+
+        // Filter by priorities (multiselect - show only selected)
+        if (!empty($filters['priorities']) && is_array($filters['priorities'])) {
+            $query->whereIn('priority', $filters['priorities']);
+        }
+
+        // Filter by assignees (multiselect - show only selected)
+        if (!empty($filters['assignees']) && is_array($filters['assignees'])) {
+            $query->where(function ($q) use ($filters) {
+                $assigneeIds = [];
+                $includeUnassigned = false;
+
+                foreach ($filters['assignees'] as $assignee) {
+                    if ($assignee === 'unassigned') {
+                        $includeUnassigned = true;
+                    } else {
+                        $assigneeIds[] = $assignee;
+                    }
+                }
+
+                if (!empty($assigneeIds)) {
+                    $q->whereIn('assignee_employee_id', $assigneeIds);
+                }
+
+                if ($includeUnassigned) {
+                    $q->orWhereNull('assignee_employee_id');
+                }
+            });
+        }
+
+        // Legacy filters (for backwards compatibility)
         if (!empty($filters['status_category'])) {
             $query->where('status_category', $filters['status_category']);
         }
@@ -373,6 +408,7 @@ class JiraIssueSyncService
             $query->where('priority', $filters['priority']);
         }
 
+        // Search filter
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {

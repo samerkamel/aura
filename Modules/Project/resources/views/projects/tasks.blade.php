@@ -5,10 +5,12 @@
 
 @section('vendor-style')
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
 @endsection
 
 @section('vendor-script')
 <script src="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
 @endsection
 
 @section('page-style')
@@ -345,8 +347,8 @@
   <!-- View Toggle and Filters -->
   <div class="card mb-4">
     <div class="card-body">
-      <div class="row align-items-center">
-        <div class="col-md-6">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-3">
           <div class="btn-group" role="group">
             <a href="{{ route('projects.tasks', ['project' => $project, 'view' => 'kanban']) }}"
                class="btn {{ $view === 'kanban' ? 'btn-primary' : 'btn-outline-primary' }}">
@@ -358,35 +360,77 @@
             </a>
           </div>
           @if($summary['last_synced'])
-            <small class="text-muted ms-3">
+            <small class="text-muted">
               <i class="ti ti-clock me-1"></i>Last synced: {{ \Carbon\Carbon::parse($summary['last_synced'])->diffForHumans() }}
             </small>
           @endif
         </div>
-        <div class="col-md-6">
-          @if($view === 'list')
-          <form method="GET" class="d-flex gap-2 justify-content-end">
-            <input type="hidden" name="view" value="list">
-            <input type="text" name="search" class="form-control form-control-sm" style="width: 200px;"
-                   placeholder="Search issues..." value="{{ $filters['search'] ?? '' }}">
-            <select name="status_category" class="form-select form-select-sm" style="width: 150px;">
-              <option value="">All Status</option>
-              <option value="new" {{ ($filters['status_category'] ?? '') === 'new' ? 'selected' : '' }}>To Do</option>
-              <option value="indeterminate" {{ ($filters['status_category'] ?? '') === 'indeterminate' ? 'selected' : '' }}>In Progress</option>
-              <option value="done" {{ ($filters['status_category'] ?? '') === 'done' ? 'selected' : '' }}>Done</option>
-            </select>
-            <button type="submit" class="btn btn-sm btn-primary">
-              <i class="ti ti-filter"></i>
-            </button>
-            @if(!empty($filters['search']) || !empty($filters['status_category']))
-            <a href="{{ route('projects.tasks', ['project' => $project, 'view' => 'list']) }}" class="btn btn-sm btn-outline-secondary">
-              <i class="ti ti-x"></i>
+        @if($view === 'list')
+        <div>
+          @php
+            $hasFilters = !empty($filters['search']) || !empty($filters['exclude_statuses']) || !empty($filters['priorities']) || !empty($filters['assignees']);
+          @endphp
+          @if($hasFilters)
+            <a href="{{ route('projects.tasks', ['project' => $project, 'view' => 'list']) }}" class="btn btn-sm btn-outline-danger">
+              <i class="ti ti-x me-1"></i>Clear Filters
             </a>
-            @endif
-          </form>
           @endif
         </div>
+        @endif
       </div>
+
+      @if($view === 'list')
+      <form method="GET" id="filterForm">
+        <input type="hidden" name="view" value="list">
+        @if(request('sort'))
+          <input type="hidden" name="sort" value="{{ request('sort') }}">
+          <input type="hidden" name="direction" value="{{ request('direction', 'asc') }}">
+        @endif
+        <div class="row g-2 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label small text-muted mb-1">Search</label>
+            <input type="text" name="search" class="form-control form-control-sm"
+                   placeholder="Search key or summary..." value="{{ $filters['search'] ?? '' }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small text-muted mb-1">Exclude Statuses</label>
+            <select name="exclude_statuses[]" class="form-select form-select-sm select2-statuses" multiple data-placeholder="Select statuses to hide...">
+              @foreach($statuses as $status)
+                <option value="{{ $status }}" {{ in_array($status, $filters['exclude_statuses'] ?? []) ? 'selected' : '' }}>
+                  {{ $status }}
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Priority</label>
+            <select name="priorities[]" class="form-select form-select-sm select2-priorities" multiple data-placeholder="All priorities">
+              @foreach($priorities as $priority)
+                <option value="{{ $priority }}" {{ in_array($priority, $filters['priorities'] ?? []) ? 'selected' : '' }}>
+                  {{ $priority }}
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Assignee</label>
+            <select name="assignees[]" class="form-select form-select-sm select2-assignees" multiple data-placeholder="All assignees">
+              <option value="unassigned" {{ in_array('unassigned', $filters['assignees'] ?? []) ? 'selected' : '' }}>Unassigned</option>
+              @foreach($assignees as $assignee)
+                <option value="{{ $assignee->id }}" {{ in_array((string)$assignee->id, $filters['assignees'] ?? []) ? 'selected' : '' }}>
+                  {{ $assignee->name }}
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">
+              <i class="ti ti-filter me-1"></i>Apply Filters
+            </button>
+          </div>
+        </div>
+      </form>
+      @endif
     </div>
   </div>
 
@@ -1244,6 +1288,29 @@ document.addEventListener('DOMContentLoaded', function() {
   createTaskModal.addEventListener('hidden.bs.modal', function() {
     createTaskForm.reset();
   });
+
+  // ==========================================
+  // Initialize Select2 for filters
+  // ==========================================
+  if (typeof $.fn.select2 !== 'undefined') {
+    $('.select2-statuses').select2({
+      placeholder: 'Select statuses to hide...',
+      allowClear: true,
+      width: '100%'
+    });
+
+    $('.select2-priorities').select2({
+      placeholder: 'All priorities',
+      allowClear: true,
+      width: '100%'
+    });
+
+    $('.select2-assignees').select2({
+      placeholder: 'All assignees',
+      allowClear: true,
+      width: '100%'
+    });
+  }
 });
 </script>
 @endsection
