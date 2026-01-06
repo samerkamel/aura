@@ -396,28 +396,74 @@ class ProjectController extends Controller
     /**
      * Sync projects from Jira.
      */
-    public function syncFromJira(JiraProjectSyncService $jiraService): RedirectResponse
-    {
+    public function syncFromJira(
+        JiraProjectSyncService $projectSyncService,
+        JiraIssueSyncService $issueSyncService,
+        \Modules\Payroll\Services\JiraBillableHoursService $worklogSyncService
+    ): RedirectResponse {
         if (!Gate::allows('sync-project-jira')) {
             abort(403, 'You do not have permission to sync projects from Jira.');
         }
 
+        $messages = [];
+        $hasErrors = false;
+
+        // 1. Sync Projects
         try {
-            $results = $jiraService->syncProjects();
-
-            $message = "Sync completed: {$results['created']} created, {$results['updated']} updated.";
-            if (!empty($results['errors'])) {
-                $message .= " " . count($results['errors']) . " errors occurred.";
+            $projectResults = $projectSyncService->syncProjects();
+            $messages[] = "Projects: {$projectResults['created']} created, {$projectResults['updated']} updated";
+            if (!empty($projectResults['errors'])) {
+                $hasErrors = true;
             }
-
-            return redirect()
-                ->route('projects.index')
-                ->with('success', $message);
         } catch (\Exception $e) {
-            return redirect()
-                ->route('projects.index')
-                ->with('error', 'Sync failed: ' . $e->getMessage());
+            $messages[] = "Projects sync failed: " . $e->getMessage();
+            $hasErrors = true;
         }
+
+        // 2. Sync Issues for all active projects
+        $issueStats = ['total' => 0, 'created' => 0, 'updated' => 0];
+        try {
+            $activeProjects = Project::where('phase', '!=', 'closure')
+                ->orWhereNull('phase')
+                ->whereNotNull('code')
+                ->get();
+
+            foreach ($activeProjects as $project) {
+                try {
+                    $issueResults = $issueSyncService->syncProjectIssues($project, 500);
+                    $issueStats['total'] += $issueResults['total'];
+                    $issueStats['created'] += $issueResults['created'];
+                    $issueStats['updated'] += $issueResults['updated'];
+                } catch (\Exception $e) {
+                    // Continue with other projects
+                    \Log::warning("Failed to sync issues for project {$project->code}: " . $e->getMessage());
+                }
+            }
+            $messages[] = "Issues: {$issueStats['created']} created, {$issueStats['updated']} updated (from {$activeProjects->count()} projects)";
+        } catch (\Exception $e) {
+            $messages[] = "Issues sync failed: " . $e->getMessage();
+            $hasErrors = true;
+        }
+
+        // 3. Sync Worklogs (last 90 days)
+        try {
+            $startDate = now()->subDays(90);
+            $endDate = now();
+            $worklogResults = $worklogSyncService->syncBillableHours($startDate, $endDate);
+            $messages[] = "Worklogs: {$worklogResults['imported']} imported, {$worklogResults['skipped']} skipped (last 90 days)";
+            if (!empty($worklogResults['errors'])) {
+                $hasErrors = true;
+            }
+        } catch (\Exception $e) {
+            $messages[] = "Worklogs sync failed: " . $e->getMessage();
+            $hasErrors = true;
+        }
+
+        $fullMessage = "Jira Sync Complete:\n• " . implode("\n• ", $messages);
+
+        return redirect()
+            ->route('projects.index')
+            ->with($hasErrors ? 'warning' : 'success', $fullMessage);
     }
 
     /**

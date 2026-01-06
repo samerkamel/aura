@@ -193,10 +193,10 @@
                   </li>
                 </ul>
               </div>
-              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline">
+              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline" id="jiraSyncForm">
                 @csrf
-                <button type="submit" class="btn btn-outline-primary btn-sm">
-                  <i class="ti ti-refresh me-1"></i>Sync Jira
+                <button type="submit" class="btn btn-outline-primary btn-sm" id="jiraSyncBtn" onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-1\'></span>Syncing...'; this.disabled=true; document.getElementById('jiraSyncForm').submit();">
+                  <i class="ti ti-refresh me-1"></i>Sync All from Jira
                 </button>
               </form>
               <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm">
@@ -432,10 +432,10 @@
               <a href="{{ route('projects.create') }}" class="btn btn-primary">
                 <i class="ti ti-plus me-1"></i>Create Project
               </a>
-              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline">
+              <form action="{{ route('projects.sync-jira') }}" method="POST" class="d-inline" id="jiraSyncForm2">
                 @csrf
-                <button type="submit" class="btn btn-outline-primary">
-                  <i class="ti ti-refresh me-1"></i>Sync from Jira
+                <button type="submit" class="btn btn-outline-primary" onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-1\'></span>Syncing...'; this.disabled=true; document.getElementById('jiraSyncForm2').submit();">
+                  <i class="ti ti-refresh me-1"></i>Sync All from Jira
                 </button>
               </form>
             </div>
