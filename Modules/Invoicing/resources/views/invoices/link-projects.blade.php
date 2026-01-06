@@ -6,6 +6,20 @@
 @vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
+@section('page-style')
+<style>
+/* Constrain Select2 dropdown width */
+.select2-container--default .select2-dropdown {
+    max-width: 400px;
+}
+.select2-container--default .select2-results__option {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+@endsection
+
 @section('vendor-script')
 @vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
@@ -307,8 +321,7 @@ function initializeProjectSelects() {
         $(this).select2({
             placeholder: 'Search projects...',
             allowClear: true,
-            width: '100%',
-            dropdownAutoWidth: true
+            width: '100%'
         });
     });
 
