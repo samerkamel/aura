@@ -113,6 +113,11 @@
           "slug": "attendance-summary-index"
         },
         {
+          "url": "attendance/team-availability",
+          "name": "Team Availability",
+          "slug": "attendance-team-availability"
+        },
+        {
           "url": "attendance/import",
           "name": "Import CSV",
           "slug": "attendance-import-create"
