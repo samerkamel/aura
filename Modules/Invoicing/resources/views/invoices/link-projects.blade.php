@@ -305,14 +305,19 @@ $(document).ready(function() {
     });
 });
 
-function trackChange(select) {
-    const invoiceId = select.dataset.invoiceId;
-    const originalValue = select.dataset.originalValue || '';
-    const currentValue = select.value;
+function trackChange(selectElement) {
+    // Handle both native element and jQuery wrapped element
+    const select = selectElement.jquery ? selectElement[0] : selectElement;
+    const $select = $(select);
+
+    const invoiceId = $select.data('invoice-id');
+    const originalValue = String($select.data('original-value') || '');
+    const currentValue = String($select.val() || '');
 
     // Get the Select2 container for visual feedback
-    const $select = $(select);
     const $container = $select.next('.select2-container');
+
+    console.log('Track change:', invoiceId, 'original:', originalValue, 'current:', currentValue);
 
     if (currentValue !== originalValue) {
         changedSelects.add(invoiceId);
