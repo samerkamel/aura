@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$updated = DB::table(\"\"projects\"\")->where(\"\"is_active\"\", false)->update([\"\"phase\"\" => \"\"closure\"\"]);\necho \"\"Updated \"\" . $updated . \"\" projects to closure phase\"\";\n''\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$updated = DB::table(\"\"projects\"\")->where(\"\"is_active\"\", false)->update([\"\"phase\"\" => \"\"closure\"\"]);\necho \"\"Updated \"\" . $updated . \"\" projects to closure phase\"\";\n''\")",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(xargs ls:*)",
+      "Bash(php artisan migrate:*)"
     ],
     "deny": [],
     "ask": []

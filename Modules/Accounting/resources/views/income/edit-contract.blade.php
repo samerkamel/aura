@@ -225,6 +225,116 @@
                                 </div>
                             </div>
 
+                            <!-- Project Allocation -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">Project Allocation</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Project Assignments <small class="text-muted">(Optional)</small></label>
+                                            <p class="text-muted small mb-3">Link this contract to projects. Revenue will be distributed based on allocation.</p>
+
+                                            <div id="project-allocations">
+                                                @foreach($contract->projects as $index => $project)
+                                                <div class="project-allocation-row">
+                                                    <div class="card mb-3 border-primary">
+                                                        <div class="card-body">
+                                                            <div class="row g-3">
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label">Project <span class="text-danger">*</span></label>
+                                                                    <select class="form-select project-allocation-project" name="project_allocations[{{ $index }}][project_id]">
+                                                                        <option value="">Select project</option>
+                                                                        @foreach($projects as $proj)
+                                                                            <option value="{{ $proj->id }}" {{ $project->id == $proj->id ? 'selected' : '' }}>
+                                                                                {{ $proj->name }} {{ $proj->code ? '(' . $proj->code . ')' : '' }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <label class="form-label">Type <span class="text-danger">*</span></label>
+                                                                    <select class="form-select project-allocation-type" name="project_allocations[{{ $index }}][allocation_type]">
+                                                                        <option value="percentage" {{ ($project->pivot->allocation_type ?? 'percentage') == 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                                                        <option value="amount" {{ ($project->pivot->allocation_type ?? '') == 'amount' ? 'selected' : '' }}>Amount</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="form-label project-allocation-value-label">
+                                                                        {{ ($project->pivot->allocation_type ?? 'percentage') == 'percentage' ? 'Percentage (%)' : 'Amount (EGP)' }} <span class="text-danger">*</span>
+                                                                    </label>
+                                                                    <div class="input-group">
+                                                                        <input type="number" class="form-control project-allocation-value {{ ($project->pivot->allocation_type ?? 'percentage') == 'amount' ? 'd-none' : '' }}"
+                                                                               name="project_allocations[{{ $index }}][allocation_percentage]"
+                                                                               step="0.01" min="0" max="100"
+                                                                               value="{{ $project->pivot->allocation_percentage }}"
+                                                                               placeholder="0.00">
+                                                                        <input type="number" class="form-control project-allocation-value {{ ($project->pivot->allocation_type ?? 'percentage') == 'percentage' ? 'd-none' : '' }}"
+                                                                               name="project_allocations[{{ $index }}][allocation_amount]"
+                                                                               step="0.01" min="0"
+                                                                               value="{{ $project->pivot->allocation_amount }}"
+                                                                               placeholder="0.00">
+                                                                        <span class="input-group-text project-allocation-unit">{{ ($project->pivot->allocation_type ?? 'percentage') == 'percentage' ? '%' : 'EGP' }}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2 d-flex align-items-end">
+                                                                    <button type="button" class="btn btn-outline-danger remove-project-allocation w-100">
+                                                                        <i class="ti ti-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label class="form-label">Notes <small class="text-muted">(Optional)</small></label>
+                                                                    <input type="text" class="form-control" name="project_allocations[{{ $index }}][notes]"
+                                                                           value="{{ $project->pivot->notes }}"
+                                                                           placeholder="Notes for this allocation">
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="form-label">&nbsp;</label>
+                                                                    <div class="form-check mt-2">
+                                                                        <input type="checkbox" class="form-check-input project-is-primary"
+                                                                               name="project_allocations[{{ $index }}][is_primary]" value="1"
+                                                                               {{ $project->pivot->is_primary ? 'checked' : '' }}>
+                                                                        <label class="form-check-label">Primary Project</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="project-calculated-amount text-muted small mt-2"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-project">
+                                                <i class="ti ti-plus me-1"></i>Add Project
+                                            </button>
+                                        </div>
+
+                                        <div class="col-12" id="project-allocation-summary" style="{{ $contract->projects->count() > 0 ? '' : 'display: none;' }}">
+                                            <div class="alert alert-primary">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <strong>Project Allocation Summary</strong>
+                                                    <div class="progress" style="width: 200px; height: 8px;">
+                                                        <div class="progress-bar bg-primary" id="project-allocation-progress" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row text-sm">
+                                                    <div class="col-6">
+                                                        <strong>Total Allocated:</strong> <span id="project-total-allocated">0 EGP</span>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <strong>Remaining:</strong> <span id="project-remaining-amount">0 EGP</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Contract Duration -->
                             <div class="card mb-4">
                                 <div class="card-header">
@@ -466,9 +576,73 @@
     </div>
 </div>
 
+<!-- Hidden Template for Project Allocation -->
+<div id="project-allocation-template" style="display: none;">
+    <div class="project-allocation-row">
+        <div class="card mb-3 border-primary">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Project <span class="text-danger">*</span></label>
+                        <select class="form-select project-allocation-project" name="project_allocations[INDEX][project_id]">
+                            <option value="">Select project</option>
+                            @foreach($projects as $proj)
+                                <option value="{{ $proj->id }}">
+                                    {{ $proj->name }} {{ $proj->code ? '(' . $proj->code . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Type <span class="text-danger">*</span></label>
+                        <select class="form-select project-allocation-type" name="project_allocations[INDEX][allocation_type]">
+                            <option value="percentage">Percentage</option>
+                            <option value="amount">Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label project-allocation-value-label">Percentage (%) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control project-allocation-value"
+                                   name="project_allocations[INDEX][allocation_percentage]"
+                                   step="0.01" min="0" max="100" placeholder="0.00">
+                            <input type="number" class="form-control project-allocation-value d-none"
+                                   name="project_allocations[INDEX][allocation_amount]"
+                                   step="0.01" min="0" placeholder="0.00">
+                            <span class="input-group-text project-allocation-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger remove-project-allocation w-100">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Notes <small class="text-muted">(Optional)</small></label>
+                        <input type="text" class="form-control" name="project_allocations[INDEX][notes]"
+                               placeholder="Notes for this allocation">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input project-is-primary"
+                                   name="project_allocations[INDEX][is_primary]" value="1">
+                            <label class="form-check-label">Primary Project</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="project-calculated-amount text-muted small mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let allocationIndex = {{ $contract->products->count() }};
+    let projectAllocationIndex = {{ $contract->projects->count() }};
 
     // Add new product allocation
     document.getElementById('add-product').addEventListener('click', function() {
@@ -480,7 +654,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('allocation-summary').style.display = 'block';
     });
 
-    // Remove allocation
+    // Add new project allocation
+    document.getElementById('add-project').addEventListener('click', function() {
+        const template = document.getElementById('project-allocation-template').innerHTML;
+        const newAllocation = template.replace(/INDEX/g, projectAllocationIndex);
+        document.getElementById('project-allocations').insertAdjacentHTML('beforeend', newAllocation);
+        projectAllocationIndex++;
+        updateProjectCalculations();
+        document.getElementById('project-allocation-summary').style.display = 'block';
+    });
+
+    // Remove allocation (product or project)
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-allocation')) {
             e.target.closest('.allocation-row').remove();
@@ -491,9 +675,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('allocation-summary').style.display = 'none';
             }
         }
+
+        if (e.target.closest('.remove-project-allocation')) {
+            e.target.closest('.project-allocation-row').remove();
+            updateProjectCalculations();
+
+            // Hide summary if no project allocations
+            if (document.querySelectorAll('.project-allocation-row').length === 0) {
+                document.getElementById('project-allocation-summary').style.display = 'none';
+            }
+        }
     });
 
-    // Handle allocation type change
+    // Handle allocation type change (product)
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('allocation-type')) {
             const row = e.target.closest('.allocation-row');
@@ -518,6 +712,42 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             updateCalculations();
         }
+
+        // Handle project allocation type change
+        if (e.target.classList.contains('project-allocation-type')) {
+            const row = e.target.closest('.project-allocation-row');
+            const type = e.target.value;
+            const percentageInput = row.querySelector('input[name*="[allocation_percentage]"]');
+            const amountInput = row.querySelector('input[name*="[allocation_amount]"]');
+            const label = row.querySelector('.project-allocation-value-label');
+            const unit = row.querySelector('.project-allocation-unit');
+
+            if (type === 'percentage') {
+                percentageInput.classList.remove('d-none');
+                amountInput.classList.add('d-none');
+                label.innerHTML = 'Percentage (%) <span class="text-danger">*</span>';
+                unit.textContent = '%';
+                amountInput.value = '';
+            } else {
+                percentageInput.classList.add('d-none');
+                amountInput.classList.remove('d-none');
+                label.innerHTML = 'Amount (EGP) <span class="text-danger">*</span>';
+                unit.textContent = 'EGP';
+                percentageInput.value = '';
+            }
+            updateProjectCalculations();
+        }
+
+        // Handle primary project checkbox - only one can be checked
+        if (e.target.classList.contains('project-is-primary')) {
+            if (e.target.checked) {
+                document.querySelectorAll('.project-is-primary').forEach(function(checkbox) {
+                    if (checkbox !== e.target) {
+                        checkbox.checked = false;
+                    }
+                });
+            }
+        }
     });
 
     // Handle value changes
@@ -525,9 +755,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.classList.contains('allocation-value') || e.target.id === 'total_amount') {
             updateCalculations();
         }
+        if (e.target.classList.contains('project-allocation-value') || e.target.id === 'total_amount') {
+            updateProjectCalculations();
+        }
     });
 
-    // Update calculations
+    // Update product calculations
     function updateCalculations() {
         const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
         let totalAllocated = 0;
@@ -580,8 +813,62 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Update project calculations
+    function updateProjectCalculations() {
+        const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
+        let totalAllocated = 0;
+
+        document.querySelectorAll('.project-allocation-row').forEach(function(row) {
+            const type = row.querySelector('.project-allocation-type').value;
+            let allocation = 0;
+
+            if (type === 'percentage') {
+                const percentage = parseFloat(row.querySelector('input[name*="[allocation_percentage]"]').value) || 0;
+                allocation = (percentage / 100) * totalAmount;
+                row.querySelector('.project-calculated-amount').textContent = `Calculated: ${allocation.toLocaleString()} EGP`;
+            } else {
+                allocation = parseFloat(row.querySelector('input[name*="[allocation_amount]"]').value) || 0;
+                if (totalAmount > 0) {
+                    const percentage = (allocation / totalAmount) * 100;
+                    row.querySelector('.project-calculated-amount').textContent = `Calculated: ${percentage.toFixed(2)}% of contract`;
+                }
+            }
+
+            totalAllocated += allocation;
+        });
+
+        const remaining = totalAmount - totalAllocated;
+        const percentage = totalAmount > 0 ? (totalAllocated / totalAmount) * 100 : 0;
+
+        if (document.getElementById('project-total-allocated')) {
+            document.getElementById('project-total-allocated').textContent = totalAllocated.toLocaleString() + ' EGP';
+            document.getElementById('project-remaining-amount').textContent = remaining.toLocaleString() + ' EGP';
+            document.getElementById('project-allocation-progress').style.width = Math.min(percentage, 100) + '%';
+
+            // Update progress bar color
+            if (percentage > 100) {
+                document.getElementById('project-allocation-progress').className = 'progress-bar bg-danger';
+            } else if (percentage >= 90) {
+                document.getElementById('project-allocation-progress').className = 'progress-bar bg-warning';
+            } else {
+                document.getElementById('project-allocation-progress').className = 'progress-bar bg-primary';
+            }
+
+            // Update remaining amount color
+            const remainingElement = document.getElementById('project-remaining-amount');
+            if (remaining < 0) {
+                remainingElement.className = 'text-danger';
+            } else if (remaining === 0) {
+                remainingElement.className = 'text-success';
+            } else {
+                remainingElement.className = '';
+            }
+        }
+    }
+
     // Initialize calculations on page load
     updateCalculations();
+    updateProjectCalculations();
 });
 </script>
 @endsection

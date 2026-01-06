@@ -98,7 +98,71 @@ class Contract extends Model
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(\Modules\Project\Models\Project::class, 'contract_project')
+                    ->withPivot(['allocation_type', 'allocation_percentage', 'allocation_amount', 'is_primary', 'notes'])
                     ->withTimestamps();
+    }
+
+    /**
+     * Get the primary project for this contract.
+     */
+    public function primaryProject(): ?\Modules\Project\Models\Project
+    {
+        return $this->projects()->wherePivot('is_primary', true)->first();
+    }
+
+    /**
+     * Get the allocated amount for a specific project.
+     */
+    public function getProjectAllocation(int $projectId): float
+    {
+        $project = $this->projects()->where('project_id', $projectId)->first();
+        if (!$project) {
+            return 0;
+        }
+
+        $pivot = $project->pivot;
+        if ($pivot->allocation_type === 'percentage') {
+            return $this->total_amount * (($pivot->allocation_percentage ?? 0) / 100);
+        }
+
+        return $pivot->allocation_amount ?? 0;
+    }
+
+    /**
+     * Get total allocated percentage across all projects.
+     */
+    public function getTotalAllocatedPercentageAttribute(): float
+    {
+        return $this->projects()
+            ->wherePivot('allocation_type', 'percentage')
+            ->get()
+            ->sum(fn($p) => $p->pivot->allocation_percentage ?? 0);
+    }
+
+    /**
+     * Get total allocated amount across all projects.
+     */
+    public function getTotalAllocatedAmountAttribute(): float
+    {
+        $percentageAmount = $this->projects()
+            ->wherePivot('allocation_type', 'percentage')
+            ->get()
+            ->sum(fn($p) => $this->total_amount * (($p->pivot->allocation_percentage ?? 0) / 100));
+
+        $fixedAmount = $this->projects()
+            ->wherePivot('allocation_type', 'amount')
+            ->get()
+            ->sum(fn($p) => $p->pivot->allocation_amount ?? 0);
+
+        return $percentageAmount + $fixedAmount;
+    }
+
+    /**
+     * Check if allocations are valid (sum to 100% for percentage-based or <= total_amount for mixed).
+     */
+    public function areAllocationsValid(): bool
+    {
+        return $this->total_allocated_amount <= $this->total_amount + 0.01; // Allow small floating point tolerance
     }
 
     /**

@@ -361,7 +361,57 @@ class Project extends Model
     public function contracts()
     {
         return $this->belongsToMany(\Modules\Accounting\Models\Contract::class, 'contract_project')
+                    ->withPivot(['allocation_type', 'allocation_percentage', 'allocation_amount', 'is_primary', 'notes'])
                     ->withTimestamps();
+    }
+
+    /**
+     * Get total allocated contract value for this project.
+     */
+    public function getTotalContractsAllocatedValueAttribute(): float
+    {
+        $total = 0;
+        foreach ($this->contracts as $contract) {
+            $pivot = $contract->pivot;
+            if ($pivot->allocation_type === 'percentage') {
+                $total += $contract->total_amount * (($pivot->allocation_percentage ?? 0) / 100);
+            } else {
+                $total += $pivot->allocation_amount ?? 0;
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Get total paid amount from contracts for this project.
+     */
+    public function getTotalContractsPaidAttribute(): float
+    {
+        $total = 0;
+        foreach ($this->contracts()->with('payments')->get() as $contract) {
+            $allocationRatio = $contract->total_amount > 0
+                ? $this->getContractAllocationRatio($contract)
+                : 0;
+            $total += $contract->paid_amount * $allocationRatio;
+        }
+        return $total;
+    }
+
+    /**
+     * Get allocation ratio for a contract (0 to 1).
+     */
+    public function getContractAllocationRatio(\Modules\Accounting\Models\Contract $contract): float
+    {
+        $pivot = $this->contracts()->where('contracts.id', $contract->id)->first()?->pivot;
+        if (!$pivot) {
+            return 0;
+        }
+
+        if ($pivot->allocation_type === 'percentage') {
+            return ($pivot->allocation_percentage ?? 0) / 100;
+        }
+
+        return $contract->total_amount > 0 ? (($pivot->allocation_amount ?? 0) / $contract->total_amount) : 0;
     }
 
     /**

@@ -254,12 +254,32 @@ class IncomeController extends Controller
 
         $contract->update($contractData);
 
-        // Sync projects (many-to-many)
-        if ($request->has('project_ids')) {
+        // Handle project allocations with pivot data
+        if ($request->has('project_allocations') && is_array($request->project_allocations)) {
             $oldProjectIds = $contract->projects()->pluck('projects.id')->toArray();
-            $newProjectIds = array_filter($request->project_ids ?? []);
 
-            $contract->projects()->sync($newProjectIds);
+            // First, detach all existing projects
+            $contract->projects()->detach();
+
+            // Then attach the new ones with allocation data
+            $newProjectIds = [];
+            foreach ($request->project_allocations as $allocation) {
+                if (!empty($allocation['project_id']) &&
+                    !empty($allocation['allocation_type']) &&
+                    (!empty($allocation['allocation_percentage']) || !empty($allocation['allocation_amount']))) {
+
+                    $projectId = $allocation['project_id'];
+                    $newProjectIds[] = $projectId;
+
+                    $contract->projects()->attach($projectId, [
+                        'allocation_type' => $allocation['allocation_type'],
+                        'allocation_percentage' => $allocation['allocation_type'] === 'percentage' ? $allocation['allocation_percentage'] : null,
+                        'allocation_amount' => $allocation['allocation_type'] === 'amount' ? $allocation['allocation_amount'] : null,
+                        'is_primary' => isset($allocation['is_primary']) && $allocation['is_primary'] ? true : false,
+                        'notes' => $allocation['notes'] ?? null,
+                    ]);
+                }
+            }
 
             // Handle removed projects - remove synced revenues
             $removedProjectIds = array_diff($oldProjectIds, $newProjectIds);
@@ -278,6 +298,16 @@ class IncomeController extends Controller
                     $this->syncService->onProjectLinkedToContract($project, $contract);
                 }
             }
+        } else {
+            // If no project allocations are submitted, remove all project links
+            $oldProjectIds = $contract->projects()->pluck('projects.id')->toArray();
+            foreach ($oldProjectIds as $projectId) {
+                $project = \Modules\Project\Models\Project::find($projectId);
+                if ($project) {
+                    $this->syncService->onProjectUnlinkedFromContract($project, $contract);
+                }
+            }
+            $contract->projects()->detach();
         }
 
         // Handle product allocations
