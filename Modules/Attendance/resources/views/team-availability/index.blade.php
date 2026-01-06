@@ -196,6 +196,14 @@
             <div class="legend-box bg-light border"></div>
             <span>Weekend</span>
           </div>
+          <div class="legend-item">
+            <div class="legend-box" style="background-color: rgba(40, 199, 111, 0.16); border: 1px solid rgba(40, 199, 111, 0.5);"></div>
+            <span>Present (Fingerprint)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-box" style="background-color: rgba(234, 84, 85, 0.16); border: 1px solid rgba(234, 84, 85, 0.5);"></div>
+            <span>Absent</span>
+          </div>
         </div>
       </div>
     </div>
@@ -285,6 +293,8 @@
           $totalLeavePending = 0;
           $totalLeaveRejected = 0;
           $totalWfh = 0;
+          $totalPresent = 0;
+          $totalAbsent = 0;
           $totalHolidays = count($publicHolidays);
 
           foreach ($availabilityData as $data) {
@@ -295,6 +305,10 @@
                 elseif ($status['status'] === 'rejected') $totalLeaveRejected++;
               } elseif ($status['type'] === 'wfh') {
                 $totalWfh++;
+              } elseif ($status['type'] === 'present') {
+                $totalPresent++;
+              } elseif ($status['type'] === 'absent') {
+                $totalAbsent++;
               }
             }
           }
@@ -353,6 +367,34 @@
                 <h6 class="mb-0">Public Holidays</h6>
                 <h4 class="mb-0">{{ $totalHolidays }}</h4>
                 <small class="text-muted">this month</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="d-flex align-items-start">
+              <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-success">
+                  <i class="ti ti-fingerprint ti-md"></i>
+                </span>
+              </div>
+              <div>
+                <h6 class="mb-0">Present Days</h6>
+                <h4 class="mb-0 text-success">{{ $totalPresent }}</h4>
+                <small class="text-muted">employee-days</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="d-flex align-items-start">
+              <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-danger">
+                  <i class="ti ti-user-x ti-md"></i>
+                </span>
+              </div>
+              <div>
+                <h6 class="mb-0">Absent Days</h6>
+                <h4 class="mb-0 text-danger">{{ $totalAbsent }}</h4>
+                <small class="text-muted">employee-days</small>
               </div>
             </div>
           </div>

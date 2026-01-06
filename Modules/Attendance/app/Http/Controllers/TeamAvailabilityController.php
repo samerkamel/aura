@@ -8,8 +8,10 @@ use Modules\HR\Models\Employee;
 use Modules\Leave\Models\LeaveRecord;
 use Modules\Attendance\Models\WfhRecord;
 use Modules\Attendance\Models\PublicHoliday;
+use Modules\Attendance\Models\AttendanceLog;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\DB;
 
 class TeamAvailabilityController extends Controller
 {
@@ -61,6 +63,15 @@ class TeamAvailabilityController extends Controller
             ->get()
             ->keyBy(fn($h) => $h->date->format('Y-m-d'));
 
+        // Get attendance logs for the month (grouped by employee and date)
+        $attendanceLogs = AttendanceLog::whereIn('employee_id', $employees->pluck('id'))
+            ->whereBetween('timestamp', [$startDate->startOfDay(), $endDate->endOfDay()])
+            ->select('employee_id', DB::raw('DATE(timestamp) as attendance_date'))
+            ->groupBy('employee_id', DB::raw('DATE(timestamp)'))
+            ->get()
+            ->groupBy('employee_id')
+            ->map(fn($logs) => $logs->pluck('attendance_date')->toArray());
+
         // Build availability data per employee per day
         $availabilityData = [];
 
@@ -77,7 +88,8 @@ class TeamAvailabilityController extends Controller
                     $day,
                     $leaveRecords,
                     $wfhRecords,
-                    $publicHolidays
+                    $publicHolidays,
+                    $attendanceLogs
                 );
                 $employeeData['days'][$dayKey] = $status;
             }
@@ -115,7 +127,8 @@ class TeamAvailabilityController extends Controller
         Carbon $day,
         $leaveRecords,
         $wfhRecords,
-        $publicHolidays
+        $publicHolidays,
+        $attendanceLogs
     ): array {
         $dayKey = $day->format('Y-m-d');
 
@@ -187,7 +200,30 @@ class TeamAvailabilityController extends Controller
             ];
         }
 
-        // Available
+        // For past days (including today), check attendance records
+        if ($day->lte(now()->endOfDay())) {
+            // Check if employee has attendance record for this day
+            $employeeAttendance = $attendanceLogs->get($employeeId, []);
+            $hasAttendance = in_array($dayKey, $employeeAttendance);
+
+            if ($hasAttendance) {
+                return [
+                    'type' => 'present',
+                    'label' => 'Present (Fingerprint)',
+                    'class' => 'bg-label-success',
+                    'icon' => 'ti-fingerprint',
+                ];
+            } else {
+                return [
+                    'type' => 'absent',
+                    'label' => 'Absent (No Record)',
+                    'class' => 'bg-label-danger',
+                    'icon' => 'ti-x',
+                ];
+            }
+        }
+
+        // Future days - no status yet
         return [
             'type' => 'available',
             'label' => '',
