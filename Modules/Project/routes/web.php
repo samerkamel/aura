@@ -90,6 +90,8 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/tasks/issues', [ProjectController::class, 'getProjectIssues'])->name('get-issues');
     Route::get('/{project}/tasks/create', [ProjectController::class, 'createTask'])->name('create-task');
     Route::post('/{project}/tasks', [ProjectController::class, 'storeTask'])->name('store-task');
+    Route::get('/{project}/tasks/bulk-create', [ProjectController::class, 'bulkCreateTasks'])->name('bulk-create-tasks');
+    Route::post('/{project}/tasks/bulk', [ProjectController::class, 'storeBulkTasks'])->name('store-bulk-tasks');
 
     // Project Dashboard routes
     Route::get('/{project}/dashboard', [ProjectDashboardController::class, 'index'])->name('dashboard');

@@ -1045,6 +1045,90 @@ class ProjectController extends Controller
     }
 
     /**
+     * Show the bulk task creation page.
+     */
+    public function bulkCreateTasks(Project $project, JiraIssueSyncService $issueSyncService): View
+    {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to create tasks for this project.');
+        }
+
+        if (empty($project->code)) {
+            return redirect()
+                ->route('projects.tasks', $project)
+                ->with('error', 'Project has no Jira project code. Cannot create tasks.');
+        }
+
+        $project->load('customer');
+
+        // Get issue types, priorities, and assignable users from Jira
+        $issueTypes = $issueSyncService->getProjectIssueTypes($project->code);
+        $priorities = $issueSyncService->getPriorities();
+        $assignees = $issueSyncService->getAssignableUsers($project->code);
+
+        return view('project::projects.bulk-create-tasks', compact(
+            'project',
+            'issueTypes',
+            'priorities',
+            'assignees'
+        ));
+    }
+
+    /**
+     * Store multiple tasks in Jira.
+     */
+    public function storeBulkTasks(Request $request, Project $project, JiraIssueSyncService $issueSyncService): RedirectResponse
+    {
+        if (!Gate::allows('view-project', $project)) {
+            abort(403, 'You do not have permission to create tasks for this project.');
+        }
+
+        $validated = $request->validate([
+            'tasks' => 'required|array|min:1',
+            'tasks.*.summary' => 'required|string|max:255',
+            'tasks.*.description' => 'nullable|string|max:5000',
+            'tasks.*.issue_type' => 'required|string',
+            'tasks.*.priority' => 'nullable|string',
+            'tasks.*.due_date' => 'nullable|date',
+            'tasks.*.assignee_account_id' => 'nullable|string',
+        ]);
+
+        $created = [];
+        $errors = [];
+
+        foreach ($validated['tasks'] as $index => $taskData) {
+            // Skip empty rows
+            if (empty(trim($taskData['summary']))) {
+                continue;
+            }
+
+            try {
+                $result = $issueSyncService->createIssueInJira($project, $taskData);
+                $created[] = $result['issue_key'];
+            } catch (\Exception $e) {
+                $errors[] = "Row " . ($index + 1) . ": " . $e->getMessage();
+            }
+        }
+
+        $message = '';
+        if (count($created) > 0) {
+            $message = count($created) . " task(s) created successfully: " . implode(', ', $created);
+        }
+        if (count($errors) > 0) {
+            $message .= (empty($message) ? '' : '. ') . "Errors: " . implode('; ', array_slice($errors, 0, 3));
+            if (count($errors) > 3) {
+                $message .= ' and ' . (count($errors) - 3) . ' more errors.';
+            }
+        }
+
+        $status = count($errors) > 0 ? (count($created) > 0 ? 'warning' : 'error') : 'success';
+
+        return redirect()
+            ->route('projects.tasks', $project)
+            ->with($status, $message);
+    }
+
+    /**
      * Display the mass customer linking page.
      */
     public function linkCustomers(Request $request): View

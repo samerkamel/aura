@@ -166,9 +166,14 @@
         @endif
       </div>
       <div class="d-flex gap-2">
-        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-          <i class="ti ti-plus me-1"></i>Create Task
-        </button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+            <i class="ti ti-plus me-1"></i>Create Task
+          </button>
+          <a href="{{ route('projects.bulk-create-tasks', $project) }}" class="btn btn-light btn-sm" title="Bulk create tasks">
+            <i class="ti ti-table"></i>
+          </a>
+        </div>
         <form action="{{ route('projects.sync-issues', $project) }}" method="POST" class="d-inline">
           @csrf
           <button type="submit" class="btn btn-outline-light btn-sm">
