@@ -22,7 +22,7 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to view invoices.');
         }
 
-        $query = Invoice::with(['customer', 'invoiceSequence', 'project']);
+        $query = Invoice::with(['customer', 'invoiceSequence', 'project', 'items.project']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {

@@ -198,10 +198,30 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($invoice->project)
-                                            <a href="{{ route('projects.show', $invoice->project) }}" class="badge bg-label-primary">
-                                                {{ $invoice->project->code }}
-                                            </a>
+                                        @php
+                                            // Collect all unique projects (main project + line item projects)
+                                            $linkedProjects = collect();
+
+                                            // Add main project if exists
+                                            if ($invoice->project) {
+                                                $linkedProjects->push($invoice->project);
+                                            }
+
+                                            // Add line item projects
+                                            foreach ($invoice->items as $item) {
+                                                if ($item->project && !$linkedProjects->contains('id', $item->project->id)) {
+                                                    $linkedProjects->push($item->project);
+                                                }
+                                            }
+                                        @endphp
+                                        @if($linkedProjects->isNotEmpty())
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach($linkedProjects as $project)
+                                                    <a href="{{ route('projects.show', $project) }}" class="badge bg-label-primary" title="{{ $project->name }}">
+                                                        {{ $project->code }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
