@@ -290,7 +290,8 @@
       @php
         // Use eager-loaded aggregates directly
         $completion = $project->completion_percentage ?? 0;
-        $totalHours = $project->total_hours ?? 0;
+        $lifetimeHours = $project->lifetime_hours ?? 0;
+        $fyHours = $project->fy_hours ?? 0;
         $receivedRevenue = $project->revenues_sum_amount_received ?? 0;
         $teamSize = $project->employees_count ?? 0;
         $openIssues = $project->open_issues_count ?? 0;
@@ -369,7 +370,13 @@
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between mini-stat mb-1">
                   <span>Hours</span>
-                  <span class="value">{{ number_format($totalHours, 1) }}h</span>
+                  <span class="value" title="FY {{ $selectedFY ?? 'All' }}: {{ number_format($fyHours, 1) }}h | Lifetime: {{ number_format($lifetimeHours, 1) }}h">
+                    @if($selectedFY)
+                      {{ number_format($fyHours, 1) }} <small class="text-muted">({{ number_format($lifetimeHours, 0) }})</small>
+                    @else
+                      {{ number_format($lifetimeHours, 1) }}h
+                    @endif
+                  </span>
                 </div>
                 <div class="d-flex justify-content-between mini-stat mb-1">
                   <span>Revenue</span>

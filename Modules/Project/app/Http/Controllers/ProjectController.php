@@ -102,6 +102,38 @@ class ProjectController extends Controller
         $earliestYear = Project::min(DB::raw('YEAR(created_at)')) ?? now()->year;
         $financialYears = range(now()->year + 1, $earliestYear);
 
+        // Calculate hours for each project (FY hours and lifetime hours)
+        $projectCodes = $projects->pluck('code')->toArray();
+
+        // Get lifetime hours per project
+        $lifetimeHours = DB::table('jira_worklogs')
+            ->select(DB::raw("SUBSTRING_INDEX(issue_key, '-', 1) as project_code"), DB::raw('SUM(time_spent_hours) as hours'))
+            ->whereIn(DB::raw("SUBSTRING_INDEX(issue_key, '-', 1)"), $projectCodes)
+            ->groupBy('project_code')
+            ->pluck('hours', 'project_code')
+            ->toArray();
+
+        // Get FY hours per project (if FY selected)
+        $fyHours = [];
+        if ($financialYear) {
+            $startDate = \Carbon\Carbon::create($financialYear, 1, 1)->startOfDay();
+            $endDate = \Carbon\Carbon::create($financialYear, 12, 31)->endOfDay();
+
+            $fyHours = DB::table('jira_worklogs')
+                ->select(DB::raw("SUBSTRING_INDEX(issue_key, '-', 1) as project_code"), DB::raw('SUM(time_spent_hours) as hours'))
+                ->whereIn(DB::raw("SUBSTRING_INDEX(issue_key, '-', 1)"), $projectCodes)
+                ->whereBetween('worklog_started', [$startDate, $endDate])
+                ->groupBy('project_code')
+                ->pluck('hours', 'project_code')
+                ->toArray();
+        }
+
+        // Attach hours to projects
+        foreach ($projects as $project) {
+            $project->lifetime_hours = $lifetimeHours[$project->code] ?? 0;
+            $project->fy_hours = $fyHours[$project->code] ?? 0;
+        }
+
         // Get portfolio stats using optimized aggregation with financial year filter
         $portfolioStats = $dashboardService->getPortfolioStatsOptimized($status, auth()->user(), $financialYear);
 
