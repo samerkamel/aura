@@ -192,9 +192,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="fw-semibold">{{ number_format($invoice->total_amount, 2) }} EGP</span>
+                                        <span class="fw-semibold">{{ number_format($invoice->total_amount, 2) }} {{ $invoice->currency ?? 'EGP' }}</span>
                                         @if($invoice->paid_amount > 0 && $invoice->status !== 'paid')
-                                            <br><small class="text-success">Paid: {{ number_format($invoice->paid_amount, 2) }} EGP</small>
+                                            <br><small class="text-success">Paid: {{ number_format($invoice->paid_amount, 2) }} {{ $invoice->currency ?? 'EGP' }}</small>
                                         @endif
                                     </td>
                                     <td>
