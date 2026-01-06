@@ -229,7 +229,7 @@
                                     <a href="{{ route('projects.show', $followup->project_id) }}#followups" class="fw-semibold text-body">
                                         {{ $followup->project->name }}
                                     </a>
-                                    <p class="mb-1 small text-muted">{{ Str::limit($followup->notes, 80) }}</p>
+                                    <p class="mb-1 small text-muted">{{ \Illuminate\Support\Str::limit($followup->notes, 80) }}</p>
                                     <span class="badge bg-danger">{{ $followup->next_followup_date->diffForHumans() }}</span>
                                 </div>
                                 <div class="dropdown">
@@ -253,7 +253,7 @@
                                     <a href="{{ route('projects.show', $followup->project_id) }}#followups" class="fw-semibold text-body">
                                         {{ $followup->project->name }}
                                     </a>
-                                    <p class="mb-1 small text-muted">{{ Str::limit($followup->notes, 80) }}</p>
+                                    <p class="mb-1 small text-muted">{{ \Illuminate\Support\Str::limit($followup->notes, 80) }}</p>
                                     <span class="badge bg-warning">Today</span>
                                 </div>
                                 <div class="dropdown">
