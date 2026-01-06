@@ -609,7 +609,7 @@ class ProjectDashboardService
      * @param mixed $user User for access control
      * @param int|null $financialYear Financial year to filter by (null for all time)
      */
-    public function getPortfolioStatsOptimized(string $status, $user, ?int $financialYear = null): array
+    public function getPortfolioStatsOptimized(string $phaseFilter, $user, ?int $financialYear = null): array
     {
         // Determine date range for financial year (calendar year: Jan 1 - Dec 31)
         $startDate = null;
@@ -621,16 +621,22 @@ class ProjectDashboardService
         // Build base query for accessible projects
         $baseQuery = Project::accessibleByUser($user);
 
-        if ($status === 'active') {
-            $baseQuery->where('is_active', true);
-        } elseif ($status === 'inactive') {
-            $baseQuery->where('is_active', false);
+        // Filter by phase (default excludes closure)
+        if ($phaseFilter === 'active') {
+            $baseQuery->where(function ($q) {
+                $q->where('phase', '!=', 'closure')->orWhereNull('phase');
+            });
+        } elseif ($phaseFilter === 'closure') {
+            $baseQuery->where('phase', 'closure');
+        } elseif ($phaseFilter !== 'all') {
+            // Specific phase selected
+            $baseQuery->where('phase', $phaseFilter);
         }
 
         // Get project counts and aggregates in single query
         $stats = (clone $baseQuery)->selectRaw('
             COUNT(*) as total_projects,
-            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_projects,
+            SUM(CASE WHEN phase != "closure" OR phase IS NULL THEN 1 ELSE 0 END) as active_projects,
             SUM(CASE WHEN health_status = "green" THEN 1 ELSE 0 END) as health_green,
             SUM(CASE WHEN health_status = "yellow" THEN 1 ELSE 0 END) as health_yellow,
             SUM(CASE WHEN health_status = "red" THEN 1 ELSE 0 END) as health_red,

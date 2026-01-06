@@ -243,11 +243,20 @@
           </select>
         </div>
         <div class="col-md-2">
-          <label class="form-label">Status</label>
-          <select class="form-select form-select-sm" name="status">
-            <option value="active" {{ ($filters['status'] ?? 'active') === 'active' ? 'selected' : '' }}>Active</option>
-            <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-            <option value="all" {{ ($filters['status'] ?? '') === 'all' ? 'selected' : '' }}>All</option>
+          <label class="form-label">Phase</label>
+          <select class="form-select form-select-sm" name="phase">
+            <option value="active" {{ $phaseFilter === 'active' ? 'selected' : '' }}>Active Projects</option>
+            <option value="all" {{ $phaseFilter === 'all' ? 'selected' : '' }}>All Phases</option>
+            <option value="closure" {{ $phaseFilter === 'closure' ? 'selected' : '' }}>Closure Only</option>
+            <optgroup label="Specific Phase">
+              @foreach($phases as $value => $label)
+                @if($value !== 'closure')
+                  <option value="{{ $value }}" {{ $phaseFilter === $value ? 'selected' : '' }}>
+                    {{ $label }}
+                  </option>
+                @endif
+              @endforeach
+            </optgroup>
           </select>
         </div>
         <div class="col-md-2">
@@ -256,17 +265,6 @@
             <option value="">All Health</option>
             @foreach($healthStatuses as $value => $label)
               <option value="{{ $value }}" {{ ($filters['health_status'] ?? '') === $value ? 'selected' : '' }}>
-                {{ $label }}
-              </option>
-            @endforeach
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Phase</label>
-          <select class="form-select form-select-sm" name="phase">
-            <option value="">All Phases</option>
-            @foreach($phases as $value => $label)
-              <option value="{{ $value }}" {{ ($filters['phase'] ?? '') === $value ? 'selected' : '' }}>
                 {{ $label }}
               </option>
             @endforeach
@@ -415,10 +413,8 @@
                   <span class="badge bg-danger">Overdue</span>
                 @elseif($project->days_until_deadline !== null && $project->days_until_deadline <= 7 && $project->days_until_deadline >= 0)
                   <span class="badge bg-warning">{{ $project->days_until_deadline }}d left</span>
-                @elseif($project->is_active)
-                  <span class="badge bg-success">Active</span>
-                @else
-                  <span class="badge bg-secondary">Inactive</span>
+                @elseif($project->phase === 'closure')
+                  <span class="badge bg-secondary">Closed</span>
                 @endif
               </div>
             </div>

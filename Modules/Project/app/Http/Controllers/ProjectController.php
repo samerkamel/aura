@@ -40,12 +40,17 @@ class ProjectController extends Controller
             ->withSum('revenues', 'amount_received')
             ->accessibleByUser(auth()->user());
 
-        // Filter by status (default to active only)
-        $status = $request->get('status', 'active');
-        if ($status === 'active') {
-            $query->where('is_active', true);
-        } elseif ($status === 'inactive') {
-            $query->where('is_active', false);
+        // Filter by phase (default excludes closure, 'all' shows everything including closure)
+        $phaseFilter = $request->get('phase', 'active'); // 'active' = all except closure
+        if ($phaseFilter === 'active') {
+            $query->where(function ($q) {
+                $q->where('phase', '!=', 'closure')->orWhereNull('phase');
+            });
+        } elseif ($phaseFilter === 'closure') {
+            $query->where('phase', 'closure');
+        } elseif ($phaseFilter !== 'all') {
+            // Specific phase selected
+            $query->where('phase', $phaseFilter);
         }
         // 'all' shows everything
 
@@ -62,11 +67,6 @@ class ProjectController extends Controller
         // Filter by health status
         if ($request->filled('health_status')) {
             $query->where('health_status', $request->health_status);
-        }
-
-        // Filter by phase
-        if ($request->filled('phase')) {
-            $query->where('phase', $request->phase);
         }
 
         // Search
@@ -135,7 +135,7 @@ class ProjectController extends Controller
         }
 
         // Get portfolio stats using optimized aggregation with financial year filter
-        $portfolioStats = $dashboardService->getPortfolioStatsOptimized($status, auth()->user(), $financialYear);
+        $portfolioStats = $dashboardService->getPortfolioStatsOptimized($phaseFilter, auth()->user(), $financialYear);
 
         $customers = Customer::active()->orderBy('name')->get(['id', 'name', 'company_name']);
 
@@ -143,7 +143,8 @@ class ProjectController extends Controller
             'projects' => $projects,
             'portfolioStats' => $portfolioStats,
             'customers' => $customers,
-            'filters' => $request->only(['status', 'needs_report', 'search', 'customer_id', 'health_status', 'phase', 'sort', 'dir', 'fy']),
+            'filters' => $request->only(['needs_report', 'search', 'customer_id', 'health_status', 'sort', 'dir', 'fy']),
+            'phaseFilter' => $phaseFilter,
             'canViewAll' => Gate::allows('view-all-projects'),
             'healthStatuses' => Project::HEALTH_STATUSES,
             'phases' => Project::PHASES,
@@ -365,11 +366,9 @@ class ProjectController extends Controller
             'phase' => 'nullable|in:' . implode(',', array_keys(Project::PHASES)),
             'health_status' => 'nullable|in:' . implode(',', array_keys(Project::HEALTH_STATUSES)),
             'needs_monthly_report' => 'boolean',
-            'is_active' => 'boolean',
         ]);
 
         $validated['needs_monthly_report'] = $request->has('needs_monthly_report');
-        $validated['is_active'] = $request->has('is_active');
 
         $project->update($validated);
 

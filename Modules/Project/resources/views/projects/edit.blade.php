@@ -153,18 +153,6 @@
                 </div>
                 <div class="form-text">Enable this if the project requires monthly billing reports</div>
               </div>
-
-              <div class="col-md-6 mb-3">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="is_active"
-                         name="is_active" value="1"
-                         {{ old('is_active', $project->is_active) ? 'checked' : '' }}>
-                  <label class="form-check-label" for="is_active">
-                    Active
-                  </label>
-                </div>
-                <div class="form-text">Inactive projects won't appear in reports</div>
-              </div>
             </div>
 
             <hr class="my-4">
