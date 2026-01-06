@@ -93,17 +93,22 @@ class InvoiceProjectSyncService
      * 2. Line items with project_id (calculated from item totals)
      * 3. Invoice-level project_id (single project allocation)
      *
+     * All amounts are converted to base currency (EGP) for proper financial tracking.
+     *
      * @return array<int, array{amount: float, source: string}>
      */
     protected function getProjectAllocations(Invoice $invoice): array
     {
         $allocations = [];
+        $exchangeRate = $this->getInvoiceExchangeRate($invoice);
 
         // First, check invoice_project pivot table
         if ($invoice->projects->isNotEmpty()) {
             foreach ($invoice->projects as $project) {
+                $amount = $project->pivot->allocated_amount ?? 0;
+                // Convert to base currency
                 $allocations[$project->id] = [
-                    'amount' => $project->pivot->allocated_amount ?? 0,
+                    'amount' => $this->convertToBaseCurrency($amount, $invoice),
                     'source' => 'pivot',
                 ];
             }
@@ -120,8 +125,9 @@ class InvoiceProjectSyncService
 
         if (!empty($itemAllocations)) {
             foreach ($itemAllocations as $projectId => $amount) {
+                // Convert to base currency
                 $allocations[$projectId] = [
-                    'amount' => $amount,
+                    'amount' => $this->convertToBaseCurrency($amount, $invoice),
                     'source' => 'line_items',
                 ];
             }
@@ -130,13 +136,65 @@ class InvoiceProjectSyncService
 
         // Third, check invoice-level project_id
         if ($invoice->project_id) {
+            // Use total_in_base if available, otherwise convert
+            $amountInBase = $this->getInvoiceTotalInBase($invoice);
             $allocations[$invoice->project_id] = [
-                'amount' => $invoice->total_amount,
+                'amount' => $amountInBase,
                 'source' => 'invoice',
             ];
         }
 
         return $allocations;
+    }
+
+    /**
+     * Get the exchange rate for an invoice.
+     */
+    protected function getInvoiceExchangeRate(Invoice $invoice): float
+    {
+        if ($invoice->currency === 'EGP') {
+            return 1.0;
+        }
+        return $invoice->exchange_rate > 0 ? (float) $invoice->exchange_rate : 1.0;
+    }
+
+    /**
+     * Convert an amount to base currency (EGP) using invoice exchange rate.
+     */
+    protected function convertToBaseCurrency(float $amount, Invoice $invoice): float
+    {
+        if ($invoice->currency === 'EGP') {
+            return $amount;
+        }
+        $exchangeRate = $this->getInvoiceExchangeRate($invoice);
+        return round($amount * $exchangeRate, 2);
+    }
+
+    /**
+     * Get invoice total in base currency (EGP).
+     */
+    protected function getInvoiceTotalInBase(Invoice $invoice): float
+    {
+        if ($invoice->currency === 'EGP') {
+            return (float) $invoice->total_amount;
+        }
+        // Use pre-calculated total_in_base if available
+        if ($invoice->total_in_base > 0) {
+            return (float) $invoice->total_in_base;
+        }
+        // Otherwise calculate
+        return $this->convertToBaseCurrency((float) $invoice->total_amount, $invoice);
+    }
+
+    /**
+     * Get invoice paid amount in base currency (EGP).
+     */
+    protected function getInvoicePaidInBase(Invoice $invoice): float
+    {
+        if ($invoice->currency === 'EGP') {
+            return (float) ($invoice->paid_amount ?? 0);
+        }
+        return $this->convertToBaseCurrency((float) ($invoice->paid_amount ?? 0), $invoice);
     }
 
     /**
