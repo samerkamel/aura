@@ -3,9 +3,6 @@
 @section('title', 'PM Calendar')
 
 @section('vendor-style')
-@vite([
-    'resources/assets/vendor/libs/@fullcalendar/core/index.global.min.js',
-])
 <style>
     .fc-event {
         cursor: pointer;
