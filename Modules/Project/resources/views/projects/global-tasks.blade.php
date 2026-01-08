@@ -104,14 +104,24 @@
     font-weight: 600;
   }
   .list-table th {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     color: #6c757d;
     font-weight: 600;
+    white-space: nowrap;
+    padding: 0.5rem 0.4rem;
   }
   .list-table td {
     vertical-align: middle;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
+    padding: 0.4rem;
+    white-space: nowrap;
+  }
+  .list-table td.summary-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
   }
   .component-badge {
     font-size: 0.7rem;
@@ -353,17 +363,18 @@
           <table class="table table-hover mb-0 list-table">
             <thead class="table-light">
               <tr>
-                <th style="width: 40px;" class="sortable" data-sort="issue_type">Type<i class="ti sort-icon"></i></th>
-                <th style="width: 90px;" class="sortable" data-sort="issue_key">Key<i class="ti sort-icon"></i></th>
-                <th style="width: 90px;">Project</th>
-                <th style="min-width: 200px;" class="sortable" data-sort="summary">Summary<i class="ti sort-icon"></i></th>
-                <th style="width: 110px;" class="sortable" data-sort="status">Status<i class="ti sort-icon"></i></th>
-                <th style="width: 90px;" class="sortable" data-sort="priority">Priority<i class="ti sort-icon"></i></th>
-                <th style="width: 130px;" class="sortable" data-sort="assignee">Assignee<i class="ti sort-icon"></i></th>
-                <th style="width: 100px;" class="sortable" data-sort="due_date">Due Date<i class="ti sort-icon"></i></th>
-                <th style="width: 50px;" class="sortable" data-sort="story_points">SP<i class="ti sort-icon"></i></th>
-                <th style="width: 100px;" class="sortable" data-sort="jira_created_at">Created<i class="ti sort-icon"></i></th>
-                <th style="width: 40px;"></th>
+                <th style="width: 32px;" class="sortable" data-sort="issue_type"><i class="ti ti-category"></i></th>
+                <th style="width: 80px;" class="sortable" data-sort="issue_key">Key<i class="ti sort-icon"></i></th>
+                <th style="width: 60px;">Proj</th>
+                <th class="sortable" data-sort="summary">Summary<i class="ti sort-icon"></i></th>
+                <th style="width: 100px;" class="sortable" data-sort="status">Status<i class="ti sort-icon"></i></th>
+                <th style="width: 80px;" class="sortable" data-sort="priority">Priority<i class="ti sort-icon"></i></th>
+                <th style="width: 110px;" class="sortable" data-sort="assignee">Assignee<i class="ti sort-icon"></i></th>
+                <th style="width: 85px;" class="sortable" data-sort="due_date">Due<i class="ti sort-icon"></i></th>
+                <th style="width: 40px;" class="sortable" data-sort="story_points" title="Story Points">SP<i class="ti sort-icon"></i></th>
+                <th style="width: 55px;" class="sortable" data-sort="remaining_estimate_seconds" title="Remaining Estimate">Rem<i class="ti sort-icon"></i></th>
+                <th style="width: 80px;" class="sortable" data-sort="jira_created_at">Created<i class="ti sort-icon"></i></th>
+                <th style="width: 32px;"></th>
               </tr>
             </thead>
             <tbody>
@@ -388,25 +399,13 @@
                       <span class="text-muted">-</span>
                     @endif
                   </td>
-                  <td>
-                    <div>
-                      @if($issue->description)
-                        <span class="summary-link" data-issue-id="{{ $issue->id }}" data-bs-toggle="modal" data-bs-target="#descriptionModal">
-                          {{ Str::limit($issue->summary, 50) }}
-                        </span>
-                      @else
-                        <span>{{ Str::limit($issue->summary, 50) }}</span>
-                      @endif
-                    </div>
-                    @if($issue->labels && count($issue->labels) > 0)
-                      <div class="issue-labels">
-                        @foreach(array_slice($issue->labels, 0, 2) as $label)
-                          <span class="issue-label">{{ $label }}</span>
-                        @endforeach
-                        @if(count($issue->labels) > 2)
-                          <span class="issue-label">+{{ count($issue->labels) - 2 }}</span>
-                        @endif
-                      </div>
+                  <td class="summary-cell">
+                    @if($issue->description)
+                      <span class="summary-link" data-issue-id="{{ $issue->id }}" data-bs-toggle="modal" data-bs-target="#descriptionModal" title="{{ $issue->summary }}">
+                        {{ Str::limit($issue->summary, 35) }}
+                      </span>
+                    @else
+                      <span title="{{ $issue->summary }}">{{ Str::limit($issue->summary, 35) }}</span>
                     @endif
                   </td>
                   <td>
@@ -463,6 +462,17 @@
                       <span class="saving-indicator"><i class="ti ti-loader ti-spin"></i></span>
                     </div>
                   </td>
+                  <td class="dates-small" title="Remaining: {{ $issue->remaining_estimate_seconds ? gmdate('H:i', $issue->remaining_estimate_seconds) : 'Not set' }}">
+                    @if($issue->remaining_estimate_seconds)
+                      @php
+                        $hours = floor($issue->remaining_estimate_seconds / 3600);
+                        $minutes = floor(($issue->remaining_estimate_seconds % 3600) / 60);
+                      @endphp
+                      <span class="text-info">{{ $hours }}h{{ $minutes > 0 ? ' '.$minutes.'m' : '' }}</span>
+                    @else
+                      <span class="text-muted">-</span>
+                    @endif
+                  </td>
                   <td class="dates-small" title="Created: {{ $issue->jira_created_at?->format('Y-m-d H:i') }}&#10;Updated: {{ $issue->jira_updated_at?->format('Y-m-d H:i') }}">
                     {{ $issue->jira_created_at?->format('M d, Y') }}
                   </td>
@@ -474,7 +484,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="11" class="text-center py-4 text-muted">
+                  <td colspan="12" class="text-center py-4 text-muted">
                     No issues match your filters.
                   </td>
                 </tr>
