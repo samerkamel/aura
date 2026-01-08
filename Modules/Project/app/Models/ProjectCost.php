@@ -20,6 +20,7 @@ class ProjectCost extends Model
         'employee_id',
         'expense_id',
         'expense_schedule_id',
+        'invoice_id',
         'synced_to_accounting',
         'synced_at',
         'hours',
@@ -51,6 +52,7 @@ class ProjectCost extends Model
         'contractor' => 'Contractor',
         'infrastructure' => 'Infrastructure',
         'software' => 'Software & Licenses',
+        'tax' => 'Tax/VAT',
         'other' => 'Other',
     ];
 
@@ -63,6 +65,7 @@ class ProjectCost extends Model
         'contractor' => 'warning',
         'infrastructure' => 'secondary',
         'software' => 'success',
+        'tax' => 'danger',
         'other' => 'dark',
     ];
 
@@ -75,6 +78,7 @@ class ProjectCost extends Model
         'contractor' => 'ti-briefcase',
         'infrastructure' => 'ti-server',
         'software' => 'ti-app-window',
+        'tax' => 'ti-receipt-tax',
         'other' => 'ti-dots',
     ];
 
@@ -116,6 +120,14 @@ class ProjectCost extends Model
     public function expenseSchedule(): BelongsTo
     {
         return $this->belongsTo(\Modules\Accounting\Models\ExpenseSchedule::class, 'expense_schedule_id');
+    }
+
+    /**
+     * Get the linked invoice (for tax costs).
+     */
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Invoicing\Models\Invoice::class);
     }
 
     /**

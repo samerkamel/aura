@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Invoicing\Models\Invoice;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectRevenue;
+use Modules\Project\Models\ProjectCost;
 
 /**
  * Service for syncing invoices to project revenues.
@@ -202,22 +203,69 @@ class InvoiceProjectSyncService
      */
     public function syncInvoiceToProject(Invoice $invoice, Project $project, float $allocatedAmount): array
     {
+        // Calculate proportional tax amount
+        $taxAllocation = $this->calculateProportionalTax($invoice, $allocatedAmount);
+
         // Check if already synced
         $existingRevenue = ProjectRevenue::where('invoice_id', $invoice->id)
             ->where('project_id', $project->id)
             ->first();
 
         if ($existingRevenue) {
-            return $this->updateExistingRevenue($existingRevenue, $invoice, $allocatedAmount);
+            return $this->updateExistingRevenue($existingRevenue, $invoice, $allocatedAmount, $taxAllocation);
         }
 
-        return $this->createRevenueFromInvoice($invoice, $project, $allocatedAmount);
+        return $this->createRevenueFromInvoice($invoice, $project, $allocatedAmount, $taxAllocation);
+    }
+
+    /**
+     * Calculate proportional tax amount for an allocation.
+     *
+     * The tax is distributed proportionally based on the allocated amount
+     * relative to the invoice subtotal.
+     */
+    protected function calculateProportionalTax(Invoice $invoice, float $allocatedAmount): float
+    {
+        if ($invoice->tax_amount <= 0 || $invoice->subtotal <= 0) {
+            return 0;
+        }
+
+        // Get the subtotal in base currency for proportion calculation
+        $subtotalInBase = $this->getInvoiceSubtotalInBase($invoice);
+
+        if ($subtotalInBase <= 0) {
+            return 0;
+        }
+
+        // Calculate the proportion
+        $proportion = $allocatedAmount / $subtotalInBase;
+
+        // Convert tax to base currency and apply proportion
+        $taxInBase = $this->convertToBaseCurrency((float) $invoice->tax_amount, $invoice);
+
+        return round($taxInBase * $proportion, 2);
+    }
+
+    /**
+     * Get invoice subtotal in base currency (EGP).
+     */
+    protected function getInvoiceSubtotalInBase(Invoice $invoice): float
+    {
+        if ($invoice->currency === 'EGP') {
+            return (float) $invoice->subtotal;
+        }
+        // Use pre-calculated subtotal_in_base if available
+        if ($invoice->subtotal_in_base > 0) {
+            return (float) $invoice->subtotal_in_base;
+        }
+        // Otherwise calculate
+        return $this->convertToBaseCurrency((float) $invoice->subtotal, $invoice);
     }
 
     /**
      * Create a project revenue from an invoice.
      */
-    protected function createRevenueFromInvoice(Invoice $invoice, Project $project, float $allocatedAmount): array
+    protected function createRevenueFromInvoice(Invoice $invoice, Project $project, float $allocatedAmount, float $taxAmount = 0): array
     {
         try {
             // Calculate received amount based on payment ratio
@@ -243,17 +291,27 @@ class InvoiceProjectSyncService
                 'created_by' => auth()->id(),
             ]);
 
+            // Create tax cost if there's tax on the invoice
+            $taxCostId = null;
+            if ($taxAmount > 0) {
+                $taxCost = $this->createTaxCostFromInvoice($invoice, $project, $taxAmount);
+                $taxCostId = $taxCost?->id;
+            }
+
             Log::info('Invoice synced to project revenue', [
                 'invoice_id' => $invoice->id,
                 'project_id' => $project->id,
                 'revenue_id' => $revenue->id,
                 'allocated_amount' => $allocatedAmount,
+                'tax_cost_id' => $taxCostId,
+                'tax_amount' => $taxAmount,
             ]);
 
             return [
                 'success' => true,
                 'message' => 'Revenue created successfully',
                 'revenue_id' => $revenue->id,
+                'tax_cost_id' => $taxCostId,
             ];
         } catch (\Exception $e) {
             Log::error('Failed to create revenue from invoice', [
@@ -270,9 +328,46 @@ class InvoiceProjectSyncService
     }
 
     /**
+     * Create a tax cost entry for a project from an invoice.
+     */
+    protected function createTaxCostFromInvoice(Invoice $invoice, Project $project, float $taxAmount): ?ProjectCost
+    {
+        // Check if tax cost already exists for this invoice and project
+        $existingTaxCost = ProjectCost::where('invoice_id', $invoice->id)
+            ->where('project_id', $project->id)
+            ->where('cost_type', 'tax')
+            ->first();
+
+        if ($existingTaxCost) {
+            // Update existing tax cost
+            $existingTaxCost->update([
+                'amount' => $taxAmount,
+                'description' => "VAT/Tax - Invoice {$invoice->invoice_number}",
+                'cost_date' => $invoice->invoice_date ?? now(),
+            ]);
+            return $existingTaxCost;
+        }
+
+        // Create new tax cost
+        return ProjectCost::create([
+            'project_id' => $project->id,
+            'invoice_id' => $invoice->id,
+            'cost_type' => 'tax',
+            'description' => "VAT/Tax - Invoice {$invoice->invoice_number}",
+            'amount' => $taxAmount,
+            'cost_date' => $invoice->invoice_date ?? now(),
+            'is_billable' => false,
+            'is_auto_generated' => true,
+            'reference_type' => 'invoice_tax',
+            'reference_id' => $invoice->id,
+            'created_by' => auth()->id(),
+        ]);
+    }
+
+    /**
      * Update an existing project revenue from invoice.
      */
-    protected function updateExistingRevenue(ProjectRevenue $revenue, Invoice $invoice, float $allocatedAmount): array
+    protected function updateExistingRevenue(ProjectRevenue $revenue, Invoice $invoice, float $allocatedAmount, float $taxAmount = 0): array
     {
         try {
             // Calculate received amount based on payment ratio
@@ -292,10 +387,27 @@ class InvoiceProjectSyncService
                 'synced_at' => now(),
             ]);
 
+            // Update or create tax cost
+            $taxCostId = null;
+            if ($taxAmount > 0) {
+                $project = Project::find($revenue->project_id);
+                if ($project) {
+                    $taxCost = $this->createTaxCostFromInvoice($invoice, $project, $taxAmount);
+                    $taxCostId = $taxCost?->id;
+                }
+            } else {
+                // Remove tax cost if tax is now zero
+                ProjectCost::where('invoice_id', $invoice->id)
+                    ->where('project_id', $revenue->project_id)
+                    ->where('cost_type', 'tax')
+                    ->delete();
+            }
+
             return [
                 'success' => true,
                 'message' => 'Revenue updated successfully',
                 'revenue_id' => $revenue->id,
+                'tax_cost_id' => $taxCostId,
             ];
         } catch (\Exception $e) {
             return [
@@ -387,17 +499,21 @@ class InvoiceProjectSyncService
     }
 
     /**
-     * Remove synced revenues when invoice is deleted or cancelled.
+     * Remove synced revenues and tax costs when invoice is deleted or cancelled.
      */
     public function removeInvoiceRevenues(Invoice $invoice): array
     {
         try {
-            $count = ProjectRevenue::where('invoice_id', $invoice->id)->delete();
+            $revenueCount = ProjectRevenue::where('invoice_id', $invoice->id)->delete();
+            $taxCostCount = ProjectCost::where('invoice_id', $invoice->id)
+                ->where('cost_type', 'tax')
+                ->delete();
 
             return [
                 'success' => true,
-                'message' => "Removed {$count} revenue(s)",
-                'removed' => $count,
+                'message' => "Removed {$revenueCount} revenue(s) and {$taxCostCount} tax cost(s)",
+                'removed_revenues' => $revenueCount,
+                'removed_tax_costs' => $taxCostCount,
             ];
         } catch (\Exception $e) {
             return [
@@ -463,6 +579,91 @@ class InvoiceProjectSyncService
             'message' => "Bulk sync complete: synced to {$totalSynced} projects",
             'total_synced' => $totalSynced,
             'invoices_with_errors' => $totalErrors,
+        ];
+    }
+
+    /**
+     * Sync tax costs for all existing invoice-project links.
+     *
+     * This method is used to backfill tax costs for invoices that were
+     * already synced to projects before the tax cost feature was added.
+     */
+    public function syncTaxCostsForExistingLinks(): array
+    {
+        $revenues = ProjectRevenue::whereNotNull('invoice_id')
+            ->where('revenue_type', 'invoice')
+            ->with(['invoice', 'project'])
+            ->get();
+
+        $created = 0;
+        $updated = 0;
+        $skipped = 0;
+        $errors = [];
+
+        foreach ($revenues as $revenue) {
+            if (!$revenue->invoice || !$revenue->project) {
+                $skipped++;
+                continue;
+            }
+
+            $invoice = $revenue->invoice;
+
+            // Skip if no tax on invoice
+            if ($invoice->tax_amount <= 0) {
+                $skipped++;
+                continue;
+            }
+
+            try {
+                // Calculate proportional tax for this allocation
+                $taxAmount = $this->calculateProportionalTax($invoice, $revenue->amount);
+
+                if ($taxAmount <= 0) {
+                    $skipped++;
+                    continue;
+                }
+
+                // Check if tax cost already exists
+                $existingTaxCost = ProjectCost::where('invoice_id', $invoice->id)
+                    ->where('project_id', $revenue->project_id)
+                    ->where('cost_type', 'tax')
+                    ->first();
+
+                if ($existingTaxCost) {
+                    $existingTaxCost->update([
+                        'amount' => $taxAmount,
+                        'description' => "VAT/Tax - Invoice {$invoice->invoice_number}",
+                        'cost_date' => $invoice->invoice_date ?? now(),
+                    ]);
+                    $updated++;
+                } else {
+                    ProjectCost::create([
+                        'project_id' => $revenue->project_id,
+                        'invoice_id' => $invoice->id,
+                        'cost_type' => 'tax',
+                        'description' => "VAT/Tax - Invoice {$invoice->invoice_number}",
+                        'amount' => $taxAmount,
+                        'cost_date' => $invoice->invoice_date ?? now(),
+                        'is_billable' => false,
+                        'is_auto_generated' => true,
+                        'reference_type' => 'invoice_tax',
+                        'reference_id' => $invoice->id,
+                        'created_by' => auth()->id() ?? 1,
+                    ]);
+                    $created++;
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Invoice {$invoice->id}: " . $e->getMessage();
+            }
+        }
+
+        return [
+            'success' => count($errors) === 0,
+            'message' => "Tax costs sync complete: {$created} created, {$updated} updated, {$skipped} skipped",
+            'created' => $created,
+            'updated' => $updated,
+            'skipped' => $skipped,
+            'errors' => $errors,
         ];
     }
 }
