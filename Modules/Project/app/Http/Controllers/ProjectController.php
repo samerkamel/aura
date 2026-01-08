@@ -1355,4 +1355,253 @@ class ProjectController extends Controller
             ->back()
             ->with('info', 'No changes were made.');
     }
+
+    /**
+     * Display global tasks across all projects.
+     */
+    public function globalTasks(Request $request): View
+    {
+        if (!Gate::allows('view-all-projects')) {
+            abort(403, 'You do not have permission to view global tasks.');
+        }
+
+        // Get filters and sort params
+        $filters = [
+            'search' => $request->get('search'),
+            'exclude_statuses' => $request->get('exclude_statuses', []),
+            'priorities' => $request->get('priorities', []),
+            'assignees' => $request->get('assignees', []),
+            'projects' => $request->get('projects', []),
+        ];
+        $sort = $request->get('sort', 'issue_key');
+        $direction = $request->get('direction', 'asc');
+
+        // Build query for all issues across active projects
+        $query = JiraIssue::query()
+            ->with(['assignee', 'project'])
+            ->whereHas('project', function ($q) {
+                $q->where('is_active', true);
+            });
+
+        // Apply filters
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('issue_key', 'like', "%{$search}%")
+                    ->orWhere('summary', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filters['exclude_statuses']) && is_array($filters['exclude_statuses'])) {
+            $query->whereNotIn('status', $filters['exclude_statuses']);
+        }
+
+        if (!empty($filters['priorities']) && is_array($filters['priorities'])) {
+            $query->whereIn('priority', $filters['priorities']);
+        }
+
+        if (!empty($filters['assignees']) && is_array($filters['assignees'])) {
+            $query->where(function ($q) use ($filters) {
+                $assigneeIds = [];
+                $includeUnassigned = false;
+
+                foreach ($filters['assignees'] as $assignee) {
+                    if ($assignee === 'unassigned') {
+                        $includeUnassigned = true;
+                    } else {
+                        $assigneeIds[] = $assignee;
+                    }
+                }
+
+                if (!empty($assigneeIds)) {
+                    $q->whereIn('assignee_employee_id', $assigneeIds);
+                }
+
+                if ($includeUnassigned) {
+                    $q->orWhereNull('assignee_employee_id');
+                }
+            });
+        }
+
+        if (!empty($filters['projects']) && is_array($filters['projects'])) {
+            $query->whereIn('project_id', $filters['projects']);
+        }
+
+        // Apply sorting
+        $validSortColumns = [
+            'issue_key', 'summary', 'status', 'priority', 'assignee',
+            'due_date', 'story_points', 'jira_created_at', 'issue_type', 'epic_key',
+        ];
+        if (in_array($sort, $validSortColumns)) {
+            if ($sort === 'assignee') {
+                $query->leftJoin('employees', 'jira_issues.assignee_employee_id', '=', 'employees.id')
+                    ->orderBy('employees.name', $direction)
+                    ->select('jira_issues.*');
+            } else {
+                $query->orderBy($sort, $direction);
+            }
+        }
+
+        $issues = $query->paginate(100)->withQueryString();
+
+        // Get summary stats
+        $totalIssues = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))->count();
+        $todoCount = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))->where('status_category', 'new')->count();
+        $inProgressCount = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))->where('status_category', 'indeterminate')->count();
+        $doneCount = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))->where('status_category', 'done')->count();
+
+        $summary = [
+            'total' => $totalIssues,
+            'by_status' => [
+                'todo' => $todoCount,
+                'in_progress' => $inProgressCount,
+                'done' => $doneCount,
+            ],
+            'completion_percentage' => $totalIssues > 0 ? round(($doneCount / $totalIssues) * 100) : 0,
+        ];
+
+        // Get filter options from all active projects
+        $statuses = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))
+            ->distinct()->pluck('status')->sort()->values();
+        $priorities = JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))
+            ->distinct()->whereNotNull('priority')->pluck('priority')->sort()->values();
+        $assignees = Employee::whereIn('id',
+            JiraIssue::whereHas('project', fn ($q) => $q->where('is_active', true))
+                ->whereNotNull('assignee_employee_id')
+                ->pluck('assignee_employee_id')
+        )->orderBy('name')->get();
+
+        // Get active projects for filter dropdown
+        $projects = Project::where('is_active', true)
+            ->whereHas('jiraIssues')
+            ->orderBy('name')
+            ->get(['id', 'code', 'name']);
+
+        return view('project::projects.global-tasks', [
+            'issues' => $issues,
+            'summary' => $summary,
+            'filters' => $filters,
+            'statuses' => $statuses,
+            'priorities' => $priorities,
+            'assignees' => $assignees,
+            'projects' => $projects,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+    }
+
+    /**
+     * Get issue details (global - no project context).
+     */
+    public function getGlobalIssueDetails(JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-all-projects')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $details = $issueSyncService->getIssueDetails($issue->issue_key);
+
+        if (!$details) {
+            $details = [
+                'key' => $issue->issue_key,
+                'summary' => $issue->summary,
+                'description' => $issue->description,
+                'status' => $issue->status,
+                'issue_type' => $issue->issue_type,
+                'priority' => $issue->priority,
+                'epic_key' => $issue->epic_key,
+                'story_points' => $issue->story_points,
+                'labels' => $issue->labels ?? [],
+                'components' => $issue->components ?? [],
+                'due_date' => $issue->due_date?->format('Y-m-d'),
+                'jira_created_at' => $issue->jira_created_at?->format('M d, Y'),
+                'jira_updated_at' => $issue->jira_updated_at?->format('M d, Y'),
+            ];
+        }
+
+        return response()->json($details);
+    }
+
+    /**
+     * Get available transitions for an issue (global - no project context).
+     */
+    public function getGlobalIssueTransitions(JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-all-projects')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $transitions = $issueSyncService->getIssueTransitions($issue->issue_key);
+
+        return response()->json([
+            'current_status' => $issue->status,
+            'transitions' => $transitions,
+        ]);
+    }
+
+    /**
+     * Update an issue field in Jira (global - no project context).
+     */
+    public function updateGlobalIssueField(Request $request, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-all-projects')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'field' => 'required|string|in:assignee,priority,due_date,story_points',
+            'value' => 'nullable',
+        ]);
+
+        try {
+            $result = $issueSyncService->updateIssueField(
+                $issue->issue_key,
+                $validated['field'],
+                $validated['value']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Field updated successfully',
+                'issue' => $result['local_issue'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * Transition an issue to a new status (global - no project context).
+     */
+    public function transitionGlobalIssue(Request $request, JiraIssue $issue, JiraIssueSyncService $issueSyncService)
+    {
+        if (!Gate::allows('view-all-projects')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'transition_id' => 'required|string',
+        ]);
+
+        try {
+            $result = $issueSyncService->transitionIssue(
+                $issue->issue_key,
+                $validated['transition_id']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'issue' => $result['local_issue'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 400);
+        }
+    }
 }

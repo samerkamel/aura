@@ -172,6 +172,11 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
+                    <a class="dropdown-item" href="{{ route('projects.global-tasks') }}">
+                      <i class="ti ti-list-check me-2"></i>All Tasks
+                    </a>
+                  </li>
+                  <li>
                     <a class="dropdown-item" href="{{ route('projects.link-customers') }}">
                       <i class="ti ti-link me-2"></i>Link to Customers
                     </a>

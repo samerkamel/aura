@@ -36,6 +36,13 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::post('/sync-jira/issues', [ProjectController::class, 'syncJiraProjectIssues'])->name('sync-jira.issues');
     Route::post('/sync-jira/worklogs', [ProjectController::class, 'syncJiraWorklogs'])->name('sync-jira.worklogs');
 
+    // Global Tasks (must come BEFORE /{project} dynamic route)
+    Route::get('/tasks', [ProjectController::class, 'globalTasks'])->name('global-tasks');
+    Route::get('/tasks/{issue}/details', [ProjectController::class, 'getGlobalIssueDetails'])->name('global-issue-details');
+    Route::get('/tasks/{issue}/transitions', [ProjectController::class, 'getGlobalIssueTransitions'])->name('global-issue-transitions');
+    Route::post('/tasks/{issue}/update-field', [ProjectController::class, 'updateGlobalIssueField'])->name('global-update-issue-field');
+    Route::post('/tasks/{issue}/transition', [ProjectController::class, 'transitionGlobalIssue'])->name('global-transition-issue');
+
     // Follow-ups (must come BEFORE /{project} dynamic route)
     Route::get('/followups', [ProjectController::class, 'followups'])->name('followups');
 
