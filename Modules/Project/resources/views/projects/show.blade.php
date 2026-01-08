@@ -240,69 +240,75 @@
     <!-- Revenue Card -->
     @can('view-financial-reports')
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card kpi-card h-100 success">
-        <div class="card-body">
-          <h6 class="text-muted mb-1">Revenue</h6>
-          <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['received_revenue'], 0) }}</h3>
-          <div class="d-flex justify-content-between align-items-center mt-2">
-            <small class="text-muted">
-              of {{ number_format($dashboard['financial']['summary']['total_revenue'], 0) }} total
-            </small>
-            <span class="badge bg-label-{{ $dashboard['financial']['revenue_breakdown']['collection_rate'] >= 80 ? 'success' : 'warning' }}">
-              {{ $dashboard['financial']['revenue_breakdown']['collection_rate'] }}% collected
-            </span>
+      <a href="{{ route('projects.finance.revenues', $project) }}" class="text-decoration-none">
+        <div class="card kpi-card h-100 success" style="cursor: pointer;">
+          <div class="card-body">
+            <h6 class="text-muted mb-1">Revenue</h6>
+            <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['received_revenue'], 0) }}</h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <small class="text-muted">
+                of {{ number_format($dashboard['financial']['summary']['total_revenue'], 0) }} total
+              </small>
+              <span class="badge bg-label-{{ $dashboard['financial']['revenue_breakdown']['collection_rate'] >= 80 ? 'success' : 'warning' }}">
+                {{ $dashboard['financial']['revenue_breakdown']['collection_rate'] }}% collected
+              </span>
+            </div>
+            @if($dashboard['financial']['summary']['pending_revenue'] > 0)
+              <small class="text-warning">
+                {{ number_format($dashboard['financial']['summary']['pending_revenue'], 0) }} pending
+              </small>
+            @endif
           </div>
-          @if($dashboard['financial']['summary']['pending_revenue'] > 0)
-            <small class="text-warning">
-              {{ number_format($dashboard['financial']['summary']['pending_revenue'], 0) }} pending
-            </small>
-          @endif
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Costs Card -->
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'info' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}">
-        <div class="card-body">
-          <h6 class="text-muted mb-1">Costs</h6>
-          <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['total_spent'], 0) }}</h3>
-          <div class="d-flex justify-content-between align-items-center mt-2">
-            <small class="text-muted">
-              of {{ number_format($dashboard['financial']['summary']['total_budget'], 0) }} budget
-            </small>
-            <span class="badge bg-label-{{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'success' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}">
-              {{ $dashboard['financial']['summary']['budget_utilization'] }}% used
-            </span>
+      <a href="{{ route('projects.finance.costs', $project) }}" class="text-decoration-none">
+        <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'info' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}" style="cursor: pointer;">
+          <div class="card-body">
+            <h6 class="text-muted mb-1">Costs</h6>
+            <h3 class="mb-0">{{ number_format($dashboard['financial']['summary']['total_spent'], 0) }}</h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <small class="text-muted">
+                of {{ number_format($dashboard['financial']['summary']['total_budget'], 0) }} budget
+              </small>
+              <span class="badge bg-label-{{ $dashboard['financial']['summary']['budget_status'] === 'healthy' ? 'success' : ($dashboard['financial']['summary']['budget_status'] === 'warning' ? 'warning' : 'danger') }}">
+                {{ $dashboard['financial']['summary']['budget_utilization'] }}% used
+              </span>
+            </div>
+            @if($dashboard['financial']['summary']['budget_remaining'] < 0)
+              <small class="text-danger">
+                {{ number_format(abs($dashboard['financial']['summary']['budget_remaining']), 0) }} over budget
+              </small>
+            @endif
           </div>
-          @if($dashboard['financial']['summary']['budget_remaining'] < 0)
-            <small class="text-danger">
-              {{ number_format(abs($dashboard['financial']['summary']['budget_remaining']), 0) }} over budget
-            </small>
-          @endif
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Profit Card -->
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['is_profitable'] ? 'success' : 'danger' }}">
-        <div class="card-body">
-          <h6 class="text-muted mb-1">Profit</h6>
-          <h3 class="mb-0 text-{{ $dashboard['financial']['summary']['gross_profit'] >= 0 ? 'success' : 'danger' }}">
-            {{ number_format($dashboard['financial']['summary']['gross_profit'], 0) }}
-          </h3>
-          <div class="d-flex justify-content-between align-items-center mt-2">
-            <small class="text-muted">Gross Margin</small>
-            <span class="badge bg-{{ $dashboard['financial']['summary']['gross_margin'] >= 20 ? 'success' : ($dashboard['financial']['summary']['gross_margin'] >= 0 ? 'warning' : 'danger') }}">
-              {{ $dashboard['financial']['summary']['gross_margin'] }}%
-            </span>
+      <a href="{{ route('projects.finance.profitability', $project) }}" class="text-decoration-none">
+        <div class="card kpi-card h-100 {{ $dashboard['financial']['summary']['is_profitable'] ? 'success' : 'danger' }}" style="cursor: pointer;">
+          <div class="card-body">
+            <h6 class="text-muted mb-1">Profit</h6>
+            <h3 class="mb-0 text-{{ $dashboard['financial']['summary']['gross_profit'] >= 0 ? 'success' : 'danger' }}">
+              {{ number_format($dashboard['financial']['summary']['gross_profit'], 0) }}
+            </h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <small class="text-muted">Gross Margin</small>
+              <span class="badge bg-{{ $dashboard['financial']['summary']['gross_margin'] >= 20 ? 'success' : ($dashboard['financial']['summary']['gross_margin'] >= 0 ? 'warning' : 'danger') }}">
+                {{ $dashboard['financial']['summary']['gross_margin'] }}%
+              </span>
+            </div>
+            <small class="text-muted">
+              ROI: {{ $dashboard['financial']['profitability']['roi'] }}%
+            </small>
           </div>
-          <small class="text-muted">
-            ROI: {{ $dashboard['financial']['profitability']['roi'] }}%
-          </small>
         </div>
-      </div>
+      </a>
     </div>
     @endcan
   </div>
