@@ -4,7 +4,11 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$columns = DB::select(\"\"DESCRIBE jira_issues\"\");\necho \"\"Columns in jira_issues:\"\" . PHP_EOL;\nforeach ($columns as $col) {\n    if (strpos($col->Field, \"\"estimate\"\") !== false || strpos($col->Field, \"\"time_spent\"\") !== false) {\n        echo \"\"- \"\" . $col->Field . \"\" (\"\" . $col->Type . \"\")\"\" . PHP_EOL;\n    }\n}\n''\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan migrate:status | grep time_tracking\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n\\DB::select(\"\"SHOW COLUMNS FROM jira_issues LIKE \\\"\"%estimate%\\\"\"\"\");\n''\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u root -e \"\"SHOW COLUMNS FROM erp_aura.jira_issues WHERE Field LIKE ''%estimate%'' OR Field LIKE ''%time_spent%'';\"\" 2>/dev/null\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"mysql -u root -e \"\"SHOW COLUMNS FROM erp_aura.jira_issues WHERE Field LIKE ''%estimate%'' OR Field LIKE ''%time_spent%'';\"\" 2>/dev/null\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && tail -100 storage/logs/laravel.log | grep -A 10 ''employeeWorkload\\|employee-workload'' 2>/dev/null || tail -50 storage/logs/laravel.log\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && grep -B 5 ''employeeWorkload'' storage/logs/laravel.log | tail -20\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"find /var/www/vhosts/aura.llc/erp.aura.llc/Modules/Leave -name ''*.php'' -path ''*/Models/*'' 2>/dev/null | head -10\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"head -60 /var/www/vhosts/aura.llc/erp.aura.llc/Modules/Leave/app/Models/LeaveRecord.php\")"
     ],
     "deny": [],
     "ask": []

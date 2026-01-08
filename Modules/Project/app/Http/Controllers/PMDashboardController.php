@@ -602,26 +602,30 @@ class PMDashboardController extends Controller
 
         // Upcoming leaves (approved and pending)
         $upcomingLeaves = [];
-        try {
-            $upcomingLeaves = \Modules\Leave\Models\LeaveApplication::where('employee_id', $employeeId)
-                ->whereIn('status', ['approved', 'pending'])
-                ->where('start_date', '>=', today())
-                ->where('start_date', '<=', today()->addDays(60))
-                ->orderBy('start_date')
-                ->get()
-                ->map(function ($leave) {
-                    return [
-                        'id' => $leave->id,
-                        'type' => $leave->leaveType->name ?? 'Leave',
-                        'start_date' => $leave->start_date->format('M d, Y'),
-                        'end_date' => $leave->end_date->format('M d, Y'),
-                        'days' => $leave->total_days,
-                        'status' => $leave->status,
-                    ];
-                })
-                ->toArray();
-        } catch (\Exception $e) {
-            // Leave module might not be available
+        if (class_exists(\Modules\Leave\Models\LeaveRecord::class)) {
+            try {
+                $upcomingLeaves = \Modules\Leave\Models\LeaveRecord::where('employee_id', $employeeId)
+                    ->whereIn('status', ['approved', 'pending'])
+                    ->where('start_date', '>=', today())
+                    ->where('start_date', '<=', today()->addDays(60))
+                    ->orderBy('start_date')
+                    ->with('leavePolicy')
+                    ->get()
+                    ->map(function ($leave) {
+                        $days = $leave->start_date->diffInDays($leave->end_date) + 1;
+                        return [
+                            'id' => $leave->id,
+                            'type' => $leave->leavePolicy->name ?? 'Leave',
+                            'start_date' => $leave->start_date->format('M d, Y'),
+                            'end_date' => $leave->end_date->format('M d, Y'),
+                            'days' => $days,
+                            'status' => $leave->status,
+                        ];
+                    })
+                    ->toArray();
+            } catch (\Exception $e) {
+                // Leave module might not be available or has errors
+            }
         }
 
         // Period totals
