@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Modules\Project\Models\JiraIssue;
 use Modules\Project\Models\PMNotification;
 use Modules\Project\Models\Project;
 use Modules\Project\Models\ProjectFollowup;
