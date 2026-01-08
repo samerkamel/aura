@@ -405,8 +405,7 @@ class PMDashboardController extends Controller
         // This ensures we show everyone who should be tracking time, even if they have 0 hours
         $employees = \Modules\HR\Models\Employee::where('billable_hours_applicable', true)
             ->active() // scope: where status = 'active'
-            ->orderBy('first_name')
-            ->orderBy('last_name')
+            ->orderBy('name')
             ->get()
             ->keyBy('id');
 

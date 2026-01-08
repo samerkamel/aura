@@ -453,7 +453,11 @@
                         @foreach($teamWorkload as $member)
                             <div class="d-flex align-items-center mb-3">
                                 <div class="avatar avatar-sm me-3 bg-label-primary">
-                                    <span class="avatar-initial">{{ substr($member['employee']->first_name ?? 'U', 0, 1) }}{{ substr($member['employee']->last_name ?? 'N', 0, 1) }}</span>
+                                    @php
+                                        $nameParts = explode(' ', $member['employee']->name ?? 'Unknown');
+                                        $initials = strtoupper(substr($nameParts[0] ?? 'U', 0, 1) . substr($nameParts[1] ?? '', 0, 1));
+                                    @endphp
+                                    <span class="avatar-initial">{{ $initials }}</span>
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
