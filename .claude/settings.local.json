@@ -1,13 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan view:clear\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git pull && php artisan view:clear\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && ls -la Modules/Project/database/migrations/ | grep pm_notifications\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan migrate:status | grep pm_notifications\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n$users = DB::table(\"\"users\"\")->limit(5)->get([\"\"id\"\", \"\"name\"\", \"\"email\"\"]);\nforeach ($users as $u) {\n    echo $u->id . \"\": \"\" . $u->email . \"\" (\"\" . $u->name . \"\")\"\" . PHP_EOL;\n}\n''\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n$users = DB::table(\"\"users\"\")->limit(5)->get([\"\"id\"\", \"\"name\"\", \"\"email\"\"]);\nforeach ($users as $u) {\n    echo $u->id . \"\": \"\" . $u->email . \"\" (\"\" . $u->name . \"\")\"\" . PHP_EOL;\n}\n''\")",
-      "Bash(php artisan:*)"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Illuminate\\Support\\Facades\\DB;\n\n// Check status categories\necho \"\"=== Status categories ===\"\" . PHP_EOL;\n$cats = DB::table(\"\"jira_issues\"\")\n    ->selectRaw(\"\"status_category, status, COUNT(*) as cnt\"\")\n    ->groupBy(\"\"status_category\"\", \"\"status\"\")\n    ->orderBy(\"\"status_category\"\")\n    ->get();\nforeach ($cats as $c) {\n    echo $c->status_category . \"\" | \"\" . $c->status . \"\" | \"\" . $c->cnt . PHP_EOL;\n}\n\n// Check tasks with assignees\necho PHP_EOL . \"\"=== Tasks with assignee_employee_id ===\"\" . PHP_EOL;\n$tasks = DB::table(\"\"jira_issues\"\")\n    ->whereNotNull(\"\"assignee_employee_id\"\")\n    ->limit(5)\n    ->get([\"\"issue_key\"\", \"\"status\"\", \"\"status_category\"\", \"\"assignee_employee_id\"\"]);\nforeach ($tasks as $t) {\n    echo $t->issue_key . \"\" | \"\" . $t->status . \"\" | \"\" . $t->status_category . \"\" | Emp:\"\" . $t->assignee_employee_id . PHP_EOL;\n}\n''\")"
     ],
     "deny": [],
     "ask": []

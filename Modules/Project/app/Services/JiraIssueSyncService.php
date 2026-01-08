@@ -112,6 +112,7 @@ class JiraIssueSyncService
                     'components',
                     'created',
                     'updated',
+                    'timetracking', // Time tracking (original/remaining estimate, time spent)
                 ],
             ];
 
@@ -172,6 +173,9 @@ class JiraIssueSyncService
             $epicKey = $epicKey['key'] ?? null;
         }
 
+        // Extract time tracking data
+        $timeTracking = $fields['timetracking'] ?? [];
+
         $data = [
             'project_id' => $project->id,
             'jira_issue_id' => $jiraIssue['id'],
@@ -188,6 +192,9 @@ class JiraIssueSyncService
             'parent_key' => $fields['parent']['key'] ?? null,
             'epic_key' => $epicKey,
             'story_points' => $fields['customfield_10016'] ?? null,
+            'original_estimate_seconds' => $timeTracking['originalEstimateSeconds'] ?? null,
+            'remaining_estimate_seconds' => $timeTracking['remainingEstimateSeconds'] ?? null,
+            'time_spent_seconds' => $timeTracking['timeSpentSeconds'] ?? null,
             'due_date' => $fields['duedate'] ?? null,
             'labels' => $fields['labels'] ?? [],
             'components' => array_map(fn($c) => $c['name'], $fields['components'] ?? []),
@@ -461,7 +468,7 @@ class JiraIssueSyncService
         $response = Http::withBasicAuth($this->email, $this->apiToken)
             ->timeout(30)
             ->get($url, [
-                'fields' => 'summary,description,status,issuetype,priority,assignee,reporter,parent,customfield_10014,customfield_10016,duedate,labels,components,created,updated',
+                'fields' => 'summary,description,status,issuetype,priority,assignee,reporter,parent,customfield_10014,customfield_10016,duedate,labels,components,created,updated,timetracking',
             ]);
 
         if (!$response->successful()) {
@@ -862,7 +869,7 @@ class JiraIssueSyncService
         $response = Http::withBasicAuth($this->email, $this->apiToken)
             ->timeout(30)
             ->get($url, [
-                'fields' => 'summary,description,status,issuetype,priority,assignee,reporter,parent,customfield_10014,customfield_10016,duedate,labels,components,created,updated,comment',
+                'fields' => 'summary,description,status,issuetype,priority,assignee,reporter,parent,customfield_10014,customfield_10016,duedate,labels,components,created,updated,comment,timetracking',
             ]);
 
         if (!$response->successful()) {

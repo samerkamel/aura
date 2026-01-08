@@ -103,6 +103,19 @@
     .workload-fill.overloaded {
         background: linear-gradient(90deg, #28a745 0%, #ffc107 60%, #dc3545 100%);
     }
+    /* Multi-segment workload bar */
+    .workload-bar-multi {
+        height: 8px;
+        border-radius: 4px;
+        background: #f0f0f0;
+        overflow: hidden;
+        display: flex;
+        border: 1px solid #e0e0e0;
+    }
+    .workload-segment {
+        height: 100%;
+        transition: width 0.3s ease;
+    }
     .quick-action-btn {
         border-radius: 8px;
         padding: 0.75rem;
@@ -425,17 +438,19 @@
         {{-- Team Workload --}}
         <div class="col-xl-6">
             <div class="card h-100">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="ti ti-users text-info me-2"></i>Team Workload This Week
+                        <i class="ti ti-users text-info me-2"></i>Team Workload (2 Weeks)
                     </h5>
+                    <div class="d-flex gap-3 small">
+                        <span><span class="badge bg-success">&nbsp;</span> Logged</span>
+                        <span><span class="badge bg-warning">&nbsp;</span> Scheduled</span>
+                        <span><span class="badge bg-light border">&nbsp;</span> Available</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if(count($teamWorkload) > 0)
                         @foreach($teamWorkload as $member)
-                            @php
-                                $utilizationColor = $member['is_overloaded'] ? 'danger' : ($member['utilization_percent'] > 80 ? 'warning' : 'success');
-                            @endphp
                             <div class="d-flex align-items-center mb-3">
                                 <div class="avatar avatar-sm me-3 bg-label-primary">
                                     <span class="avatar-initial">{{ substr($member['employee']->first_name ?? 'U', 0, 1) }}{{ substr($member['employee']->last_name ?? 'N', 0, 1) }}</span>
@@ -443,10 +458,20 @@
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <span class="fw-semibold">{{ $member['employee']->name ?? 'Unknown' }}</span>
-                                        <span class="small {{ $member['is_overloaded'] ? 'text-danger' : '' }}">{{ $member['total_hours'] }}h / 40h</span>
+                                        <span class="small {{ $member['is_overloaded'] ? 'text-danger fw-bold' : '' }}">
+                                            {{ $member['logged_hours'] }}h logged
+                                            @if($member['scheduled_hours'] > 0)
+                                                + {{ $member['scheduled_hours'] }}h scheduled
+                                            @endif
+                                            / {{ $member['capacity'] }}h
+                                        </span>
                                     </div>
-                                    <div class="workload-bar">
-                                        <div class="workload-fill bg-{{ $utilizationColor }} {{ $member['is_overloaded'] ? 'overloaded' : '' }}" style="width: {{ min(100, $member['utilization_percent']) }}%;"></div>
+                                    <div class="workload-bar-multi">
+                                        {{-- Logged hours (green) --}}
+                                        <div class="workload-segment bg-success" style="width: {{ $member['logged_percent'] }}%;" title="Logged: {{ $member['logged_hours'] }}h"></div>
+                                        {{-- Scheduled hours (orange/warning) --}}
+                                        <div class="workload-segment bg-warning" style="width: {{ $member['scheduled_percent'] }}%;" title="Scheduled: {{ $member['scheduled_hours'] }}h"></div>
+                                        {{-- Unutilized remains as background --}}
                                     </div>
                                 </div>
                             </div>
@@ -454,7 +479,7 @@
                     @else
                         <div class="text-center text-muted py-4">
                             <i class="ti ti-clock text-muted mb-2" style="font-size: 3rem;"></i>
-                            <p class="mb-0">No worklogs recorded this week.</p>
+                            <p class="mb-0">No workload data for this period.</p>
                         </div>
                     @endif
                 </div>

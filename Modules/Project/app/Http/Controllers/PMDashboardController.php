@@ -367,34 +367,87 @@ class PMDashboardController extends Controller
     }
 
     /**
-     * Get team workload for the current week.
+     * Get team workload for 2 weeks (starting from previous Sunday).
      */
     protected function getTeamWorkload(): array
     {
-        $startOfWeek = now()->startOfWeek();
-        $endOfWeek = now()->endOfWeek();
+        // Start from the most recent Sunday (or today if Sunday)
+        $startDate = now()->startOfWeek(\Carbon\Carbon::SUNDAY);
+        // End 2 weeks from start (14 days total)
+        $endDate = $startDate->copy()->addDays(13)->endOfDay();
 
-        return JiraWorklog::whereNotNull('employee_id')
-            ->whereBetween('worklog_started', [$startOfWeek, $endOfWeek])
-            ->with('employee')
-            ->selectRaw('employee_id, SUM(time_spent_hours) as total_hours, COUNT(DISTINCT issue_key) as task_count')
+        // 60 hours capacity for 2 weeks (6 hours/day * 10 working days)
+        $capacity = 60;
+
+        // Get logged hours from worklogs
+        $loggedHours = JiraWorklog::whereNotNull('employee_id')
+            ->whereBetween('worklog_started', [$startDate, $endDate])
+            ->selectRaw('employee_id, SUM(time_spent_hours) as logged_hours')
             ->groupBy('employee_id')
-            ->orderByDesc('total_hours')
-            ->limit(10)
-            ->get()
-            ->map(function ($item) {
-                $capacity = 40; // Standard work week
-                $utilizationPercent = min(100, ($item->total_hours / $capacity) * 100);
-
-                return [
-                    'employee' => $item->employee,
-                    'total_hours' => round($item->total_hours, 1),
-                    'task_count' => $item->task_count,
-                    'utilization_percent' => round($utilizationPercent, 0),
-                    'is_overloaded' => $item->total_hours > $capacity,
-                ];
-            })
+            ->pluck('logged_hours', 'employee_id')
             ->toArray();
+
+        // Get scheduled hours from active Jira issues (remaining estimate)
+        // Only count issues that are not done and have remaining time
+        $scheduledHours = JiraIssue::whereNotNull('assignee_employee_id')
+            ->where('status_category', '!=', 'done')
+            ->whereNotNull('remaining_estimate_seconds')
+            ->where('remaining_estimate_seconds', '>', 0)
+            ->selectRaw('assignee_employee_id, SUM(remaining_estimate_seconds) / 3600 as scheduled_hours')
+            ->groupBy('assignee_employee_id')
+            ->pluck('scheduled_hours', 'assignee_employee_id')
+            ->toArray();
+
+        // Get all employees who have either logged hours or scheduled hours
+        $employeeIds = array_unique(array_merge(
+            array_keys($loggedHours),
+            array_keys($scheduledHours)
+        ));
+
+        if (empty($employeeIds)) {
+            return [];
+        }
+
+        // Fetch employees
+        $employees = \Modules\HR\Models\Employee::whereIn('id', $employeeIds)
+            ->get()
+            ->keyBy('id');
+
+        $result = [];
+        foreach ($employeeIds as $empId) {
+            $employee = $employees->get($empId);
+            if (!$employee) {
+                continue;
+            }
+
+            $logged = round($loggedHours[$empId] ?? 0, 1);
+            $scheduled = round($scheduledHours[$empId] ?? 0, 1);
+            $totalAllocated = $logged + $scheduled;
+
+            // Calculate percentages for the bar (capped at 100% each)
+            $loggedPercent = min(100, ($logged / $capacity) * 100);
+            $scheduledPercent = min(100 - $loggedPercent, ($scheduled / $capacity) * 100);
+            $unutilizedPercent = max(0, 100 - $loggedPercent - $scheduledPercent);
+
+            $result[] = [
+                'employee' => $employee,
+                'logged_hours' => $logged,
+                'scheduled_hours' => $scheduled,
+                'total_hours' => round($totalAllocated, 1),
+                'capacity' => $capacity,
+                'logged_percent' => round($loggedPercent, 0),
+                'scheduled_percent' => round($scheduledPercent, 0),
+                'unutilized_percent' => round($unutilizedPercent, 0),
+                'utilization_percent' => round(min(100, ($totalAllocated / $capacity) * 100), 0),
+                'is_overloaded' => $totalAllocated > $capacity,
+            ];
+        }
+
+        // Sort by total allocated hours descending
+        usort($result, fn($a, $b) => $b['total_hours'] <=> $a['total_hours']);
+
+        // Limit to top 10
+        return array_slice($result, 0, 10);
     }
 
     /**
