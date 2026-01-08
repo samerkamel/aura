@@ -512,4 +512,156 @@ class PMDashboardController extends Controller
             'followup' => $followup->load('project'),
         ]);
     }
+
+    /**
+     * Get employee workload details for modal.
+     */
+    public function employeeWorkload(Request $request, int $employeeId): JsonResponse
+    {
+        $employee = \Modules\HR\Models\Employee::findOrFail($employeeId);
+
+        // Date ranges
+        $startDate = now()->startOfWeek(\Carbon\Carbon::SUNDAY);
+        $endDate = $startDate->copy()->addDays(13)->endOfDay();
+        $monthStart = now()->startOfMonth();
+        $monthEnd = now()->endOfMonth();
+
+        // Recent tasks with worklogs (last 2 weeks)
+        $recentWorklogs = JiraWorklog::where('employee_id', $employeeId)
+            ->whereBetween('worklog_started', [$startDate, $endDate])
+            ->orderByDesc('worklog_started')
+            ->get()
+            ->groupBy('issue_key')
+            ->map(function ($worklogs, $issueKey) {
+                $issue = JiraIssue::where('issue_key', $issueKey)->first();
+                return [
+                    'issue_key' => $issueKey,
+                    'summary' => $issue->summary ?? 'Unknown Task',
+                    'status' => $issue->status ?? 'Unknown',
+                    'status_category' => $issue->status_category ?? 'new',
+                    'project_code' => explode('-', $issueKey)[0],
+                    'total_hours' => round($worklogs->sum('time_spent_hours'), 2),
+                    'worklogs' => $worklogs->map(function ($wl) {
+                        return [
+                            'id' => $wl->id,
+                            'date' => $wl->worklog_started->format('M d, Y'),
+                            'time' => $wl->worklog_started->format('H:i'),
+                            'hours' => round($wl->time_spent_hours, 2),
+                            'description' => $wl->comment,
+                        ];
+                    })->values()->toArray(),
+                ];
+            })
+            ->values()
+            ->take(10)
+            ->toArray();
+
+        // Scheduled tasks (To Do, In Progress with due date in period)
+        $scheduledTasks = JiraIssue::where('assignee_employee_id', $employeeId)
+            ->whereIn('status', ['To Do', 'In Progress', 'Pending'])
+            ->whereNotNull('remaining_estimate_seconds')
+            ->where('remaining_estimate_seconds', '>', 0)
+            ->whereBetween('due_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->orderBy('due_date')
+            ->get()
+            ->map(function ($issue) {
+                return [
+                    'issue_key' => $issue->issue_key,
+                    'summary' => $issue->summary,
+                    'status' => $issue->status,
+                    'status_category' => $issue->status_category ?? 'new',
+                    'priority' => $issue->priority,
+                    'due_date' => $issue->due_date?->format('M d, Y'),
+                    'remaining_hours' => round($issue->remaining_estimate_seconds / 3600, 1),
+                    'original_hours' => $issue->original_estimate_seconds ? round($issue->original_estimate_seconds / 3600, 1) : null,
+                    'jira_url' => $issue->jira_url,
+                ];
+            })
+            ->toArray();
+
+        // Monthly logged hours (last 6 months)
+        $monthlyHours = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate = now()->subMonths($i);
+            $monthStartDate = $monthDate->copy()->startOfMonth();
+            $monthEndDate = $monthDate->copy()->endOfMonth();
+
+            $hours = JiraWorklog::where('employee_id', $employeeId)
+                ->whereBetween('worklog_started', [$monthStartDate, $monthEndDate])
+                ->sum('time_spent_hours');
+
+            $monthlyHours[] = [
+                'month' => $monthDate->format('M Y'),
+                'hours' => round($hours, 1),
+            ];
+        }
+
+        $monthlyTotal = JiraWorklog::where('employee_id', $employeeId)
+            ->whereBetween('worklog_started', [$monthStart, $monthEnd])
+            ->sum('time_spent_hours');
+
+        // Upcoming leaves (approved and pending)
+        $upcomingLeaves = [];
+        try {
+            $upcomingLeaves = \Modules\Leave\Models\LeaveApplication::where('employee_id', $employeeId)
+                ->whereIn('status', ['approved', 'pending'])
+                ->where('start_date', '>=', today())
+                ->where('start_date', '<=', today()->addDays(60))
+                ->orderBy('start_date')
+                ->get()
+                ->map(function ($leave) {
+                    return [
+                        'id' => $leave->id,
+                        'type' => $leave->leaveType->name ?? 'Leave',
+                        'start_date' => $leave->start_date->format('M d, Y'),
+                        'end_date' => $leave->end_date->format('M d, Y'),
+                        'days' => $leave->total_days,
+                        'status' => $leave->status,
+                    ];
+                })
+                ->toArray();
+        } catch (\Exception $e) {
+            // Leave module might not be available
+        }
+
+        // Period totals
+        $periodLoggedHours = JiraWorklog::where('employee_id', $employeeId)
+            ->whereBetween('worklog_started', [$startDate, $endDate])
+            ->sum('time_spent_hours');
+
+        $periodScheduledHours = JiraIssue::where('assignee_employee_id', $employeeId)
+            ->whereIn('status', ['To Do', 'In Progress', 'Pending'])
+            ->whereNotNull('remaining_estimate_seconds')
+            ->where('remaining_estimate_seconds', '>', 0)
+            ->whereBetween('due_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->sum('remaining_estimate_seconds') / 3600;
+
+        // Count of active tasks
+        $taskCount = JiraIssue::where('assignee_employee_id', $employeeId)
+            ->whereIn('status', ['To Do', 'In Progress', 'Pending'])
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'employee' => [
+                'id' => $employee->id,
+                'name' => $employee->name,
+                'position' => $employee->position,
+                'department' => $employee->department?->name,
+                'avatar' => $employee->avatar_url,
+            ],
+            'period' => [
+                'start' => $startDate->format('M d, Y'),
+                'end' => $endDate->format('M d, Y'),
+                'logged_hours' => round($periodLoggedHours, 1),
+                'scheduled_hours' => round($periodScheduledHours, 1),
+                'capacity' => 60,
+                'task_count' => $taskCount,
+            ],
+            'recent_tasks' => $recentWorklogs,
+            'scheduled_tasks' => $scheduledTasks,
+            'monthly_hours' => $monthlyHours,
+            'upcoming_leaves' => $upcomingLeaves,
+        ]);
+    }
 }

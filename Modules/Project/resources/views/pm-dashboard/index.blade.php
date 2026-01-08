@@ -457,7 +457,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="fw-semibold">{{ $member['employee']->name ?? 'Unknown' }}</span>
+                                        <a href="#" class="fw-semibold text-body employee-workload-link" data-employee-id="{{ $member['employee']->id }}">{{ $member['employee']->name ?? 'Unknown' }}</a>
                                         <span class="small {{ $member['is_overloaded'] ? 'text-danger fw-bold' : '' }}">
                                             {{ $member['logged_hours'] }}h logged
                                             @if($member['scheduled_hours'] > 0)
@@ -571,6 +571,29 @@
         </div>
     </div>
 </div>
+
+{{-- Employee Workload Modal --}}
+<div class="modal fade" id="employeeWorkloadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="ti ti-user me-2"></i>
+                    <span id="employeeWorkloadName">Employee Workload</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="employeeWorkloadContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading workload data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('page-script')
@@ -624,6 +647,312 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+    }
+
+    // Employee Workload Modal
+    const employeeWorkloadModal = document.getElementById('employeeWorkloadModal');
+    const employeeWorkloadLinks = document.querySelectorAll('.employee-workload-link');
+
+    employeeWorkloadLinks.forEach(link => {
+        link.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const employeeId = this.dataset.employeeId;
+            const employeeName = this.textContent;
+
+            // Update modal title
+            document.getElementById('employeeWorkloadName').textContent = employeeName + ' - Workload';
+
+            // Show loading state
+            document.getElementById('employeeWorkloadContent').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading workload data...</p>
+                </div>
+            `;
+
+            // Show modal
+            const modal = new bootstrap.Modal(employeeWorkloadModal);
+            modal.show();
+
+            // Fetch employee workload data
+            try {
+                const response = await fetch(`{{ url('projects/pm-dashboard/api/employee-workload') }}/${employeeId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch employee workload');
+                }
+
+                const data = await response.json();
+                renderEmployeeWorkload(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('employeeWorkloadContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="ti ti-alert-circle me-2"></i>
+                        Failed to load employee workload data.
+                    </div>
+                `;
+            }
+        });
+    });
+
+    function renderEmployeeWorkload(data) {
+        const content = document.getElementById('employeeWorkloadContent');
+
+        let html = `
+            {{-- Period Summary --}}
+            <div class="row g-3 mb-4">
+                <div class="col-sm-4">
+                    <div class="card bg-label-success">
+                        <div class="card-body p-3 text-center">
+                            <h4 class="mb-1">${data.period.logged_hours}h</h4>
+                            <small>Logged Hours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card bg-label-warning">
+                        <div class="card-body p-3 text-center">
+                            <h4 class="mb-1">${data.period.scheduled_hours}h</h4>
+                            <small>Scheduled Hours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card bg-label-info">
+                        <div class="card-body p-3 text-center">
+                            <h4 class="mb-1">${data.period.task_count}</h4>
+                            <small>Active Tasks</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-muted small mb-3">
+                <i class="ti ti-calendar me-1"></i>
+                Period: ${data.period.start} to ${data.period.end}
+            </p>
+
+            {{-- Tabs --}}
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#recentTasks" type="button">
+                        <i class="ti ti-clock me-1"></i>Recent Work
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#scheduledTasks" type="button">
+                        <i class="ti ti-calendar-event me-1"></i>Scheduled
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#monthlyHours" type="button">
+                        <i class="ti ti-chart-bar me-1"></i>Monthly
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#upcomingLeaves" type="button">
+                        <i class="ti ti-beach me-1"></i>Leaves
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                {{-- Recent Tasks Tab --}}
+                <div class="tab-pane fade show active" id="recentTasks">
+                    ${renderRecentTasks(data.recent_tasks)}
+                </div>
+
+                {{-- Scheduled Tasks Tab --}}
+                <div class="tab-pane fade" id="scheduledTasks">
+                    ${renderScheduledTasks(data.scheduled_tasks)}
+                </div>
+
+                {{-- Monthly Hours Tab --}}
+                <div class="tab-pane fade" id="monthlyHours">
+                    ${renderMonthlyHours(data.monthly_hours)}
+                </div>
+
+                {{-- Upcoming Leaves Tab --}}
+                <div class="tab-pane fade" id="upcomingLeaves">
+                    ${renderUpcomingLeaves(data.upcoming_leaves)}
+                </div>
+            </div>
+        `;
+
+        content.innerHTML = html;
+    }
+
+    function renderRecentTasks(tasks) {
+        if (!tasks || tasks.length === 0) {
+            return `<div class="text-center text-muted py-4">
+                <i class="ti ti-clipboard-off mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No recent tasks in this period.</p>
+            </div>`;
+        }
+
+        let html = '<div class="accordion" id="recentTasksAccordion">';
+        tasks.forEach((task, index) => {
+            const statusBadge = getStatusBadge(task.status_category);
+            html += `
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#task${index}">
+                            <span class="badge ${statusBadge} me-2">${task.status}</span>
+                            <strong class="me-2">${task.issue_key}</strong>
+                            <span class="text-truncate">${task.summary}</span>
+                            <span class="badge bg-success ms-auto me-2">${task.total_hours}h</span>
+                        </button>
+                    </h2>
+                    <div id="task${index}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#recentTasksAccordion">
+                        <div class="accordion-body">
+                            <table class="table table-sm table-borderless mb-0">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th class="text-end">Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${task.worklogs.map(w => `
+                                        <tr>
+                                            <td class="small">${w.date}</td>
+                                            <td class="small">${w.description || '-'}</td>
+                                            <td class="text-end small">${w.hours}h</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderScheduledTasks(tasks) {
+        if (!tasks || tasks.length === 0) {
+            return `<div class="text-center text-muted py-4">
+                <i class="ti ti-calendar-off mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No scheduled tasks for this period.</p>
+            </div>`;
+        }
+
+        let html = '<div class="list-group list-group-flush">';
+        tasks.forEach(task => {
+            const statusBadge = getStatusBadge(task.status_category);
+            const priorityBadge = getPriorityBadge(task.priority);
+            html += `
+                <div class="list-group-item px-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="badge ${statusBadge}">${task.status}</span>
+                                ${priorityBadge}
+                                <strong>${task.issue_key}</strong>
+                            </div>
+                            <p class="mb-1">${task.summary}</p>
+                            <small class="text-muted">
+                                ${task.due_date ? `<i class="ti ti-calendar me-1"></i>Due: ${task.due_date}` : ''}
+                                ${task.remaining_hours ? `<span class="ms-2"><i class="ti ti-clock me-1"></i>Est: ${task.remaining_hours}h</span>` : ''}
+                            </small>
+                        </div>
+                        ${task.jira_url ? `<a href="${task.jira_url}" target="_blank" class="btn btn-sm btn-icon btn-outline-primary"><i class="ti ti-external-link"></i></a>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderMonthlyHours(months) {
+        if (!months || months.length === 0) {
+            return `<div class="text-center text-muted py-4">
+                <i class="ti ti-chart-bar-off mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No monthly data available.</p>
+            </div>`;
+        }
+
+        let html = '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Month</th><th class="text-end">Hours Logged</th><th>Progress</th></tr></thead><tbody>';
+        const maxHours = Math.max(...months.map(m => m.hours), 1);
+        months.forEach(month => {
+            const percent = Math.round((month.hours / maxHours) * 100);
+            html += `
+                <tr>
+                    <td><strong>${month.month}</strong></td>
+                    <td class="text-end">${month.hours}h</td>
+                    <td style="width: 40%;">
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: ${percent}%;"></div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table></div>';
+        return html;
+    }
+
+    function renderUpcomingLeaves(leaves) {
+        if (!leaves || leaves.length === 0) {
+            return `<div class="text-center text-muted py-4">
+                <i class="ti ti-beach mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No upcoming leaves scheduled.</p>
+            </div>`;
+        }
+
+        let html = '<div class="list-group list-group-flush">';
+        leaves.forEach(leave => {
+            const statusClass = leave.status === 'approved' ? 'success' : (leave.status === 'pending' ? 'warning' : 'secondary');
+            html += `
+                <div class="list-group-item px-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${leave.type}</strong>
+                            <p class="mb-0 small text-muted">
+                                ${leave.start_date} - ${leave.end_date}
+                                <span class="ms-2">(${leave.days} day${leave.days > 1 ? 's' : ''})</span>
+                            </p>
+                        </div>
+                        <span class="badge bg-${statusClass}">${leave.status}</span>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function getStatusBadge(statusCategory) {
+        switch(statusCategory) {
+            case 'new': return 'bg-secondary';
+            case 'indeterminate': return 'bg-info';
+            case 'done': return 'bg-success';
+            default: return 'bg-secondary';
+        }
+    }
+
+    function getPriorityBadge(priority) {
+        const colors = {
+            'Highest': 'danger',
+            'High': 'warning',
+            'Medium': 'info',
+            'Low': 'secondary',
+            'Lowest': 'light'
+        };
+        const color = colors[priority] || 'secondary';
+        return priority ? `<span class="badge bg-label-${color}">${priority}</span>` : '';
     }
 
     // Auto-refresh dashboard data every 5 minutes

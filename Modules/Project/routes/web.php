@@ -75,6 +75,7 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         Route::post('/notifications/mark-all-read', [PMDashboardController::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read');
         Route::post('/notifications/dismiss', [PMDashboardController::class, 'dismissNotification'])->name('notifications.dismiss');
         Route::post('/quick-followup', [PMDashboardController::class, 'quickFollowup'])->name('quick-followup');
+        Route::get('/api/employee-workload/{employee}', [PMDashboardController::class, 'employeeWorkload'])->name('api.employee-workload');
     });
 
     // Project CRUD with dynamic {project} parameter (must come AFTER static routes)
