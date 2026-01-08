@@ -448,7 +448,7 @@
                         <span><span class="badge bg-light border">&nbsp;</span> Available</span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                     @if(count($teamWorkload) > 0)
                         @foreach($teamWorkload as $member)
                             <div class="d-flex align-items-center mb-3">

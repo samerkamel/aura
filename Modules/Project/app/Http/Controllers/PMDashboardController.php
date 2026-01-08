@@ -449,8 +449,7 @@ class PMDashboardController extends Controller
         // Sort by total allocated hours descending
         usort($result, fn($a, $b) => $b['total_hours'] <=> $a['total_hours']);
 
-        // Limit to top 10
-        return array_slice($result, 0, 10);
+        return $result;
     }
 
     /**
