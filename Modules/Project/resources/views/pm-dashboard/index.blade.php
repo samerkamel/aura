@@ -389,52 +389,6 @@
             </div>
         </div>
 
-        {{-- Pending Payments --}}
-        <div class="col-xl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="ti ti-cash text-primary me-2"></i>Pending Payments
-                    </h5>
-                    @if($pendingPayments->count() > 0)
-                        <span class="badge bg-label-primary">{{ $pendingPayments->count() }} payments</span>
-                    @endif
-                </div>
-                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                    @if($pendingPayments->count() > 0)
-                        @foreach($pendingPayments->take(5) as $payment)
-                            @php
-                                $project = $payment->contract->projects->first();
-                            @endphp
-                            <div class="d-flex align-items-start mb-3 {{ $payment->is_overdue ? 'overdue-item' : 'upcoming-item' }}">
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">{{ $payment->name }}</div>
-                                    <p class="mb-1 small text-muted">
-                                        {{ $payment->contract->contract_number }}
-                                        @if($project) - {{ $project->name }}@endif
-                                    </p>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="fw-bold">{{ number_format($payment->amount, 2) }}</span>
-                                        <span class="badge bg-{{ $payment->is_overdue ? 'danger' : 'success' }}">
-                                            {{ $payment->due_date->diffForHumans() }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <a href="{{ route('accounting.income.contracts.show', $payment->contract_id) }}" class="btn btn-sm btn-icon btn-outline-primary">
-                                    <i class="ti ti-external-link"></i>
-                                </a>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="text-center text-muted py-4">
-                            <i class="ti ti-receipt-off text-success mb-2" style="font-size: 3rem;"></i>
-                            <p class="mb-0">No pending payments.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
         {{-- Team Workload --}}
         <div class="col-xl-6">
             <div class="card h-100">
@@ -490,41 +444,6 @@
             </div>
         </div>
 
-        {{-- Recent Activity --}}
-        <div class="col-xl-6">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="ti ti-activity text-success me-2"></i>Recent Activity
-                    </h5>
-                </div>
-                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                    @if(count($recentActivity) > 0)
-                        @foreach($recentActivity as $activity)
-                            <div class="activity-item d-flex align-items-start">
-                                <div class="activity-icon bg-label-{{ $activity['color'] }} me-3">
-                                    <i class="ti {{ $activity['icon'] }}"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="mb-1">{{ $activity['description'] }}</p>
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($activity['date'])->diffForHumans() }}</small>
-                                </div>
-                                @if(isset($activity['url']))
-                                    <a href="{{ $activity['url'] }}" class="btn btn-sm btn-icon btn-outline-secondary">
-                                        <i class="ti ti-external-link"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="text-center text-muted py-4">
-                            <i class="ti ti-activity-heartbeat text-muted mb-2" style="font-size: 3rem;"></i>
-                            <p class="mb-0">No recent activity.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
