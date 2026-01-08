@@ -401,17 +401,28 @@ class PMDashboardController extends Controller
             ->pluck('scheduled_hours', 'assignee_employee_id')
             ->toArray();
 
-        // Get ALL employees with billable_hours_applicable = true
-        // This ensures we show everyone who should be tracking time, even if they have 0 hours
-        $employees = \Modules\HR\Models\Employee::where('billable_hours_applicable', true)
-            ->active() // scope: where status = 'active'
+        // Get employees with billable_hours_applicable = true OR who have logged/scheduled hours
+        $billableEmployeeIds = \Modules\HR\Models\Employee::where('billable_hours_applicable', true)
+            ->active()
+            ->pluck('id')
+            ->toArray();
+
+        // Combine: billable employees + anyone with logged or scheduled hours
+        $allEmployeeIds = array_unique(array_merge(
+            $billableEmployeeIds,
+            array_keys($loggedHours),
+            array_keys($scheduledHours)
+        ));
+
+        if (empty($allEmployeeIds)) {
+            return [];
+        }
+
+        // Fetch all relevant employees
+        $employees = \Modules\HR\Models\Employee::whereIn('id', $allEmployeeIds)
             ->orderBy('name')
             ->get()
             ->keyBy('id');
-
-        if ($employees->isEmpty()) {
-            return [];
-        }
 
         $result = [];
         foreach ($employees as $empId => $employee) {
