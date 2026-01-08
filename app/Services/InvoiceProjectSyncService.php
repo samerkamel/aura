@@ -203,8 +203,8 @@ class InvoiceProjectSyncService
      */
     public function syncInvoiceToProject(Invoice $invoice, Project $project, float $allocatedAmount): array
     {
-        // Calculate proportional tax amount
-        $taxAllocation = $this->calculateProportionalTax($invoice, $allocatedAmount);
+        // Calculate tax amount (from line items or proportional)
+        $taxAllocation = $this->calculateProportionalTax($invoice, $allocatedAmount, $project->id);
 
         // Check if already synced
         $existingRevenue = ProjectRevenue::where('invoice_id', $invoice->id)
@@ -219,13 +219,23 @@ class InvoiceProjectSyncService
     }
 
     /**
-     * Calculate proportional tax amount for an allocation.
+     * Calculate tax amount for a project allocation.
      *
-     * The tax is distributed proportionally based on the allocated amount
-     * relative to the invoice total (not subtotal, since revenue includes tax).
+     * Priority:
+     * 1. Line item tax - sum of tax_amount from line items allocated to the project
+     * 2. Invoice-level tax - proportionally distributed based on allocation
      */
-    protected function calculateProportionalTax(Invoice $invoice, float $allocatedAmount): float
+    protected function calculateProportionalTax(Invoice $invoice, float $allocatedAmount, ?int $projectId = null): float
     {
+        // First, try to get tax from line items for this project
+        if ($projectId) {
+            $lineItemTax = $this->getLineItemTaxForProject($invoice, $projectId);
+            if ($lineItemTax > 0) {
+                return $lineItemTax;
+            }
+        }
+
+        // Fall back to invoice-level tax (proportionally distributed)
         if ($invoice->tax_amount <= 0 || $invoice->total_amount <= 0) {
             return 0;
         }
@@ -245,6 +255,19 @@ class InvoiceProjectSyncService
         $taxInBase = $this->convertToBaseCurrency((float) $invoice->tax_amount, $invoice);
 
         return round($taxInBase * $proportion, 2);
+    }
+
+    /**
+     * Get the sum of line item tax for a specific project.
+     */
+    protected function getLineItemTaxForProject(Invoice $invoice, int $projectId): float
+    {
+        $taxAmount = $invoice->items()
+            ->where('project_id', $projectId)
+            ->sum('tax_amount');
+
+        // Convert to base currency
+        return $this->convertToBaseCurrency((float) $taxAmount, $invoice);
     }
 
     /**
@@ -573,12 +596,16 @@ class InvoiceProjectSyncService
      * This method is used to backfill tax costs for invoices that were
      * already synced to projects before the tax cost feature was added.
      * It recalculates all tax costs to ensure accuracy.
+     *
+     * Tax is calculated from:
+     * 1. Line item tax (if line items have project_id and tax_amount)
+     * 2. Invoice-level tax (proportionally distributed)
      */
     public function syncTaxCostsForExistingLinks(): array
     {
         $revenues = ProjectRevenue::whereNotNull('invoice_id')
             ->where('revenue_type', 'invoice')
-            ->with(['invoice', 'project'])
+            ->with(['invoice.items', 'project'])
             ->get();
 
         $created = 0;
@@ -601,20 +628,10 @@ class InvoiceProjectSyncService
                 ->where('cost_type', 'tax')
                 ->first();
 
-            // Skip if no tax on invoice - but delete existing tax cost if any
-            if ($invoice->tax_amount <= 0) {
-                if ($existingTaxCost) {
-                    $existingTaxCost->delete();
-                    $deleted++;
-                } else {
-                    $skipped++;
-                }
-                continue;
-            }
-
             try {
-                // Calculate proportional tax for this allocation
-                $taxAmount = $this->calculateProportionalTax($invoice, $revenue->amount);
+                // Calculate tax for this allocation (checks line items first, then invoice-level)
+                // Pass project_id so it can find line item tax for this specific project
+                $taxAmount = $this->calculateProportionalTax($invoice, $revenue->amount, $revenue->project_id);
 
                 if ($taxAmount <= 0) {
                     if ($existingTaxCost) {
