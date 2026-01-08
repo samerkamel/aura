@@ -389,11 +389,13 @@ class PMDashboardController extends Controller
             ->toArray();
 
         // Get scheduled hours from active Jira issues (remaining estimate)
-        // Only count issues that are not done and have remaining time
+        // Only include: To Do, In Progress (exclude: Hold, Testing, Done, etc.)
+        // Only include tasks with due dates in the 2-week period
         $scheduledHours = JiraIssue::whereNotNull('assignee_employee_id')
-            ->where('status_category', '!=', 'done')
+            ->whereIn('status', ['To Do', 'In Progress', 'Pending'])
             ->whereNotNull('remaining_estimate_seconds')
             ->where('remaining_estimate_seconds', '>', 0)
+            ->whereBetween('due_date', [$startDate->toDateString(), $endDate->toDateString()])
             ->selectRaw('assignee_employee_id, SUM(remaining_estimate_seconds) / 3600 as scheduled_hours')
             ->groupBy('assignee_employee_id')
             ->pluck('scheduled_hours', 'assignee_employee_id')
