@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_snapshot"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\nuse Modules\\Project\\Models\\ProjectRevenue;\nuse Modules\\Project\\Models\\ProjectCost;\n\n// Get current tax costs created\n$taxCosts = ProjectCost::where(\"\"cost_type\"\", \"\"tax\"\")->sum(\"\"amount\"\");\necho \"\"Current tax costs in DB: \"\" . number_format($taxCosts, 2) . \"\" EGP\"\" . PHP_EOL;\n\n// Calculate what total tax should be from invoices\n$revenues = ProjectRevenue::whereNotNull(\"\"invoice_id\"\")\n    ->where(\"\"revenue_type\"\", \"\"invoice\"\")\n    ->with(\"\"invoice\"\")\n    ->get();\n\n$expectedTotal = 0;\nforeach ($revenues as $rev) {\n    if ($rev->invoice && $rev->invoice->tax_amount > 0) {\n        $invoiceTotal = $rev->invoice->total_amount * ($rev->invoice->exchange_rate > 0 ? $rev->invoice->exchange_rate : 1);\n        $proportion = $invoiceTotal > 0 ? $rev->amount / $invoiceTotal : 0;\n        $taxInBase = $rev->invoice->tax_amount * ($rev->invoice->exchange_rate > 0 ? $rev->invoice->exchange_rate : 1);\n        $expectedTotal += $taxInBase * $proportion;\n    }\n}\n\necho \"\"Expected tax costs: \"\" . number_format($expectedTotal, 2) . \"\" EGP\"\" . PHP_EOL;\necho \"\"Difference: \"\" . number_format($expectedTotal - $taxCosts, 2) . \"\" EGP\"\" . PHP_EOL;\n''\")"
     ],
     "deny": [],
     "ask": []

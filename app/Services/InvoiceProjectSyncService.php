@@ -222,44 +222,29 @@ class InvoiceProjectSyncService
      * Calculate proportional tax amount for an allocation.
      *
      * The tax is distributed proportionally based on the allocated amount
-     * relative to the invoice subtotal.
+     * relative to the invoice total (not subtotal, since revenue includes tax).
      */
     protected function calculateProportionalTax(Invoice $invoice, float $allocatedAmount): float
     {
-        if ($invoice->tax_amount <= 0 || $invoice->subtotal <= 0) {
+        if ($invoice->tax_amount <= 0 || $invoice->total_amount <= 0) {
             return 0;
         }
 
-        // Get the subtotal in base currency for proportion calculation
-        $subtotalInBase = $this->getInvoiceSubtotalInBase($invoice);
+        // Get the total in base currency for proportion calculation
+        // (allocated amount is already in base currency and includes tax)
+        $totalInBase = $this->getInvoiceTotalInBase($invoice);
 
-        if ($subtotalInBase <= 0) {
+        if ($totalInBase <= 0) {
             return 0;
         }
 
-        // Calculate the proportion
-        $proportion = $allocatedAmount / $subtotalInBase;
+        // Calculate the proportion of this allocation to total invoice
+        $proportion = $allocatedAmount / $totalInBase;
 
         // Convert tax to base currency and apply proportion
         $taxInBase = $this->convertToBaseCurrency((float) $invoice->tax_amount, $invoice);
 
         return round($taxInBase * $proportion, 2);
-    }
-
-    /**
-     * Get invoice subtotal in base currency (EGP).
-     */
-    protected function getInvoiceSubtotalInBase(Invoice $invoice): float
-    {
-        if ($invoice->currency === 'EGP') {
-            return (float) $invoice->subtotal;
-        }
-        // Use pre-calculated subtotal_in_base if available
-        if ($invoice->subtotal_in_base > 0) {
-            return (float) $invoice->subtotal_in_base;
-        }
-        // Otherwise calculate
-        return $this->convertToBaseCurrency((float) $invoice->subtotal, $invoice);
     }
 
     /**
@@ -587,6 +572,7 @@ class InvoiceProjectSyncService
      *
      * This method is used to backfill tax costs for invoices that were
      * already synced to projects before the tax cost feature was added.
+     * It recalculates all tax costs to ensure accuracy.
      */
     public function syncTaxCostsForExistingLinks(): array
     {
@@ -598,6 +584,7 @@ class InvoiceProjectSyncService
         $created = 0;
         $updated = 0;
         $skipped = 0;
+        $deleted = 0;
         $errors = [];
 
         foreach ($revenues as $revenue) {
@@ -608,9 +595,20 @@ class InvoiceProjectSyncService
 
             $invoice = $revenue->invoice;
 
-            // Skip if no tax on invoice
+            // Check if tax cost already exists
+            $existingTaxCost = ProjectCost::where('invoice_id', $invoice->id)
+                ->where('project_id', $revenue->project_id)
+                ->where('cost_type', 'tax')
+                ->first();
+
+            // Skip if no tax on invoice - but delete existing tax cost if any
             if ($invoice->tax_amount <= 0) {
-                $skipped++;
+                if ($existingTaxCost) {
+                    $existingTaxCost->delete();
+                    $deleted++;
+                } else {
+                    $skipped++;
+                }
                 continue;
             }
 
@@ -619,15 +617,14 @@ class InvoiceProjectSyncService
                 $taxAmount = $this->calculateProportionalTax($invoice, $revenue->amount);
 
                 if ($taxAmount <= 0) {
-                    $skipped++;
+                    if ($existingTaxCost) {
+                        $existingTaxCost->delete();
+                        $deleted++;
+                    } else {
+                        $skipped++;
+                    }
                     continue;
                 }
-
-                // Check if tax cost already exists
-                $existingTaxCost = ProjectCost::where('invoice_id', $invoice->id)
-                    ->where('project_id', $revenue->project_id)
-                    ->where('cost_type', 'tax')
-                    ->first();
 
                 if ($existingTaxCost) {
                     $existingTaxCost->update([
@@ -659,9 +656,10 @@ class InvoiceProjectSyncService
 
         return [
             'success' => count($errors) === 0,
-            'message' => "Tax costs sync complete: {$created} created, {$updated} updated, {$skipped} skipped",
+            'message' => "Tax costs sync complete: {$created} created, {$updated} updated, {$deleted} deleted, {$skipped} skipped",
             'created' => $created,
             'updated' => $updated,
+            'deleted' => $deleted,
             'skipped' => $skipped,
             'errors' => $errors,
         ];
