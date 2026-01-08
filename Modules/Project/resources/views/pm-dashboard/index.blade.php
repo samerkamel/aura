@@ -444,6 +444,68 @@
             </div>
         </div>
 
+        {{-- Upcoming Team Leaves --}}
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="ti ti-beach text-warning me-2"></i>Upcoming Team Leaves
+                    </h5>
+                    @if(count($upcomingTeamLeaves) > 0)
+                        <span class="badge bg-label-warning">{{ count($upcomingTeamLeaves) }} leaves</span>
+                    @endif
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if(count($upcomingTeamLeaves) > 0)
+                        @foreach($upcomingTeamLeaves as $leave)
+                            <div class="d-flex align-items-start mb-3 {{ $leave['is_current'] ? 'today-item' : ($leave['starts_in_days'] <= 3 ? 'upcoming-item' : '') }}">
+                                <div class="avatar avatar-sm me-3 bg-label-{{ $leave['status'] === 'approved' ? 'success' : 'warning' }}">
+                                    @php
+                                        $nameParts = explode(' ', $leave['employee_name']);
+                                        $initials = strtoupper(substr($nameParts[0] ?? 'U', 0, 1) . substr($nameParts[1] ?? '', 0, 1));
+                                    @endphp
+                                    <span class="avatar-initial">{{ $initials }}</span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">{{ $leave['employee_name'] }}</div>
+                                    <p class="mb-1 small text-muted">
+                                        {{ $leave['type'] }} - {{ $leave['days'] }} day{{ $leave['days'] > 1 ? 's' : '' }}
+                                    </p>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="small">
+                                            {{ $leave['start_date']->format('M d') }}
+                                            @if($leave['days'] > 1)
+                                                - {{ $leave['end_date']->format('M d') }}
+                                            @endif
+                                        </span>
+                                        @if($leave['is_current'])
+                                            <span class="badge bg-info">On Leave Now</span>
+                                        @elseif($leave['starts_in_days'] == 0)
+                                            <span class="badge bg-warning">Starts Today</span>
+                                        @elseif($leave['starts_in_days'] == 1)
+                                            <span class="badge bg-warning">Tomorrow</span>
+                                        @elseif($leave['starts_in_days'] <= 7)
+                                            <span class="badge bg-label-warning">In {{ $leave['starts_in_days'] }} days</span>
+                                        @else
+                                            <span class="badge bg-label-secondary">{{ $leave['start_date']->diffForHumans() }}</span>
+                                        @endif
+                                        @if($leave['status'] === 'pending')
+                                            <span class="badge bg-label-warning">Pending</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-center text-muted py-4">
+                            <i class="ti ti-beach text-success mb-2" style="font-size: 3rem;"></i>
+                            <p class="mb-0">No upcoming leaves in the next 30 days.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

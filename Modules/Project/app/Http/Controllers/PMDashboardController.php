@@ -102,6 +102,9 @@ class PMDashboardController extends Controller
         // Team Workload (hours logged this week)
         $teamWorkload = $this->getTeamWorkload();
 
+        // Upcoming Team Leaves (next 30 days)
+        $upcomingTeamLeaves = $this->getUpcomingTeamLeaves();
+
         // Notifications Summary
         $notificationsSummary = $this->notificationService->getNotificationsSummary($user->id);
 
@@ -121,6 +124,7 @@ class PMDashboardController extends Controller
             'projectsByPhase',
             'recentActivity',
             'teamWorkload',
+            'upcomingTeamLeaves',
             'notificationsSummary',
             'notifications',
             'unreadCount'
@@ -453,6 +457,45 @@ class PMDashboardController extends Controller
         usort($result, fn($a, $b) => $b['total_hours'] <=> $a['total_hours']);
 
         return $result;
+    }
+
+    /**
+     * Get upcoming team leaves for the next 30 days.
+     */
+    protected function getUpcomingTeamLeaves(): array
+    {
+        if (!class_exists(\Modules\Leave\Models\LeaveRecord::class)) {
+            return [];
+        }
+
+        try {
+            return \Modules\Leave\Models\LeaveRecord::with(['employee', 'leavePolicy'])
+                ->whereIn('status', ['approved', 'pending'])
+                ->where('start_date', '>=', today())
+                ->where('start_date', '<=', today()->addDays(30))
+                ->orderBy('start_date')
+                ->get()
+                ->map(function ($leave) {
+                    $days = $leave->start_date->diffInDays($leave->end_date) + 1;
+                    $isCurrentlyOnLeave = $leave->start_date->lte(today()) && $leave->end_date->gte(today());
+
+                    return [
+                        'id' => $leave->id,
+                        'employee_id' => $leave->employee_id,
+                        'employee_name' => $leave->employee->name ?? 'Unknown',
+                        'type' => $leave->leavePolicy->name ?? 'Leave',
+                        'start_date' => $leave->start_date,
+                        'end_date' => $leave->end_date,
+                        'days' => $days,
+                        'status' => $leave->status,
+                        'is_current' => $isCurrentlyOnLeave,
+                        'starts_in_days' => today()->diffInDays($leave->start_date, false),
+                    ];
+                })
+                ->toArray();
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
