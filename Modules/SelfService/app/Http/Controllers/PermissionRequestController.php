@@ -9,15 +9,18 @@ use Modules\SelfService\Services\RequestApprovalService;
 use Modules\Attendance\Models\AttendanceRule;
 use Modules\Attendance\Models\PermissionUsage;
 use Modules\Attendance\Models\Setting;
+use Modules\Attendance\Services\WorkingDaysService;
 use Carbon\Carbon;
 
 class PermissionRequestController extends Controller
 {
     protected RequestApprovalService $approvalService;
+    protected WorkingDaysService $workingDaysService;
 
-    public function __construct(RequestApprovalService $approvalService)
+    public function __construct(RequestApprovalService $approvalService, WorkingDaysService $workingDaysService)
     {
         $this->approvalService = $approvalService;
+        $this->workingDaysService = $workingDaysService;
     }
 
     /**
@@ -77,10 +80,10 @@ class PermissionRequestController extends Controller
 
         $date = Carbon::parse($validated['date']);
 
-        // Check if it's a weekend
-        if ($date->isWeekend()) {
+        // Check if it's a weekend or holiday (using settings-based weekend days)
+        if (!$this->workingDaysService->isWorkingDay($date)) {
             return back()->withInput()->withErrors([
-                'date' => 'Permission cannot be requested for weekends.',
+                'date' => 'Permission cannot be requested for weekends or public holidays.',
             ]);
         }
 
