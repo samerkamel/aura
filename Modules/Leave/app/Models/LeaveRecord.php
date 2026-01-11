@@ -48,6 +48,24 @@ class LeaveRecord extends Model
     const STATUS_PENDING = 'pending';
     const STATUS_APPROVED = 'approved';
     const STATUS_REJECTED = 'rejected';
+    const STATUS_CANCELLED = 'cancelled';
+
+    /**
+     * Check if leave can be cancelled (approved and start date is in the future)
+     */
+    public function canBeCancelled(): bool
+    {
+        return $this->status === self::STATUS_APPROVED
+            && $this->start_date->isFuture();
+    }
+
+    /**
+     * Scope to only include cancelled leave records.
+     */
+    public function scopeCancelled($query)
+    {
+        return $query->where('status', self::STATUS_CANCELLED);
+    }
 
     /**
      * Get the employee that owns the leave record.

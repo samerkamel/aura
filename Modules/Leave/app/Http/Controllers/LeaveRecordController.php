@@ -181,4 +181,46 @@ class LeaveRecordController extends Controller
       ], 500);
     }
   }
+
+  /**
+   * Cancel an approved leave record (only if start date is in the future).
+   *
+   * @param Employee $employee
+   * @param LeaveRecord $leaveRecord
+   * @return JsonResponse
+   */
+  public function cancel(Employee $employee, LeaveRecord $leaveRecord): JsonResponse
+  {
+    try {
+      // Ensure the leave record belongs to the employee
+      if ($leaveRecord->employee_id !== $employee->id) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Leave record does not belong to this employee.'
+        ], 404);
+      }
+
+      // Check if the leave can be cancelled
+      if (!$leaveRecord->canBeCancelled()) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Only approved future leaves can be cancelled.'
+        ], 422);
+      }
+
+      $leaveRecord->update([
+        'status' => LeaveRecord::STATUS_CANCELLED
+      ]);
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Leave request cancelled successfully.'
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Error cancelling leave record: ' . $e->getMessage()
+      ], 500);
+    }
+  }
 }

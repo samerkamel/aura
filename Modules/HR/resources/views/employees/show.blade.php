@@ -553,12 +553,25 @@
                 <td>{{ $record->start_date->format('M d') }} - {{ $record->end_date->format('M d, Y') }}</td>
                 <td>{{ $record->getDaysCount() }}</td>
                 <td>
-                  <span class="badge bg-{{ $record->status === 'approved' ? 'success' : ($record->status === 'rejected' ? 'danger' : 'warning') }}">
+                  @php
+                    $statusColor = match($record->status) {
+                      'approved' => 'success',
+                      'rejected' => 'danger',
+                      'cancelled' => 'secondary',
+                      default => 'warning',
+                    };
+                  @endphp
+                  <span class="badge bg-{{ $statusColor }}">
                     {{ ucfirst($record->status) }}
                   </span>
                 </td>
-                <td>
-                  <button class="btn btn-sm btn-icon btn-text-danger" onclick="deleteLeaveRecord({{ $record->id }})">
+                <td class="text-end">
+                  @if($record->canBeCancelled())
+                    <button class="btn btn-sm btn-icon btn-text-warning" onclick="cancelLeaveRecord({{ $record->id }})" title="Cancel">
+                      <i class="ti ti-x"></i>
+                    </button>
+                  @endif
+                  <button class="btn btn-sm btn-icon btn-text-danger" onclick="deleteLeaveRecord({{ $record->id }})" title="Delete">
                     <i class="ti ti-trash"></i>
                   </button>
                 </td>
@@ -1224,6 +1237,15 @@ function deleteLeaveRecord(id) {
   if(confirm('Delete this leave record?')) {
     fetch(`/api/v1/employees/{{ $employee->id }}/leave-records/${id}`, {
       method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
+    }).then(r => r.json()).then(data => { if(data.success) location.reload(); else alert(data.message); });
+  }
+}
+
+function cancelLeaveRecord(id) {
+  if(confirm('Cancel this approved leave request? The leave days will be restored to the balance.')) {
+    fetch(`/api/v1/employees/{{ $employee->id }}/leave-records/${id}/cancel`, {
+      method: 'POST',
       headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
     }).then(r => r.json()).then(data => { if(data.success) location.reload(); else alert(data.message); });
   }

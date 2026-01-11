@@ -12,5 +12,6 @@ Route::middleware(['auth:web'])->prefix('v1')->group(function () {
         Route::post('leave-records', [LeaveRecordController::class, 'store'])->name('employee.leave-records.store');
         Route::put('leave-records/{leaveRecord}', [LeaveRecordController::class, 'update'])->name('employee.leave-records.update');
         Route::delete('leave-records/{leaveRecord}', [LeaveRecordController::class, 'destroy'])->name('employee.leave-records.destroy');
+        Route::post('leave-records/{leaveRecord}/cancel', [LeaveRecordController::class, 'cancel'])->name('employee.leave-records.cancel');
     });
 });
