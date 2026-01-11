@@ -245,7 +245,7 @@
             <option value="">All Customers</option>
             @foreach($customers as $customer)
               <option value="{{ $customer->id }}" {{ ($filters['customer_id'] ?? '') == $customer->id ? 'selected' : '' }}>
-                {{ $customer->display_name }}
+                {{ $customer->company_name ?: $customer->name }}
               </option>
             @endforeach
           </select>
