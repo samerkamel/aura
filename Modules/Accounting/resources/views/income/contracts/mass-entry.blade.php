@@ -500,8 +500,31 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUI();
 
     // Add contract buttons
-    document.getElementById('add-contract-btn').addEventListener('click', addContract);
-    document.getElementById('add-first-contract-btn').addEventListener('click', addContract);
+    document.getElementById('add-contract-btn').addEventListener('click', () => addContract());
+    document.getElementById('add-first-contract-btn').addEventListener('click', () => addContract());
+
+    // Event delegation for modal buttons (ensures they work even with dynamic content)
+    container.addEventListener('click', function(e) {
+        const projectBtn = e.target.closest('.open-projects-modal');
+        const productBtn = e.target.closest('.open-products-modal');
+        const paymentBtn = e.target.closest('.open-payment-modal');
+
+        if (projectBtn) {
+            const card = projectBtn.closest('.contract-card');
+            const index = parseInt(card.dataset.rowIndex);
+            openProjectModal(index);
+        }
+        if (productBtn) {
+            const card = productBtn.closest('.contract-card');
+            const index = parseInt(card.dataset.rowIndex);
+            openProductModal(index);
+        }
+        if (paymentBtn) {
+            const card = paymentBtn.closest('.contract-card');
+            const index = parseInt(card.dataset.rowIndex);
+            openPaymentModal(index);
+        }
+    });
 
     // Validate and Save buttons
     document.getElementById('validate-btn').addEventListener('click', validateAll);
@@ -564,25 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup card event listeners
     function setupCardListeners(card, index) {
-        // Customer select change
-        card.querySelector('.customer-select').addEventListener('change', function() {
-            const contractData = contracts.find(c => c.row_index === index);
-            contractData.customer_id = this.value;
-
-            // Auto-fill client name from customer
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption && selectedOption.dataset.name) {
-                const clientNameInput = card.querySelector('[data-field="client_name"]');
-                if (!clientNameInput.value) {
-                    clientNameInput.value = selectedOption.dataset.name;
-                    contractData.client_name = selectedOption.dataset.name;
-                }
-                card.querySelector('.contract-client-name').textContent = selectedOption.dataset.name;
-            }
-            clearValidation();
-        });
-
-        // Field inputs
+        // Field inputs (customer select handled by Select2 initialization below)
         card.querySelectorAll('[data-field]').forEach(input => {
             input.addEventListener('input', function() {
                 const field = this.dataset.field;
@@ -615,17 +620,26 @@ document.addEventListener('DOMContentLoaded', function() {
             addContract({ ...contractData, row_index: null });
         });
 
-        // Open modals
-        card.querySelector('.open-projects-modal').addEventListener('click', function() {
-            openProjectModal(index);
-        });
+        // Initialize Select2 on customer dropdown
+        $(card).find('.customer-select').select2({
+            placeholder: 'Search customer...',
+            allowClear: true,
+            width: '100%'
+        }).on('change', function() {
+            const contractData = contracts.find(c => c.row_index === index);
+            contractData.customer_id = this.value;
 
-        card.querySelector('.open-products-modal').addEventListener('click', function() {
-            openProductModal(index);
-        });
-
-        card.querySelector('.open-payment-modal').addEventListener('click', function() {
-            openPaymentModal(index);
+            // Auto-fill client name from customer
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.dataset.name) {
+                const clientNameInput = card.querySelector('[data-field="client_name"]');
+                if (!clientNameInput.value) {
+                    clientNameInput.value = selectedOption.dataset.name;
+                    contractData.client_name = selectedOption.dataset.name;
+                }
+                card.querySelector('.contract-client-name').textContent = selectedOption.dataset.name;
+            }
+            clearValidation();
         });
     }
 

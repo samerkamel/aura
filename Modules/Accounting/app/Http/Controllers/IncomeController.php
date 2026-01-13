@@ -1196,10 +1196,11 @@ class IncomeController extends Controller
             abort(403, 'Unauthorized to create contracts.');
         }
 
-        // Get customers for Select2 dropdown
+        // Get customers for Select2 dropdown (need all fields for display_name accessor)
         $customers = \App\Models\Customer::active()
-            ->orderBy('name')
-            ->get(['id', 'name', 'email']);
+            ->get()
+            ->sortBy(fn($c) => strtolower($c->display_name))
+            ->values();
 
         // Get products for allocation
         $products = \App\Models\Product::where('is_active', true)
