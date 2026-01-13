@@ -14,6 +14,7 @@ class UpdateContractRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'customer_id' => 'required|exists:customers,id',
             'client_name' => 'required|string|max:255',
             'contract_number' => 'required|string|max:255|unique:contracts,contract_number,' . $this->route('contract')->id,
             'description' => 'nullable|string',

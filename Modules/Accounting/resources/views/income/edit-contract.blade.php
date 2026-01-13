@@ -31,6 +31,23 @@
                                 <div class="card-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
+                                            <label for="customer_id" class="form-label">Customer <span class="text-danger">*</span></label>
+                                            <select class="form-select @error('customer_id') is-invalid @enderror"
+                                                    id="customer_id" name="customer_id" required>
+                                                <option value="">Select customer...</option>
+                                                @foreach($customers as $customer)
+                                                    <option value="{{ $customer->id }}"
+                                                        {{ old('customer_id', $contract->customer_id) == $customer->id ? 'selected' : '' }}>
+                                                        {{ $customer->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('customer_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <label for="client_name" class="form-label">Client Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('client_name') is-invalid @enderror"
                                                    id="client_name" name="client_name" value="{{ old('client_name', $contract->client_name) }}"

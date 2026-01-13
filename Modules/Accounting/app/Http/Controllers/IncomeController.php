@@ -229,7 +229,12 @@ class IncomeController extends Controller
      */
     public function editContract(Contract $contract): View
     {
-        $contract->load(['products', 'projects']);
+        $contract->load(['products', 'projects', 'customer']);
+
+        // Get all customers for dropdown
+        $customers = \App\Models\Customer::active()
+            ->orderBy('name')
+            ->get();
 
         // Get all products for allocation dropdown
         $products = \App\Models\Product::where('is_active', true)
@@ -239,7 +244,7 @@ class IncomeController extends Controller
         // Get projects for project selection
         $projects = \Modules\Project\Models\Project::active()->orderBy('name')->get();
 
-        return view('accounting::income.edit-contract', compact('contract', 'products', 'projects'));
+        return view('accounting::income.edit-contract', compact('contract', 'customers', 'products', 'projects'));
     }
 
     /**
