@@ -203,7 +203,12 @@ class BitbucketController extends Controller
      */
     public function projectCommits(Request $request, Project $project)
     {
-        $query = $project->bitbucketCommits();
+        $query = $project->bitbucketCommits()->orderBy('committed_at', 'desc');
+
+        // Filter by repository
+        if ($request->filled('repo')) {
+            $query->where('repo_slug', $request->repo);
+        }
 
         // Filter by author
         if ($request->filled('author')) {
@@ -232,6 +237,16 @@ class BitbucketController extends Controller
             ->orderBy('author_name')
             ->get();
 
+        // Get unique repositories for filter dropdown
+        $repositories = $project->bitbucketCommits()
+            ->select('repo_slug')
+            ->distinct()
+            ->orderBy('repo_slug')
+            ->pluck('repo_slug');
+
+        // Get all linked repositories (new model + legacy)
+        $linkedRepos = $project->getAllBitbucketRepoSlugs();
+
         // Get stats
         $stats = $this->bitbucketService->getProjectCommitStats(
             $project,
@@ -239,7 +254,7 @@ class BitbucketController extends Controller
             $request->end_date
         );
 
-        return view('project::bitbucket.commits', compact('project', 'commits', 'authors', 'stats'));
+        return view('project::bitbucket.commits', compact('project', 'commits', 'authors', 'repositories', 'linkedRepos', 'stats'));
     }
 
     /**

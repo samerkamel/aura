@@ -87,7 +87,16 @@
                 <i class="ti ti-git-commit me-2"></i>Bitbucket Commits
             </h4>
             <p class="text-muted mb-0">
-                Repository: <strong>{{ $project->bitbucket_repo_slug }}</strong>
+                @if(count($linkedRepos) > 1)
+                    Repositories:
+                    @foreach($linkedRepos as $repo)
+                        <span class="badge bg-primary me-1">{{ $repo }}</span>
+                    @endforeach
+                @elseif(count($linkedRepos) == 1)
+                    Repository: <strong>{{ $linkedRepos[0] }}</strong>
+                @else
+                    <span class="text-warning">No repositories linked</span>
+                @endif
                 @if($project->bitbucket_last_sync_at)
                     <span class="ms-2">• Last synced {{ $project->bitbucket_last_sync_at->diffForHumans() }}</span>
                 @endif
@@ -173,7 +182,21 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="row g-3">
+                        @if($repositories->count() > 1)
+                        <div class="col-md-3">
+                            <select class="form-select form-select-sm" id="repoFilter" onchange="applyFilters()">
+                                <option value="">All Repositories</option>
+                                @foreach($repositories as $repo)
+                                    <option value="{{ $repo }}" {{ request('repo') == $repo ? 'selected' : '' }}>
+                                        {{ $repo }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                        @else
                         <div class="col-md-4">
+                        @endif
                             <select class="form-select form-select-sm" id="authorFilter" onchange="applyFilters()">
                                 <option value="">All Authors</option>
                                 @foreach($authors as $author)
@@ -183,11 +206,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <input type="date" class="form-control form-control-sm" id="startDate" value="{{ request('start_date') }}" onchange="applyFilters()">
+                        <div class="col-md-2">
+                            <input type="date" class="form-control form-control-sm" id="startDate" value="{{ request('start_date') }}" onchange="applyFilters()" placeholder="From">
                         </div>
-                        <div class="col-md-3">
-                            <input type="date" class="form-control form-control-sm" id="endDate" value="{{ request('end_date') }}" onchange="applyFilters()">
+                        <div class="col-md-2">
+                            <input type="date" class="form-control form-control-sm" id="endDate" value="{{ request('end_date') }}" onchange="applyFilters()" placeholder="To">
                         </div>
                         <div class="col-md-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary w-100" onclick="clearFilters()">
@@ -218,8 +241,11 @@
                                     <div class="commit-message mb-2">
                                         {{ $commit->message_summary }}
                                     </div>
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
                                         <code class="commit-hash">{{ $commit->short_hash }}</code>
+                                        @if($repositories->count() > 1 && $commit->repo_slug)
+                                            <span class="badge bg-label-info">{{ $commit->repo_slug }}</span>
+                                        @endif
                                         <small class="text-muted">{{ $commit->committed_at->format('M j, Y g:i A') }}</small>
                                         @if($commit->bitbucket_url)
                                             <a href="{{ $commit->bitbucket_url }}" target="_blank" class="text-muted small" onclick="event.stopPropagation();">
@@ -409,16 +435,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function applyFilters() {
+    const repoFilter = document.getElementById('repoFilter');
+    const repo = repoFilter ? repoFilter.value : '';
     const author = document.getElementById('authorFilter').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
 
     let url = new URL(window.location.href);
+    url.searchParams.set('repo', repo);
     url.searchParams.set('author', author);
     url.searchParams.set('start_date', startDate);
     url.searchParams.set('end_date', endDate);
 
     // Remove empty params
+    if (!repo) url.searchParams.delete('repo');
     if (!author) url.searchParams.delete('author');
     if (!startDate) url.searchParams.delete('start_date');
     if (!endDate) url.searchParams.delete('end_date');
