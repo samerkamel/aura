@@ -95,6 +95,7 @@ class IncomeSheetController extends Controller
 
     /**
      * Calculate financial data for a specific product.
+     * Uses the product allocation percentages/amounts from the contract_product pivot table.
      */
     private function calculateProductFinancials(\App\Models\Product $product, int $year): array
     {
@@ -111,10 +112,14 @@ class IncomeSheetController extends Controller
             ];
         }
 
-        // Get contracts allocated to this product
-        $contracts = Contract::whereHas('products', function($query) use ($product) {
+        // Get contracts allocated to this product WITH pivot data
+        $allContracts = Contract::whereHas('products', function($query) use ($product) {
             $query->where('products.id', $product->id);
-        });
+        })
+        ->with(['products' => function($query) use ($product) {
+            $query->where('products.id', $product->id);
+        }, 'payments'])
+        ->get();
 
         // Calculate monthly data
         for ($month = 1; $month <= 12; $month++) {
@@ -123,87 +128,110 @@ class IncomeSheetController extends Controller
             $monthEndDate = now()->setYear($year)->setMonth($month)->endOfMonth();
 
             // Contracts (Approved/Active contracts with start_date in this month)
-            $months[$month]['contracts'] = $contracts->clone()
-                ->whereIn('status', ['approved', 'active'])
-                ->whereBetween('start_date', [$monthStart, $monthEnd])
-                ->sum('total_amount');
-
-            // Expected Contracts (Draft contracts with start_date in this month)
-            $months[$month]['expected_contracts'] = $contracts->clone()
-                ->where('status', 'draft')
-                ->whereBetween('start_date', [$monthStart, $monthEnd])
-                ->sum('total_amount');
-
-            // Income (Paid contract payments in this month)
-            $months[$month]['income'] = $contracts->clone()
-                ->whereIn('status', ['approved', 'active'])
-                ->whereHas('payments', function($query) use ($monthStart, $monthEnd) {
-                    $query->where('status', 'paid')
-                          ->whereBetween('paid_date', [$monthStart, $monthEnd]);
+            $months[$month]['contracts'] = $allContracts
+                ->filter(function($contract) use ($monthStart, $monthEnd) {
+                    return in_array($contract->status, ['approved', 'active'])
+                        && $contract->start_date >= $monthStart
+                        && $contract->start_date <= $monthEnd;
                 })
-                ->with(['payments' => function($query) use ($monthStart, $monthEnd) {
-                    $query->where('status', 'paid')
-                          ->whereBetween('paid_date', [$monthStart, $monthEnd]);
-                }])
-                ->get()
                 ->sum(function($contract) {
-                    return $contract->payments->sum('paid_amount');
+                    return $this->getProductAllocation($contract);
                 });
 
-            // Expected Income (Pending/overdue payments due in this month)
-            $months[$month]['expected_income'] = $contracts->clone()
-                ->whereIn('status', ['approved', 'active'])
-                ->whereHas('payments', function($query) use ($monthStart, $monthEnd) {
-                    $query->whereIn('status', ['pending', 'overdue'])
-                          ->whereBetween('due_date', [$monthStart, $monthEnd]);
+            // Expected Contracts (Draft contracts with start_date in this month)
+            $months[$month]['expected_contracts'] = $allContracts
+                ->filter(function($contract) use ($monthStart, $monthEnd) {
+                    return $contract->status === 'draft'
+                        && $contract->start_date >= $monthStart
+                        && $contract->start_date <= $monthEnd;
                 })
-                ->with(['payments' => function($query) use ($monthStart, $monthEnd) {
-                    $query->whereIn('status', ['pending', 'overdue'])
-                          ->whereBetween('due_date', [$monthStart, $monthEnd]);
-                }])
-                ->get()
                 ->sum(function($contract) {
-                    return $contract->payments->sum('amount');
+                    return $this->getProductAllocation($contract);
+                });
+
+            // Income (Paid contract payments in this month) - allocated portion
+            $months[$month]['income'] = $allContracts
+                ->filter(function($contract) {
+                    return in_array($contract->status, ['approved', 'active']);
+                })
+                ->sum(function($contract) use ($monthStart, $monthEnd) {
+                    $paidPayments = $contract->payments
+                        ->filter(function($payment) use ($monthStart, $monthEnd) {
+                            return $payment->status === 'paid'
+                                && $payment->paid_date >= $monthStart
+                                && $payment->paid_date <= $monthEnd;
+                        })
+                        ->sum('paid_amount');
+
+                    // Apply product allocation ratio to the payment
+                    return $this->applyAllocationRatio($contract, $paidPayments);
+                });
+
+            // Expected Income (Pending/overdue payments due in this month) - allocated portion
+            $months[$month]['expected_income'] = $allContracts
+                ->filter(function($contract) {
+                    return in_array($contract->status, ['approved', 'active']);
+                })
+                ->sum(function($contract) use ($monthStart, $monthEnd) {
+                    $pendingPayments = $contract->payments
+                        ->filter(function($payment) use ($monthStart, $monthEnd) {
+                            return in_array($payment->status, ['pending', 'overdue'])
+                                && $payment->due_date >= $monthStart
+                                && $payment->due_date <= $monthEnd;
+                        })
+                        ->sum('amount');
+
+                    // Apply product allocation ratio to the payment
+                    return $this->applyAllocationRatio($contract, $pendingPayments);
                 });
 
             // Balance (Outstanding balance = approved contracts - paid income up to this month)
-            $totalApprovedContracts = $contracts->clone()
-                ->whereIn('status', ['approved', 'active'])
-                ->where('start_date', '<=', $monthEndDate)
-                ->sum('total_amount');
-
-            $totalPaidIncome = $contracts->clone()
-                ->whereIn('status', ['approved', 'active'])
-                ->whereHas('payments', function($query) use ($monthEndDate) {
-                    $query->where('status', 'paid')
-                          ->where('paid_date', '<=', $monthEndDate);
+            $totalApprovedContracts = $allContracts
+                ->filter(function($contract) use ($monthEndDate) {
+                    return in_array($contract->status, ['approved', 'active'])
+                        && $contract->start_date <= $monthEndDate;
                 })
-                ->with(['payments' => function($query) use ($monthEndDate) {
-                    $query->where('status', 'paid')
-                          ->where('paid_date', '<=', $monthEndDate);
-                }])
-                ->get()
                 ->sum(function($contract) {
-                    return $contract->payments->sum('paid_amount');
+                    return $this->getProductAllocation($contract);
+                });
+
+            $totalPaidIncome = $allContracts
+                ->filter(function($contract) {
+                    return in_array($contract->status, ['approved', 'active']);
+                })
+                ->sum(function($contract) use ($monthEndDate) {
+                    $paidPayments = $contract->payments
+                        ->filter(function($payment) use ($monthEndDate) {
+                            return $payment->status === 'paid'
+                                && $payment->paid_date <= $monthEndDate;
+                        })
+                        ->sum('paid_amount');
+
+                    return $this->applyAllocationRatio($contract, $paidPayments);
                 });
 
             $months[$month]['balance'] = $totalApprovedContracts - $totalPaidIncome;
         }
 
         // Calculate totals
-        $totalApprovedContracts = $contracts->clone()
-            ->whereIn('status', ['approved', 'active'])
-            ->sum('total_amount');
-
-        $totalIncome = $contracts->clone()
-            ->whereIn('status', ['approved', 'active'])
-            ->whereHas('payments', function($query) {
-                $query->where('status', 'paid');
+        $totalApprovedContracts = $allContracts
+            ->filter(function($contract) {
+                return in_array($contract->status, ['approved', 'active']);
             })
-            ->with('payments')
-            ->get()
             ->sum(function($contract) {
-                return $contract->payments->where('status', 'paid')->sum('paid_amount');
+                return $this->getProductAllocation($contract);
+            });
+
+        $totalIncome = $allContracts
+            ->filter(function($contract) {
+                return in_array($contract->status, ['approved', 'active']);
+            })
+            ->sum(function($contract) {
+                $paidPayments = $contract->payments
+                    ->where('status', 'paid')
+                    ->sum('paid_amount');
+
+                return $this->applyAllocationRatio($contract, $paidPayments);
             });
 
         $totals = [
@@ -218,6 +246,45 @@ class IncomeSheetController extends Controller
             'months' => $months,
             'totals' => $totals
         ];
+    }
+
+    /**
+     * Get the allocated amount for a product from a contract based on pivot data.
+     */
+    private function getProductAllocation(Contract $contract): float
+    {
+        // The products relation should be loaded with pivot data for the specific product
+        $productPivot = $contract->products->first()?->pivot;
+
+        if (!$productPivot) {
+            return 0;
+        }
+
+        if ($productPivot->allocation_type === 'amount' && $productPivot->allocation_amount) {
+            return (float) $productPivot->allocation_amount;
+        }
+
+        if ($productPivot->allocation_type === 'percentage' && $productPivot->allocation_percentage) {
+            return ($contract->total_amount * $productPivot->allocation_percentage) / 100;
+        }
+
+        // Default: no allocation specified, return 0 (or could return full amount if desired)
+        return 0;
+    }
+
+    /**
+     * Apply the product allocation ratio to a payment amount.
+     */
+    private function applyAllocationRatio(Contract $contract, float $paymentAmount): float
+    {
+        if ($contract->total_amount <= 0 || $paymentAmount <= 0) {
+            return 0;
+        }
+
+        $productAllocation = $this->getProductAllocation($contract);
+        $allocationRatio = $productAllocation / $contract->total_amount;
+
+        return $paymentAmount * $allocationRatio;
     }
 
     /**
