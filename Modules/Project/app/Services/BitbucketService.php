@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Project\Models\BitbucketSetting;
 use Modules\Project\Models\BitbucketCommit;
 use Modules\Project\Models\Project;
+use Modules\Project\Models\ProjectBitbucketRepository;
 
 class BitbucketService
 {
@@ -267,109 +268,144 @@ class BitbucketService
     }
 
     /**
-     * Sync commits for a project.
+     * Sync commits for a project from all linked repositories.
      */
     public function syncProjectCommits(Project $project): array
     {
-        if (!$project->bitbucket_repo_slug) {
-            return [
-                'success' => false,
-                'message' => 'Project is not linked to a Bitbucket repository',
-            ];
-        }
+        // Get all repository slugs (both from pivot table and legacy field)
+        $repositories = $project->bitbucketRepositories()->get();
 
-        $workspace = $project->bitbucket_workspace ?? $this->workspace;
-        $repoSlug = $project->bitbucket_repo_slug;
-
-        // Get the last synced commit date
-        $lastCommit = $project->bitbucketCommits()->orderByDesc('committed_at')->first();
-        $since = $lastCommit ? $lastCommit->committed_at->toIso8601String() : null;
-
-        try {
-            $commits = $this->getCommits($repoSlug, $since, 500);
-
-            $created = 0;
-            $skipped = 0;
-            $errors = [];
-
-            foreach ($commits as $commit) {
-                try {
-                    $hash = $commit['hash'] ?? null;
-                    if (!$hash) {
-                        continue;
-                    }
-
-                    // Skip if already exists
-                    if (BitbucketCommit::where('commit_hash', $hash)->exists()) {
-                        $skipped++;
-                        continue;
-                    }
-
-                    // Get diffstat for the commit
-                    $diffstat = $this->getCommitDiffstat($repoSlug, $hash);
-
-                    // Extract author info
-                    $author = $commit['author'] ?? [];
-                    $user = $author['user'] ?? [];
-                    $rawAuthor = $author['raw'] ?? '';
-
-                    // Parse author name and email from raw string (e.g., "Name <email@example.com>")
-                    $authorName = $user['display_name'] ?? '';
-                    $authorEmail = null;
-                    if (preg_match('/<(.+?)>/', $rawAuthor, $matches)) {
-                        $authorEmail = $matches[1];
-                    }
-                    if (!$authorName && preg_match('/^([^<]+)/', $rawAuthor, $matches)) {
-                        $authorName = trim($matches[1]);
-                    }
-
-                    BitbucketCommit::create([
-                        'project_id' => $project->id,
-                        'commit_hash' => $hash,
-                        'short_hash' => substr($hash, 0, 7),
-                        'message' => $commit['message'] ?? '',
-                        'author_name' => $authorName ?: 'Unknown',
-                        'author_email' => $authorEmail,
-                        'author_username' => $user['nickname'] ?? $user['username'] ?? null,
-                        'committed_at' => $commit['date'] ?? now(),
-                        'branch' => null, // Not directly available in commits endpoint
-                        'additions' => $diffstat['additions'],
-                        'deletions' => $diffstat['deletions'],
-                        'files_changed' => $diffstat['files'],
-                        'bitbucket_url' => $commit['links']['html']['href'] ?? null,
-                    ]);
-
-                    $created++;
-                } catch (\Exception $e) {
-                    $errors[] = "Commit {$hash}: " . $e->getMessage();
-                    Log::error("Bitbucket commit sync error", [
-                        'project' => $project->code,
-                        'commit' => $hash ?? 'unknown',
-                        'error' => $e->getMessage(),
-                    ]);
-                }
+        // Also check legacy field
+        if ($project->bitbucket_repo_slug) {
+            $legacyExists = $repositories->contains('repo_slug', $project->bitbucket_repo_slug);
+            if (!$legacyExists) {
+                // Create a fake collection item for legacy repo
+                $repositories = $repositories->push((object)[
+                    'repo_slug' => $project->bitbucket_repo_slug,
+                    'workspace' => $project->bitbucket_workspace,
+                ]);
             }
+        }
 
-            // Update last sync time
-            $project->update(['bitbucket_last_sync_at' => now()]);
-
-            return [
-                'success' => true,
-                'message' => "Synced {$created} new commits, skipped {$skipped} existing",
-                'created' => $created,
-                'skipped' => $skipped,
-                'errors' => $errors,
-            ];
-        } catch (\Exception $e) {
+        if ($repositories->isEmpty()) {
             return [
                 'success' => false,
-                'message' => 'Sync failed: ' . $e->getMessage(),
+                'message' => 'Project is not linked to any Bitbucket repositories',
             ];
         }
+
+        $totalCreated = 0;
+        $totalSkipped = 0;
+        $allErrors = [];
+        $repoResults = [];
+
+        foreach ($repositories as $repo) {
+            $repoSlug = $repo->repo_slug;
+            $workspace = $repo->workspace ?? $this->workspace;
+
+            // Get the last synced commit date for this specific repo
+            $lastCommit = $project->bitbucketCommits()
+                ->where('repo_slug', $repoSlug)
+                ->orderByDesc('committed_at')
+                ->first();
+            $since = $lastCommit ? $lastCommit->committed_at->toIso8601String() : null;
+
+            try {
+                $commits = $this->getCommits($repoSlug, $since, 500);
+
+                $created = 0;
+                $skipped = 0;
+
+                foreach ($commits as $commit) {
+                    try {
+                        $hash = $commit['hash'] ?? null;
+                        if (!$hash) {
+                            continue;
+                        }
+
+                        // Skip if already exists for this project
+                        if (BitbucketCommit::where('commit_hash', $hash)->where('project_id', $project->id)->exists()) {
+                            $skipped++;
+                            continue;
+                        }
+
+                        // Get diffstat for the commit
+                        $diffstat = $this->getCommitDiffstat($repoSlug, $hash);
+
+                        // Extract author info
+                        $author = $commit['author'] ?? [];
+                        $user = $author['user'] ?? [];
+                        $rawAuthor = $author['raw'] ?? '';
+
+                        // Parse author name and email from raw string
+                        $authorName = $user['display_name'] ?? '';
+                        $authorEmail = null;
+                        if (preg_match('/<(.+?)>/', $rawAuthor, $matches)) {
+                            $authorEmail = $matches[1];
+                        }
+                        if (!$authorName && preg_match('/^([^<]+)/', $rawAuthor, $matches)) {
+                            $authorName = trim($matches[1]);
+                        }
+
+                        BitbucketCommit::create([
+                            'project_id' => $project->id,
+                            'repo_slug' => $repoSlug,
+                            'commit_hash' => $hash,
+                            'short_hash' => substr($hash, 0, 7),
+                            'message' => $commit['message'] ?? '',
+                            'author_name' => $authorName ?: 'Unknown',
+                            'author_email' => $authorEmail,
+                            'author_username' => $user['nickname'] ?? $user['username'] ?? null,
+                            'committed_at' => $commit['date'] ?? now(),
+                            'branch' => null,
+                            'additions' => $diffstat['additions'],
+                            'deletions' => $diffstat['deletions'],
+                            'files_changed' => $diffstat['files'],
+                            'bitbucket_url' => $commit['links']['html']['href'] ?? null,
+                        ]);
+
+                        $created++;
+                    } catch (\Exception $e) {
+                        $allErrors[] = "Repo {$repoSlug}, Commit {$hash}: " . $e->getMessage();
+                        Log::error("Bitbucket commit sync error", [
+                            'project' => $project->code,
+                            'repo' => $repoSlug,
+                            'commit' => $hash ?? 'unknown',
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+
+                $totalCreated += $created;
+                $totalSkipped += $skipped;
+                $repoResults[$repoSlug] = ['created' => $created, 'skipped' => $skipped];
+
+                // Update last sync time for this repo in pivot table
+                if ($repo instanceof ProjectBitbucketRepository) {
+                    $repo->update(['last_sync_at' => now()]);
+                }
+
+            } catch (\Exception $e) {
+                $allErrors[] = "Repo {$repoSlug}: " . $e->getMessage();
+            }
+        }
+
+        // Update project's last sync time
+        $project->update(['bitbucket_last_sync_at' => now()]);
+
+        return [
+            'success' => true,
+            'message' => "Synced {$totalCreated} new commits from " . count($repositories) . " repositories, skipped {$totalSkipped} existing",
+            'created' => $totalCreated,
+            'skipped' => $totalSkipped,
+            'repositories' => $repoResults,
+            'errors' => $allErrors,
+        ];
     }
 
     /**
      * Link a project to a Bitbucket repository.
+     * Supports multiple repositories per project.
      */
     public function linkRepository(Project $project, string $repoSlug, ?string $workspace = null): array
     {
@@ -385,11 +421,40 @@ class BitbucketService
             ];
         }
 
-        $project->update([
-            'bitbucket_workspace' => $workspace,
-            'bitbucket_repo_slug' => $repoSlug,
-            'bitbucket_repo_uuid' => $repo['uuid'] ?? null,
+        // Check if already linked
+        $existing = ProjectBitbucketRepository::where('project_id', $project->id)
+            ->where('repo_slug', $repoSlug)
+            ->first();
+
+        if ($existing) {
+            return [
+                'success' => true,
+                'message' => 'Repository already linked',
+                'repository' => [
+                    'name' => $repo['name'],
+                    'slug' => $repo['slug'],
+                    'description' => $repo['description'] ?? '',
+                ],
+            ];
+        }
+
+        // Create new link in pivot table
+        ProjectBitbucketRepository::create([
+            'project_id' => $project->id,
+            'repo_slug' => $repoSlug,
+            'repo_name' => $repo['name'],
+            'workspace' => $workspace,
+            'repo_uuid' => $repo['uuid'] ?? null,
         ]);
+
+        // Also update legacy field for backward compatibility (first repo only)
+        if (empty($project->bitbucket_repo_slug)) {
+            $project->update([
+                'bitbucket_workspace' => $workspace,
+                'bitbucket_repo_slug' => $repoSlug,
+                'bitbucket_repo_uuid' => $repo['uuid'] ?? null,
+            ]);
+        }
 
         return [
             'success' => true,
@@ -400,6 +465,41 @@ class BitbucketService
                 'description' => $repo['description'] ?? '',
             ],
         ];
+    }
+
+    /**
+     * Unlink a specific repository from a project.
+     */
+    public function unlinkRepositoryBySlug(Project $project, string $repoSlug): void
+    {
+        // Remove from pivot table
+        ProjectBitbucketRepository::where('project_id', $project->id)
+            ->where('repo_slug', $repoSlug)
+            ->delete();
+
+        // If this was the legacy repo, clear those fields
+        if ($project->bitbucket_repo_slug === $repoSlug) {
+            // Try to promote another repo to legacy field
+            $nextRepo = ProjectBitbucketRepository::where('project_id', $project->id)->first();
+
+            if ($nextRepo) {
+                $project->update([
+                    'bitbucket_workspace' => $nextRepo->workspace,
+                    'bitbucket_repo_slug' => $nextRepo->repo_slug,
+                    'bitbucket_repo_uuid' => $nextRepo->repo_uuid,
+                ]);
+            } else {
+                $project->update([
+                    'bitbucket_workspace' => null,
+                    'bitbucket_repo_slug' => null,
+                    'bitbucket_repo_uuid' => null,
+                    'bitbucket_last_sync_at' => null,
+                ]);
+            }
+        }
+
+        // Optionally delete commits for this repo
+        // BitbucketCommit::where('project_id', $project->id)->where('repo_slug', $repoSlug)->delete();
     }
 
     /**

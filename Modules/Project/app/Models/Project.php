@@ -481,11 +481,35 @@ class Project extends Model
     }
 
     /**
+     * Get all linked Bitbucket repositories for this project.
+     */
+    public function bitbucketRepositories()
+    {
+        return $this->hasMany(ProjectBitbucketRepository::class)->orderBy('repo_name');
+    }
+
+    /**
      * Check if project is linked to a Bitbucket repository.
+     * Checks both legacy single-repo field and new multi-repo relationship.
      */
     public function hasBitbucketRepository(): bool
     {
-        return !empty($this->bitbucket_repo_slug);
+        return !empty($this->bitbucket_repo_slug) || $this->bitbucketRepositories()->exists();
+    }
+
+    /**
+     * Get all repository slugs (both legacy and new).
+     */
+    public function getAllBitbucketRepoSlugs(): array
+    {
+        $slugs = $this->bitbucketRepositories()->pluck('repo_slug')->toArray();
+
+        // Include legacy single repo if set
+        if (!empty($this->bitbucket_repo_slug) && !in_array($this->bitbucket_repo_slug, $slugs)) {
+            $slugs[] = $this->bitbucket_repo_slug;
+        }
+
+        return $slugs;
     }
 
     /**

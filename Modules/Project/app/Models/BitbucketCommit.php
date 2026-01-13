@@ -12,6 +12,7 @@ class BitbucketCommit extends Model
 
     protected $fillable = [
         'project_id',
+        'repo_slug',
         'commit_hash',
         'short_hash',
         'message',

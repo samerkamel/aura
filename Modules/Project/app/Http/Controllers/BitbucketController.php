@@ -41,7 +41,7 @@ class BitbucketController extends Controller
         $settings = BitbucketSetting::getInstance();
         $isConfigured = $settings->isConfigured();
 
-        $projects = Project::with('customer')
+        $projects = Project::with(['customer', 'bitbucketRepositories'])
             ->orderBy('is_active', 'desc')
             ->orderBy('name')
             ->get();
@@ -151,9 +151,21 @@ class BitbucketController extends Controller
     /**
      * Unlink a repository from a project.
      */
-    public function unlinkRepository(Project $project)
+    public function unlinkRepository(Request $request, Project $project)
     {
-        $this->bitbucketService->unlinkRepository($project);
+        $repoSlug = $request->input('repo_slug');
+
+        if ($repoSlug) {
+            // Unlink specific repository
+            $this->bitbucketService->unlinkRepositoryBySlug($project, $repoSlug);
+        } else {
+            // Unlink all repositories (legacy behavior)
+            $this->bitbucketService->unlinkRepository($project);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->back()->with('success', 'Repository unlinked successfully');
     }

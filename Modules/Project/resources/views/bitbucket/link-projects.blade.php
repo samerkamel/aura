@@ -3,7 +3,7 @@
 @section('title', 'Link Projects to Bitbucket')
 
 @section('vendor-style')
-@vite(['resources/assets/vendor/libs/toastr/toastr.scss'])
+@vite(['resources/assets/vendor/libs/toastr/toastr.scss', 'resources/assets/vendor/libs/select2/select2.scss'])
 <style>
     .project-row {
         transition: background-color 0.2s;
@@ -11,20 +11,27 @@
     .project-row:hover {
         background-color: #f8f9fa;
     }
-    .project-row.linked {
+    .project-row.has-repos {
         background-color: #d4edda;
     }
-    .repo-select {
-        min-width: 250px;
+    .repo-badge {
+        font-size: 0.75rem;
+        margin: 2px;
     }
-    .status-badge {
-        min-width: 80px;
+    .select2-container {
+        min-width: 300px !important;
+    }
+    .linked-repos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
     }
 </style>
 @endsection
 
 @section('vendor-script')
-@vite(['resources/assets/vendor/libs/toastr/toastr.js'])
+@vite(['resources/assets/vendor/libs/toastr/toastr.js', 'resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('content')
@@ -42,16 +49,13 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-1">
-                <i class="ti ti-link me-2"></i>Bulk Link Projects to Repositories
+                <i class="ti ti-link me-2"></i>Link Projects to Repositories
             </h4>
-            <p class="text-muted mb-0">Link multiple projects to Bitbucket repositories at once</p>
+            <p class="text-muted mb-0">Link multiple repositories to each project</p>
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-outline-secondary" id="refreshReposBtn">
                 <i class="ti ti-refresh me-1"></i>Refresh Repositories
-            </button>
-            <button type="button" class="btn btn-primary" id="saveAllBtn" disabled>
-                <i class="ti ti-device-floppy me-1"></i>Save All Links
             </button>
         </div>
     </div>
@@ -82,8 +86,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="mb-0" id="linkedCount">{{ $projects->where('bitbucket_repo_slug', '!=', null)->count() }}</h4>
-                                <small>Linked</small>
+                                <h4 class="mb-0" id="linkedCount">{{ $projects->filter(fn($p) => $p->hasBitbucketRepository())->count() }}</h4>
+                                <small>With Repositories</small>
                             </div>
                             <i class="ti ti-link display-6 opacity-50"></i>
                         </div>
@@ -95,8 +99,8 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="mb-0" id="unlinkedCount">{{ $projects->where('bitbucket_repo_slug', null)->count() }}</h4>
-                                <small>Not Linked</small>
+                                <h4 class="mb-0" id="unlinkedCount">{{ $projects->filter(fn($p) => !$p->hasBitbucketRepository())->count() }}</h4>
+                                <small>No Repositories</small>
                             </div>
                             <i class="ti ti-unlink display-6 opacity-50"></i>
                         </div>
@@ -131,8 +135,8 @@
                     <div class="col-md-3">
                         <select class="form-select" id="filterStatus">
                             <option value="">All Projects</option>
-                            <option value="linked">Linked Only</option>
-                            <option value="unlinked">Not Linked Only</option>
+                            <option value="linked">With Repositories</option>
+                            <option value="unlinked">No Repositories</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -157,27 +161,24 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 50px;">
-                                <input type="checkbox" class="form-check-input" id="selectAll">
-                            </th>
                             <th>Project</th>
                             <th>Code</th>
-                            <th>Status</th>
-                            <th>Repository</th>
-                            <th style="width: 100px;">Actions</th>
+                            <th>Linked Repositories</th>
+                            <th style="width: 350px;">Add Repository</th>
                         </tr>
                     </thead>
                     <tbody id="projectsTable">
                         @foreach($projects as $project)
-                            <tr class="project-row {{ $project->bitbucket_repo_slug ? 'linked' : '' }}"
+                            @php
+                                $linkedRepos = $project->bitbucketRepositories;
+                                $hasRepos = $project->hasBitbucketRepository();
+                            @endphp
+                            <tr class="project-row {{ $hasRepos ? 'has-repos' : '' }}"
                                 data-project-id="{{ $project->id }}"
                                 data-project-name="{{ strtolower($project->name) }}"
                                 data-project-code="{{ strtolower($project->code) }}"
-                                data-is-linked="{{ $project->bitbucket_repo_slug ? 'linked' : 'unlinked' }}"
+                                data-is-linked="{{ $hasRepos ? 'linked' : 'unlinked' }}"
                                 data-is-active="{{ $project->is_active ? 'active' : 'inactive' }}">
-                                <td>
-                                    <input type="checkbox" class="form-check-input project-checkbox" value="{{ $project->id }}">
-                                </td>
                                 <td>
                                     <div class="fw-semibold">{{ $project->name }}</div>
                                     @if($project->customer)
@@ -186,31 +187,37 @@
                                 </td>
                                 <td><code>{{ $project->code }}</code></td>
                                 <td>
-                                    @if($project->bitbucket_repo_slug)
-                                        <span class="badge bg-success status-badge">Linked</span>
-                                    @else
-                                        <span class="badge bg-secondary status-badge">Not Linked</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <select class="form-select form-select-sm repo-select"
-                                            data-project-id="{{ $project->id }}"
-                                            data-original="{{ $project->bitbucket_repo_slug }}">
-                                        <option value="">-- Select Repository --</option>
-                                        @if($project->bitbucket_repo_slug)
-                                            <option value="{{ $project->bitbucket_repo_slug }}" selected>
-                                                {{ $project->bitbucket_repo_slug }} (current)
-                                            </option>
+                                    <div class="linked-repos" id="repos-{{ $project->id }}">
+                                        @foreach($linkedRepos as $repo)
+                                            <span class="badge bg-primary repo-badge" data-repo-slug="{{ $repo->repo_slug }}">
+                                                {{ $repo->display_name }}
+                                                <i class="ti ti-x ms-1 remove-repo" style="cursor: pointer;"
+                                                   data-project-id="{{ $project->id }}"
+                                                   data-repo-slug="{{ $repo->repo_slug }}"></i>
+                                            </span>
+                                        @endforeach
+                                        @if($project->bitbucket_repo_slug && !$linkedRepos->contains('repo_slug', $project->bitbucket_repo_slug))
+                                            <span class="badge bg-secondary repo-badge" data-repo-slug="{{ $project->bitbucket_repo_slug }}">
+                                                {{ $project->bitbucket_repo_slug }} (legacy)
+                                                <i class="ti ti-x ms-1 remove-repo" style="cursor: pointer;"
+                                                   data-project-id="{{ $project->id }}"
+                                                   data-repo-slug="{{ $project->bitbucket_repo_slug }}"></i>
+                                            </span>
                                         @endif
-                                    </select>
+                                        @if(!$hasRepos)
+                                            <span class="text-muted small">No repositories linked</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td>
-                                    @if($project->bitbucket_repo_slug)
-                                        <button type="button" class="btn btn-sm btn-outline-danger unlink-btn"
-                                                data-project-id="{{ $project->id }}">
-                                            <i class="ti ti-unlink"></i>
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select form-select-sm repo-select" data-project-id="{{ $project->id }}">
+                                            <option value="">Select repository to add...</option>
+                                        </select>
+                                        <button type="button" class="btn btn-primary btn-sm add-repo-btn" data-project-id="{{ $project->id }}">
+                                            <i class="ti ti-plus"></i>
                                         </button>
-                                    @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -226,7 +233,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let repositories = [];
-    let pendingChanges = new Map();
 
     // Load repositories on page load
     loadRepositories();
@@ -266,66 +272,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function populateRepoSelects() {
         document.querySelectorAll('.repo-select').forEach(select => {
-            const currentValue = select.dataset.original;
             const projectId = select.dataset.projectId;
+            const linkedReposContainer = document.getElementById(`repos-${projectId}`);
+            const linkedSlugs = Array.from(linkedReposContainer?.querySelectorAll('[data-repo-slug]') || [])
+                .map(el => el.dataset.repoSlug);
 
-            // Clear options except first
-            select.innerHTML = '<option value="">-- Select Repository --</option>';
+            select.innerHTML = '<option value="">Select repository to add...</option>';
 
-            // Add all repos
             repositories.forEach(repo => {
+                // Skip if already linked
+                if (linkedSlugs.includes(repo.slug)) return;
+
                 const option = document.createElement('option');
                 option.value = repo.slug;
                 option.textContent = repo.name;
-                if (repo.slug === currentValue) {
-                    option.selected = true;
-                    option.textContent += ' (current)';
-                }
                 select.appendChild(option);
             });
         });
     }
 
-    // Track changes
-    document.querySelectorAll('.repo-select').forEach(select => {
-        select.addEventListener('change', function() {
+    // Add repository button click
+    document.querySelectorAll('.add-repo-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
             const projectId = this.dataset.projectId;
-            const originalValue = this.dataset.original || '';
-            const newValue = this.value;
+            const select = document.querySelector(`select[data-project-id="${projectId}"]`);
+            const repoSlug = select?.value;
 
-            if (newValue !== originalValue) {
-                pendingChanges.set(projectId, newValue);
-                this.classList.add('border-warning');
-            } else {
-                pendingChanges.delete(projectId);
-                this.classList.remove('border-warning');
+            if (!repoSlug) {
+                toastr.warning('Please select a repository');
+                return;
             }
 
-            updateSaveButton();
-        });
-    });
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
-    function updateSaveButton() {
-        const btn = document.getElementById('saveAllBtn');
-        if (btn) {
-            btn.disabled = pendingChanges.size === 0;
-            btn.innerHTML = pendingChanges.size > 0
-                ? `<i class="ti ti-device-floppy me-1"></i>Save ${pendingChanges.size} Change${pendingChanges.size > 1 ? 's' : ''}`
-                : '<i class="ti ti-device-floppy me-1"></i>Save All Links';
-        }
-    }
-
-    // Save all changes
-    document.getElementById('saveAllBtn')?.addEventListener('click', async function() {
-        if (pendingChanges.size === 0) return;
-
-        this.disabled = true;
-        this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
-
-        let success = 0;
-        let failed = 0;
-
-        for (const [projectId, repoSlug] of pendingChanges) {
             try {
                 const response = await fetch(`/projects/${projectId}/bitbucket/link`, {
                     method: 'POST',
@@ -337,87 +317,88 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({ repo_slug: repoSlug })
                 });
 
-                if (response.ok) {
-                    success++;
-                    // Update UI
-                    const row = document.querySelector(`tr[data-project-id="${projectId}"]`);
-                    const select = document.querySelector(`select[data-project-id="${projectId}"]`);
-                    if (row && select) {
-                        if (repoSlug) {
-                            row.classList.add('linked');
-                            row.dataset.isLinked = 'linked';
-                            row.querySelector('.status-badge').className = 'badge bg-success status-badge';
-                            row.querySelector('.status-badge').textContent = 'Linked';
-                        }
-                        select.dataset.original = repoSlug;
-                        select.classList.remove('border-warning');
-                    }
-                } else {
-                    failed++;
-                }
-            } catch (error) {
-                failed++;
-            }
-        }
+                const data = await response.json();
 
-        pendingChanges.clear();
-        updateSaveButton();
-        updateCounts();
+                if (response.ok && data.success) {
+                    // Add badge to the linked repos container
+                    const container = document.getElementById(`repos-${projectId}`);
+                    const noReposText = container.querySelector('.text-muted');
+                    if (noReposText) noReposText.remove();
 
-        if (success > 0) {
-            toastr.success(`Successfully linked ${success} project${success > 1 ? 's' : ''}`);
-        }
-        if (failed > 0) {
-            toastr.error(`Failed to link ${failed} project${failed > 1 ? 's' : ''}`);
-        }
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-primary repo-badge';
+                    badge.dataset.repoSlug = repoSlug;
+                    badge.innerHTML = `${data.repository?.name || repoSlug} <i class="ti ti-x ms-1 remove-repo" style="cursor: pointer;" data-project-id="${projectId}" data-repo-slug="${repoSlug}"></i>`;
+                    container.appendChild(badge);
 
-        this.disabled = false;
-        this.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save All Links';
-    });
+                    // Attach remove handler
+                    badge.querySelector('.remove-repo').addEventListener('click', handleRemoveRepo);
 
-    // Unlink buttons
-    document.querySelectorAll('.unlink-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const projectId = this.dataset.projectId;
-            if (!confirm('Are you sure you want to unlink this repository?')) return;
+                    // Update row class
+                    document.querySelector(`tr[data-project-id="${projectId}"]`).classList.add('has-repos');
+                    document.querySelector(`tr[data-project-id="${projectId}"]`).dataset.isLinked = 'linked';
 
-            this.disabled = true;
-            this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                    // Reset select and remove option
+                    select.value = '';
+                    const optionToRemove = select.querySelector(`option[value="${repoSlug}"]`);
+                    if (optionToRemove) optionToRemove.remove();
 
-            try {
-                const response = await fetch(`/projects/${projectId}/bitbucket/unlink`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                if (response.ok) {
-                    const row = document.querySelector(`tr[data-project-id="${projectId}"]`);
-                    const select = document.querySelector(`select[data-project-id="${projectId}"]`);
-                    if (row && select) {
-                        row.classList.remove('linked');
-                        row.dataset.isLinked = 'unlinked';
-                        row.querySelector('.status-badge').className = 'badge bg-secondary status-badge';
-                        row.querySelector('.status-badge').textContent = 'Not Linked';
-                        select.value = '';
-                        select.dataset.original = '';
-                        this.remove();
-                    }
                     updateCounts();
-                    toastr.success('Repository unlinked');
+                    toastr.success(`Linked ${data.repository?.name || repoSlug}`);
                 } else {
-                    toastr.error('Failed to unlink repository');
-                    this.disabled = false;
-                    this.innerHTML = '<i class="ti ti-unlink"></i>';
+                    toastr.error(data.message || 'Failed to link repository');
                 }
             } catch (error) {
-                toastr.error('Failed to unlink repository');
+                toastr.error('Failed to link repository');
+            } finally {
                 this.disabled = false;
-                this.innerHTML = '<i class="ti ti-unlink"></i>';
+                this.innerHTML = '<i class="ti ti-plus"></i>';
             }
         });
+    });
+
+    // Remove repository handler
+    function handleRemoveRepo() {
+        const projectId = this.dataset.projectId;
+        const repoSlug = this.dataset.repoSlug;
+        const badge = this.closest('.repo-badge');
+
+        if (!confirm(`Unlink ${repoSlug} from this project?`)) return;
+
+        fetch(`/projects/${projectId}/bitbucket/unlink`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ repo_slug: repoSlug })
+        })
+        .then(response => {
+            if (response.ok) {
+                badge.remove();
+
+                // Check if any repos left
+                const container = document.getElementById(`repos-${projectId}`);
+                if (!container.querySelector('.repo-badge')) {
+                    container.innerHTML = '<span class="text-muted small">No repositories linked</span>';
+                    document.querySelector(`tr[data-project-id="${projectId}"]`).classList.remove('has-repos');
+                    document.querySelector(`tr[data-project-id="${projectId}"]`).dataset.isLinked = 'unlinked';
+                }
+
+                // Re-add option to select
+                populateRepoSelects();
+                updateCounts();
+                toastr.success('Repository unlinked');
+            } else {
+                toastr.error('Failed to unlink repository');
+            }
+        })
+        .catch(() => toastr.error('Failed to unlink repository'));
+    }
+
+    // Attach remove handlers to existing badges
+    document.querySelectorAll('.remove-repo').forEach(el => {
+        el.addEventListener('click', handleRemoveRepo);
     });
 
     // Search and filter
@@ -438,17 +419,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let show = true;
 
-            // Search filter
             if (search && !name.includes(search) && !code.includes(search)) {
                 show = false;
             }
-
-            // Status filter
             if (status && isLinked !== status) {
                 show = false;
             }
-
-            // Active filter
             if (active && isActive !== active) {
                 show = false;
             }
@@ -468,22 +444,13 @@ document.addEventListener('DOMContentLoaded', function() {
         applyFilters();
     });
 
-    // Apply default filter (active only)
     applyFilters();
 
-    // Select all checkbox
-    document.getElementById('selectAll')?.addEventListener('change', function() {
-        const isChecked = this.checked;
-        document.querySelectorAll('.project-row:not([style*="display: none"]) .project-checkbox').forEach(cb => {
-            cb.checked = isChecked;
-        });
-    });
-
     function updateCounts() {
-        const linked = document.querySelectorAll('.project-row.linked').length;
-        const unlinked = document.querySelectorAll('.project-row:not(.linked)').length;
+        const linked = document.querySelectorAll('.project-row.has-repos').length;
+        const total = document.querySelectorAll('.project-row').length;
         document.getElementById('linkedCount').textContent = linked;
-        document.getElementById('unlinkedCount').textContent = unlinked;
+        document.getElementById('unlinkedCount').textContent = total - linked;
     }
 });
 </script>
