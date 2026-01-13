@@ -5,43 +5,67 @@
 @section('vendor-style')
 @vite(['resources/assets/vendor/libs/toastr/toastr.scss', 'resources/assets/vendor/libs/select2/select2.scss'])
 <style>
-    .project-row {
+    .project-row, .repo-row {
         transition: background-color 0.2s;
     }
-    .project-row:hover {
+    .project-row:hover, .repo-row:hover {
         background-color: #f8f9fa;
     }
-    .project-row.has-repos {
+    .project-row.has-repos, .repo-row.has-projects {
         background-color: #d4edda;
     }
-    .repo-badge {
+    .repo-badge, .project-badge {
         font-size: 0.75rem;
         margin: 2px;
     }
-    .linked-repos {
+    .linked-repos, .linked-projects {
         display: flex;
         flex-wrap: wrap;
         gap: 4px;
         margin-top: 4px;
     }
-    .repo-add-container {
+    .repo-add-container, .project-add-container {
         display: flex;
         gap: 8px;
         align-items: center;
     }
-    .repo-add-container .select2-container {
+    .repo-add-container .select2-container,
+    .project-add-container .select2-container {
         flex: 1;
         min-width: 250px;
     }
-    .repo-add-container .select2-selection {
+    .repo-add-container .select2-selection,
+    .project-add-container .select2-selection {
         height: 31px !important;
         font-size: 0.875rem;
     }
-    .repo-add-container .select2-selection__rendered {
+    .repo-add-container .select2-selection__rendered,
+    .project-add-container .select2-selection__rendered {
         line-height: 29px !important;
     }
-    .repo-add-container .select2-selection__arrow {
+    .repo-add-container .select2-selection__arrow,
+    .project-add-container .select2-selection__arrow {
         height: 29px !important;
+    }
+    .view-switch {
+        display: flex;
+        gap: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+    .view-switch .btn {
+        border-radius: 0;
+        border: none;
+        padding: 8px 20px;
+    }
+    .view-switch .btn.active {
+        background-color: #7367f0;
+        color: white;
+    }
+    .view-switch .btn:not(.active) {
+        background-color: #f8f9fa;
+        color: #697a8d;
     }
 </style>
 @endsection
@@ -65,13 +89,22 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-1">
-                <i class="ti ti-link me-2"></i>Link Projects to Repositories
+                <i class="ti ti-link me-2"></i><span id="viewTitle">Link Projects to Repositories</span>
             </h4>
-            <p class="text-muted mb-0">Link multiple repositories to each project</p>
+            <p class="text-muted mb-0" id="viewSubtitle">Link multiple repositories to each project</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 align-items-center">
+            <!-- View Switch -->
+            <div class="view-switch me-2">
+                <button type="button" class="btn active" id="projectsViewBtn" data-view="projects">
+                    <i class="ti ti-folder me-1"></i>Projects
+                </button>
+                <button type="button" class="btn" id="reposViewBtn" data-view="repos">
+                    <i class="ti ti-git-branch me-1"></i>Repositories
+                </button>
+            </div>
             <button type="button" class="btn btn-outline-secondary" id="refreshReposBtn">
-                <i class="ti ti-refresh me-1"></i>Refresh Repositories
+                <i class="ti ti-refresh me-1"></i>Refresh
             </button>
         </div>
     </div>
@@ -103,7 +136,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h4 class="mb-0" id="linkedCount">{{ $projects->filter(fn($p) => $p->hasBitbucketRepository())->count() }}</h4>
-                                <small>With Repositories</small>
+                                <small id="linkedLabel">Projects Linked</small>
                             </div>
                             <i class="ti ti-link display-6 opacity-50"></i>
                         </div>
@@ -116,7 +149,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h4 class="mb-0" id="unlinkedCount">{{ $projects->filter(fn($p) => !$p->hasBitbucketRepository())->count() }}</h4>
-                                <small>No Repositories</small>
+                                <small id="unlinkedLabel">Not Linked</small>
                             </div>
                             <i class="ti ti-unlink display-6 opacity-50"></i>
                         </div>
@@ -145,17 +178,17 @@
                     <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text"><i class="ti ti-search"></i></span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Search projects...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" id="filterStatus">
-                            <option value="">All Projects</option>
-                            <option value="linked">With Repositories</option>
-                            <option value="unlinked">No Repositories</option>
+                            <option value="">All</option>
+                            <option value="linked">Linked</option>
+                            <option value="unlinked">Not Linked</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" id="activeFilterContainer">
                         <select class="form-select" id="filterActive">
                             <option value="">All Status</option>
                             <option value="active" selected>Active Only</option>
@@ -171,8 +204,8 @@
             </div>
         </div>
 
-        <!-- Projects Table -->
-        <div class="card">
+        <!-- Projects View Table -->
+        <div class="card" id="projectsView">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
@@ -241,6 +274,25 @@
                 </table>
             </div>
         </div>
+
+        <!-- Repositories View Table -->
+        <div class="card" id="reposView" style="display: none;">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Repository</th>
+                            <th>Description</th>
+                            <th>Linked Projects</th>
+                            <th style="width: 350px;">Add Project</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reposTable">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     @endif
 </div>
 @endsection
@@ -249,9 +301,64 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let repositories = [];
+    let currentView = 'projects';
+
+    // Projects data from server
+    const projectsData = @json($projects->map(fn($p) => [
+        'id' => $p->id,
+        'name' => $p->name,
+        'code' => $p->code,
+        'customer' => $p->customer?->display_name,
+        'is_active' => $p->is_active,
+        'repos' => $p->getAllBitbucketRepoSlugs()
+    ]));
 
     // Load repositories on page load
     loadRepositories();
+
+    // View switch handlers
+    document.getElementById('projectsViewBtn')?.addEventListener('click', () => switchView('projects'));
+    document.getElementById('reposViewBtn')?.addEventListener('click', () => switchView('repos'));
+
+    function switchView(view) {
+        currentView = view;
+
+        // Update button states
+        document.getElementById('projectsViewBtn').classList.toggle('active', view === 'projects');
+        document.getElementById('reposViewBtn').classList.toggle('active', view === 'repos');
+
+        // Update title and subtitle
+        if (view === 'projects') {
+            document.getElementById('viewTitle').textContent = 'Link Projects to Repositories';
+            document.getElementById('viewSubtitle').textContent = 'Link multiple repositories to each project';
+            document.getElementById('linkedLabel').textContent = 'Projects Linked';
+            document.getElementById('unlinkedLabel').textContent = 'Not Linked';
+            document.getElementById('searchInput').placeholder = 'Search projects...';
+            document.getElementById('activeFilterContainer').style.display = '';
+        } else {
+            document.getElementById('viewTitle').textContent = 'Link Repositories to Projects';
+            document.getElementById('viewSubtitle').textContent = 'Link multiple projects to each repository';
+            document.getElementById('linkedLabel').textContent = 'Repos Linked';
+            document.getElementById('unlinkedLabel').textContent = 'Not Linked';
+            document.getElementById('searchInput').placeholder = 'Search repositories...';
+            document.getElementById('activeFilterContainer').style.display = 'none';
+        }
+
+        // Show/hide tables
+        document.getElementById('projectsView').style.display = view === 'projects' ? '' : 'none';
+        document.getElementById('reposView').style.display = view === 'repos' ? '' : 'none';
+
+        // Update counts
+        updateCounts();
+
+        // Clear filters
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterStatus').value = '';
+        if (view === 'projects') {
+            document.getElementById('filterActive').value = 'active';
+        }
+        applyFilters();
+    }
 
     // Refresh repositories button
     document.getElementById('refreshReposBtn')?.addEventListener('click', loadRepositories);
@@ -270,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     repositories = data.repositories;
                     document.getElementById('repoCount').textContent = repositories.length;
                     populateRepoSelects();
+                    populateReposTable();
                     toastr.success(`Loaded ${repositories.length} repositories`);
                 } else {
                     toastr.error(data.message || 'Failed to load repositories');
@@ -281,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .finally(() => {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="ti ti-refresh me-1"></i>Refresh Repositories';
+                    btn.innerHTML = '<i class="ti ti-refresh me-1"></i>Refresh';
                 }
             });
     }
@@ -325,11 +433,309 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Add repository button click
+    function populateReposTable() {
+        const tbody = document.getElementById('reposTable');
+        if (!tbody) return;
+
+        // Sort repositories by name
+        const sortedRepos = [...repositories].sort((a, b) =>
+            a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        );
+
+        // Sort projects by name for dropdown
+        const sortedProjects = [...projectsData].sort((a, b) =>
+            a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        );
+
+        tbody.innerHTML = '';
+
+        sortedRepos.forEach(repo => {
+            // Find projects linked to this repo
+            const linkedProjects = projectsData.filter(p => p.repos.includes(repo.slug));
+            const hasProjects = linkedProjects.length > 0;
+
+            const tr = document.createElement('tr');
+            tr.className = `repo-row ${hasProjects ? 'has-projects' : ''}`;
+            tr.dataset.repoSlug = repo.slug;
+            tr.dataset.repoName = repo.name.toLowerCase();
+            tr.dataset.isLinked = hasProjects ? 'linked' : 'unlinked';
+
+            // Repository info
+            const tdRepo = document.createElement('td');
+            tdRepo.innerHTML = `
+                <div class="fw-semibold">${repo.name}</div>
+                <small class="text-muted">${repo.slug}</small>
+            `;
+            tr.appendChild(tdRepo);
+
+            // Description
+            const tdDesc = document.createElement('td');
+            tdDesc.innerHTML = `<small class="text-muted">${repo.description || '-'}</small>`;
+            tr.appendChild(tdDesc);
+
+            // Linked projects
+            const tdProjects = document.createElement('td');
+            const projectsContainer = document.createElement('div');
+            projectsContainer.className = 'linked-projects';
+            projectsContainer.id = `projects-${repo.slug}`;
+
+            if (hasProjects) {
+                linkedProjects.forEach(p => {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-info project-badge';
+                    badge.dataset.projectId = p.id;
+                    badge.innerHTML = `${p.name} <i class="ti ti-x ms-1 remove-project-from-repo" style="cursor: pointer;" data-project-id="${p.id}" data-repo-slug="${repo.slug}"></i>`;
+                    projectsContainer.appendChild(badge);
+                });
+            } else {
+                projectsContainer.innerHTML = '<span class="text-muted small">No projects linked</span>';
+            }
+            tdProjects.appendChild(projectsContainer);
+            tr.appendChild(tdProjects);
+
+            // Add project dropdown
+            const tdAdd = document.createElement('td');
+            const addContainer = document.createElement('div');
+            addContainer.className = 'project-add-container';
+
+            const select = document.createElement('select');
+            select.className = 'form-select form-select-sm project-select';
+            select.dataset.repoSlug = repo.slug;
+            select.innerHTML = '<option value="">Select project to add...</option>';
+
+            sortedProjects.forEach(p => {
+                // Skip if already linked
+                if (p.repos.includes(repo.slug)) return;
+
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.name} (${p.code})`;
+                select.appendChild(option);
+            });
+
+            const addBtn = document.createElement('button');
+            addBtn.type = 'button';
+            addBtn.className = 'btn btn-info btn-sm add-project-btn';
+            addBtn.dataset.repoSlug = repo.slug;
+            addBtn.innerHTML = '<i class="ti ti-plus"></i>';
+
+            addContainer.appendChild(select);
+            addContainer.appendChild(addBtn);
+            tdAdd.appendChild(addContainer);
+            tr.appendChild(tdAdd);
+
+            tbody.appendChild(tr);
+        });
+
+        // Initialize Select2 for project selects
+        $('.project-select').each(function() {
+            $(this).select2({
+                placeholder: 'Search project...',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $(this).parent()
+            });
+        });
+
+        // Attach event handlers
+        attachRepoViewHandlers();
+
+        // Update counts
+        updateCounts();
+    }
+
+    function attachRepoViewHandlers() {
+        // Add project button click
+        document.querySelectorAll('.add-project-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const repoSlug = this.dataset.repoSlug;
+                const select = document.querySelector(`select.project-select[data-repo-slug="${repoSlug}"]`);
+                const projectId = select?.value;
+
+                if (!projectId) {
+                    toastr.warning('Please select a project');
+                    return;
+                }
+
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                try {
+                    const response = await fetch(`/projects/${projectId}/bitbucket/link`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ repo_slug: repoSlug })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update projectsData
+                        const project = projectsData.find(p => p.id == projectId);
+                        if (project && !project.repos.includes(repoSlug)) {
+                            project.repos.push(repoSlug);
+                        }
+
+                        // Add badge to linked projects container
+                        const container = document.getElementById(`projects-${repoSlug}`);
+                        const noProjectsText = container.querySelector('.text-muted');
+                        if (noProjectsText) noProjectsText.remove();
+
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-info project-badge';
+                        badge.dataset.projectId = projectId;
+                        badge.innerHTML = `${project?.name || 'Project'} <i class="ti ti-x ms-1 remove-project-from-repo" style="cursor: pointer;" data-project-id="${projectId}" data-repo-slug="${repoSlug}"></i>`;
+                        container.appendChild(badge);
+
+                        // Attach remove handler
+                        badge.querySelector('.remove-project-from-repo').addEventListener('click', handleRemoveProjectFromRepo);
+
+                        // Update row class
+                        const row = document.querySelector(`tr[data-repo-slug="${repoSlug}"]`);
+                        row?.classList.add('has-projects');
+                        if (row) row.dataset.isLinked = 'linked';
+
+                        // Remove option from select
+                        const optionToRemove = select.querySelector(`option[value="${projectId}"]`);
+                        if (optionToRemove) optionToRemove.remove();
+                        $(select).val('').trigger('change');
+
+                        // Also update the projects view
+                        updateProjectsViewForRepo(projectId, repoSlug, 'add');
+
+                        updateCounts();
+                        toastr.success(`Linked ${project?.name || 'project'} to ${repoSlug}`);
+                    } else {
+                        toastr.error(data.message || 'Failed to link project');
+                    }
+                } catch (error) {
+                    toastr.error('Failed to link project');
+                } finally {
+                    this.disabled = false;
+                    this.innerHTML = '<i class="ti ti-plus"></i>';
+                }
+            });
+        });
+
+        // Remove project from repo handler
+        document.querySelectorAll('.remove-project-from-repo').forEach(el => {
+            el.addEventListener('click', handleRemoveProjectFromRepo);
+        });
+    }
+
+    function handleRemoveProjectFromRepo() {
+        const projectId = this.dataset.projectId;
+        const repoSlug = this.dataset.repoSlug;
+        const badge = this.closest('.project-badge');
+        const project = projectsData.find(p => p.id == projectId);
+
+        if (!confirm(`Unlink ${project?.name || 'project'} from ${repoSlug}?`)) return;
+
+        fetch(`/projects/${projectId}/bitbucket/unlink`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ repo_slug: repoSlug })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Update projectsData
+                if (project) {
+                    project.repos = project.repos.filter(r => r !== repoSlug);
+                }
+
+                badge.remove();
+
+                // Check if any projects left
+                const container = document.getElementById(`projects-${repoSlug}`);
+                if (!container.querySelector('.project-badge')) {
+                    container.innerHTML = '<span class="text-muted small">No projects linked</span>';
+                    const row = document.querySelector(`tr[data-repo-slug="${repoSlug}"]`);
+                    row?.classList.remove('has-projects');
+                    if (row) row.dataset.isLinked = 'unlinked';
+                }
+
+                // Re-add option to project select
+                const select = document.querySelector(`select.project-select[data-repo-slug="${repoSlug}"]`);
+                if (select && project) {
+                    const option = document.createElement('option');
+                    option.value = projectId;
+                    option.textContent = `${project.name} (${project.code})`;
+                    select.appendChild(option);
+                }
+
+                // Also update the projects view
+                updateProjectsViewForRepo(projectId, repoSlug, 'remove');
+
+                updateCounts();
+                toastr.success('Project unlinked');
+            } else {
+                toastr.error('Failed to unlink project');
+            }
+        })
+        .catch(() => toastr.error('Failed to unlink project'));
+    }
+
+    function updateProjectsViewForRepo(projectId, repoSlug, action) {
+        const reposContainer = document.getElementById(`repos-${projectId}`);
+        const projectRow = document.querySelector(`tr.project-row[data-project-id="${projectId}"]`);
+
+        if (!reposContainer || !projectRow) return;
+
+        if (action === 'add') {
+            // Add badge
+            const noReposText = reposContainer.querySelector('.text-muted');
+            if (noReposText) noReposText.remove();
+
+            const repo = repositories.find(r => r.slug === repoSlug);
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary repo-badge';
+            badge.dataset.repoSlug = repoSlug;
+            badge.innerHTML = `${repo?.name || repoSlug} <i class="ti ti-x ms-1 remove-repo" style="cursor: pointer;" data-project-id="${projectId}" data-repo-slug="${repoSlug}"></i>`;
+            reposContainer.appendChild(badge);
+
+            badge.querySelector('.remove-repo').addEventListener('click', handleRemoveRepo);
+            projectRow.classList.add('has-repos');
+            projectRow.dataset.isLinked = 'linked';
+
+            // Remove from dropdown
+            const repoSelect = document.querySelector(`select.repo-select[data-project-id="${projectId}"]`);
+            const optionToRemove = repoSelect?.querySelector(`option[value="${repoSlug}"]`);
+            if (optionToRemove) optionToRemove.remove();
+        } else {
+            // Remove badge
+            const badge = reposContainer.querySelector(`.repo-badge[data-repo-slug="${repoSlug}"]`);
+            if (badge) badge.remove();
+
+            if (!reposContainer.querySelector('.repo-badge')) {
+                reposContainer.innerHTML = '<span class="text-muted small">No repositories linked</span>';
+                projectRow.classList.remove('has-repos');
+                projectRow.dataset.isLinked = 'unlinked';
+            }
+
+            // Re-add to dropdown
+            const repoSelect = document.querySelector(`select.repo-select[data-project-id="${projectId}"]`);
+            const repo = repositories.find(r => r.slug === repoSlug);
+            if (repoSelect && repo) {
+                const option = document.createElement('option');
+                option.value = repoSlug;
+                option.textContent = repo.name;
+                repoSelect.appendChild(option);
+            }
+        }
+    }
+
+    // Add repository button click (projects view)
     document.querySelectorAll('.add-repo-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const projectId = this.dataset.projectId;
-            const select = document.querySelector(`select[data-project-id="${projectId}"]`);
+            const select = document.querySelector(`select.repo-select[data-project-id="${projectId}"]`);
             const repoSlug = select?.value;
 
             if (!repoSlug) {
@@ -354,6 +760,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (response.ok && data.success) {
+                    // Update projectsData
+                    const project = projectsData.find(p => p.id == projectId);
+                    if (project && !project.repos.includes(repoSlug)) {
+                        project.repos.push(repoSlug);
+                    }
+
                     // Add badge to the linked repos container
                     const container = document.getElementById(`repos-${projectId}`);
                     const noReposText = container.querySelector('.text-muted');
@@ -373,9 +785,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector(`tr[data-project-id="${projectId}"]`).dataset.isLinked = 'linked';
 
                     // Reset select and remove option
-                    select.value = '';
+                    $(select).val('').trigger('change');
                     const optionToRemove = select.querySelector(`option[value="${repoSlug}"]`);
                     if (optionToRemove) optionToRemove.remove();
+
+                    // Also update the repos view
+                    updateReposViewForProject(projectId, repoSlug, 'add');
 
                     updateCounts();
                     toastr.success(`Linked ${data.repository?.name || repoSlug}`);
@@ -391,7 +806,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Remove repository handler
+    // Remove repository handler (projects view)
     function handleRemoveRepo() {
         const projectId = this.dataset.projectId;
         const repoSlug = this.dataset.repoSlug;
@@ -409,6 +824,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (response.ok) {
+                // Update projectsData
+                const project = projectsData.find(p => p.id == projectId);
+                if (project) {
+                    project.repos = project.repos.filter(r => r !== repoSlug);
+                }
+
                 badge.remove();
 
                 // Check if any repos left
@@ -421,6 +842,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Re-add option to select
                 populateRepoSelects();
+
+                // Also update the repos view
+                updateReposViewForProject(projectId, repoSlug, 'remove');
+
                 updateCounts();
                 toastr.success('Repository unlinked');
             } else {
@@ -430,7 +855,56 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(() => toastr.error('Failed to unlink repository'));
     }
 
-    // Attach remove handlers to existing badges
+    function updateReposViewForProject(projectId, repoSlug, action) {
+        const projectsContainer = document.getElementById(`projects-${repoSlug}`);
+        const repoRow = document.querySelector(`tr.repo-row[data-repo-slug="${repoSlug}"]`);
+
+        if (!projectsContainer || !repoRow) return;
+
+        const project = projectsData.find(p => p.id == projectId);
+
+        if (action === 'add') {
+            // Add badge
+            const noProjectsText = projectsContainer.querySelector('.text-muted');
+            if (noProjectsText) noProjectsText.remove();
+
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-info project-badge';
+            badge.dataset.projectId = projectId;
+            badge.innerHTML = `${project?.name || 'Project'} <i class="ti ti-x ms-1 remove-project-from-repo" style="cursor: pointer;" data-project-id="${projectId}" data-repo-slug="${repoSlug}"></i>`;
+            projectsContainer.appendChild(badge);
+
+            badge.querySelector('.remove-project-from-repo').addEventListener('click', handleRemoveProjectFromRepo);
+            repoRow.classList.add('has-projects');
+            repoRow.dataset.isLinked = 'linked';
+
+            // Remove from dropdown
+            const projectSelect = document.querySelector(`select.project-select[data-repo-slug="${repoSlug}"]`);
+            const optionToRemove = projectSelect?.querySelector(`option[value="${projectId}"]`);
+            if (optionToRemove) optionToRemove.remove();
+        } else {
+            // Remove badge
+            const badge = projectsContainer.querySelector(`.project-badge[data-project-id="${projectId}"]`);
+            if (badge) badge.remove();
+
+            if (!projectsContainer.querySelector('.project-badge')) {
+                projectsContainer.innerHTML = '<span class="text-muted small">No projects linked</span>';
+                repoRow.classList.remove('has-projects');
+                repoRow.dataset.isLinked = 'unlinked';
+            }
+
+            // Re-add to dropdown
+            const projectSelect = document.querySelector(`select.project-select[data-repo-slug="${repoSlug}"]`);
+            if (projectSelect && project) {
+                const option = document.createElement('option');
+                option.value = projectId;
+                option.textContent = `${project.name} (${project.code})`;
+                projectSelect.appendChild(option);
+            }
+        }
+    }
+
+    // Attach remove handlers to existing badges (projects view)
     document.querySelectorAll('.remove-repo').forEach(el => {
         el.addEventListener('click', handleRemoveRepo);
     });
@@ -445,26 +919,45 @@ document.addEventListener('DOMContentLoaded', function() {
         const status = filterStatus.value;
         const active = filterActive.value;
 
-        document.querySelectorAll('.project-row').forEach(row => {
-            const name = row.dataset.projectName;
-            const code = row.dataset.projectCode;
-            const isLinked = row.dataset.isLinked;
-            const isActive = row.dataset.isActive;
+        if (currentView === 'projects') {
+            document.querySelectorAll('.project-row').forEach(row => {
+                const name = row.dataset.projectName;
+                const code = row.dataset.projectCode;
+                const isLinked = row.dataset.isLinked;
+                const isActive = row.dataset.isActive;
 
-            let show = true;
+                let show = true;
 
-            if (search && !name.includes(search) && !code.includes(search)) {
-                show = false;
-            }
-            if (status && isLinked !== status) {
-                show = false;
-            }
-            if (active && isActive !== active) {
-                show = false;
-            }
+                if (search && !name.includes(search) && !code.includes(search)) {
+                    show = false;
+                }
+                if (status && isLinked !== status) {
+                    show = false;
+                }
+                if (active && isActive !== active) {
+                    show = false;
+                }
 
-            row.style.display = show ? '' : 'none';
-        });
+                row.style.display = show ? '' : 'none';
+            });
+        } else {
+            document.querySelectorAll('.repo-row').forEach(row => {
+                const name = row.dataset.repoName;
+                const slug = row.dataset.repoSlug?.toLowerCase();
+                const isLinked = row.dataset.isLinked;
+
+                let show = true;
+
+                if (search && !name.includes(search) && !slug?.includes(search)) {
+                    show = false;
+                }
+                if (status && isLinked !== status) {
+                    show = false;
+                }
+
+                row.style.display = show ? '' : 'none';
+            });
+        }
     }
 
     searchInput?.addEventListener('input', applyFilters);
@@ -481,10 +974,17 @@ document.addEventListener('DOMContentLoaded', function() {
     applyFilters();
 
     function updateCounts() {
-        const linked = document.querySelectorAll('.project-row.has-repos').length;
-        const total = document.querySelectorAll('.project-row').length;
-        document.getElementById('linkedCount').textContent = linked;
-        document.getElementById('unlinkedCount').textContent = total - linked;
+        if (currentView === 'projects') {
+            const linked = document.querySelectorAll('.project-row.has-repos').length;
+            const total = document.querySelectorAll('.project-row').length;
+            document.getElementById('linkedCount').textContent = linked;
+            document.getElementById('unlinkedCount').textContent = total - linked;
+        } else {
+            const linked = document.querySelectorAll('.repo-row.has-projects').length;
+            const total = document.querySelectorAll('.repo-row').length;
+            document.getElementById('linkedCount').textContent = linked;
+            document.getElementById('unlinkedCount').textContent = total - linked;
+        }
     }
 });
 </script>
