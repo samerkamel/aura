@@ -15,9 +15,23 @@
                     <a href="{{ route('accounting.income.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i>Back to Income
                     </a>
-                    <a href="{{ route('accounting.income.contracts.import') }}" class="btn btn-outline-info btn-sm" title="Import Contracts from CSV">
-                        <i class="ti ti-upload"></i>
-                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ti ti-upload me-1"></i>Import
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('accounting.income.contracts.mass-entry') }}">
+                                    <i class="ti ti-forms me-2"></i>Mass Entry Form
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('accounting.income.contracts.import') }}">
+                                    <i class="ti ti-file-spreadsheet me-2"></i>Import from Excel
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
                         <i class="ti ti-plus me-1"></i>New Contract
                     </a>

@@ -572,185 +572,6 @@ class IncomeController extends Controller
     }
 
     /**
-     * Show CSV import form for contracts.
-     */
-    public function importForm(): View
-    {
-        // Check authorization
-        if (!auth()->user()->can('manage-contracts')) {
-            abort(403, 'Unauthorized to import contracts.');
-        }
-
-        $customers = \App\Models\Customer::active()->orderBy('name')->get();
-
-        return view('accounting::income.import-contracts', compact('customers'));
-    }
-
-    /**
-     * Process CSV import for contracts.
-     */
-    public function import(Request $request): RedirectResponse
-    {
-        // Check authorization
-        if (!auth()->user()->can('manage-contracts')) {
-            abort(403, 'Unauthorized to import contracts.');
-        }
-
-        $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
-        ]);
-
-        try {
-            $file = $request->file('csv_file');
-            $csvData = array_map('str_getcsv', file($file->getPathname()));
-
-            // Remove header row
-            $header = array_shift($csvData);
-
-            // Validate header format
-            $expectedHeader = ['client_name', 'contract_number', 'description', 'total_amount', 'start_date', 'end_date', 'customer_id', 'contact_info', 'notes'];
-            if (count(array_intersect($header, $expectedHeader)) < 4) { // At least 4 required fields
-                return redirect()->back()
-                    ->with('error', 'Invalid CSV format. Please download the sample CSV and follow the format.');
-            }
-
-            $successCount = 0;
-            $errorCount = 0;
-            $errors = [];
-
-            foreach ($csvData as $rowIndex => $row) {
-                // Skip empty rows
-                if (empty(array_filter($row))) {
-                    continue;
-                }
-
-                try {
-                    // Map CSV row to array using header
-                    $data = array_combine($header, $row);
-
-                    // Validate required fields
-                    if (empty($data['client_name']) || empty($data['contract_number']) || empty($data['total_amount'])) {
-                        $errors[] = "Row " . ($rowIndex + 2) . ": Missing required fields (client_name, contract_number, total_amount)";
-                        $errorCount++;
-                        continue;
-                    }
-
-                    // Check for duplicate contract numbers
-                    if (Contract::where('contract_number', trim($data['contract_number']))->exists()) {
-                        $errors[] = "Row " . ($rowIndex + 2) . ": Contract number '" . trim($data['contract_number']) . "' already exists";
-                        $errorCount++;
-                        continue;
-                    }
-
-                    // Validate customer exists if provided
-                    $customerId = !empty($data['customer_id']) ? (int)$data['customer_id'] : null;
-                    if ($customerId && !\App\Models\Customer::find($customerId)) {
-                        $errors[] = "Row " . ($rowIndex + 2) . ": Customer ID {$customerId} does not exist";
-                        $errorCount++;
-                        continue;
-                    }
-
-                    // Create the contract record
-                    $contractData = [
-                        'client_name' => trim($data['client_name']),
-                        'contract_number' => trim($data['contract_number']),
-                        'description' => !empty($data['description']) ? trim($data['description']) : null,
-                        'total_amount' => (float)$data['total_amount'],
-                        'start_date' => !empty($data['start_date']) ? date('Y-m-d', strtotime($data['start_date'])) : now()->format('Y-m-d'),
-                        'end_date' => !empty($data['end_date']) ? date('Y-m-d', strtotime($data['end_date'])) : null,
-                        'customer_id' => $customerId,
-                        'contact_info' => !empty($data['contact_info']) ? trim($data['contact_info']) : null,
-                        'notes' => !empty($data['notes']) ? trim($data['notes']) : null,
-                        'status' => 'active',
-                        'is_active' => true,
-                    ];
-
-                    Contract::create($contractData);
-                    $successCount++;
-
-                } catch (\Exception $e) {
-                    $errors[] = "Row " . ($rowIndex + 2) . ": " . $e->getMessage();
-                    $errorCount++;
-                }
-            }
-
-            $message = "{$successCount} contracts imported successfully.";
-            if ($errorCount > 0) {
-                $message .= " {$errorCount} errors occurred.";
-            }
-
-            $messageType = $errorCount > 0 ? 'warning' : 'success';
-
-            return redirect()->route('accounting.income.contracts.index')
-                ->with($messageType, $message)
-                ->with('import_errors', $errors);
-
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Error processing CSV file: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Download sample CSV file for contracts import.
-     */
-    public function downloadSample()
-    {
-        // Check authorization
-        if (!auth()->user()->can('manage-contracts')) {
-            abort(403, 'Unauthorized to download sample files.');
-        }
-
-        $headers = [
-            'client_name',
-            'contract_number',
-            'description',
-            'total_amount',
-            'start_date',
-            'end_date',
-            'customer_id',
-            'contact_info',
-            'notes'
-        ];
-
-        $sampleData = [
-            [
-                'ABC Company Ltd',
-                'CONT-2024-001',
-                'Website development and maintenance contract',
-                '50000.00',
-                '2024-12-01',
-                '2025-06-30',
-                '1',
-                'john@abccompany.com',
-                'Initial website project with 6 months maintenance'
-            ],
-            [
-                'Tech Solutions Inc',
-                'CONT-2024-002',
-                'Mobile app development',
-                '75000.00',
-                '2024-12-15',
-                '2025-08-15',
-                '2',
-                'contact@techsolutions.com',
-                'iOS and Android mobile application'
-            ],
-        ];
-
-        $csvContent = implode(',', $headers) . "\n";
-        foreach ($sampleData as $row) {
-            $csvContent .= '"' . implode('","', $row) . '"' . "\n";
-        }
-
-        $filename = 'contracts_sample_' . date('Y-m-d') . '.csv';
-
-        return response($csvContent)
-            ->header('Content-Type', 'text/csv')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-    }
-
-    /**
      * Mark related invoices as paid when a payment is marked as paid.
      */
     private function markRelatedInvoicesAsPaid(ContractPayment $payment): void
@@ -1604,5 +1425,242 @@ class IncomeController extends Controller
                 ]);
             }
         }
+    }
+
+    /**
+     * Display the Excel import form.
+     */
+    public function importForm(): View
+    {
+        if (!auth()->user()->can('manage-contracts')) {
+            abort(403, 'Unauthorized to import contracts.');
+        }
+
+        $products = \App\Models\Product::where('is_active', true)->orderBy('name')->get();
+        $customers = \App\Models\Customer::active()
+            ->get()
+            ->sortBy(fn($c) => strtolower($c->display_name))
+            ->values();
+
+        return view('accounting::income.contracts.import', compact('products', 'customers'));
+    }
+
+    /**
+     * Preview Excel import data.
+     */
+    public function importPreview(Request $request): \Illuminate\Http\JsonResponse
+    {
+        if (!auth()->user()->can('manage-contracts')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:xls,xlsx',
+            'year' => 'required|integer|min:2000|max:2100',
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $year = (int) $request->input('year');
+
+            // Store temporarily
+            $tempPath = $file->store('temp/imports');
+            $fullPath = storage_path('app/' . $tempPath);
+
+            $importService = new \Modules\Accounting\Services\ContractExcelImportService();
+            $data = $importService->parseExcelFile($fullPath, $year);
+
+            // Check for duplicates
+            foreach ($data['contracts'] as &$contract) {
+                $customerId = $data['customers'][$contract['customer_name']]['id'] ?? null;
+                $productId = $contract['suggested_product_id'];
+
+                $duplicate = $importService->checkForDuplicates($contract, $customerId, $productId);
+                $contract['potential_duplicate'] = $duplicate;
+            }
+
+            // Store temp path in session for later use
+            session(['import_temp_path' => $fullPath, 'import_year' => $year]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'stats' => [
+                    'total_contracts' => count($data['contracts']),
+                    'total_customers' => count($data['customers']),
+                    'matched_customers' => count(array_filter($data['customers'], fn($c) => $c !== null)),
+                    'products' => count($data['products']),
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Excel import preview failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to parse Excel file: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Process the Excel import.
+     */
+    public function importProcess(Request $request): \Illuminate\Http\JsonResponse
+    {
+        if (!auth()->user()->can('manage-contracts')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'contracts' => 'required|array',
+            'contracts.*.import' => 'required|boolean',
+            'contracts.*.customer_id' => 'nullable|integer|exists:customers,id',
+            'contracts.*.product_id' => 'nullable|integer|exists:products,id',
+            'customer_mappings' => 'nullable|array',
+            'product_mappings' => 'nullable|array',
+        ]);
+
+        $contracts = $request->input('contracts');
+        $customerMappings = $request->input('customer_mappings', []);
+        $productMappings = $request->input('product_mappings', []);
+        $year = session('import_year', now()->year);
+
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+
+        try {
+            foreach ($contracts as $index => $contractData) {
+                // Skip if not selected for import
+                if (empty($contractData['import'])) {
+                    $skipped++;
+                    continue;
+                }
+
+                // Get customer ID from mapping or direct selection
+                $customerId = $contractData['customer_id']
+                    ?? $customerMappings[$contractData['customer_name']] ?? null;
+
+                // Get product ID from mapping
+                $productId = $contractData['product_id']
+                    ?? $productMappings[$contractData['product_sheet']] ?? null;
+
+                if (!$customerId) {
+                    $errors[$index] = 'No customer selected for: ' . $contractData['customer_name'];
+                    continue;
+                }
+
+                // Generate contract number
+                $contractNumber = $this->generateContractNumber();
+
+                // Create contract
+                $contract = Contract::create([
+                    'contract_number' => $contractNumber,
+                    'customer_id' => $customerId,
+                    'client_name' => $contractData['customer_name'],
+                    'description' => "Imported from Excel ({$year})",
+                    'total_amount' => $contractData['total_amount'],
+                    'start_date' => $contractData['start_date'],
+                    'end_date' => $contractData['end_date'],
+                    'status' => $contractData['status'] === 'completed' ? 'active' : $contractData['status'],
+                    'notes' => "Imported from Excel on " . now()->format('Y-m-d'),
+                ]);
+
+                // Attach product if specified
+                if ($productId) {
+                    $contract->products()->attach($productId, [
+                        'allocation_type' => 'percentage',
+                        'allocation_percentage' => 100,
+                    ]);
+                }
+
+                // Create payments
+                if (!empty($contractData['payments'])) {
+                    $sequenceNumber = 1;
+                    foreach ($contractData['payments'] as $payment) {
+                        $contract->payments()->create([
+                            'name' => $payment['status'] === 'paid'
+                                ? 'Payment ' . date('M Y', strtotime($payment['date']))
+                                : 'Expected ' . date('M Y', strtotime($payment['date'])),
+                            'amount' => $payment['amount'],
+                            'paid_amount' => $payment['status'] === 'paid' ? $payment['amount'] : 0,
+                            'due_date' => $payment['date'],
+                            'paid_date' => $payment['status'] === 'paid' ? $payment['date'] : null,
+                            'status' => $payment['status'],
+                            'is_milestone' => false,
+                            'sequence_number' => $sequenceNumber++,
+                        ]);
+                    }
+                }
+
+                $imported++;
+            }
+
+            if ($imported > 0) {
+                \Illuminate\Support\Facades\DB::commit();
+
+                // Clean up temp file
+                $tempPath = session('import_temp_path');
+                if ($tempPath && file_exists($tempPath)) {
+                    unlink($tempPath);
+                }
+                session()->forget(['import_temp_path', 'import_year']);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "Successfully imported {$imported} contracts. {$skipped} skipped.",
+                    'imported' => $imported,
+                    'skipped' => $skipped,
+                    'errors' => $errors,
+                    'redirect_url' => route('accounting.income.contracts.index'),
+                ]);
+            } else {
+                \Illuminate\Support\Facades\DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No contracts were imported.',
+                    'errors' => $errors,
+                ], 422);
+            }
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+
+            Log::error('Excel import processing failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Import failed: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate a unique contract number.
+     */
+    private function generateContractNumber(): string
+    {
+        $year = now()->format('Y');
+        $prefix = "C-{$year}";
+
+        $lastContract = Contract::where('contract_number', 'like', "{$prefix}%")
+            ->orderByRaw('CAST(SUBSTRING(contract_number, -3) AS UNSIGNED) DESC')
+            ->first();
+
+        if ($lastContract) {
+            $lastNumber = (int) substr($lastContract->contract_number, -3);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 }

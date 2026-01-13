@@ -116,6 +116,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/mass-entry', [IncomeController::class, 'massEntryForm'])->name('mass-entry');
                 Route::post('/mass-entry/validate', [IncomeController::class, 'validateMassEntry'])->name('mass-entry.validate');
                 Route::post('/mass-entry', [IncomeController::class, 'storeMassEntry'])->name('mass-entry.store');
+
+                // Excel Import routes
+                Route::get('/import', [IncomeController::class, 'importForm'])->name('import');
+                Route::post('/import/preview', [IncomeController::class, 'importPreview'])->name('import.preview');
+                Route::post('/import/process', [IncomeController::class, 'importProcess'])->name('import.process');
+
                 Route::get('/{contract}', [IncomeController::class, 'showContract'])->name('show');
                 Route::get('/{contract}/edit', [IncomeController::class, 'editContract'])->name('edit');
                 Route::put('/{contract}', [IncomeController::class, 'updateContract'])->name('update');
@@ -139,11 +145,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
                 // Project Revenue Sync route
                 Route::post('/{contract}/sync-to-projects', [IncomeController::class, 'syncContractToProjects'])->name('sync-to-projects');
-
-                // CSV Import routes for contracts
-                Route::get('/import', [IncomeController::class, 'importForm'])->name('import');
-                Route::post('/import', [IncomeController::class, 'import'])->name('import.process');
-                Route::get('/import/sample', [IncomeController::class, 'downloadSample'])->name('import.sample');
 
             });
         });
