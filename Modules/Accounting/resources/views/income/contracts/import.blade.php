@@ -3,11 +3,17 @@
 @section('title', 'Import Contracts from Excel')
 
 @section('vendor-style')
-@vite(['resources/assets/vendor/libs/select2/select2.scss'])
+@vite([
+    'resources/assets/vendor/libs/bs-stepper/bs-stepper.scss',
+    'resources/assets/vendor/libs/select2/select2.scss'
+])
 @endsection
 
 @section('vendor-script')
-@vite(['resources/assets/vendor/libs/select2/select2.js'])
+@vite([
+    'resources/assets/vendor/libs/bs-stepper/bs-stepper.js',
+    'resources/assets/vendor/libs/select2/select2.js'
+])
 @endsection
 
 @section('content')
@@ -30,10 +36,10 @@
     </div>
 
     <!-- Step Indicator -->
-    <div class="bs-stepper wizard-modern wizard-modern-example mt-2 mb-4">
+    <div class="bs-stepper wizard-modern wizard-modern-import-example mt-2 mb-4">
         <div class="bs-stepper-header">
             <div class="step" data-target="#step-upload">
-                <button type="button" class="step-trigger" disabled>
+                <button type="button" class="step-trigger">
                     <span class="bs-stepper-circle"><i class="ti ti-upload ti-sm"></i></span>
                     <span class="bs-stepper-label">
                         <span class="bs-stepper-title">Upload</span>
@@ -41,9 +47,11 @@
                     </span>
                 </button>
             </div>
-            <div class="line"></div>
+            <div class="line">
+                <i class="ti ti-chevron-right"></i>
+            </div>
             <div class="step" data-target="#step-preview">
-                <button type="button" class="step-trigger" disabled>
+                <button type="button" class="step-trigger">
                     <span class="bs-stepper-circle"><i class="ti ti-eye ti-sm"></i></span>
                     <span class="bs-stepper-label">
                         <span class="bs-stepper-title">Preview</span>
@@ -51,9 +59,11 @@
                     </span>
                 </button>
             </div>
-            <div class="line"></div>
+            <div class="line">
+                <i class="ti ti-chevron-right"></i>
+            </div>
             <div class="step" data-target="#step-import">
-                <button type="button" class="step-trigger" disabled>
+                <button type="button" class="step-trigger">
                     <span class="bs-stepper-circle"><i class="ti ti-check ti-sm"></i></span>
                     <span class="bs-stepper-label">
                         <span class="bs-stepper-title">Import</span>
@@ -361,6 +371,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const customers = @json($customers);
     const products = @json($products);
     const $ = window.jQuery;
+
+    // Initialize the stepper
+    const wizardElement = document.querySelector('.wizard-modern-import-example');
+    let importStepper = null;
+    if (wizardElement && typeof Stepper !== 'undefined') {
+        importStepper = new Stepper(wizardElement, {
+            linear: false
+        });
+    }
 
     // Initialize Select2 for any dynamic selects
     function initSelect2(selector) {
@@ -738,21 +757,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function showStep(step) {
         $('#step-upload-content, #step-preview-content, #step-results-content').addClass('d-none');
 
-        // Update stepper
-        $('.bs-stepper .step').removeClass('active crossed');
-
         if (step === 'upload') {
             $('#step-upload-content').removeClass('d-none');
-            $('[data-target="#step-upload"]').addClass('active');
+            if (importStepper) importStepper.to(1);
         } else if (step === 'preview') {
             $('#step-preview-content').removeClass('d-none');
-            $('[data-target="#step-upload"]').addClass('crossed');
-            $('[data-target="#step-preview"]').addClass('active');
+            if (importStepper) importStepper.to(2);
         } else if (step === 'results') {
             $('#step-results-content').removeClass('d-none');
-            $('[data-target="#step-upload"]').addClass('crossed');
-            $('[data-target="#step-preview"]').addClass('crossed');
-            $('[data-target="#step-import"]').addClass('active');
+            if (importStepper) importStepper.to(3);
         }
     }
 
