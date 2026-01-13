@@ -103,12 +103,16 @@ class BitbucketController extends Controller
             return response()->json([
                 'success' => true,
                 'repositories' => collect($repositories)->map(function ($repo) {
+                    $project = $repo['project'] ?? null;
                     return [
                         'slug' => $repo['slug'],
                         'name' => $repo['name'],
                         'description' => $repo['description'] ?? '',
                         'updated_on' => $repo['updated_on'] ?? null,
                         'is_private' => $repo['is_private'] ?? true,
+                        'project_key' => $project['key'] ?? null,
+                        'project_name' => $project['name'] ?? null,
+                        'project_link' => $project['links']['html']['href'] ?? null,
                     ];
                 })->values(),
             ]);

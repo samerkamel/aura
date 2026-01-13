@@ -302,9 +302,10 @@
                     <thead class="table-light">
                         <tr>
                             <th class="sortable" data-sort="name" data-direction="">Repository</th>
+                            <th class="sortable" data-sort="bbproject" data-direction="">BB Project</th>
                             <th class="sortable" data-sort="updated" data-direction="">Last Updated</th>
                             <th class="sortable" data-sort="projects" data-direction="">Linked Projects</th>
-                            <th style="width: 350px;">Add Project</th>
+                            <th style="width: 300px;">Add Project</th>
                         </tr>
                     </thead>
                     <tbody id="reposTable">
@@ -495,6 +496,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let comparison = 0;
             if (repoSortField === 'name') {
                 comparison = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            } else if (repoSortField === 'bbproject') {
+                const projA = (a.project_name || '').toLowerCase();
+                const projB = (b.project_name || '').toLowerCase();
+                comparison = projA.localeCompare(projB);
             } else if (repoSortField === 'updated') {
                 const dateA = a.updated_on ? new Date(a.updated_on).getTime() : 0;
                 const dateB = b.updated_on ? new Date(b.updated_on).getTime() : 0;
@@ -530,6 +535,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 <small class="text-muted">${repo.slug}</small>
             `;
             tr.appendChild(tdRepo);
+
+            // BB Project
+            const tdBBProject = document.createElement('td');
+            if (repo.project_key && repo.project_name) {
+                const projectLink = repo.project_link ?
+                    `<a href="${repo.project_link}" target="_blank" class="text-decoration-none">` : '';
+                const projectLinkEnd = repo.project_link ? '</a>' : '';
+                tdBBProject.innerHTML = `
+                    ${projectLink}
+                    <span class="badge bg-label-secondary">${repo.project_key}</span>
+                    <div class="small text-muted">${repo.project_name}</div>
+                    ${projectLinkEnd}
+                `;
+            } else {
+                tdBBProject.innerHTML = '<span class="text-muted">-</span>';
+            }
+            tr.appendChild(tdBBProject);
 
             // Last Updated
             const tdDate = document.createElement('td');
