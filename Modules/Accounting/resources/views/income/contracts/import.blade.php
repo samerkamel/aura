@@ -3,11 +3,11 @@
 @section('title', 'Import Contracts from Excel')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 @section('vendor-script')
-<script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('content')
@@ -354,21 +354,24 @@
 
 @section('page-script')
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // State management
     let importData = null;
     let contractsToImport = [];
     const customers = @json($customers);
     const products = @json($products);
+    const $ = window.jQuery;
 
     // Initialize Select2 for any dynamic selects
     function initSelect2(selector) {
-        $(selector).select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            placeholder: 'Select customer...',
-            allowClear: true
-        });
+        if ($ && $.fn.select2) {
+            $(selector).select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Select customer...',
+                allowClear: true
+            });
+        }
     }
 
     // Step 1: Upload and Preview
