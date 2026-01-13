@@ -110,6 +110,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/next-number', [IncomeController::class, 'getNextContractNumber'])->name('next-number');
                 Route::get('/create', [IncomeController::class, 'createContract'])->name('create');
                 Route::post('/', [IncomeController::class, 'storeContract'])->name('store');
+
+                // Mass Entry routes (must come before {contract} dynamic routes)
+                Route::get('/mass-entry', [IncomeController::class, 'massEntryForm'])->name('mass-entry');
+                Route::post('/mass-entry/validate', [IncomeController::class, 'validateMassEntry'])->name('mass-entry.validate');
+                Route::post('/mass-entry', [IncomeController::class, 'storeMassEntry'])->name('mass-entry.store');
                 Route::get('/{contract}', [IncomeController::class, 'showContract'])->name('show');
                 Route::get('/{contract}/edit', [IncomeController::class, 'editContract'])->name('edit');
                 Route::put('/{contract}', [IncomeController::class, 'updateContract'])->name('update');

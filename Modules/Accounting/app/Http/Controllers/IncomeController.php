@@ -1180,4 +1180,423 @@ class IncomeController extends Controller
 
         return redirect()->back()->with('success', $message);
     }
+
+    /**
+     * Display the mass contract entry form.
+     */
+    public function massEntryForm(): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-contracts')) {
+            abort(403, 'Unauthorized to create contracts.');
+        }
+
+        // Get customers for Select2 dropdown
+        $customers = \App\Models\Customer::active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        // Get products for allocation
+        $products = \App\Models\Product::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'unit_price']);
+
+        // Get projects for project selection
+        $projects = \Modules\Project\Models\Project::active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'customer_id']);
+
+        return view('accounting::income.contracts.mass-entry', compact(
+            'customers',
+            'products',
+            'projects'
+        ));
+    }
+
+    /**
+     * Validate mass contract entry data via AJAX.
+     */
+    public function validateMassEntry(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-contracts')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $contracts = $request->input('contracts', []);
+
+        if (empty($contracts)) {
+            return response()->json([
+                'valid' => false,
+                'total_valid' => 0,
+                'total_invalid' => 0,
+                'errors' => [],
+                'message' => 'No contracts provided.',
+            ]);
+        }
+
+        $errors = [];
+        $validCount = 0;
+        $invalidCount = 0;
+
+        foreach ($contracts as $index => $contract) {
+            $rowErrors = [];
+
+            // Required field validations
+            if (empty($contract['customer_id'])) {
+                $rowErrors[] = 'Customer is required.';
+            } else {
+                // Check customer exists
+                $customer = \App\Models\Customer::find($contract['customer_id']);
+                if (!$customer) {
+                    $rowErrors[] = 'Selected customer does not exist.';
+                }
+            }
+
+            if (empty($contract['client_name'])) {
+                $rowErrors[] = 'Client name is required.';
+            } elseif (strlen($contract['client_name']) > 255) {
+                $rowErrors[] = 'Client name must not exceed 255 characters.';
+            }
+
+            if (empty($contract['total_amount'])) {
+                $rowErrors[] = 'Total amount is required.';
+            } elseif (!is_numeric($contract['total_amount']) || $contract['total_amount'] <= 0) {
+                $rowErrors[] = 'Total amount must be a positive number.';
+            } elseif ($contract['total_amount'] > 99999999.99) {
+                $rowErrors[] = 'Total amount must not exceed 99,999,999.99.';
+            }
+
+            if (empty($contract['start_date'])) {
+                $rowErrors[] = 'Start date is required.';
+            } elseif (!strtotime($contract['start_date'])) {
+                $rowErrors[] = 'Start date is invalid.';
+            }
+
+            if (empty($contract['end_date'])) {
+                $rowErrors[] = 'End date is required.';
+            } elseif (!strtotime($contract['end_date'])) {
+                $rowErrors[] = 'End date is invalid.';
+            } elseif (!empty($contract['start_date']) && strtotime($contract['end_date']) <= strtotime($contract['start_date'])) {
+                $rowErrors[] = 'End date must be after start date.';
+            }
+
+            // Validate products allocation if provided
+            if (!empty($contract['products']) && is_array($contract['products'])) {
+                $totalAllocation = 0;
+                $totalAmountAlloc = 0;
+
+                foreach ($contract['products'] as $product) {
+                    if (!empty($product['product_id'])) {
+                        $productExists = \App\Models\Product::where('id', $product['product_id'])
+                            ->where('is_active', true)
+                            ->exists();
+
+                        if (!$productExists) {
+                            $rowErrors[] = 'One or more selected products do not exist.';
+                            break;
+                        }
+
+                        if (($product['allocation_type'] ?? '') === 'percentage') {
+                            $totalAllocation += floatval($product['allocation_percentage'] ?? 0);
+                        } else {
+                            $totalAmountAlloc += floatval($product['allocation_amount'] ?? 0);
+                        }
+                    }
+                }
+
+                if ($totalAllocation > 100) {
+                    $rowErrors[] = 'Product percentage allocation exceeds 100%.';
+                }
+
+                if (!empty($contract['total_amount']) && $totalAmountAlloc > $contract['total_amount']) {
+                    $rowErrors[] = 'Product amount allocation exceeds contract total.';
+                }
+            }
+
+            // Validate payment schedule if provided
+            if (!empty($contract['payment_schedule'])) {
+                $schedule = $contract['payment_schedule'];
+
+                if (($schedule['type'] ?? '') === 'recurring') {
+                    if (empty($schedule['frequency']) || !in_array($schedule['frequency'], ['monthly', 'quarterly', 'bi-annual', 'annual'])) {
+                        $rowErrors[] = 'Invalid payment frequency selected.';
+                    }
+                } elseif (($schedule['type'] ?? '') === 'milestones') {
+                    if (!empty($schedule['milestones'])) {
+                        $milestoneTotal = 0;
+                        foreach ($schedule['milestones'] as $milestone) {
+                            $milestoneTotal += floatval($milestone['amount'] ?? 0);
+                        }
+
+                        if (!empty($contract['total_amount']) && $milestoneTotal > $contract['total_amount']) {
+                            $rowErrors[] = 'Milestone amounts exceed contract total.';
+                        }
+                    }
+                }
+            }
+
+            // Validate project IDs if provided
+            if (!empty($contract['project_ids']) && is_array($contract['project_ids'])) {
+                foreach ($contract['project_ids'] as $projectId) {
+                    if (!empty($projectId)) {
+                        $projectExists = \Modules\Project\Models\Project::where('id', $projectId)->exists();
+                        if (!$projectExists) {
+                            $rowErrors[] = 'One or more selected projects do not exist.';
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!empty($rowErrors)) {
+                $errors[$index] = $rowErrors;
+                $invalidCount++;
+            } else {
+                $validCount++;
+            }
+        }
+
+        return response()->json([
+            'valid' => $invalidCount === 0,
+            'total_valid' => $validCount,
+            'total_invalid' => $invalidCount,
+            'errors' => $errors,
+            'message' => $invalidCount === 0
+                ? "All {$validCount} contracts are valid and ready to save."
+                : "{$validCount} valid, {$invalidCount} with errors.",
+        ]);
+    }
+
+    /**
+     * Store multiple contracts from mass entry.
+     */
+    public function storeMassEntry(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // Check authorization
+        if (!auth()->user()->can('manage-contracts')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $contracts = $request->input('contracts', []);
+
+        if (empty($contracts)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No contracts provided.',
+            ], 422);
+        }
+
+        $createdContracts = [];
+        $errors = [];
+        $successCount = 0;
+        $errorCount = 0;
+
+        \Illuminate\Support\Facades\DB::beginTransaction();
+
+        try {
+            foreach ($contracts as $index => $contractData) {
+                try {
+                    // Generate contract number
+                    $contractNumber = Contract::generateContractNumber($contractData['start_date'] ?? null);
+
+                    // Create the contract
+                    $contract = Contract::create([
+                        'contract_number' => $contractNumber,
+                        'client_name' => trim($contractData['client_name']),
+                        'customer_id' => $contractData['customer_id'] ?? null,
+                        'description' => trim($contractData['description'] ?? ''),
+                        'total_amount' => (float) $contractData['total_amount'],
+                        'start_date' => $contractData['start_date'],
+                        'end_date' => $contractData['end_date'],
+                        'contact_info' => $contractData['contact_info'] ?? null,
+                        'notes' => $contractData['notes'] ?? null,
+                        'status' => 'active',
+                        'is_active' => true,
+                    ]);
+
+                    // Attach projects if provided
+                    if (!empty($contractData['project_ids']) && is_array($contractData['project_ids'])) {
+                        $projectIds = array_filter($contractData['project_ids']);
+                        if (!empty($projectIds)) {
+                            // Handle project allocations if provided
+                            if (!empty($contractData['project_allocations']) && is_array($contractData['project_allocations'])) {
+                                foreach ($contractData['project_allocations'] as $allocation) {
+                                    if (!empty($allocation['project_id'])) {
+                                        $contract->projects()->attach($allocation['project_id'], [
+                                            'allocation_type' => $allocation['allocation_type'] ?? 'percentage',
+                                            'allocation_percentage' => ($allocation['allocation_type'] ?? 'percentage') === 'percentage'
+                                                ? ($allocation['allocation_percentage'] ?? 100)
+                                                : null,
+                                            'allocation_amount' => ($allocation['allocation_type'] ?? 'percentage') === 'amount'
+                                                ? ($allocation['allocation_amount'] ?? null)
+                                                : null,
+                                            'is_primary' => $allocation['is_primary'] ?? false,
+                                        ]);
+                                    }
+                                }
+                            } else {
+                                // Simple attachment without allocation details
+                                $contract->projects()->attach($projectIds);
+                            }
+
+                            // Sync contract payments to project revenues
+                            $this->syncService->syncContractToProjects($contract);
+                        }
+                    }
+
+                    // Handle product allocations
+                    if (!empty($contractData['products']) && is_array($contractData['products'])) {
+                        foreach ($contractData['products'] as $allocation) {
+                            if (!empty($allocation['product_id'])) {
+                                $contract->products()->attach($allocation['product_id'], [
+                                    'allocation_type' => $allocation['allocation_type'] ?? 'percentage',
+                                    'allocation_percentage' => ($allocation['allocation_type'] ?? 'percentage') === 'percentage'
+                                        ? ($allocation['allocation_percentage'] ?? null)
+                                        : null,
+                                    'allocation_amount' => ($allocation['allocation_type'] ?? 'percentage') === 'amount'
+                                        ? ($allocation['allocation_amount'] ?? null)
+                                        : null,
+                                    'notes' => $allocation['notes'] ?? null,
+                                ]);
+                            }
+                        }
+                    }
+
+                    // Handle payment schedule
+                    if (!empty($contractData['payment_schedule'])) {
+                        $schedule = $contractData['payment_schedule'];
+
+                        if (($schedule['type'] ?? '') === 'recurring') {
+                            // Generate recurring payments
+                            $this->generateMassEntryRecurringPayments($contract, $schedule);
+                        } elseif (($schedule['type'] ?? '') === 'milestones' && !empty($schedule['milestones'])) {
+                            // Create milestone payments
+                            $this->createMassEntryMilestonePayments($contract, $schedule['milestones']);
+                        }
+                    }
+
+                    $createdContracts[] = [
+                        'id' => $contract->id,
+                        'contract_number' => $contract->contract_number,
+                        'client_name' => $contract->client_name,
+                        'total_amount' => $contract->total_amount,
+                    ];
+                    $successCount++;
+
+                } catch (\Exception $e) {
+                    $errors[$index] = ['Failed to create contract: ' . $e->getMessage()];
+                    $errorCount++;
+                    Log::error('Mass entry contract creation failed', [
+                        'index' => $index,
+                        'error' => $e->getMessage(),
+                        'data' => $contractData,
+                    ]);
+                }
+            }
+
+            if ($errorCount === 0) {
+                \Illuminate\Support\Facades\DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "Successfully created {$successCount} contracts.",
+                    'contracts' => $createdContracts,
+                    'redirect_url' => route('accounting.income.contracts.index'),
+                ]);
+            } else {
+                // If any errors, rollback all and return errors
+                \Illuminate\Support\Facades\DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "{$errorCount} contracts failed to create. No contracts were saved.",
+                    'errors' => $errors,
+                ], 422);
+            }
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+
+            Log::error('Mass entry bulk creation failed', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create contracts: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate recurring payments for mass entry contract.
+     */
+    private function generateMassEntryRecurringPayments(Contract $contract, array $schedule): void
+    {
+        $frequency = $schedule['frequency'] ?? 'monthly';
+        $startDate = Carbon::parse($contract->start_date);
+        $endDate = Carbon::parse($contract->end_date);
+
+        // Calculate payment count based on frequency
+        $frequencyMonths = match ($frequency) {
+            'monthly' => 1,
+            'quarterly' => 3,
+            'bi-annual' => 6,
+            'annual' => 12,
+            default => 1,
+        };
+
+        // Calculate number of payments
+        $totalMonths = $startDate->diffInMonths($endDate);
+        $paymentCount = max(1, ceil($totalMonths / $frequencyMonths));
+
+        // Calculate payment amount
+        $paymentAmount = $contract->total_amount / $paymentCount;
+
+        // Create payments
+        $currentDate = $startDate->copy();
+        for ($i = 1; $i <= $paymentCount; $i++) {
+            $isLast = ($i === $paymentCount);
+
+            // For last payment, use remaining amount to handle rounding
+            $amount = $isLast
+                ? ($contract->total_amount - ($paymentAmount * ($paymentCount - 1)))
+                : $paymentAmount;
+
+            $contract->payments()->create([
+                'name' => "Payment {$i} of {$paymentCount}",
+                'description' => ucfirst($frequency) . ' payment',
+                'amount' => round($amount, 2),
+                'due_date' => $currentDate->toDateString(),
+                'status' => 'pending',
+                'is_milestone' => false,
+                'sequence_number' => $i,
+            ]);
+
+            $currentDate->addMonths($frequencyMonths);
+        }
+    }
+
+    /**
+     * Create milestone payments for mass entry contract.
+     */
+    private function createMassEntryMilestonePayments(Contract $contract, array $milestones): void
+    {
+        $sequenceNumber = 1;
+
+        foreach ($milestones as $milestone) {
+            if (!empty($milestone['name']) && !empty($milestone['amount'])) {
+                $contract->payments()->create([
+                    'name' => trim($milestone['name']),
+                    'description' => $milestone['description'] ?? null,
+                    'amount' => (float) $milestone['amount'],
+                    'due_date' => $milestone['due_date'] ?? null,
+                    'status' => 'pending',
+                    'is_milestone' => true,
+                    'sequence_number' => $sequenceNumber++,
+                ]);
+            }
+        }
+    }
 }

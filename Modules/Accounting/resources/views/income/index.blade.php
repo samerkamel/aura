@@ -84,9 +84,14 @@
                     <h5 class="mb-0">Contracts Management</h5>
                     <small class="text-muted">Manage client contracts and their payment milestones</small>
                 </div>
-                <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
-                    <i class="ti ti-plus me-1"></i>New Contract
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('accounting.income.contracts.mass-entry') }}" class="btn btn-outline-primary">
+                        <i class="ti ti-table me-1"></i>Mass Entry
+                    </a>
+                    <a href="{{ route('accounting.income.contracts.create') }}" class="btn btn-primary">
+                        <i class="ti ti-plus me-1"></i>New Contract
+                    </a>
+                </div>
             </div>
 
             @if(session('success'))
