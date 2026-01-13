@@ -38,7 +38,7 @@
                                                 @foreach($customers as $customer)
                                                     <option value="{{ $customer->id }}"
                                                         {{ old('customer_id', $contract->customer_id) == $customer->id ? 'selected' : '' }}>
-                                                        {{ $customer->name }}
+                                                        {{ $customer->display_name }}
                                                     </option>
                                                 @endforeach
                                             </select>

@@ -361,8 +361,8 @@
                     <select class="form-select customer-select" data-field="customer_id" required>
                         <option value="">Select customer...</option>
                         @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}" data-name="{{ $customer->name }}">
-                                {{ $customer->name }}
+                            <option value="{{ $customer->id }}" data-name="{{ $customer->display_name }}">
+                                {{ $customer->display_name }}
                             </option>
                         @endforeach
                     </select>
