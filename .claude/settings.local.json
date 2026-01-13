@@ -5,7 +5,8 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && ls -la Modules/Project/database/migrations/ | grep 100004\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan migrate:status | grep repositories\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git pull origin main && git log --oneline -1\")",
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan view:clear && git log --oneline -1\")"
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan view:clear && git log --oneline -1\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && tail -500 storage/logs/laravel.log | grep -i -A 20 ''invoice''\")"
     ],
     "deny": [],
     "ask": []

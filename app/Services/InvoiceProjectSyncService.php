@@ -428,10 +428,10 @@ class InvoiceProjectSyncService
     /**
      * Map invoice status to project revenue status.
      */
-    protected function mapInvoiceStatusToRevenueStatus(string $invoiceStatus): string
+    protected function mapInvoiceStatusToRevenueStatus(?string $invoiceStatus): string
     {
         return match ($invoiceStatus) {
-            'draft' => 'planned',
+            'draft', null => 'planned',
             'sent' => 'invoiced',
             'paid' => 'received',
             'partial' => 'partial',
