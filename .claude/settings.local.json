@@ -11,7 +11,10 @@
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && tail -100 storage/logs/laravel.log | grep -i ''error\\|exception'' | tail -5\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"date && cd /var/www/vhosts/aura.llc/erp.aura.llc && tail -30 storage/logs/laravel.log | grep -E ''^\\[2026-01-13 (1[3-9]|2)'' | head -10\")",
       "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && git fetch origin && git reset --hard origin/main && php artisan route:clear && php artisan view:clear && git log --oneline -1\")",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list | grep income-sheet\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan config:clear && php artisan route:clear && php artisan cache:clear && php artisan view:clear && php artisan optimize:clear\")",
+      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan route:list --name=income-sheet\")"
     ],
     "deny": [],
     "ask": []

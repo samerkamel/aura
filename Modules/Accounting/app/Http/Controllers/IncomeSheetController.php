@@ -311,9 +311,32 @@ class IncomeSheetController extends Controller
             $selectedYear = now()->year;
         }
 
-        // Get all contracts allocated to this product
+        // Year boundaries
+        $yearStart = now()->setYear($selectedYear)->startOfYear();
+        $yearEnd = now()->setYear($selectedYear)->endOfYear();
+
+        // Get contracts allocated to this product that are relevant to the selected year
+        // A contract is relevant if:
+        // 1. Its start_date falls within the year, OR
+        // 2. Its end_date falls within the year, OR
+        // 3. It spans the entire year (start before, end after), OR
+        // 4. It has payments (paid or due) within the year
         $contracts = Contract::whereHas('products', function($query) use ($product) {
             $query->where('products.id', $product->id);
+        })
+        ->where(function($query) use ($yearStart, $yearEnd) {
+            $query->whereBetween('start_date', [$yearStart, $yearEnd])
+                  ->orWhereBetween('end_date', [$yearStart, $yearEnd])
+                  ->orWhere(function($q) use ($yearStart, $yearEnd) {
+                      $q->where('start_date', '<=', $yearStart)
+                        ->where('end_date', '>=', $yearEnd);
+                  })
+                  ->orWhereHas('payments', function($q) use ($yearStart, $yearEnd) {
+                      $q->where(function($pq) use ($yearStart, $yearEnd) {
+                          $pq->whereBetween('due_date', [$yearStart, $yearEnd])
+                             ->orWhereBetween('paid_date', [$yearStart, $yearEnd]);
+                      });
+                  });
         })
         ->with(['products' => function($query) use ($product) {
             $query->where('products.id', $product->id);
@@ -346,6 +369,18 @@ class IncomeSheetController extends Controller
 
         foreach ($contracts as $contract) {
             $data = $this->calculateContractFinancials($contract, $product, $selectedYear);
+
+            // Only include contracts that have some financial activity in the selected year
+            $hasActivity = $data['totals']['balance'] != 0
+                || $data['totals']['contracts'] != 0
+                || $data['totals']['expected_contracts'] != 0
+                || $data['totals']['income'] != 0
+                || $data['totals']['expected_income'] != 0;
+
+            if (!$hasActivity) {
+                continue;
+            }
+
             $contractsData[] = [
                 'contract' => $contract,
                 'financials' => $data
