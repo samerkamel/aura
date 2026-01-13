@@ -68,6 +68,14 @@
                                     </a>
                                 </li>
                             @endif
+                            @if($invoice->canBeDeleted())
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="deleteInvoice({{ $invoice->id }})">
+                                        <i class="ti ti-trash me-2"></i>Delete Invoice
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                     </div>
                     <a href="{{ route('invoicing.invoices.index') }}" class="btn btn-outline-secondary">
@@ -874,6 +882,30 @@ function cancelInvoice(invoiceId) {
         .then(data => {
             if (data.success) {
                 location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred');
+            console.error('Error:', error);
+        });
+    }
+}
+
+function deleteInvoice(invoiceId) {
+    if (confirm('Delete this invoice permanently? This action cannot be undone.')) {
+        fetch(`/invoicing/invoices/${invoiceId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/invoicing/invoices';
             } else {
                 alert('Error: ' + data.message);
             }

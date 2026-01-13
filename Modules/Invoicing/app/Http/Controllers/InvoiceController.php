@@ -324,16 +324,41 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized to delete invoices.');
         }
 
-        // Only allow deletion of draft invoices
-        if ($invoice->status !== 'draft') {
-            abort(403, 'Only draft invoices can be deleted.');
+        // Check if invoice can be deleted (draft/cancelled without actual invoice number)
+        if (!$invoice->canBeDeleted()) {
+            abort(403, $invoice->cannot_delete_reason);
         }
 
+        // Delete related items and project allocations
+        $invoice->items()->delete();
+        $invoice->projects()->detach();
         $invoice->delete();
 
         return redirect()
             ->route('invoicing.invoices.index')
             ->with('success', 'Invoice deleted successfully.');
+    }
+
+    /**
+     * Delete invoice via AJAX.
+     */
+    public function destroyAjax(Invoice $invoice): \Illuminate\Http\JsonResponse
+    {
+        if (!auth()->user()->can('manage-invoices')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized to delete invoices.'], 403);
+        }
+
+        // Check if invoice can be deleted
+        if (!$invoice->canBeDeleted()) {
+            return response()->json(['success' => false, 'message' => $invoice->cannot_delete_reason], 403);
+        }
+
+        // Delete related items and project allocations
+        $invoice->items()->delete();
+        $invoice->projects()->detach();
+        $invoice->delete();
+
+        return response()->json(['success' => true, 'message' => 'Invoice deleted successfully.']);
     }
 
     /**

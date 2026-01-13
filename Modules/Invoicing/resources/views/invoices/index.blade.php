@@ -261,6 +261,11 @@
                                                         <i class="ti ti-x me-2"></i>Cancel
                                                     </button>
                                                 @endif
+                                                @if($invoice->canBeDeleted())
+                                                    <button type="button" class="dropdown-item text-danger" onclick="deleteInvoice({{ $invoice->id }})">
+                                                        <i class="ti ti-trash me-2"></i>Delete
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -477,6 +482,30 @@ function cancelInvoice(invoiceId) {
     if (confirm('Cancel this invoice? This action cannot be undone.')) {
         fetch(`/invoicing/invoices/${invoiceId}/cancel`, {
             method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred');
+            console.error('Error:', error);
+        });
+    }
+}
+
+function deleteInvoice(invoiceId) {
+    if (confirm('Delete this invoice permanently? This action cannot be undone.')) {
+        fetch(`/invoicing/invoices/${invoiceId}/delete`, {
+            method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json',

@@ -426,6 +426,46 @@ class Invoice extends Model
     }
 
     /**
+     * Check if invoice can be deleted.
+     * Only draft or cancelled invoices without an actual invoice number can be deleted.
+     */
+    public function canBeDeleted(): bool
+    {
+        // Must be draft or cancelled
+        if (!in_array($this->status, ['draft', 'cancelled'])) {
+            return false;
+        }
+
+        // Must not have an actual invoice number (only DRAFT- placeholders allowed)
+        // Real invoice numbers don't start with DRAFT-
+        if (!str_starts_with($this->invoice_number, 'DRAFT-')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get human-readable reason why invoice cannot be deleted.
+     */
+    public function getCannotDeleteReasonAttribute(): ?string
+    {
+        if ($this->canBeDeleted()) {
+            return null;
+        }
+
+        if (!in_array($this->status, ['draft', 'cancelled'])) {
+            return 'Only draft or cancelled invoices can be deleted.';
+        }
+
+        if (!str_starts_with($this->invoice_number, 'DRAFT-')) {
+            return 'Invoices with assigned invoice numbers cannot be deleted.';
+        }
+
+        return 'This invoice cannot be deleted.';
+    }
+
+    /**
      * Update overdue invoices automatically.
      */
     public static function updateOverdueStatus(): void

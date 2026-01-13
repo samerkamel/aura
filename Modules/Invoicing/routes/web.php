@@ -41,6 +41,7 @@ Route::prefix('invoicing')->name('invoicing.')->middleware(['web', 'auth'])->gro
         Route::post('/{invoice}/send', [InvoiceController::class, 'markAsSent'])->name('send');
         Route::post('/{invoice}/pay', [InvoiceController::class, 'markAsPaid'])->name('pay');
         Route::post('/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('cancel');
+        Route::delete('/{invoice}/delete', [InvoiceController::class, 'destroyAjax'])->name('delete-ajax');
 
         // Project revenue sync
         Route::post('/{invoice}/sync-to-projects', [InvoiceController::class, 'syncToProjects'])->name('sync-to-projects');
