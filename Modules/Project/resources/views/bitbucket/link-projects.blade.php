@@ -282,7 +282,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Repository</th>
-                            <th>Description</th>
+                            <th>Last Updated</th>
                             <th>Linked Projects</th>
                             <th style="width: 350px;">Add Project</th>
                         </tr>
@@ -474,10 +474,28 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             tr.appendChild(tdRepo);
 
-            // Description
-            const tdDesc = document.createElement('td');
-            tdDesc.innerHTML = `<small class="text-muted">${repo.description || '-'}</small>`;
-            tr.appendChild(tdDesc);
+            // Last Updated
+            const tdDate = document.createElement('td');
+            let dateDisplay = '-';
+            if (repo.updated_on) {
+                const date = new Date(repo.updated_on);
+                const now = new Date();
+                const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 0) {
+                    dateDisplay = '<span class="badge bg-success">Today</span>';
+                } else if (diffDays === 1) {
+                    dateDisplay = '<span class="badge bg-success">Yesterday</span>';
+                } else if (diffDays <= 7) {
+                    dateDisplay = `<span class="badge bg-info">${diffDays} days ago</span>`;
+                } else if (diffDays <= 30) {
+                    dateDisplay = `<span class="badge bg-warning">${Math.floor(diffDays / 7)} weeks ago</span>`;
+                } else {
+                    dateDisplay = `<small class="text-muted">${date.toLocaleDateString()}</small>`;
+                }
+            }
+            tdDate.innerHTML = dateDisplay;
+            tr.appendChild(tdDate);
 
             // Linked projects
             const tdProjects = document.createElement('td');
