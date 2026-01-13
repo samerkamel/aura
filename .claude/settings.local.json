@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(sshpass -p '4S34%S?Kv42ZbCek' ssh -o StrictHostKeyChecking=no root@78.46.88.250 \"cd /var/www/vhosts/aura.llc/erp.aura.llc && php artisan tinker --execute=''\n$file = storage_path(\"\"app/temp/test_import.xls\"\");\n$spreadsheet = \\PhpOffice\\PhpSpreadsheet\\IOFactory::load($file);\n\n// Check PHP sheet\n$sheet = $spreadsheet->getSheetByName(\"\"PHP\"\");\n$data = $sheet->toArray();\necho \"\"PHP sheet rows: \"\" . count($data) . \"\"\\n\\n\"\";\necho \"\"=== First 25 rows ===\\n\"\";\nfor ($i = 0; $i < min(25, count($data)); $i++) {\n    $row = array_map(function($v) { return $v === null ? \"\"NULL\"\" : (is_numeric($v) ? $v : mb_substr((string)$v, 0, 25)); }, array_slice($data[$i], 0, 10));\n    echo \"\"Row $i: \"\" . json_encode($row, JSON_UNESCAPED_UNICODE) . \"\"\\n\"\";\n}\n''\")"
+      "Bash(sshpass:*)"
     ],
     "deny": [],
     "ask": []

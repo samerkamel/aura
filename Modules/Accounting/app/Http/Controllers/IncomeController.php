@@ -1553,8 +1553,8 @@ class IncomeController extends Controller
                     continue;
                 }
 
-                // Generate contract number
-                $contractNumber = $this->generateContractNumber();
+                // Generate contract number based on contract start date
+                $contractNumber = Contract::generateContractNumber($contractData['start_date']);
 
                 // Create contract
                 $contract = Contract::create([

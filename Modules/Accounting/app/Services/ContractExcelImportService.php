@@ -189,8 +189,8 @@ class ContractExcelImportService
 
             // If we have a customer number in first column, this starts a new customer block
             $customerNumber = $row[0] ?? null;
-            if (is_numeric($customerNumber) && $customerName && $customerName !== 'إجمالى') {
-                // Save previous customer if exists
+            if (is_numeric($customerNumber)) {
+                // Save previous customer if exists and has contract data
                 if ($currentCustomer && !empty($currentCustomerData['contract'])) {
                     $contract = $this->buildContractFromData($currentCustomer, $currentCustomerData, $year, $monthStartCol ?? 5);
                     if ($contract) {
@@ -198,15 +198,28 @@ class ContractExcelImportService
                     }
                 }
 
-                // Start new customer
-                $currentCustomer = $customerName;
-                $currentCustomerData = [
-                    'balance' => [],
-                    'contract' => [],
-                    'expected_contract' => [],
-                    'paid' => [],
-                    'expected' => [],
-                ];
+                // Check if this is a valid new customer (has a name)
+                if ($customerName && $customerName !== 'إجمالى') {
+                    // Start new customer
+                    $currentCustomer = $customerName;
+                    $currentCustomerData = [
+                        'balance' => [],
+                        'contract' => [],
+                        'expected_contract' => [],
+                        'paid' => [],
+                        'expected' => [],
+                    ];
+                } else {
+                    // Customer number but no name - reset to stop collecting data
+                    $currentCustomer = null;
+                    $currentCustomerData = [
+                        'balance' => [],
+                        'contract' => [],
+                        'expected_contract' => [],
+                        'paid' => [],
+                        'expected' => [],
+                    ];
+                }
             }
 
             // Collect operation data
