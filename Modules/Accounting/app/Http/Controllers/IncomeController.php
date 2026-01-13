@@ -1199,7 +1199,7 @@ class IncomeController extends Controller
         // Get products for allocation
         $products = \App\Models\Product::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'unit_price']);
+            ->get(['id', 'name']);
 
         // Get projects for project selection
         $projects = \Modules\Project\Models\Project::active()
