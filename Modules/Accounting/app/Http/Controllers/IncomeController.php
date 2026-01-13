@@ -64,7 +64,20 @@ class IncomeController extends Controller
             });
         }
 
-        $contracts = $query->orderBy('created_at', 'desc')->paginate(15);
+        // Sorting - default to contract_number descending
+        $sortField = $request->get('sort', 'contract_number');
+        $sortDirection = $request->get('direction', 'desc');
+
+        // Validate sort field to prevent SQL injection
+        $allowedSortFields = ['contract_number', 'client_name', 'total_amount', 'start_date', 'status'];
+        if (!in_array($sortField, $allowedSortFields)) {
+            $sortField = 'contract_number';
+        }
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $contracts = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
 
         // Statistics
         $statistics = [
@@ -77,7 +90,9 @@ class IncomeController extends Controller
 
         return view('accounting::income.index', compact(
             'contracts',
-            'statistics'
+            'statistics',
+            'sortField',
+            'sortDirection'
         ));
     }
 

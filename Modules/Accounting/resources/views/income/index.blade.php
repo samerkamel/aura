@@ -115,16 +115,55 @@
                 </div>
             @endif
 
+            @php
+                $currentSort = $sortField ?? 'contract_number';
+                $currentDirection = $sortDirection ?? 'desc';
+
+                $getSortUrl = function($field) use ($currentSort, $currentDirection) {
+                    $direction = ($currentSort === $field && $currentDirection === 'asc') ? 'desc' : 'asc';
+                    return request()->fullUrlWithQuery(['sort' => $field, 'direction' => $direction]);
+                };
+
+                $getSortIcon = function($field) use ($currentSort, $currentDirection) {
+                    if ($currentSort !== $field) {
+                        return '<i class="ti ti-arrows-sort ti-xs text-muted ms-1"></i>';
+                    }
+                    return $currentDirection === 'asc'
+                        ? '<i class="ti ti-sort-ascending ti-xs text-primary ms-1"></i>'
+                        : '<i class="ti ti-sort-descending ti-xs text-primary ms-1"></i>';
+                };
+            @endphp
+
             <div class="table-responsive text-nowrap">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Contract #</th>
-                            <th>Client / Project</th>
-                            <th>Value</th>
-                            <th>Duration</th>
+                            <th style="cursor: pointer;">
+                                <a href="{{ $getSortUrl('contract_number') }}" class="text-dark text-decoration-none d-flex align-items-center">
+                                    Contract # {!! $getSortIcon('contract_number') !!}
+                                </a>
+                            </th>
+                            <th style="cursor: pointer;">
+                                <a href="{{ $getSortUrl('client_name') }}" class="text-dark text-decoration-none d-flex align-items-center">
+                                    Client / Project {!! $getSortIcon('client_name') !!}
+                                </a>
+                            </th>
+                            <th style="cursor: pointer;">
+                                <a href="{{ $getSortUrl('total_amount') }}" class="text-dark text-decoration-none d-flex align-items-center">
+                                    Value {!! $getSortIcon('total_amount') !!}
+                                </a>
+                            </th>
+                            <th style="cursor: pointer;">
+                                <a href="{{ $getSortUrl('start_date') }}" class="text-dark text-decoration-none d-flex align-items-center">
+                                    Duration {!! $getSortIcon('start_date') !!}
+                                </a>
+                            </th>
                             <th>Payment Progress</th>
-                            <th>Status</th>
+                            <th style="cursor: pointer;">
+                                <a href="{{ $getSortUrl('status') }}" class="text-dark text-decoration-none d-flex align-items-center">
+                                    Status {!! $getSortIcon('status') !!}
+                                </a>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
