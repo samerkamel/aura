@@ -297,6 +297,19 @@
 </div>
 @endsection
 
+@php
+$projectsJson = $projects->map(function($p) {
+    return [
+        'id' => $p->id,
+        'name' => $p->name,
+        'code' => $p->code,
+        'customer' => $p->customer ? $p->customer->display_name : null,
+        'is_active' => $p->is_active,
+        'repos' => $p->getAllBitbucketRepoSlugs()
+    ];
+})->values();
+@endphp
+
 @section('page-script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -304,16 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentView = 'projects';
 
     // Projects data from server
-    const projectsData = @json($projects->map(function($p) {
-        return [
-            'id' => $p->id,
-            'name' => $p->name,
-            'code' => $p->code,
-            'customer' => $p->customer ? $p->customer->display_name : null,
-            'is_active' => $p->is_active,
-            'repos' => $p->getAllBitbucketRepoSlugs()
-        ];
-    })->values());
+    const projectsData = @json($projectsJson);
 
     // Load repositories on page load
     loadRepositories();
