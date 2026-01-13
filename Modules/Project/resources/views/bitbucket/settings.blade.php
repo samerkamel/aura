@@ -199,9 +199,14 @@
                 <h5 class="mb-0">
                     <i class="ti ti-git-branch me-2"></i>Linked Projects
                 </h5>
-                <button type="button" class="btn btn-sm btn-primary" id="syncAllBtn">
-                    <i class="ti ti-refresh me-1"></i>Sync All
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('projects.bitbucket.link-projects') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="ti ti-link me-1"></i>Bulk Link Projects
+                    </a>
+                    <button type="button" class="btn btn-sm btn-primary" id="syncAllBtn">
+                        <i class="ti ti-refresh me-1"></i>Sync All
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

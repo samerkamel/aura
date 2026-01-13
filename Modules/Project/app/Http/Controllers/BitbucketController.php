@@ -34,6 +34,22 @@ class BitbucketController extends Controller
     }
 
     /**
+     * Show bulk link projects page.
+     */
+    public function linkProjects()
+    {
+        $settings = BitbucketSetting::getInstance();
+        $isConfigured = $settings->isConfigured();
+
+        $projects = Project::with('customer')
+            ->orderBy('is_active', 'desc')
+            ->orderBy('name')
+            ->get();
+
+        return view('project::bitbucket.link-projects', compact('projects', 'isConfigured'));
+    }
+
+    /**
      * Update Bitbucket settings.
      */
     public function updateSettings(Request $request)
@@ -119,6 +135,11 @@ class BitbucketController extends Controller
             $request->repo_slug,
             $request->workspace
         );
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json($result, $result['success'] ? 200 : 422);
+        }
 
         if ($result['success']) {
             return redirect()->back()->with('success', 'Repository linked successfully');

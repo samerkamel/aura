@@ -94,6 +94,7 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         Route::post('/test-connection', [BitbucketController::class, 'testConnection'])->name('test-connection');
         Route::get('/repositories', [BitbucketController::class, 'getRepositories'])->name('repositories');
         Route::post('/sync-all', [BitbucketController::class, 'syncAll'])->name('sync-all');
+        Route::get('/link-projects', [BitbucketController::class, 'linkProjects'])->name('link-projects');
     });
 
     // Project CRUD with dynamic {project} parameter (must come AFTER static routes)
