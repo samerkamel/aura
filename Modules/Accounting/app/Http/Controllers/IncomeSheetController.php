@@ -17,11 +17,25 @@ class IncomeSheetController extends Controller
     /**
      * Display the income sheet with all products and their financial data.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         // Check authorization
         if (!auth()->user()->can('view-accounting-readonly')) {
             abort(403, 'Unauthorized to view income sheet.');
+        }
+
+        // Get selected year (default to current year)
+        $selectedYear = (int) $request->get('year', now()->year);
+
+        // Get available years from contracts (min start_date year to current year + 1)
+        $minYear = Contract::min('start_date');
+        $minYear = $minYear ? (int) date('Y', strtotime($minYear)) : now()->year;
+        $maxYear = now()->year + 1;
+        $availableYears = range($maxYear, $minYear);
+
+        // Validate selected year is within range
+        if ($selectedYear < $minYear || $selectedYear > $maxYear) {
+            $selectedYear = now()->year;
         }
 
         // Get all products with their contracts data
@@ -53,7 +67,7 @@ class IncomeSheetController extends Controller
         }
 
         foreach ($products as $product) {
-            $data = $this->calculateProductFinancials($product);
+            $data = $this->calculateProductFinancials($product, $selectedYear);
             $incomeSheetData[] = [
                 'product' => $product,
                 'financials' => $data
@@ -76,15 +90,14 @@ class IncomeSheetController extends Controller
             }
         }
 
-        return view('accounting::income-sheet.index', compact('incomeSheetData', 'grandTotals'));
+        return view('accounting::income-sheet.index', compact('incomeSheetData', 'grandTotals', 'selectedYear', 'availableYears'));
     }
 
     /**
      * Calculate financial data for a specific product.
      */
-    private function calculateProductFinancials(\App\Models\Product $product): array
+    private function calculateProductFinancials(\App\Models\Product $product, int $year): array
     {
-        $currentYear = now()->year;
         $months = [];
 
         // Initialize monthly data for all 12 months
@@ -105,9 +118,9 @@ class IncomeSheetController extends Controller
 
         // Calculate monthly data
         for ($month = 1; $month <= 12; $month++) {
-            $monthStart = now()->setYear($currentYear)->setMonth($month)->startOfMonth();
-            $monthEnd = now()->setYear($currentYear)->setMonth($month)->endOfMonth();
-            $monthEndDate = now()->setYear($currentYear)->setMonth($month)->endOfMonth();
+            $monthStart = now()->setYear($year)->setMonth($month)->startOfMonth();
+            $monthEnd = now()->setYear($year)->setMonth($month)->endOfMonth();
+            $monthEndDate = now()->setYear($year)->setMonth($month)->endOfMonth();
 
             // Contracts (Approved/Active contracts with start_date in this month)
             $months[$month]['contracts'] = $contracts->clone()

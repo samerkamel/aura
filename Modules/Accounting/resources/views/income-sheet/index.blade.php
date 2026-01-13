@@ -8,10 +8,20 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0">Income Sheet - {{ date('Y') }}</h5>
+                    <h5 class="mb-0">Income Sheet - {{ $selectedYear }}</h5>
                     <small class="text-muted">Monthly financial overview across all products</small>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="d-flex align-items-center me-2">
+                        <label class="form-label mb-0 me-2 text-nowrap">Fiscal Year:</label>
+                        <select class="form-select form-select-sm" id="year-selector" style="width: auto;">
+                            @foreach($availableYears as $year)
+                                <option value="{{ $year }}" {{ $year == $selectedYear ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <button type="button" class="btn btn-outline-success" onclick="window.print()">
                         <i class="ti ti-printer me-1"></i>Print
                     </button>
@@ -395,4 +405,13 @@
 [data-bs-theme="dark"] .income-row { background-color: rgba(25, 135, 84, 0.1) !important; }
 [data-bs-theme="dark"] .expected-income-row { background-color: rgba(111, 66, 193, 0.1) !important; }
 </style>
+@endsection
+
+@section('page-script')
+<script>
+document.getElementById('year-selector').addEventListener('change', function() {
+    const year = this.value;
+    window.location.href = '{{ route("accounting.income-sheet.index") }}?year=' + year;
+});
+</script>
 @endsection
