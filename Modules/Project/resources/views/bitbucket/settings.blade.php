@@ -67,20 +67,20 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="api_token">App Password</label>
+                            <label class="form-label" for="api_token">API Token</label>
                             <div class="input-group">
                                 <input type="password"
                                        class="form-control @error('api_token') is-invalid @enderror"
                                        id="api_token"
                                        name="api_token"
-                                       placeholder="{{ $settings->api_token ? '••••••••••••' : 'Enter your Bitbucket app password' }}">
+                                       placeholder="{{ $settings->api_token ? '••••••••••••' : 'Enter your Bitbucket API token' }}">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="ti ti-eye"></i>
                                 </button>
                             </div>
                             <div class="form-text">
-                                Create an app password in Bitbucket: Personal settings → App passwords → Create app password
-                                (needs Repository read permissions)
+                                Create an API token in Bitbucket: Workspace settings → API tokens → Create token
+                                (needs Repository read scope)
                             </div>
                             @error('api_token')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -176,16 +176,16 @@
                 <div class="card-body">
                     <ol class="ps-3 mb-0">
                         <li class="mb-2">Log in to your Bitbucket account</li>
-                        <li class="mb-2">Go to <strong>Personal settings</strong> → <strong>App passwords</strong></li>
-                        <li class="mb-2">Click <strong>Create app password</strong></li>
-                        <li class="mb-2">Give it a label (e.g., "AURA Integration")</li>
-                        <li class="mb-2">Select permissions:
+                        <li class="mb-2">Go to <strong>Workspace settings</strong> → <strong>API tokens</strong></li>
+                        <li class="mb-2">Click <strong>Create token</strong></li>
+                        <li class="mb-2">Give it a name (e.g., "AURA Integration")</li>
+                        <li class="mb-2">Select scopes:
                             <ul class="mt-1">
-                                <li>Repositories: Read</li>
+                                <li>Repository: Read</li>
                             </ul>
                         </li>
-                        <li class="mb-2">Copy the generated password</li>
-                        <li>Paste it in the App Password field above</li>
+                        <li class="mb-2">Copy the generated token</li>
+                        <li>Paste it in the API Token field above</li>
                     </ol>
                 </div>
             </div>
