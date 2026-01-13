@@ -18,14 +18,30 @@
         font-size: 0.75rem;
         margin: 2px;
     }
-    .select2-container {
-        min-width: 300px !important;
-    }
     .linked-repos {
         display: flex;
         flex-wrap: wrap;
         gap: 4px;
         margin-top: 4px;
+    }
+    .repo-add-container {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .repo-add-container .select2-container {
+        flex: 1;
+        min-width: 250px;
+    }
+    .repo-add-container .select2-selection {
+        height: 31px !important;
+        font-size: 0.875rem;
+    }
+    .repo-add-container .select2-selection__rendered {
+        line-height: 29px !important;
+    }
+    .repo-add-container .select2-selection__arrow {
+        height: 29px !important;
     }
 </style>
 @endsection
@@ -210,9 +226,9 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="input-group input-group-sm">
+                                    <div class="repo-add-container">
                                         <select class="form-select form-select-sm repo-select" data-project-id="{{ $project->id }}">
-                                            <option value="">Select repository to add...</option>
+                                            <option value="">Search repository...</option>
                                         </select>
                                         <button type="button" class="btn btn-primary btn-sm add-repo-btn" data-project-id="{{ $project->id }}">
                                             <i class="ti ti-plus"></i>
@@ -271,15 +287,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function populateRepoSelects() {
+        // Sort repositories by name
+        const sortedRepos = [...repositories].sort((a, b) =>
+            a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        );
+
         document.querySelectorAll('.repo-select').forEach(select => {
             const projectId = select.dataset.projectId;
             const linkedReposContainer = document.getElementById(`repos-${projectId}`);
             const linkedSlugs = Array.from(linkedReposContainer?.querySelectorAll('[data-repo-slug]') || [])
                 .map(el => el.dataset.repoSlug);
 
+            // Destroy existing Select2 if any
+            if ($(select).hasClass('select2-hidden-accessible')) {
+                $(select).select2('destroy');
+            }
+
             select.innerHTML = '<option value="">Select repository to add...</option>';
 
-            repositories.forEach(repo => {
+            sortedRepos.forEach(repo => {
                 // Skip if already linked
                 if (linkedSlugs.includes(repo.slug)) return;
 
@@ -287,6 +313,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.value = repo.slug;
                 option.textContent = repo.name;
                 select.appendChild(option);
+            });
+
+            // Initialize Select2 with search
+            $(select).select2({
+                placeholder: 'Search repository...',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $(select).parent()
             });
         });
     }
