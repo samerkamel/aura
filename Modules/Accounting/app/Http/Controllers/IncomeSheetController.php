@@ -288,6 +288,231 @@ class IncomeSheetController extends Controller
     }
 
     /**
+     * Display detailed income sheet for a specific product with contracts as rows.
+     */
+    public function productDetail(\App\Models\Product $product, Request $request): View
+    {
+        // Check authorization
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            abort(403, 'Unauthorized to view income sheet.');
+        }
+
+        // Get selected year (default to current year)
+        $selectedYear = (int) $request->get('year', now()->year);
+
+        // Get available years from contracts (min start_date year to current year + 1)
+        $minYear = Contract::min('start_date');
+        $minYear = $minYear ? (int) date('Y', strtotime($minYear)) : now()->year;
+        $maxYear = now()->year + 1;
+        $availableYears = range($maxYear, $minYear);
+
+        // Validate selected year is within range
+        if ($selectedYear < $minYear || $selectedYear > $maxYear) {
+            $selectedYear = now()->year;
+        }
+
+        // Get all contracts allocated to this product
+        $contracts = Contract::whereHas('products', function($query) use ($product) {
+            $query->where('products.id', $product->id);
+        })
+        ->with(['products' => function($query) use ($product) {
+            $query->where('products.id', $product->id);
+        }, 'payments', 'customer'])
+        ->orderBy('start_date', 'desc')
+        ->get();
+
+        $contractsData = [];
+        $grandTotals = [
+            'months' => [],
+            'totals' => [
+                'balance' => 0,
+                'contracts' => 0,
+                'expected_contracts' => 0,
+                'income' => 0,
+                'expected_income' => 0,
+            ]
+        ];
+
+        // Initialize grand totals for each month
+        for ($month = 1; $month <= 12; $month++) {
+            $grandTotals['months'][$month] = [
+                'balance' => 0,
+                'contracts' => 0,
+                'expected_contracts' => 0,
+                'income' => 0,
+                'expected_income' => 0,
+            ];
+        }
+
+        foreach ($contracts as $contract) {
+            $data = $this->calculateContractFinancials($contract, $product, $selectedYear);
+            $contractsData[] = [
+                'contract' => $contract,
+                'financials' => $data
+            ];
+
+            // Add to grand totals
+            $grandTotals['totals']['balance'] += $data['totals']['balance'];
+            $grandTotals['totals']['contracts'] += $data['totals']['contracts'];
+            $grandTotals['totals']['expected_contracts'] += $data['totals']['expected_contracts'];
+            $grandTotals['totals']['income'] += $data['totals']['income'];
+            $grandTotals['totals']['expected_income'] += $data['totals']['expected_income'];
+
+            // Add monthly data to grand totals
+            foreach ($data['months'] as $month => $monthData) {
+                $grandTotals['months'][$month]['balance'] += $monthData['balance'];
+                $grandTotals['months'][$month]['contracts'] += $monthData['contracts'];
+                $grandTotals['months'][$month]['expected_contracts'] += $monthData['expected_contracts'];
+                $grandTotals['months'][$month]['income'] += $monthData['income'];
+                $grandTotals['months'][$month]['expected_income'] += $monthData['expected_income'];
+            }
+        }
+
+        return view('accounting::income-sheet.product-detail', compact(
+            'product', 'contractsData', 'grandTotals', 'selectedYear', 'availableYears'
+        ));
+    }
+
+    /**
+     * Calculate financial data for a specific contract within a product context.
+     */
+    private function calculateContractFinancials(Contract $contract, \App\Models\Product $product, int $year): array
+    {
+        $months = [];
+
+        // Initialize monthly data for all 12 months
+        for ($month = 1; $month <= 12; $month++) {
+            $months[$month] = [
+                'balance' => 0,
+                'contracts' => 0,
+                'expected_contracts' => 0,
+                'income' => 0,
+                'expected_income' => 0,
+            ];
+        }
+
+        // Get allocation for this product from the contract
+        $allocation = $this->getProductAllocationFromContract($contract, $product);
+
+        // Calculate monthly data
+        for ($month = 1; $month <= 12; $month++) {
+            $monthStart = now()->setYear($year)->setMonth($month)->startOfMonth();
+            $monthEnd = now()->setYear($year)->setMonth($month)->endOfMonth();
+            $monthEndDate = now()->setYear($year)->setMonth($month)->endOfMonth();
+
+            // Contracts (Approved/Active contracts with start_date in this month)
+            if (in_array($contract->status, ['approved', 'active'])
+                && $contract->start_date >= $monthStart
+                && $contract->start_date <= $monthEnd) {
+                $months[$month]['contracts'] = $allocation;
+            }
+
+            // Expected Contracts (Draft contracts with start_date in this month)
+            if ($contract->status === 'draft'
+                && $contract->start_date >= $monthStart
+                && $contract->start_date <= $monthEnd) {
+                $months[$month]['expected_contracts'] = $allocation;
+            }
+
+            // Income (Paid contract payments in this month) - allocated portion
+            if (in_array($contract->status, ['approved', 'active'])) {
+                $paidPayments = $contract->payments
+                    ->filter(function($payment) use ($monthStart, $monthEnd) {
+                        return $payment->status === 'paid'
+                            && $payment->paid_date >= $monthStart
+                            && $payment->paid_date <= $monthEnd;
+                    })
+                    ->sum('paid_amount');
+
+                $months[$month]['income'] = $this->applyAllocationRatioForContract($contract, $product, $paidPayments);
+            }
+
+            // Expected Income (Pending/overdue payments due in this month) - allocated portion
+            if (in_array($contract->status, ['approved', 'active'])) {
+                $pendingPayments = $contract->payments
+                    ->filter(function($payment) use ($monthStart, $monthEnd) {
+                        return in_array($payment->status, ['pending', 'overdue'])
+                            && $payment->due_date >= $monthStart
+                            && $payment->due_date <= $monthEnd;
+                    })
+                    ->sum('amount');
+
+                $months[$month]['expected_income'] = $this->applyAllocationRatioForContract($contract, $product, $pendingPayments);
+            }
+
+            // Balance (Outstanding balance = approved contracts - paid income up to this month)
+            if (in_array($contract->status, ['approved', 'active']) && $contract->start_date <= $monthEndDate) {
+                $totalPaidIncome = $contract->payments
+                    ->filter(function($payment) use ($monthEndDate) {
+                        return $payment->status === 'paid'
+                            && $payment->paid_date <= $monthEndDate;
+                    })
+                    ->sum('paid_amount');
+
+                $allocatedPaid = $this->applyAllocationRatioForContract($contract, $product, $totalPaidIncome);
+                $months[$month]['balance'] = $allocation - $allocatedPaid;
+            }
+        }
+
+        // Calculate totals
+        $totalIncome = 0;
+        if (in_array($contract->status, ['approved', 'active'])) {
+            $paidPayments = $contract->payments->where('status', 'paid')->sum('paid_amount');
+            $totalIncome = $this->applyAllocationRatioForContract($contract, $product, $paidPayments);
+        }
+
+        $totals = [
+            'balance' => in_array($contract->status, ['approved', 'active']) ? $allocation - $totalIncome : 0,
+            'contracts' => array_sum(array_column($months, 'contracts')),
+            'expected_contracts' => array_sum(array_column($months, 'expected_contracts')),
+            'income' => array_sum(array_column($months, 'income')),
+            'expected_income' => array_sum(array_column($months, 'expected_income')),
+        ];
+
+        return [
+            'months' => $months,
+            'totals' => $totals
+        ];
+    }
+
+    /**
+     * Get the allocated amount for a specific product from a contract.
+     */
+    private function getProductAllocationFromContract(Contract $contract, \App\Models\Product $product): float
+    {
+        $productPivot = $contract->products->where('id', $product->id)->first()?->pivot;
+
+        if (!$productPivot) {
+            return 0;
+        }
+
+        if ($productPivot->allocation_type === 'amount' && $productPivot->allocation_amount) {
+            return (float) $productPivot->allocation_amount;
+        }
+
+        if ($productPivot->allocation_type === 'percentage' && $productPivot->allocation_percentage) {
+            return ($contract->total_amount * $productPivot->allocation_percentage) / 100;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Apply the product allocation ratio to a payment amount for a specific product.
+     */
+    private function applyAllocationRatioForContract(Contract $contract, \App\Models\Product $product, float $paymentAmount): float
+    {
+        if ($contract->total_amount <= 0 || $paymentAmount <= 0) {
+            return 0;
+        }
+
+        $productAllocation = $this->getProductAllocationFromContract($contract, $product);
+        $allocationRatio = $productAllocation / $contract->total_amount;
+
+        return $paymentAmount * $allocationRatio;
+    }
+
+    /**
      * Export income sheet data.
      */
     public function export(Request $request)

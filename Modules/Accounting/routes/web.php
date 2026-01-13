@@ -86,6 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('income-sheet')->name('income-sheet.')->group(function () {
             Route::get('/', [IncomeSheetController::class, 'index'])->name('index');
             Route::get('/export', [IncomeSheetController::class, 'export'])->name('export');
+            Route::get('/product/{product}', [IncomeSheetController::class, 'productDetail'])->name('product');
         });
 
         // Account Management Routes

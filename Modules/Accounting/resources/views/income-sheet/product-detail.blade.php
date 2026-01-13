@@ -1,6 +1,6 @@
 @extends('layouts/layoutMaster')
 
-@section('title', 'Income Sheet')
+@section('title', 'Income Sheet - ' . $product->name)
 
 @section('content')
 <div class="row">
@@ -8,8 +8,11 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0">Income Sheet - {{ $selectedYear }}</h5>
-                    <small class="text-muted">Monthly financial overview across all products</small>
+                    <h5 class="mb-0">
+                        <i class="ti ti-package text-primary me-2"></i>
+                        {{ $product->name }} - {{ $selectedYear }}
+                    </h5>
+                    <small class="text-muted">Monthly financial overview for contracts linked to this product</small>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
                     <div class="d-flex align-items-center me-2">
@@ -25,11 +28,8 @@
                     <button type="button" class="btn btn-outline-success" onclick="window.print()">
                         <i class="ti ti-printer me-1"></i>Print
                     </button>
-                    <a href="{{ route('accounting.income-sheet.export') }}" class="btn btn-outline-info">
-                        <i class="ti ti-download me-1"></i>Export
-                    </a>
-                    <a href="{{ route('accounting.dashboard') }}" class="btn btn-outline-secondary">
-                        <i class="ti ti-arrow-left me-1"></i>Back to Dashboard
+                    <a href="{{ route('accounting.income-sheet.index', ['year' => $selectedYear]) }}" class="btn btn-outline-secondary">
+                        <i class="ti ti-arrow-left me-1"></i>Back to Income Sheet
                     </a>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                 <table class="table table-bordered table-sm">
                     <thead class="table-light">
                         <tr>
-                            <th class="align-middle text-center" style="min-width: 150px;">Product</th>
+                            <th class="align-middle text-center" style="min-width: 200px;">Contract</th>
                             <th class="align-middle text-center" style="min-width: 120px;">Category</th>
                             @for($month = 1; $month <= 12; $month++)
                                 <th class="text-center" style="min-width: 100px;">{{ DateTime::createFromFormat('!m', $month)->format('M') }}</th>
@@ -47,25 +47,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($incomeSheetData as $data)
-                            @php $product = $data['product']; $financials = $data['financials']; @endphp
+                        @forelse($contractsData as $data)
+                            @php $contract = $data['contract']; $financials = $data['financials']; @endphp
 
                             <!-- Balance Row -->
                             <tr class="product-start balance-row">
-                                <td rowspan="5" class="align-middle text-center bg-body-tertiary">
-                                    <div class="d-flex flex-column align-items-center">
-                                        <a href="{{ route('accounting.income-sheet.product', ['product' => $product, 'year' => $selectedYear]) }}" class="avatar avatar-sm mb-2" title="View contracts for {{ $product->name }}">
-                                            <span class="avatar-initial rounded-circle bg-label-primary">
-                                                <i class="ti ti-package ti-sm"></i>
+                                <td rowspan="5" class="align-middle bg-body-tertiary">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm me-3">
+                                            <span class="avatar-initial rounded-circle bg-label-{{ $contract->status === 'active' ? 'success' : ($contract->status === 'approved' ? 'primary' : ($contract->status === 'draft' ? 'warning' : 'secondary')) }}">
+                                                <i class="ti ti-file-text ti-sm"></i>
                                             </span>
-                                        </a>
-                                        <div class="text-center">
-                                            <a href="{{ route('accounting.income-sheet.product', ['product' => $product, 'year' => $selectedYear]) }}" class="fw-medium text-body" style="font-size: 0.875rem;" title="View contracts for {{ $product->name }}">
-                                                {{ $product->name }}
+                                        </div>
+                                        <div>
+                                            <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-medium text-body" target="_blank">
+                                                {{ $contract->contract_number }}
                                             </a>
-                                            @if($product->code)
-                                                <br><small class="text-muted">{{ $product->code }}</small>
-                                            @endif
+                                            <br>
+                                            <small class="text-muted">{{ $contract->customer?->display_name ?? $contract->client_name }}</small>
+                                            <br>
+                                            <span class="badge bg-label-{{ $contract->status === 'active' ? 'success' : ($contract->status === 'approved' ? 'primary' : ($contract->status === 'draft' ? 'warning' : 'secondary')) }}">
+                                                {{ ucfirst($contract->status) }}
+                                            </span>
                                         </div>
                                     </div>
                                 </td>
@@ -180,15 +183,18 @@
                             <tr>
                                 <td colspan="15" class="text-center py-5">
                                     <div class="d-flex flex-column align-items-center">
-                                        <i class="ti ti-package text-muted mb-3" style="font-size: 4rem;"></i>
-                                        <h5>No Products Found</h5>
-                                        <p class="text-muted">Create products and contracts to view the income sheet</p>
+                                        <i class="ti ti-file-off text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <h5>No Contracts Found</h5>
+                                        <p class="text-muted">No contracts are linked to this product</p>
+                                        <a href="{{ route('accounting.income-sheet.index') }}" class="btn btn-primary mt-2">
+                                            <i class="ti ti-arrow-left me-1"></i>Back to Income Sheet
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
                         @endforelse
 
-                        @if(count($incomeSheetData) > 0)
+                        @if(count($contractsData) > 0)
                             <!-- Totals Section -->
                             <tr class="balance-row totals-section totals-first-row">
                                 <td rowspan="5" class="align-middle text-center bg-body-tertiary">
@@ -200,7 +206,7 @@
                                         </div>
                                         <div class="text-center">
                                             <strong>TOTALS</strong>
-                                            <br><small class="text-muted">All Products</small>
+                                            <br><small class="text-muted">{{ $product->name }}</small>
                                         </div>
                                     </div>
                                 </td>
@@ -313,25 +319,25 @@
             </div>
 
             <!-- Legend -->
-            @if(count($incomeSheetData) > 0)
+            @if(count($contractsData) > 0)
             <div class="card-body">
                 <div class="alert alert-info">
                     <div class="d-flex">
                         <i class="ti ti-info-circle me-2 mt-1"></i>
                         <div>
-                            <h6 class="mb-1">Income Sheet Legend</h6>
+                            <h6 class="mb-1">Income Sheet Legend - {{ $product->name }}</h6>
                             <div class="row">
                                 <div class="col-md-6">
                                     <ul class="mb-0 small">
-                                        <li><strong>Balance:</strong> Outstanding balance (contracts - paid income) up to each month</li>
-                                        <li><strong>Contracts:</strong> Approved/active contracts created in each month</li>
-                                        <li><strong>Ex. Contracts:</strong> Draft contracts created in each month</li>
+                                        <li><strong>Balance:</strong> Outstanding balance (allocated value - paid income) up to each month</li>
+                                        <li><strong>Contracts:</strong> Allocated value of approved/active contracts created in each month</li>
+                                        <li><strong>Ex. Contracts:</strong> Allocated value of draft contracts created in each month</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
                                     <ul class="mb-0 small">
-                                        <li><strong>Income:</strong> Contract payments received in each month</li>
-                                        <li><strong>Ex. Income:</strong> Pending/overdue payments due in each month</li>
+                                        <li><strong>Income:</strong> Allocated portion of payments received in each month</li>
+                                        <li><strong>Ex. Income:</strong> Allocated portion of pending/overdue payments due in each month</li>
                                         <li><strong>Total:</strong> Yearly total for each category</li>
                                     </ul>
                                 </div>
@@ -363,7 +369,7 @@
     .table-bordered th, .table-bordered td { border: 1px solid #000 !important; font-size: 9px !important; padding: 3px !important; background: white !important; line-height: 1.2 !important; }
     .small { font-size: 8px !important; }
     .table th, .table td { position: static !important; left: auto !important; }
-    .table-responsive::before { content: "Income Sheet - {{ date('Y') }}"; display: block; font-weight: bold; font-size: 16px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 5px; }
+    .table-responsive::before { content: "{{ $product->name }} - Income Sheet {{ $selectedYear }}"; display: block; font-weight: bold; font-size: 16px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 5px; }
 }
 
 .table-sm th, .table-sm td { padding: 0.25rem; font-size: 0.875rem; }
@@ -372,13 +378,13 @@
 
 .table th:nth-child(1), .table th:nth-child(2) { position: sticky; z-index: 10; }
 .table th:nth-child(1) { left: 0; }
-.table th:nth-child(2) { left: 150px; }
+.table th:nth-child(2) { left: 200px; }
 
 .table tbody tr.product-start td:nth-child(1), .table tbody tr.product-start td:nth-child(2) { position: sticky; z-index: 10; }
 .table tbody tr.product-start td:nth-child(1) { left: 0; }
-.table tbody tr.product-start td:nth-child(2) { left: 150px; }
+.table tbody tr.product-start td:nth-child(2) { left: 200px; }
 
-.table tbody tr:not(.product-start) td:nth-child(1) { position: sticky; left: 150px; z-index: 10; }
+.table tbody tr:not(.product-start) td:nth-child(1) { position: sticky; left: 200px; z-index: 10; }
 
 .table th:nth-child(1), .table th:nth-child(2),
 .table tbody tr.product-start td:nth-child(1), .table tbody tr.product-start td:nth-child(2),
@@ -387,8 +393,8 @@
 }
 
 .table tbody tr.totals-first-row td:nth-child(1) { position: sticky; left: 0; z-index: 15; background: var(--bs-body-bg) !important; }
-.table tbody tr.totals-first-row td:nth-child(2) { position: sticky; left: 150px; z-index: 10; background: var(--bs-body-bg) !important; }
-.table tbody tr.totals-section:not(.totals-first-row) td:nth-child(1) { position: sticky; left: 150px; z-index: 10; background: var(--bs-body-bg) !important; }
+.table tbody tr.totals-first-row td:nth-child(2) { position: sticky; left: 200px; z-index: 10; background: var(--bs-body-bg) !important; }
+.table tbody tr.totals-section:not(.totals-first-row) td:nth-child(1) { position: sticky; left: 200px; z-index: 10; background: var(--bs-body-bg) !important; }
 
 .product-start td { border-top: 3px solid var(--bs-primary) !important; }
 .product-end td { border-bottom: 3px solid var(--bs-primary) !important; }
@@ -413,7 +419,7 @@
 <script>
 document.getElementById('year-selector').addEventListener('change', function() {
     const year = this.value;
-    window.location.href = '{{ route("accounting.income-sheet.index") }}?year=' + year;
+    window.location.href = '{{ route("accounting.income-sheet.product", $product) }}?year=' + year;
 });
 </script>
 @endsection
