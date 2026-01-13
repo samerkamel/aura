@@ -320,7 +320,8 @@ class IncomeSheetController extends Controller
         // 1. Its start_date falls within the year, OR
         // 2. Its end_date falls within the year, OR
         // 3. It spans the entire year (start before, end after), OR
-        // 4. It has payments (paid or due) within the year
+        // 4. It has payments (paid or due) within the year, OR
+        // 5. It's active/approved and started before year end (may have outstanding balance)
         $contracts = Contract::whereHas('products', function($query) use ($product) {
             $query->where('products.id', $product->id);
         })
@@ -336,6 +337,11 @@ class IncomeSheetController extends Controller
                           $pq->whereBetween('due_date', [$yearStart, $yearEnd])
                              ->orWhereBetween('paid_date', [$yearStart, $yearEnd]);
                       });
+                  })
+                  // Include active/approved contracts that started before year end (may have balance)
+                  ->orWhere(function($q) use ($yearEnd) {
+                      $q->whereIn('status', ['active', 'approved'])
+                        ->where('start_date', '<=', $yearEnd);
                   });
         })
         ->with(['products' => function($query) use ($product) {
