@@ -67,6 +67,26 @@
         background-color: #f8f9fa;
         color: #697a8d;
     }
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+    .sortable:hover {
+        background-color: #e9ecef;
+    }
+    .sortable::after {
+        content: ' ↕';
+        opacity: 0.3;
+        font-size: 0.75rem;
+    }
+    .sortable.asc::after {
+        content: ' ↑';
+        opacity: 1;
+    }
+    .sortable.desc::after {
+        content: ' ↓';
+        opacity: 1;
+    }
 </style>
 @endsection
 
@@ -281,9 +301,9 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Repository</th>
-                            <th>Last Updated</th>
-                            <th>Linked Projects</th>
+                            <th class="sortable" data-sort="name" data-direction="">Repository</th>
+                            <th class="sortable" data-sort="updated" data-direction="">Last Updated</th>
+                            <th class="sortable" data-sort="projects" data-direction="">Linked Projects</th>
                             <th style="width: 350px;">Add Project</th>
                         </tr>
                     </thead>
@@ -315,12 +335,33 @@ $projectsJson = $projects->map(function($p) {
 document.addEventListener('DOMContentLoaded', function() {
     let repositories = [];
     let currentView = 'projects';
+    let repoSortField = 'name';
+    let repoSortDirection = 'asc';
 
     // Projects data from server
     const projectsData = @json($projectsJson);
 
     // Load repositories on page load
     loadRepositories();
+
+    // Setup sortable headers
+    document.querySelectorAll('#reposView .sortable').forEach(th => {
+        th.addEventListener('click', function() {
+            const field = this.dataset.sort;
+            if (repoSortField === field) {
+                repoSortDirection = repoSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                repoSortField = field;
+                repoSortDirection = 'asc';
+            }
+            // Update header classes
+            document.querySelectorAll('#reposView .sortable').forEach(h => {
+                h.classList.remove('asc', 'desc');
+            });
+            this.classList.add(repoSortDirection);
+            populateReposTable();
+        });
+    });
 
     // View switch handlers
     document.getElementById('projectsViewBtn')?.addEventListener('click', () => switchView('projects'));
@@ -443,10 +484,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.getElementById('reposTable');
         if (!tbody) return;
 
-        // Sort repositories by name
-        const sortedRepos = [...repositories].sort((a, b) =>
-            a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-        );
+        // Calculate linked projects count for each repo
+        const reposWithData = repositories.map(repo => ({
+            ...repo,
+            linkedCount: projectsData.filter(p => p.repos.includes(repo.slug)).length
+        }));
+
+        // Sort repositories based on current sort state
+        const sortedRepos = [...reposWithData].sort((a, b) => {
+            let comparison = 0;
+            if (repoSortField === 'name') {
+                comparison = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            } else if (repoSortField === 'updated') {
+                const dateA = a.updated_on ? new Date(a.updated_on).getTime() : 0;
+                const dateB = b.updated_on ? new Date(b.updated_on).getTime() : 0;
+                comparison = dateA - dateB;
+            } else if (repoSortField === 'projects') {
+                comparison = a.linkedCount - b.linkedCount;
+            }
+            return repoSortDirection === 'asc' ? comparison : -comparison;
+        });
 
         // Sort projects by name for dropdown
         const sortedProjects = [...projectsData].sort((a, b) =>
