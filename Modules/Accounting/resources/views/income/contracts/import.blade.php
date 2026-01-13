@@ -3,17 +3,11 @@
 @section('title', 'Import Contracts from Excel')
 
 @section('vendor-style')
-@vite([
-    'resources/assets/vendor/libs/bs-stepper/bs-stepper.scss',
-    'resources/assets/vendor/libs/select2/select2.scss'
-])
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 @section('vendor-script')
-@vite([
-    'resources/assets/vendor/libs/bs-stepper/bs-stepper.js',
-    'resources/assets/vendor/libs/select2/select2.js'
-])
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('content')
@@ -36,40 +30,38 @@
     </div>
 
     <!-- Step Indicator -->
-    <div class="bs-stepper wizard-modern wizard-modern-import-example mt-2 mb-4">
-        <div class="bs-stepper-header">
-            <div class="step" data-target="#step-upload">
-                <button type="button" class="step-trigger">
-                    <span class="bs-stepper-circle"><i class="ti ti-upload ti-sm"></i></span>
-                    <span class="bs-stepper-label">
-                        <span class="bs-stepper-title">Upload</span>
-                        <span class="bs-stepper-subtitle">Select File & Year</span>
-                    </span>
-                </button>
-            </div>
-            <div class="line">
-                <i class="ti ti-chevron-right"></i>
-            </div>
-            <div class="step" data-target="#step-preview">
-                <button type="button" class="step-trigger">
-                    <span class="bs-stepper-circle"><i class="ti ti-eye ti-sm"></i></span>
-                    <span class="bs-stepper-label">
-                        <span class="bs-stepper-title">Preview</span>
-                        <span class="bs-stepper-subtitle">Review & Map Data</span>
-                    </span>
-                </button>
-            </div>
-            <div class="line">
-                <i class="ti ti-chevron-right"></i>
-            </div>
-            <div class="step" data-target="#step-import">
-                <button type="button" class="step-trigger">
-                    <span class="bs-stepper-circle"><i class="ti ti-check ti-sm"></i></span>
-                    <span class="bs-stepper-label">
-                        <span class="bs-stepper-title">Import</span>
-                        <span class="bs-stepper-subtitle">Confirm & Process</span>
-                    </span>
-                </button>
+    <div class="card mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                <div class="d-flex align-items-center step-item" id="step-indicator-upload">
+                    <div class="avatar avatar-sm me-2 bg-primary">
+                        <span class="avatar-initial rounded-circle"><i class="ti ti-upload ti-sm"></i></span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-semibold">Upload</h6>
+                        <small class="text-muted">Select File & Year</small>
+                    </div>
+                </div>
+                <i class="ti ti-chevron-right text-muted d-none d-sm-block"></i>
+                <div class="d-flex align-items-center step-item" id="step-indicator-preview">
+                    <div class="avatar avatar-sm me-2 bg-label-secondary">
+                        <span class="avatar-initial rounded-circle"><i class="ti ti-eye ti-sm"></i></span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Preview</h6>
+                        <small class="text-muted">Review & Map Data</small>
+                    </div>
+                </div>
+                <i class="ti ti-chevron-right text-muted d-none d-sm-block"></i>
+                <div class="d-flex align-items-center step-item" id="step-indicator-import">
+                    <div class="avatar avatar-sm me-2 bg-label-secondary">
+                        <span class="avatar-initial rounded-circle"><i class="ti ti-check ti-sm"></i></span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Import</h6>
+                        <small class="text-muted">Confirm & Process</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -372,14 +364,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const products = @json($products);
     const $ = window.jQuery;
 
-    // Initialize the stepper
-    const wizardElement = document.querySelector('.wizard-modern-import-example');
-    let importStepper = null;
-    if (wizardElement && typeof Stepper !== 'undefined') {
-        importStepper = new Stepper(wizardElement, {
-            linear: false
-        });
-    }
 
     // Initialize Select2 for any dynamic selects
     function initSelect2(selector) {
@@ -757,15 +741,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function showStep(step) {
         $('#step-upload-content, #step-preview-content, #step-results-content').addClass('d-none');
 
+        // Reset all step indicators
+        $('#step-indicator-upload .avatar').removeClass('bg-primary bg-success').addClass('bg-label-secondary');
+        $('#step-indicator-preview .avatar').removeClass('bg-primary bg-success').addClass('bg-label-secondary');
+        $('#step-indicator-import .avatar').removeClass('bg-primary bg-success').addClass('bg-label-secondary');
+
         if (step === 'upload') {
             $('#step-upload-content').removeClass('d-none');
-            if (importStepper) importStepper.to(1);
+            $('#step-indicator-upload .avatar').removeClass('bg-label-secondary').addClass('bg-primary');
         } else if (step === 'preview') {
             $('#step-preview-content').removeClass('d-none');
-            if (importStepper) importStepper.to(2);
+            $('#step-indicator-upload .avatar').removeClass('bg-label-secondary').addClass('bg-success');
+            $('#step-indicator-preview .avatar').removeClass('bg-label-secondary').addClass('bg-primary');
         } else if (step === 'results') {
             $('#step-results-content').removeClass('d-none');
-            if (importStepper) importStepper.to(3);
+            $('#step-indicator-upload .avatar').removeClass('bg-label-secondary').addClass('bg-success');
+            $('#step-indicator-preview .avatar').removeClass('bg-label-secondary').addClass('bg-success');
+            $('#step-indicator-import .avatar').removeClass('bg-label-secondary').addClass('bg-success');
         }
     }
 
