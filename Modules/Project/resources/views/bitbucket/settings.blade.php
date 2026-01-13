@@ -221,7 +221,70 @@
                             </tr>
                         </thead>
                         <tbody id="linkedProjectsTable">
-                            <!-- Will be populated via AJAX or you can pass linked projects -->
+                            @forelse($linkedProjects as $project)
+                                @php
+                                    $repos = $project->bitbucketRepositories;
+                                    $legacyRepo = $project->bitbucket_repo_slug;
+                                    $allRepoSlugs = $project->getAllBitbucketRepoSlugs();
+                                    $commitCount = $project->bitbucketCommits->count();
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('projects.show', $project) }}" class="fw-semibold text-body">
+                                            {{ $project->name }}
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">{{ $project->code }}</small>
+                                    </td>
+                                    <td>
+                                        @foreach($repos as $repo)
+                                            <span class="badge bg-primary mb-1">{{ $repo->display_name }}</span>
+                                        @endforeach
+                                        @if($legacyRepo && !$repos->contains('repo_slug', $legacyRepo))
+                                            <span class="badge bg-secondary mb-1">{{ $legacyRepo }}</span>
+                                        @endif
+                                        @if(empty($allRepoSlugs))
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-info">{{ $commitCount }}</span>
+                                    </td>
+                                    <td>
+                                        @if($project->bitbucket_last_sync_at)
+                                            <small class="text-muted">{{ $project->bitbucket_last_sync_at->diffForHumans() }}</small>
+                                        @else
+                                            <small class="text-muted">Never</small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ route('projects.bitbucket.commits', $project) }}"
+                                               class="btn btn-sm btn-icon btn-outline-primary"
+                                               title="View Commits">
+                                                <i class="ti ti-git-commit"></i>
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-icon btn-outline-success sync-project-btn"
+                                                    data-project-id="{{ $project->id }}"
+                                                    title="Sync Commits">
+                                                <i class="ti ti-refresh"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="ti ti-unlink display-6 d-block mb-2"></i>
+                                        No projects linked to Bitbucket repositories yet.
+                                        <br>
+                                        <a href="{{ route('projects.bitbucket.link-projects') }}" class="btn btn-sm btn-primary mt-2">
+                                            <i class="ti ti-link me-1"></i>Link Projects
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -312,6 +375,43 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Sync individual project
+    document.querySelectorAll('.sync-project-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const projectId = this.dataset.projectId;
+            const icon = this.querySelector('i');
+
+            this.disabled = true;
+            icon.classList.remove('ti-refresh');
+            icon.classList.add('ti-loader', 'ti-spin');
+
+            fetch(`/projects/${projectId}/bitbucket/sync`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    toastr.success(data.message || 'Sync completed');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    toastr.error(data.message || 'Sync failed');
+                }
+            })
+            .catch(error => {
+                toastr.error('An error occurred during sync');
+            })
+            .finally(() => {
+                this.disabled = false;
+                icon.classList.remove('ti-loader', 'ti-spin');
+                icon.classList.add('ti-refresh');
+            });
+        });
+    });
 });
 </script>
 @endsection

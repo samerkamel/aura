@@ -25,12 +25,22 @@ class BitbucketController extends Controller
     {
         $settings = BitbucketSetting::getInstance();
         $connectionStatus = null;
+        $linkedProjects = collect();
 
         if ($settings->isConfigured()) {
             $connectionStatus = $this->bitbucketService->testConnection();
+
+            // Get projects with linked repositories
+            $linkedProjects = Project::with(['bitbucketRepositories', 'bitbucketCommits'])
+                ->where(function ($query) {
+                    $query->whereNotNull('bitbucket_repo_slug')
+                        ->orWhereHas('bitbucketRepositories');
+                })
+                ->orderBy('name')
+                ->get();
         }
 
-        return view('project::bitbucket.settings', compact('settings', 'connectionStatus'));
+        return view('project::bitbucket.settings', compact('settings', 'connectionStatus', 'linkedProjects'));
     }
 
     /**
