@@ -9,6 +9,7 @@ use Modules\Project\Http\Controllers\ProjectPlanningController;
 use Modules\Project\Http\Controllers\ProjectTemplateController;
 use Modules\Project\Http\Controllers\CapacityPlanningController;
 use Modules\Project\Http\Controllers\PMDashboardController;
+use Modules\Project\Http\Controllers\BitbucketController;
 
 Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group(function () {
     // Project Templates (must come before dynamic {project} routes)
@@ -85,6 +86,16 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         Route::get('/api/employee-workload/{employee}', [PMDashboardController::class, 'employeeWorkload'])->name('api.employee-workload');
     });
 
+    // Bitbucket Integration (must come BEFORE /{project} dynamic route)
+    Route::prefix('bitbucket')->name('bitbucket.')->group(function () {
+        // Global Bitbucket settings
+        Route::get('/settings', [BitbucketController::class, 'settings'])->name('settings');
+        Route::post('/settings', [BitbucketController::class, 'updateSettings'])->name('update-settings');
+        Route::post('/test-connection', [BitbucketController::class, 'testConnection'])->name('test-connection');
+        Route::get('/repositories', [BitbucketController::class, 'getRepositories'])->name('repositories');
+        Route::post('/sync-all', [BitbucketController::class, 'syncAll'])->name('sync-all');
+    });
+
     // Project CRUD with dynamic {project} parameter (must come AFTER static routes)
     Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
     Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
@@ -128,6 +139,14 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     Route::get('/{project}/dashboard/health-trend', [ProjectDashboardController::class, 'healthTrend'])->name('health-trend');
     Route::get('/{project}/dashboard/activity', [ProjectDashboardController::class, 'activityFeed'])->name('activity-feed');
     Route::get('/{project}/dashboard/team', [ProjectDashboardController::class, 'teamPerformance'])->name('team-performance');
+
+    // Project Bitbucket routes
+    Route::post('/{project}/bitbucket/link', [BitbucketController::class, 'linkRepository'])->name('bitbucket.link');
+    Route::delete('/{project}/bitbucket/unlink', [BitbucketController::class, 'unlinkRepository'])->name('bitbucket.unlink');
+    Route::post('/{project}/bitbucket/sync', [BitbucketController::class, 'syncCommits'])->name('bitbucket.sync-commits');
+    Route::get('/{project}/bitbucket/commits', [BitbucketController::class, 'projectCommits'])->name('bitbucket.commits');
+    Route::get('/{project}/bitbucket/commits/{commit}', [BitbucketController::class, 'commitDetails'])->name('bitbucket.commit-details');
+    Route::get('/{project}/bitbucket/stats', [BitbucketController::class, 'getCommitStats'])->name('bitbucket.stats');
 
     // Project Finance routes
     Route::prefix('{project}/finance')->name('finance.')->group(function () {

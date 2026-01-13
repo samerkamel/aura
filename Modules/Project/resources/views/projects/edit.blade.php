@@ -95,6 +95,46 @@
               </div>
             @endif
 
+            <!-- Bitbucket Integration -->
+            <div class="card bg-light mb-3">
+              <div class="card-header py-2">
+                <h6 class="mb-0">
+                  <i class="ti ti-brand-bitbucket me-2"></i>Bitbucket Repository
+                </h6>
+              </div>
+              <div class="card-body py-3">
+                @if($project->hasBitbucketRepository())
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="badge bg-success me-2">Linked</span>
+                      <code>{{ $project->bitbucket_repo_slug }}</code>
+                      @if($project->bitbucket_last_sync_at)
+                        <small class="text-muted ms-2">Last synced: {{ $project->bitbucket_last_sync_at->diffForHumans() }}</small>
+                      @endif
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                      <a href="{{ route('projects.bitbucket.commits', $project) }}" class="btn btn-outline-primary">
+                        <i class="ti ti-git-commit me-1"></i>View Commits
+                      </a>
+                      <button type="button" class="btn btn-outline-danger" id="unlinkBitbucketBtn">
+                        <i class="ti ti-unlink"></i>
+                      </button>
+                    </div>
+                  </div>
+                @else
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="badge bg-secondary me-2">Not Linked</span>
+                      <span class="text-muted">Link a Bitbucket repository to track commits</span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#linkBitbucketModal">
+                      <i class="ti ti-link me-1"></i>Link Repository
+                    </button>
+                  </div>
+                @endif
+              </div>
+            </div>
+
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="phase">Project Phase</label>
@@ -242,6 +282,117 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     initCustomerSelect2();
+
+    // Bitbucket Repository Linking
+    const unlinkBtn = document.getElementById('unlinkBitbucketBtn');
+    if (unlinkBtn) {
+        unlinkBtn.addEventListener('click', function() {
+            if (!confirm('Are you sure you want to unlink this repository?')) return;
+
+            fetch('{{ route("projects.bitbucket.unlink", $project) }}', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to unlink repository');
+                }
+            });
+        });
+    }
+
+    // Load repositories for modal
+    const loadReposBtn = document.getElementById('loadRepositoriesBtn');
+    const repoSelect = document.getElementById('repo_slug');
+    if (loadReposBtn && repoSelect) {
+        loadReposBtn.addEventListener('click', loadRepositories);
+
+        // Also load when modal is shown
+        const modal = document.getElementById('linkBitbucketModal');
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', function() {
+                if (repoSelect.options.length <= 1) {
+                    loadRepositories();
+                }
+            });
+        }
+    }
+
+    function loadRepositories() {
+        if (!loadReposBtn) return;
+
+        loadReposBtn.disabled = true;
+        loadReposBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        fetch('{{ route("projects.bitbucket.repositories") }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.repositories) {
+                    repoSelect.innerHTML = '<option value="">Select a repository...</option>';
+                    data.repositories.forEach(repo => {
+                        const option = document.createElement('option');
+                        option.value = repo.slug;
+                        option.textContent = repo.name + (repo.description ? ' - ' + repo.description.substring(0, 50) : '');
+                        repoSelect.appendChild(option);
+                    });
+                } else {
+                    alert(data.message || 'Failed to load repositories');
+                }
+            })
+            .catch(error => {
+                alert('Failed to load repositories');
+            })
+            .finally(() => {
+                loadReposBtn.disabled = false;
+                loadReposBtn.innerHTML = '<i class="ti ti-refresh"></i>';
+            });
+    }
 });
 </script>
+
+<!-- Link Bitbucket Modal -->
+<div class="modal fade" id="linkBitbucketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('projects.bitbucket.link', $project) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="ti ti-brand-bitbucket me-2"></i>Link Bitbucket Repository
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="repo_slug">Repository</label>
+                        <div class="input-group">
+                            <select class="form-select" id="repo_slug" name="repo_slug" required>
+                                <option value="">Select a repository...</option>
+                            </select>
+                            <button type="button" class="btn btn-outline-secondary" id="loadRepositoriesBtn">
+                                <i class="ti ti-refresh"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Select the repository to link to this project</div>
+                    </div>
+                    <div class="alert alert-info small mb-0">
+                        <i class="ti ti-info-circle me-1"></i>
+                        Make sure Bitbucket is configured in <a href="{{ route('projects.bitbucket.settings') }}" target="_blank">Bitbucket Settings</a> before linking repositories.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-link me-1"></i>Link Repository
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

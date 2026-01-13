@@ -37,6 +37,10 @@ class Project extends Model
         'completion_percentage',
         'billing_type',
         'jira_project_id',
+        'bitbucket_workspace',
+        'bitbucket_repo_slug',
+        'bitbucket_repo_uuid',
+        'bitbucket_last_sync_at',
         'needs_monthly_report',
         'is_active',
         'last_followup_date',
@@ -59,6 +63,7 @@ class Project extends Model
         'budgeted_hours' => 'decimal:2',
         'completion_percentage' => 'decimal:2',
         'required_skills' => 'array',
+        'bitbucket_last_sync_at' => 'datetime',
     ];
 
     /**
@@ -457,6 +462,30 @@ class Project extends Model
     public function jiraIssues()
     {
         return $this->hasMany(JiraIssue::class);
+    }
+
+    /**
+     * Get all Bitbucket commits for this project.
+     */
+    public function bitbucketCommits()
+    {
+        return $this->hasMany(BitbucketCommit::class)->orderByDesc('committed_at');
+    }
+
+    /**
+     * Get recent Bitbucket commits for this project.
+     */
+    public function recentBitbucketCommits(int $limit = 10)
+    {
+        return $this->bitbucketCommits()->limit($limit)->get();
+    }
+
+    /**
+     * Check if project is linked to a Bitbucket repository.
+     */
+    public function hasBitbucketRepository(): bool
+    {
+        return !empty($this->bitbucket_repo_slug);
     }
 
     /**

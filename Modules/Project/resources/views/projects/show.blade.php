@@ -159,6 +159,11 @@
           <a href="{{ route('projects.manage-employees', $project) }}" class="btn btn-light btn-sm">
             <i class="ti ti-users me-1"></i>Team
           </a>
+          @if($project->hasBitbucketRepository())
+          <a href="{{ route('projects.bitbucket.commits', $project) }}" class="btn btn-light btn-sm">
+            <i class="ti ti-git-commit me-1"></i>Commits
+          </a>
+          @endif
         </div>
         <div class="btn-group mb-2">
           <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
