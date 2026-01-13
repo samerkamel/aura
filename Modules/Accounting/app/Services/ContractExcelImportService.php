@@ -117,38 +117,34 @@ class ContractExcelImportService
 
         foreach ($data as $rowIndex => $row) {
             foreach ($row as $colIndex => $cell) {
-                if ($cell === 'أسم العميل' || $cell === 'Custom Software' || $cell === 'Mobile Application' || $cell === 'Websites') {
+                $cellStr = trim((string) $cell);
+                if ($cellStr === 'أسم العميل') {
                     $customerCol = $colIndex;
-                }
-                if ($cell === 'العملية') {
-                    $operationCol = $colIndex;
                     $headerRow = $rowIndex;
                 }
-                if ($cell === 'بداية السنة') {
+                if ($cellStr === 'بداية السنة') {
                     $startYearCol = $colIndex;
                 }
-                if ($cell === 'يناير') {
+                if ($cellStr === 'يناير') {
                     $monthStartCol = $colIndex;
                 }
             }
-            if ($headerRow !== null) {
+            if ($headerRow !== null && $monthStartCol !== null) {
                 break;
             }
         }
 
         // If we couldn't find the structure, try alternative detection
         if ($headerRow === null) {
-            // Look for first row with customer-like data
+            // Look for first row with يناير (January) which indicates the header
             foreach ($data as $rowIndex => $row) {
-                if ($rowIndex < 1) continue;
-                // Check if this looks like a customer row (has a number in first column)
-                if (isset($row[0]) && is_numeric($row[0])) {
-                    $headerRow = 0;
-                    $customerCol = 1;
-                    $operationCol = 2;
-                    $startYearCol = 4;
-                    $monthStartCol = 5;
-                    break;
+                foreach ($row as $colIndex => $cell) {
+                    if (trim((string) $cell) === 'يناير') {
+                        $headerRow = $rowIndex;
+                        $monthStartCol = $colIndex;
+                        $customerCol = 1;
+                        break 2;
+                    }
                 }
             }
         }
@@ -156,6 +152,18 @@ class ContractExcelImportService
         if ($headerRow === null) {
             return $contracts;
         }
+
+        // Set default column positions based on known structure:
+        // Col 0: رقم (customer number)
+        // Col 1: أسم العميل (customer name)
+        // Col 2: Operation type in DATA rows (رصيد, تعاقد, etc.)
+        // Col 3: NULL (or العملية in header)
+        // Col 4: بداية السنة
+        // Col 5+: Monthly values
+        $customerCol = $customerCol ?? 1;
+        $operationCol = 2; // Operation values are ALWAYS in column 2 in data rows
+        $startYearCol = $startYearCol ?? 4;
+        $monthStartCol = $monthStartCol ?? 5;
 
         // Parse customer data
         $currentCustomer = null;
@@ -171,13 +179,13 @@ class ContractExcelImportService
             $row = $data[$i];
 
             // Skip empty rows
-            if (empty(array_filter($row))) {
+            if (empty(array_filter($row, fn($v) => $v !== null && $v !== ''))) {
                 continue;
             }
 
-            // Check if this is a new customer row (has customer name)
-            $customerName = $row[$customerCol] ?? null;
-            $operation = $row[$operationCol ?? 3] ?? null;
+            // Get customer name and operation type
+            $customerName = isset($row[$customerCol]) ? trim((string) $row[$customerCol]) : null;
+            $operation = isset($row[$operationCol]) ? trim((string) $row[$operationCol]) : null;
 
             // If we have a customer number in first column, this starts a new customer block
             $customerNumber = $row[0] ?? null;
