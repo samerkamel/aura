@@ -367,40 +367,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // General polynomial regression with configurable order
     // Uses least squares fitting: y = a_n*x^n + a_(n-1)*x^(n-1) + ... + a_1*x + a_0
     function polynomialRegression(data, order = 2) {
-        const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
+        // For polynomial, use ALL data points including zeros (they're valid revenue data)
+        const allData = data.map((v, i) => ({ x: i + 1, y: v || 0 }));
 
-        // Need at least order+1 points for polynomial of given order
-        if (validData.length < order + 1) {
-            if (order > 1 && validData.length >= 2) {
-                return polynomialRegression(data, order - 1); // Try lower order
-            }
+        // Check if we have any non-zero data
+        const hasData = allData.some(d => d.y > 0);
+        if (!hasData) {
+            return { coefficients: [0], order: 0, predict: () => 0 };
+        }
+
+        // For polynomial, we use all 3 data points (including zeros)
+        // This allows proper curve fitting
+        const n = allData.length;
+
+        // Limit order to n-1 (can't fit higher order than points - 1)
+        const effectiveOrder = Math.min(order, n - 1);
+
+        if (effectiveOrder < 1) {
             return linearRegression(data);
         }
 
-        const n = validData.length;
-        const x = validData.map(d => d.x);
-        const y = validData.map(d => d.y);
+        const x = allData.map(d => d.x);
+        const y = allData.map(d => d.y);
 
         // Build the Vandermonde matrix and solve using normal equations
         // For order 2: [1, x, x²], for order 3: [1, x, x², x³], etc.
 
         // Calculate sums of powers of x
         const sumPows = [];
-        for (let p = 0; p <= 2 * order; p++) {
+        for (let p = 0; p <= 2 * effectiveOrder; p++) {
             sumPows[p] = x.reduce((acc, xi) => acc + Math.pow(xi, p), 0);
         }
 
         // Calculate sums of y * x^p
         const sumYPows = [];
-        for (let p = 0; p <= order; p++) {
+        for (let p = 0; p <= effectiveOrder; p++) {
             sumYPows[p] = x.reduce((acc, xi, i) => acc + y[i] * Math.pow(xi, p), 0);
         }
 
-        // Build the normal equations matrix (order+1 x order+1)
+        // Build the normal equations matrix (effectiveOrder+1 x effectiveOrder+1)
         const matrix = [];
-        for (let i = 0; i <= order; i++) {
+        for (let i = 0; i <= effectiveOrder; i++) {
             matrix[i] = [];
-            for (let j = 0; j <= order; j++) {
+            for (let j = 0; j <= effectiveOrder; j++) {
                 matrix[i][j] = sumPows[i + j];
             }
         }
@@ -414,10 +423,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return {
             coefficients: coeffs,
-            order: order,
+            order: effectiveOrder,
             predict: (xVal) => {
                 let result = 0;
-                for (let p = 0; p <= order; p++) {
+                for (let p = 0; p <= effectiveOrder; p++) {
                     result += coeffs[p] * Math.pow(xVal, p);
                 }
                 return Math.max(0, result);
