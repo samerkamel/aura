@@ -342,6 +342,43 @@ class BudgetController extends Controller
     }
 
     /**
+     * Populate capacity entries from employee data.
+     * Maps employee teams to products and populates headcount and average hourly rates.
+     */
+    public function populateCapacityFromEmployees(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            $results = $this->capacityService->populateFromEmployees($budget);
+
+            $updatedCount = collect($results)->filter(fn($r) => $r['updated'])->count();
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Populated {$updatedCount} capacity entries from employee data",
+                    'results' => $results,
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', "Populated {$updatedCount} capacity entries from employee data");
+
+        } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to populate from employees: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to populate from employees: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Delete a budget
      */
     public function destroy(Budget $budget)

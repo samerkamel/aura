@@ -170,6 +170,10 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Capacity Budget
                             </button>
+                            <button type="button" class="btn btn-info" id="populateFromEmployeesBtn"
+                                    data-route="{{ route('accounting.budgets.capacity.populate-from-employees', $budget->id) }}">
+                                <i class="fas fa-users"></i> Populate from Employees
+                            </button>
                             <a href="{{ route('accounting.budgets.growth', $budget->id) }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to Growth
                             </a>
@@ -484,6 +488,51 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Populate from Employees button handler
+    const populateBtn = document.getElementById('populateFromEmployeesBtn');
+    if (populateBtn) {
+        populateBtn.addEventListener('click', function() {
+            if (!confirm('This will update the headcount and hourly rates from the current employee data. Continue?')) {
+                return;
+            }
+
+            const route = this.dataset.route;
+            const btn = this;
+
+            // Disable button and show loading state
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+            fetch(route, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message and reload page to see updated data
+                    alert(data.message + '\n\nThe page will reload to show the updated values.');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to populate from employees');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to populate from employees');
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+        });
+    }
 });
 </script>
 @endsection
