@@ -73,9 +73,23 @@ class BudgetController extends Controller
 
         $growthEntries = $this->growthService->getBudgetGrowthEntries($budget);
 
+        // Prepare chart data for JavaScript
+        $chartData = $growthEntries->map(function ($entry) {
+            return [
+                'id' => $entry->id,
+                'name' => $entry->product->name ?? 'Unknown',
+                'year_minus_3' => (float) ($entry->year_minus_3 ?? 0),
+                'year_minus_2' => (float) ($entry->year_minus_2 ?? 0),
+                'year_minus_1' => (float) ($entry->year_minus_1 ?? 0),
+                'trendline_type' => $entry->trendline_type ?? 'linear',
+                'budgeted_value' => (float) ($entry->budgeted_value ?? 0),
+            ];
+        })->values();
+
         return view('accounting::budget.tabs.growth', [
             'budget' => $budget,
             'growthEntries' => $growthEntries,
+            'chartData' => $chartData,
         ]);
     }
 

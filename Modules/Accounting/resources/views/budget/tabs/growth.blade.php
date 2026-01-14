@@ -318,16 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const years = [budgetYear - 3, budgetYear - 2, budgetYear - 1, budgetYear];
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    // Data for charts
-    const productData = @json($growthEntries->map(fn($e) => [
-        'id' => $e->id,
-        'name' => $e->product->name,
-        'year_minus_3' => $e->year_minus_3 ?? 0,
-        'year_minus_2' => $e->year_minus_2 ?? 0,
-        'year_minus_1' => $e->year_minus_1 ?? 0,
-        'trendline_type' => $e->trendline_type ?? 'linear',
-        'budgeted_value' => $e->budgeted_value ?? 0,
-    ]));
+    // Data for charts (prepared by controller)
+    const productData = @json($chartData);
 
     let projectedValues = {};
     let barChart = null;
