@@ -10,6 +10,7 @@ use Modules\Accounting\Http\Controllers\AccountController;
 use Modules\Accounting\Http\Controllers\EstimateController;
 use Modules\Accounting\Http\Controllers\CreditNoteController;
 use Modules\Accounting\Http\Controllers\ExpenseImportController;
+use Modules\Accounting\Http\Controllers\BudgetController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -205,5 +206,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Expense Import Row Routes (separate for AJAX)
         Route::patch('/expense-imports/rows/{expenseImportRow}', [ExpenseImportController::class, 'updateRow'])
             ->name('expense-imports.rows.update');
+
+        // Budget Planning Routes
+        Route::prefix('budgets')->name('budgets.')->group(function () {
+            Route::get('/', [BudgetController::class, 'index'])->name('index');
+            Route::get('/create', [BudgetController::class, 'create'])->name('create');
+            Route::post('/', [BudgetController::class, 'store'])->name('store');
+            Route::delete('/{budget}', [BudgetController::class, 'destroy'])->name('destroy');
+
+            // Budget Tab Routes
+            Route::get('/{budget}/growth', [BudgetController::class, 'growth'])->name('growth');
+            Route::post('/{budget}/growth', [BudgetController::class, 'updateGrowth'])->name('growth.update');
+            Route::post('/{budget}/growth/calculate-trendline', [BudgetController::class, 'calculateTrendline'])->name('growth.calculate-trendline');
+            Route::post('/{budget}/growth/populate-historical', [BudgetController::class, 'populateHistoricalData'])->name('growth.populate-historical');
+
+            Route::get('/{budget}/capacity', [BudgetController::class, 'capacity'])->name('capacity');
+            Route::post('/{budget}/capacity', [BudgetController::class, 'updateCapacity'])->name('capacity.update');
+            Route::post('/{budget}/capacity/hires', [BudgetController::class, 'addHire'])->name('capacity.hires.add');
+            Route::delete('/{budget}/capacity/hires/{hire}', [BudgetController::class, 'deleteHire'])->name('capacity.hires.delete');
+            Route::post('/{budget}/capacity/calculate', [BudgetController::class, 'calculateCapacityIncome'])->name('capacity.calculate');
+        });
     });
 });

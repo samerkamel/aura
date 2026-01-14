@@ -40,6 +40,9 @@ class AccountingServiceProvider extends ServiceProvider
         // Register Accounting services
         $this->app->singleton(\Modules\Accounting\Services\ScheduleCalculatorService::class);
         $this->app->singleton(\Modules\Accounting\Services\CashFlowProjectionService::class);
+
+        // Register Budget services
+        $this->app->register(\Modules\Accounting\Services\Budget\BudgetServiceProvider::class);
     }
 
     /**
