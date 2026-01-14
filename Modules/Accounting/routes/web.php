@@ -246,6 +246,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{budget}/personnel/{entry}/allocations', [BudgetController::class, 'updateAllocations'])->name('personnel.allocations.update');
             Route::post('/{budget}/personnel/new-hire', [BudgetController::class, 'addNewHire'])->name('personnel.new-hire.add');
             Route::delete('/{budget}/personnel/{entry}', [BudgetController::class, 'deletePersonnelEntry'])->name('personnel.delete');
+
+            // Expenses Tab (OpEx, Tax, CapEx)
+            Route::get('/{budget}/expenses', [BudgetController::class, 'expenses'])->name('expenses');
+            Route::post('/{budget}/expenses', [BudgetController::class, 'updateExpenses'])->name('expenses.update');
+            Route::post('/{budget}/expenses/initialize', [BudgetController::class, 'initializeExpenses'])->name('expenses.initialize');
+            Route::post('/{budget}/expenses/apply-global', [BudgetController::class, 'applyGlobalIncrease'])->name('expenses.apply-global');
+            Route::post('/{budget}/expenses/populate', [BudgetController::class, 'populateExpenseData'])->name('expenses.populate');
         });
     });
 });

@@ -13,6 +13,7 @@ use Modules\Accounting\Services\Budget\CapacityService;
 use Modules\Accounting\Services\Budget\CollectionService;
 use Modules\Accounting\Services\Budget\ResultService;
 use Modules\Accounting\Services\Budget\PersonnelService;
+use Modules\Accounting\Services\Budget\ExpenseService;
 use Modules\HR\Models\Employee;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class BudgetController extends Controller
         private CollectionService $collectionService,
         private ResultService $resultService,
         private PersonnelService $personnelService,
+        private ExpenseService $expenseService,
     ) {}
 
     /**
@@ -1037,6 +1039,239 @@ class BudgetController extends Controller
         }
 
         return $allocations;
+    }
+
+    // ==================== Expenses Tab Methods ====================
+
+    /**
+     * Show Expenses Tab (OpEx, Tax, CapEx combined)
+     */
+    public function expenses(Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $expenseEntries = $this->expenseService->getBudgetExpenseEntries($budget);
+        $summary = $this->expenseService->getExpensesSummary($budget);
+
+        // Group entries by type
+        $opexEntries = $expenseEntries->where('type', 'opex');
+        $taxEntries = $expenseEntries->where('type', 'tax');
+        $capexEntries = $expenseEntries->where('type', 'capex');
+
+        // Prepare chart data
+        $chartData = [
+            'byType' => [
+                'OpEx' => $summary['opex_total'],
+                'Tax' => $summary['tax_total'],
+                'CapEx' => $summary['capex_total'],
+            ],
+            'comparison' => [
+                'last_year' => $expenseEntries->sum('last_year_total'),
+                'proposed' => $summary['grand_total'],
+            ],
+        ];
+
+        return view('accounting::budget.tabs.expenses', [
+            'budget' => $budget,
+            'expenseEntries' => $expenseEntries,
+            'opexEntries' => $opexEntries,
+            'taxEntries' => $taxEntries,
+            'capexEntries' => $capexEntries,
+            'summary' => $summary,
+            'chartData' => $chartData,
+        ]);
+    }
+
+    /**
+     * Initialize expense entries from expense categories
+     */
+    public function initializeExpenses(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            if ($budget->expenseEntries()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Expense entries already initialized.',
+                ], 400);
+            }
+
+            $this->expenseService->initializeExpenseEntries($budget);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Expense entries initialized from categories',
+                    'count' => $budget->expenseEntries()->count(),
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Expense entries initialized from categories');
+        } catch (\Exception $e) {
+            \Log::error('Failed to initialize expense entries: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to initialize expense entries: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to initialize expense entries: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update expense entries
+     */
+    public function updateExpenses(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'expense_entries' => 'required|array',
+            'expense_entries.*.id' => 'required|exists:budget_expense_entries,id',
+            'expense_entries.*.increase_percentage' => 'nullable|numeric',
+            'expense_entries.*.proposed_amount' => 'nullable|numeric|min:0',
+            'expense_entries.*.is_override' => 'nullable|boolean',
+        ]);
+
+        foreach ($validated['expense_entries'] as $entryData) {
+            $entry = $budget->expenseEntries()->findOrFail($entryData['id']);
+
+            $isOverride = $entryData['is_override'] ?? false;
+
+            if ($isOverride && isset($entryData['proposed_amount'])) {
+                $this->expenseService->updateWithAmountOverride($entry, $entryData['proposed_amount']);
+            } else {
+                $this->expenseService->updateWithPercentageIncrease($entry, $entryData['increase_percentage'] ?? 0);
+            }
+        }
+
+        return redirect()->back()
+            ->with('success', 'Expense budget entries updated successfully');
+    }
+
+    /**
+     * Apply global increase to all entries of a type
+     */
+    public function applyGlobalIncrease(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'type' => 'required|in:opex,tax,capex,all',
+            'increase_percentage' => 'required|numeric',
+        ]);
+
+        $type = $validated['type'];
+        $pct = $validated['increase_percentage'];
+
+        if ($type === 'opex' || $type === 'all') {
+            $this->expenseService->applyGlobalOpExIncrease($budget, $pct);
+            $budget->update(['opex_global_increase_pct' => $pct]);
+        }
+
+        if ($type === 'tax' || $type === 'all') {
+            $this->expenseService->applyGlobalTaxIncrease($budget, $pct);
+            $budget->update(['tax_global_increase_pct' => $pct]);
+        }
+
+        if ($type === 'capex' || $type === 'all') {
+            // CapEx typically doesn't have global increase
+            $budget->expenseEntries()
+                ->where('type', 'capex')
+                ->get()
+                ->each(fn($entry) => $entry->applyGlobalIncrease($pct));
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Global increase of {$pct}% applied to {$type} expenses",
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', "Global increase of {$pct}% applied to {$type} expenses");
+    }
+
+    /**
+     * Populate expense data from last year actuals
+     */
+    public function populateExpenseData(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            $results = $this->populateExpensesFromActuals($budget);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Expense data populated from last year actuals',
+                    'data' => $results,
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Expense data populated from last year actuals');
+        } catch (\Exception $e) {
+            \Log::error('Failed to populate expense data: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to populate expense data: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to populate expense data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Helper to populate expense data from actual expenses
+     */
+    private function populateExpensesFromActuals(Budget $budget): array
+    {
+        $results = [];
+        $budgetYear = $budget->year;
+        $lastYear = $budgetYear - 1;
+
+        $entries = $budget->expenseEntries()->with('category')->get();
+
+        foreach ($entries as $entry) {
+            $categoryId = $entry->expense_category_id;
+
+            if (!$categoryId) {
+                continue;
+            }
+
+            // Get actual expenses from last year for this category
+            $lastYearTotal = \Modules\Accounting\Models\ExpenseSchedule::query()
+                ->where('expense_category_id', $categoryId)
+                ->whereYear('expense_date', $lastYear)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            $entry->update([
+                'last_year_total' => $lastYearTotal,
+                'last_year_avg_monthly' => $lastYearTotal / 12,
+            ]);
+
+            $results[$entry->id] = [
+                'category_id' => $categoryId,
+                'category_name' => $entry->category?->name ?? 'Unknown',
+                'last_year_total' => $lastYearTotal,
+            ];
+        }
+
+        return $results;
     }
 
     /**
