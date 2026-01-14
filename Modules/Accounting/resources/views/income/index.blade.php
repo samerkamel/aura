@@ -87,9 +87,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title mb-1">Outstanding Balance</h6>
+                                <h6 class="card-title mb-1">Outstanding Balance <span class="badge bg-label-success">Active</span></h6>
                                 <h4 class="mb-0 {{ $statistics['total_outstanding'] > 0 ? 'text-warning' : '' }}">EGP {{ number_format($statistics['total_outstanding'], 0) }}</h4>
-                                <small class="text-muted">All active contracts</small>
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-warning">
