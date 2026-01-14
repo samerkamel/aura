@@ -151,25 +151,26 @@ class BudgetController extends Controller
     }
 
     /**
-     * Auto-fill historical data from actual invoices
+     * Auto-fill historical data from actual invoices/contracts
      */
     public function populateHistoricalData(Request $request, Budget $budget)
     {
         $this->authorizeEdit($budget);
 
-        // This would integrate with Invoice model to get actual historical data
-        // For now, it's a placeholder for the structure
+        // Populate historical data from contracts/payments
+        $results = $this->growthService->populateHistoricalData($budget);
 
         // Return JSON for AJAX request, redirect for regular request
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Historical data populated from actual invoices',
+                'message' => 'Historical data populated from contracts',
+                'data' => $results,
             ]);
         }
 
         return redirect()->back()
-            ->with('success', 'Historical data populated from actual invoices');
+            ->with('success', 'Historical data populated from contracts');
     }
 
     /**

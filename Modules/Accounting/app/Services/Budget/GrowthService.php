@@ -204,4 +204,101 @@ class GrowthService
     {
         return $budget->growthEntries()->with('product')->get();
     }
+
+    /**
+     * Populate historical data from contracts/invoices for all growth entries
+     *
+     * Calculates income by product for the 3 years prior to the budget year
+     * using paid contract payments allocated to each product.
+     */
+    public function populateHistoricalData(Budget $budget): array
+    {
+        $budgetYear = $budget->year;
+        $results = [];
+
+        foreach ($budget->growthEntries as $entry) {
+            $productId = $entry->product_id;
+
+            // Get income for each historical year
+            $yearMinus3 = $this->getProductIncomeForYear($productId, $budgetYear - 3);
+            $yearMinus2 = $this->getProductIncomeForYear($productId, $budgetYear - 2);
+            $yearMinus1 = $this->getProductIncomeForYear($productId, $budgetYear - 1);
+
+            // Update the entry
+            $entry->update([
+                'year_minus_3' => $yearMinus3,
+                'year_minus_2' => $yearMinus2,
+                'year_minus_1' => $yearMinus1,
+            ]);
+
+            $results[$entry->id] = [
+                'product_id' => $productId,
+                'product_name' => $entry->product->name ?? 'Unknown',
+                'year_minus_3' => $yearMinus3,
+                'year_minus_2' => $yearMinus2,
+                'year_minus_1' => $yearMinus1,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Get total income for a product in a specific year
+     *
+     * Uses paid contract payments where the contract has the product allocated.
+     * Income is prorated based on the product's allocation percentage.
+     */
+    public function getProductIncomeForYear(int $productId, int $year): float
+    {
+        $startDate = "{$year}-01-01";
+        $endDate = "{$year}-12-31";
+
+        // Get all contracts that have this product allocated
+        $contracts = \Modules\Accounting\Models\Contract::whereHas('products', function ($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })->get();
+
+        $totalIncome = 0;
+
+        foreach ($contracts as $contract) {
+            // Get the product allocation for this contract
+            $allocation = $contract->products()
+                ->where('product_id', $productId)
+                ->first();
+
+            if (!$allocation) {
+                continue;
+            }
+
+            // Get paid payments for this contract in the target year
+            $paidAmount = $contract->payments()
+                ->where('status', 'paid')
+                ->whereYear('paid_date', $year)
+                ->sum('amount');
+
+            if ($paidAmount > 0) {
+                // Apply allocation percentage or use proportion of contract total
+                $allocationType = $allocation->pivot->allocation_type ?? 'percentage';
+                $allocationPct = $allocation->pivot->allocation_percentage ?? 0;
+                $allocationAmt = $allocation->pivot->allocation_amount ?? 0;
+
+                if ($allocationType === 'percentage' && $allocationPct > 0) {
+                    $totalIncome += $paidAmount * ($allocationPct / 100);
+                } elseif ($allocationType === 'amount' && $allocationAmt > 0 && $contract->total_amount > 0) {
+                    // Calculate proportion based on allocation amount vs contract total
+                    $proportion = $allocationAmt / $contract->total_amount;
+                    $totalIncome += $paidAmount * $proportion;
+                } else {
+                    // No allocation info - assume equal distribution among products
+                    $productCount = $contract->products()->count();
+                    if ($productCount > 0) {
+                        $totalIncome += $paidAmount / $productCount;
+                    }
+                }
+            }
+        }
+
+        return round($totalIncome, 2);
+    }
 }

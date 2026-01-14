@@ -56,7 +56,7 @@
                     <h5 class="mb-0">Growth-Based Budget Projections</h5>
                     <button class="btn btn-sm btn-outline-primary" id="populate-historical-btn"
                             data-route="{{ route('accounting.budgets.growth.populate-historical', $budget->id) }}">
-                        <i class="fas fa-download"></i> Populate from Invoices
+                        <i class="fas fa-download"></i> Populate from Contracts
                     </button>
                 </div>
                 <div class="card-body">
@@ -68,14 +68,14 @@
                                 <thead>
                                     <tr>
                                         <th>Product</th>
-                                        <th>Year -3</th>
-                                        <th>Year -2</th>
-                                        <th>Year -1</th>
+                                        <th>{{ $budget->year - 3 }}</th>
+                                        <th>{{ $budget->year - 2 }}</th>
+                                        <th>{{ $budget->year - 1 }}</th>
                                         <th>Trendline Type</th>
                                         <th>Polynomial Order</th>
-                                        <th>Projected Value</th>
-                                        <th>Budgeted Value</th>
-                                        <th>Action</th>
+                                        <th>Projected ({{ $budget->year }})</th>
+                                        <th>Budgeted ({{ $budget->year }})</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -296,7 +296,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Populate historical data button
     document.getElementById('populate-historical-btn')?.addEventListener('click', function() {
-        if (confirm('This will populate historical data from your actual invoices. Continue?')) {
+        if (confirm('This will calculate income from paid contracts for {{ $budget->year - 3 }}, {{ $budget->year - 2 }}, and {{ $budget->year - 1 }} for each product. Continue?')) {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            btn.disabled = true;
+
             const route = this.dataset.route;
             fetch(route, {
                 method: 'POST',
@@ -310,11 +315,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     location.reload();
                 } else {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                     alert(data.message || 'Failed to populate historical data');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
                 alert('Failed to populate historical data');
             });
         }
