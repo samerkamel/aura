@@ -33,7 +33,13 @@
       "mcp__playwright__browser_take_screenshot",
       "Bash(python3:*)",
       "mcp__playwright__browser_select_option",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm uninstall:*)",
+      "Bash(php:*)",
+      "Bash(php /Users/SamerKamel/Root/aura/artisan view:clear:*)"
     ],
     "deny": [],
     "ask": []

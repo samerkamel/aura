@@ -4,7 +4,6 @@
 
 @section('vendor-script')
 @vite(['resources/assets/vendor/libs/chartjs/chartjs.js'])
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-regression-trendline/dist/chartjs-plugin-regression-trendline.min.js"></script>
 @endsection
 
 @section('content')
@@ -71,7 +70,9 @@
                     </span>
                 </div>
                 <div class="card-body p-2">
-                    <canvas id="trendline-chart-{{ $entry->id }}" style="height: 280px;"></canvas>
+                    <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="trendline-chart-{{ $entry->id }}"></canvas>
+                    </div>
                     <div class="text-center mt-2">
                         <span class="badge bg-success fs-6">
                             {{ $budget->year }} Projected: <span class="projected-display-{{ $entry->id }}">Calculating...</span>
@@ -467,15 +468,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTrendlineCharts();
     }
 
-    // Map trendline type to plugin type
-    function getPluginType(type) {
-        switch (type) {
-            case 'logarithmic': return 'logarithmic';
-            case 'polynomial': return 'polynomial';
-            default: return 'linear';
-        }
-    }
-
     // Get trendline color based on type
     function getTrendlineColor(type) {
         switch (type) {
@@ -485,7 +477,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Initialize trendline charts with Chart.js
+    // Generate trendline points for smooth curve
+    function generateTrendlinePoints(regression, type, startX, endX, steps) {
+        const points = [];
+        const step = (endX - startX) / (steps - 1);
+
+        for (let i = 0; i < steps; i++) {
+            const x = startX + (i * step);
+            let y;
+
+            if (type === 'logarithmic') {
+                // For logarithmic: y = a * ln(x) + b
+                y = x > 0 ? regression.predict(x) : 0;
+            } else if (type === 'polynomial') {
+                // For polynomial: y = ax² + bx + c
+                y = regression.predict(x);
+            } else {
+                // For linear: y = mx + b
+                y = regression.predict(x);
+            }
+
+            points.push({ x: x, y: Math.max(0, y) });
+        }
+
+        return points;
+    }
+
+    // Initialize trendline charts with Chart.js (mixed bar + line)
     function initTrendlineCharts() {
         productData.forEach(product => {
             const canvas = document.getElementById('trendline-chart-' + product.id);
@@ -496,36 +514,53 @@ document.addEventListener('DOMContentLoaded', function() {
             const projection = projectedValues[product.id] || 0;
             const regData = regressionCoeffs[product.id];
             const type = regData ? regData.type : 'linear';
+            const regression = regData ? regData.regression : linearRegression(data);
             const trendlineColor = getTrendlineColor(type);
 
-            // Include projected value in data for trendline calculation
-            const allData = [...data, projection];
+            // Generate trendline curve points (x=1 to x=4, with many intermediate points)
+            const trendlinePoints = generateTrendlinePoints(regression, type, 1, 4, 50);
 
             const chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: years.map(String),
-                    datasets: [{
-                        label: 'Revenue',
-                        data: allData,
-                        backgroundColor: [
-                            'rgba(168, 213, 226, 0.8)',
-                            'rgba(168, 213, 226, 0.8)',
-                            'rgba(168, 213, 226, 0.8)',
-                            'rgba(39, 174, 96, 0.8)' // Projected year in green
-                        ],
-                        borderColor: [
-                            'rgba(168, 213, 226, 1)',
-                            'rgba(168, 213, 226, 1)',
-                            'rgba(168, 213, 226, 1)',
-                            'rgba(39, 174, 96, 1)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        regressionTrendline: {
-                            showLine: true
+                    datasets: [
+                        // Bar dataset for actual values
+                        {
+                            type: 'bar',
+                            label: 'Revenue',
+                            data: [...data, projection],
+                            backgroundColor: [
+                                'rgba(168, 213, 226, 0.8)',
+                                'rgba(168, 213, 226, 0.8)',
+                                'rgba(168, 213, 226, 0.8)',
+                                'rgba(39, 174, 96, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(168, 213, 226, 1)',
+                                'rgba(168, 213, 226, 1)',
+                                'rgba(168, 213, 226, 1)',
+                                'rgba(39, 174, 96, 1)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            order: 2
+                        },
+                        // Line dataset for trendline curve
+                        {
+                            type: 'line',
+                            label: type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline',
+                            data: trendlinePoints,
+                            borderColor: trendlineColor,
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0,
+                            fill: false,
+                            order: 1,
+                            xAxisID: 'xLine'
                         }
-                    }]
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -542,25 +577,27 @@ document.addEventListener('DOMContentLoaded', function() {
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return formatNumber(context.raw) + ' EGP';
+                                    if (context.dataset.type === 'line') {
+                                        return context.dataset.label + ': ' + formatNumber(context.raw.y) + ' EGP';
+                                    }
+                                    return 'Revenue: ' + formatNumber(context.raw) + ' EGP';
                                 }
                             }
-                        },
-                        regressionTrendline: {
-                            enabled: true,
-                            type: getPluginType(type),
-                            degree: 2, // For polynomial
-                            steps: 100,
-                            color: trendlineColor,
-                            borderWidth: 3
                         }
                     },
                     scales: {
                         x: {
+                            type: 'category',
                             grid: { display: false },
                             ticks: {
                                 font: { size: 11 }
                             }
+                        },
+                        xLine: {
+                            type: 'linear',
+                            display: false,
+                            min: 1,
+                            max: 4
                         },
                         y: {
                             beginAtZero: true,
@@ -597,12 +634,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const projection = projectedValues[product.id] || 0;
             const trendlineColor = getTrendlineColor(type);
 
-            // Update chart data
+            // Recalculate regression and trendline points
+            const data = [y3, y2, y1];
+            const regression = getRegression(data, type);
+            const trendlinePoints = generateTrendlinePoints(regression, type, 1, 4, 50);
+
+            // Update bar data
             chart.data.datasets[0].data = [y3, y2, y1, projection];
 
-            // Update trendline options
-            chart.options.plugins.regressionTrendline.type = getPluginType(type);
-            chart.options.plugins.regressionTrendline.color = trendlineColor;
+            // Update trendline data
+            chart.data.datasets[1].data = trendlinePoints;
+            chart.data.datasets[1].borderColor = trendlineColor;
+            chart.data.datasets[1].label = type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline';
 
             chart.update();
         });
