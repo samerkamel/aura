@@ -115,6 +115,36 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible mx-4 mt-3" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <!-- Bulk Actions Bar -->
+            <div id="bulkActionsBar" class="card-body border-bottom py-3 d-none">
+                <form id="bulkActionForm" action="{{ route('accounting.income.contracts.bulk-action') }}" method="POST" class="d-flex align-items-center gap-3 flex-wrap">
+                    @csrf
+                    <input type="hidden" name="action" id="bulkAction" value="">
+                    <span class="fw-medium"><span id="selectedCount">0</span> contracts selected</span>
+                    <div class="vr"></div>
+                    <select name="project_id" id="projectSelect" class="form-select form-select-sm" style="width: 250px;">
+                        <option value="">Select Project...</option>
+                        @foreach($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->code ? $project->code . ' - ' : '' }}{{ $project->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="submitBulkAction('assign_project')">
+                        <i class="ti ti-link me-1"></i>Link to Project
+                    </button>
+                    <div class="vr"></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearSelection()">
+                        <i class="ti ti-x me-1"></i>Clear Selection
+                    </button>
+                </form>
+            </div>
+
             @php
                 $currentSort = $sortField ?? 'contract_number';
                 $currentDirection = $sortDirection ?? 'desc';
@@ -138,6 +168,9 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleSelectAll(this)">
+                            </th>
                             <th style="cursor: pointer;">
                                 <a href="{{ $getSortUrl('contract_number') }}" class="text-dark text-decoration-none d-flex align-items-center">
                                     Contract # {!! $getSortIcon('contract_number') !!}
@@ -170,6 +203,9 @@
                     <tbody class="table-border-bottom-0">
                         @forelse($contracts as $contract)
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input contract-checkbox" value="{{ $contract->id }}" onchange="updateSelection()">
+                                </td>
                                 <td>
                                     <a href="{{ route('accounting.income.contracts.show', $contract) }}" class="fw-bold text-primary">
                                         {{ $contract->contract_number }}
@@ -273,7 +309,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4">
                                     <div class="mb-3">
                                         <i class="ti ti-file-text" style="font-size: 3rem; color: #ddd;"></i>
                                     </div>
@@ -297,4 +333,73 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('page-script')
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.contract-checkbox');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    updateSelection();
+}
+
+function updateSelection() {
+    const checkboxes = document.querySelectorAll('.contract-checkbox:checked');
+    const count = checkboxes.length;
+    document.getElementById('selectedCount').textContent = count;
+
+    const bulkBar = document.getElementById('bulkActionsBar');
+    if (count > 0) {
+        bulkBar.classList.remove('d-none');
+    } else {
+        bulkBar.classList.add('d-none');
+    }
+
+    // Update select all checkbox state
+    const allCheckboxes = document.querySelectorAll('.contract-checkbox');
+    const selectAll = document.getElementById('selectAll');
+    selectAll.checked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+    selectAll.indeterminate = checkboxes.length > 0 && checkboxes.length < allCheckboxes.length;
+}
+
+function clearSelection() {
+    document.querySelectorAll('.contract-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+    updateSelection();
+}
+
+function submitBulkAction(action) {
+    const checkboxes = document.querySelectorAll('.contract-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Please select at least one contract.');
+        return;
+    }
+
+    if (action === 'assign_project') {
+        const projectId = document.getElementById('projectSelect').value;
+        if (!projectId) {
+            alert('Please select a project.');
+            return;
+        }
+    }
+
+    // Set action
+    document.getElementById('bulkAction').value = action;
+
+    // Add selected contract IDs to form
+    const form = document.getElementById('bulkActionForm');
+    // Remove existing hidden inputs
+    form.querySelectorAll('input[name="contracts[]"]').forEach(el => el.remove());
+    // Add new hidden inputs
+    checkboxes.forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'contracts[]';
+        input.value = cb.value;
+        form.appendChild(input);
+    });
+
+    form.submit();
+}
+</script>
 @endsection

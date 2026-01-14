@@ -88,11 +88,15 @@ class IncomeController extends Controller
             'total_paid_amount' => Contract::active()->get()->sum('paid_amount'),
         ];
 
+        // Get projects for bulk assignment
+        $projects = \Modules\Project\Models\Project::orderBy('name')->get(['id', 'name', 'code']);
+
         return view('accounting::income.index', compact(
             'contracts',
             'statistics',
             'sortField',
-            'sortDirection'
+            'sortDirection',
+            'projects'
         ));
     }
 
@@ -577,6 +581,30 @@ class IncomeController extends Controller
             case 'delete':
                 Contract::whereIn('id', $contractIds)->delete();
                 $message = 'Contracts deleted successfully.';
+                break;
+
+            case 'assign_project':
+                $projectId = $request->input('project_id');
+                if (!$projectId) {
+                    return redirect()->back()->with('error', 'No project selected.');
+                }
+
+                $contracts = Contract::whereIn('id', $contractIds)->get();
+                $assigned = 0;
+
+                foreach ($contracts as $contract) {
+                    // Check if not already linked
+                    if (!$contract->projects()->where('project_id', $projectId)->exists()) {
+                        $contract->projects()->attach($projectId, [
+                            'allocation_type' => 'percentage',
+                            'allocation_percentage' => 100,
+                            'is_primary' => $contract->projects()->count() === 0,
+                        ]);
+                        $assigned++;
+                    }
+                }
+
+                $message = "{$assigned} contracts linked to project successfully.";
                 break;
 
             default:
