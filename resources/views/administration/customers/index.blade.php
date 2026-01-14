@@ -25,6 +25,9 @@
         </h5>
         @can('manage-customers')
           <div class="d-flex gap-2">
+            <a href="{{ route('administration.customers.merge') }}" class="btn btn-outline-warning btn-sm" title="Merge Duplicate Customers">
+              <i class="ti ti-git-merge"></i>
+            </a>
             <a href="{{ route('administration.customers.import') }}" class="btn btn-outline-info btn-sm" title="Import Customers from CSV">
               <i class="ti ti-upload"></i>
             </a>

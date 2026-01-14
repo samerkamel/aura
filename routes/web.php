@@ -416,6 +416,11 @@ Route::middleware(['auth'])->prefix('administration')->name('administration.')->
         Route::post('/import', [CustomerController::class, 'import'])->name('import.process');
         Route::get('/import/sample', [CustomerController::class, 'downloadSample'])->name('import.sample');
 
+        // Customer Merge routes (must come before dynamic routes)
+        Route::get('/merge', [CustomerController::class, 'mergeForm'])->name('merge');
+        Route::post('/merge/preview', [CustomerController::class, 'mergePreview'])->name('merge.preview');
+        Route::post('/merge', [CustomerController::class, 'merge'])->name('merge.process');
+
         Route::get('/{customer}', [CustomerController::class, 'show'])->name('show');
         Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
         Route::put('/{customer}', [CustomerController::class, 'update'])->name('update');

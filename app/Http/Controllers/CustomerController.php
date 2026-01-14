@@ -9,6 +9,8 @@ use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 use Modules\Payroll\Models\JiraWorklog;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -586,5 +588,248 @@ class CustomerController extends Controller
         return response($csvContent)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Show the merge customers page.
+     */
+    public function mergeForm(Request $request): View
+    {
+        if (!auth()->user()->can('manage-customers')) {
+            abort(403, 'Unauthorized to merge customers.');
+        }
+
+        // Get all customers for selection
+        $customers = Customer::withCount(['contracts', 'projects', 'invoices'])
+            ->orderBy('name')
+            ->get();
+
+        // Pre-selected customers (from query string)
+        $selectedIds = $request->get('ids', []);
+        if (is_string($selectedIds)) {
+            $selectedIds = explode(',', $selectedIds);
+        }
+
+        $selectedCustomers = [];
+        if (!empty($selectedIds)) {
+            $selectedCustomers = Customer::whereIn('id', $selectedIds)
+                ->withCount(['contracts', 'projects', 'invoices'])
+                ->orderBy('id')
+                ->get();
+        }
+
+        return view('administration.customers.merge', compact('customers', 'selectedCustomers', 'selectedIds'));
+    }
+
+    /**
+     * Preview merge results via AJAX.
+     */
+    public function mergePreview(Request $request): JsonResponse
+    {
+        if (!auth()->user()->can('manage-customers')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $customerIds = $request->input('customer_ids', []);
+
+        if (count($customerIds) < 2) {
+            return response()->json(['error' => 'Please select at least 2 customers to merge.'], 400);
+        }
+
+        $customers = Customer::whereIn('id', $customerIds)
+            ->orderBy('id')
+            ->get();
+
+        if ($customers->count() < 2) {
+            return response()->json(['error' => 'Invalid customer selection.'], 400);
+        }
+
+        $primary = $customers->first();
+        $duplicates = $customers->slice(1);
+
+        // Calculate what will be transferred
+        $preview = [
+            'primary' => [
+                'id' => $primary->id,
+                'name' => $primary->name,
+                'company_name' => $primary->company_name,
+                'email' => $primary->email,
+            ],
+            'duplicates' => [],
+            'totals' => [
+                'contracts' => 0,
+                'projects' => 0,
+                'invoices' => 0,
+                'estimates' => 0,
+                'credit_notes' => 0,
+            ],
+        ];
+
+        foreach ($duplicates as $dup) {
+            $contracts = \Modules\Accounting\Models\Contract::where('customer_id', $dup->id)->count();
+            $projects = \Modules\Project\Models\Project::where('customer_id', $dup->id)->count();
+            $invoices = \Modules\Invoicing\Models\Invoice::where('customer_id', $dup->id)->count();
+            $estimates = \Modules\Accounting\Models\Estimate::where('customer_id', $dup->id)->count();
+            $creditNotes = \Modules\Accounting\Models\CreditNote::where('customer_id', $dup->id)->count();
+
+            $preview['duplicates'][] = [
+                'id' => $dup->id,
+                'name' => $dup->name,
+                'company_name' => $dup->company_name,
+                'email' => $dup->email,
+                'contracts' => $contracts,
+                'projects' => $projects,
+                'invoices' => $invoices,
+                'estimates' => $estimates,
+                'credit_notes' => $creditNotes,
+            ];
+
+            $preview['totals']['contracts'] += $contracts;
+            $preview['totals']['projects'] += $projects;
+            $preview['totals']['invoices'] += $invoices;
+            $preview['totals']['estimates'] += $estimates;
+            $preview['totals']['credit_notes'] += $creditNotes;
+        }
+
+        return response()->json(['success' => true, 'preview' => $preview]);
+    }
+
+    /**
+     * Process the merge of customers.
+     */
+    public function merge(Request $request): RedirectResponse
+    {
+        if (!auth()->user()->can('manage-customers')) {
+            abort(403, 'Unauthorized to merge customers.');
+        }
+
+        $customerIds = $request->input('customer_ids', []);
+
+        if (count($customerIds) < 2) {
+            return redirect()->back()->with('error', 'Please select at least 2 customers to merge.');
+        }
+
+        // Get customers ordered by ID (earliest = primary)
+        $customers = Customer::whereIn('id', $customerIds)
+            ->orderBy('id')
+            ->get();
+
+        if ($customers->count() < 2) {
+            return redirect()->back()->with('error', 'Invalid customer selection.');
+        }
+
+        $primary = $customers->first();
+        $duplicates = $customers->slice(1);
+        $duplicateIds = $duplicates->pluck('id')->toArray();
+
+        DB::beginTransaction();
+
+        try {
+            // 1. Transfer all related records to primary customer
+            $transferredCounts = [
+                'contracts' => 0,
+                'projects' => 0,
+                'invoices' => 0,
+                'estimates' => 0,
+                'credit_notes' => 0,
+                'expense_import_rows' => 0,
+            ];
+
+            // Contracts
+            $transferredCounts['contracts'] = \Modules\Accounting\Models\Contract::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // Projects
+            $transferredCounts['projects'] = \Modules\Project\Models\Project::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // Invoices
+            $transferredCounts['invoices'] = \Modules\Invoicing\Models\Invoice::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // Estimates
+            $transferredCounts['estimates'] = \Modules\Accounting\Models\Estimate::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // Credit Notes
+            $transferredCounts['credit_notes'] = \Modules\Accounting\Models\CreditNote::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // Expense Import Rows
+            $transferredCounts['expense_import_rows'] = \Modules\Accounting\Models\ExpenseImportRow::whereIn('customer_id', $duplicateIds)
+                ->update(['customer_id' => $primary->id]);
+
+            // 2. Merge customer information (fill in missing fields from duplicates)
+            $fieldsToMerge = ['email', 'phone', 'address', 'company_name', 'tax_id', 'website', 'perfex_id'];
+
+            foreach ($duplicates as $dup) {
+                foreach ($fieldsToMerge as $field) {
+                    if (empty($primary->$field) && !empty($dup->$field)) {
+                        $primary->$field = $dup->$field;
+                    }
+                }
+            }
+
+            // 3. Merge contact_persons (combine arrays, remove duplicates)
+            $allContacts = $primary->contact_persons ?? [];
+            foreach ($duplicates as $dup) {
+                if (!empty($dup->contact_persons) && is_array($dup->contact_persons)) {
+                    $allContacts = array_merge($allContacts, $dup->contact_persons);
+                }
+            }
+            $primary->contact_persons = array_values(array_unique($allContacts));
+
+            // 4. Concatenate notes
+            $allNotes = [$primary->notes];
+            foreach ($duplicates as $dup) {
+                if (!empty($dup->notes)) {
+                    $allNotes[] = "--- Merged from Customer #{$dup->id} ({$dup->display_name}) ---\n{$dup->notes}";
+                }
+            }
+            $primary->notes = implode("\n\n", array_filter($allNotes));
+
+            // Save primary customer
+            $primary->save();
+
+            // 5. Delete duplicate customers
+            $deletedCount = Customer::whereIn('id', $duplicateIds)->delete();
+
+            DB::commit();
+
+            // Build success message
+            $transferDetails = [];
+            foreach ($transferredCounts as $type => $count) {
+                if ($count > 0) {
+                    $transferDetails[] = "{$count} " . str_replace('_', ' ', $type);
+                }
+            }
+
+            $message = "Successfully merged {$deletedCount} customer(s) into {$primary->display_name} (ID: {$primary->id}).";
+            if (!empty($transferDetails)) {
+                $message .= " Transferred: " . implode(', ', $transferDetails) . ".";
+            }
+
+            Log::info('Customers merged', [
+                'primary_id' => $primary->id,
+                'merged_ids' => $duplicateIds,
+                'transferred' => $transferredCounts,
+                'user_id' => auth()->id(),
+            ]);
+
+            return redirect()
+                ->route('administration.customers.show', $primary)
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Customer merge failed', [
+                'customer_ids' => $customerIds,
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            return redirect()->back()->with('error', 'Merge failed: ' . $e->getMessage());
+        }
     }
 }
