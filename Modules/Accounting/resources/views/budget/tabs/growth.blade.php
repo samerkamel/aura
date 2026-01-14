@@ -2,12 +2,9 @@
 
 @section('title', 'Budget ' . $budget->year . ' - Growth')
 
-@section('vendor-style')
-@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
-@endsection
-
 @section('vendor-script')
-@vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
+@vite(['resources/assets/vendor/libs/chartjs/chartjs.js'])
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-regression-trendline/dist/chartjs-plugin-regression-trendline.min.js"></script>
 @endsection
 
 @section('content')
@@ -74,7 +71,7 @@
                     </span>
                 </div>
                 <div class="card-body p-2">
-                    <div id="trendline-chart-{{ $entry->id }}" style="height: 280px;"></div>
+                    <canvas id="trendline-chart-{{ $entry->id }}" style="height: 280px;"></canvas>
                     <div class="text-center mt-2">
                         <span class="badge bg-success fs-6">
                             {{ $budget->year }} Projected: <span class="projected-display-{{ $entry->id }}">Calculating...</span>
@@ -311,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let regressionCoeffs = {}; // Store regression coefficients per product
 
     // Linear regression: y = mx + b
-    // Returns { m, b } coefficients
     function linearRegression(data) {
         const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
         if (validData.length < 2) {
@@ -337,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Logarithmic regression: y = a * ln(x) + b
-    // Returns { a, b } coefficients
     function logarithmicRegression(data) {
         const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
         if (validData.length < 2) {
@@ -364,11 +359,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Polynomial regression (quadratic): y = ax² + bx + c
-    // Returns { a, b, c } coefficients
     function polynomialRegression(data) {
         const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
         if (validData.length < 3) {
-            // Fall back to linear if not enough points
             return linearRegression(data);
         }
 
@@ -376,7 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = validData.map(d => d.x);
         const y = validData.map(d => d.y);
 
-        // Using least squares for quadratic fit
         let sumX = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0;
         let sumY = 0, sumXY = 0, sumX2Y = 0;
 
@@ -391,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
             sumX2Y += xi * xi * yi;
         }
 
-        // Solve system of equations using Cramer's rule
         const D = n * (sumX2 * sumX4 - sumX3 * sumX3) -
                   sumX * (sumX * sumX4 - sumX2 * sumX3) +
                   sumX2 * (sumX * sumX3 - sumX2 * sumX2);
@@ -426,17 +417,6 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'polynomial': return polynomialRegression(data);
             default: return linearRegression(data);
         }
-    }
-
-    // Generate trendline points for smooth curve
-    function generateTrendlinePoints(regression, startX, endX, numPoints = 50) {
-        const points = [];
-        const step = (endX - startX) / (numPoints - 1);
-        for (let i = 0; i < numPoints; i++) {
-            const x = startX + i * step;
-            points.push({ x: x, y: regression.predict(x) });
-        }
-        return points;
     }
 
     function formatNumber(num) {
@@ -487,165 +467,117 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTrendlineCharts();
     }
 
-    // Generate trendline data points - many points for curves, few for linear
-    function generateTrendlineData(regression, type, numPoints = 50) {
-        if (type === 'linear') {
-            // For linear, just 2 points (start and end) connected with straight line
-            return [
-                { x: 1, y: regression.predict(1) },
-                { x: 4, y: regression.predict(4) }
-            ];
-        } else {
-            // For logarithmic/polynomial, generate many points to show true curve shape
-            const points = [];
-            for (let i = 0; i < numPoints; i++) {
-                const x = 1 + (i / (numPoints - 1)) * 3; // From x=1 to x=4
-                points.push({ x: x, y: regression.predict(x) });
-            }
-            return points;
+    // Map trendline type to plugin type
+    function getPluginType(type) {
+        switch (type) {
+            case 'logarithmic': return 'logarithmic';
+            case 'polynomial': return 'polynomial';
+            default: return 'linear';
         }
     }
 
-    // Initialize trendline charts with bars and regression line
+    // Get trendline color based on type
+    function getTrendlineColor(type) {
+        switch (type) {
+            case 'logarithmic': return '#F39C12';
+            case 'polynomial': return '#27AE60';
+            default: return '#3498DB';
+        }
+    }
+
+    // Initialize trendline charts with Chart.js
     function initTrendlineCharts() {
         productData.forEach(product => {
-            const chartEl = document.querySelector('#trendline-chart-' + product.id);
-            if (!chartEl) return;
+            const canvas = document.getElementById('trendline-chart-' + product.id);
+            if (!canvas) return;
 
-            const data = [product.year_minus_3, product.year_minus_2, product.year_minus_1];
+            const ctx = canvas.getContext('2d');
+            const data = [product.year_minus_3 || 0, product.year_minus_2 || 0, product.year_minus_1 || 0];
             const projection = projectedValues[product.id] || 0;
             const regData = regressionCoeffs[product.id];
-            const regression = regData ? regData.regression : linearRegression(data);
-
-            // Determine trendline type and color
             const type = regData ? regData.type : 'linear';
-            const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
+            const trendlineColor = getTrendlineColor(type);
 
-            // Generate trendline data - many points for curves to show true mathematical shape
-            const trendlineData = generateTrendlineData(regression, type);
+            // Include projected value in data for trendline calculation
+            const allData = [...data, projection];
 
-            const options = {
-                series: [
-                    {
-                        name: 'Revenue',
-                        type: 'bar',
-                        data: [
-                            { x: 1, y: data[0] || 0 },
-                            { x: 2, y: data[1] || 0 },
-                            { x: 3, y: data[2] || 0 },
-                            { x: 4, y: projection }
-                        ]
-                    },
-                    {
-                        name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
-                        type: 'line',
-                        data: trendlineData
-                    }
-                ],
-                chart: {
-                    type: 'line',
-                    height: 280,
-                    toolbar: { show: false },
-                    animations: { enabled: true }
-                },
-                stroke: {
-                    width: [0, 3],
-                    curve: 'straight' // Always straight - curves are made by many points
-                },
-                plotOptions: {
-                    bar: {
-                        columnWidth: '50%',
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years.map(String),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: allData,
+                        backgroundColor: [
+                            'rgba(168, 213, 226, 0.8)',
+                            'rgba(168, 213, 226, 0.8)',
+                            'rgba(168, 213, 226, 0.8)',
+                            'rgba(39, 174, 96, 0.8)' // Projected year in green
+                        ],
+                        borderColor: [
+                            'rgba(168, 213, 226, 1)',
+                            'rgba(168, 213, 226, 1)',
+                            'rgba(168, 213, 226, 1)',
+                            'rgba(39, 174, 96, 1)'
+                        ],
+                        borderWidth: 1,
                         borderRadius: 4,
-                        colors: {
-                            ranges: [{
-                                from: 0,
-                                to: Infinity,
-                                color: '#A8D5E2'
-                            }]
-                        }
-                    }
-                },
-                colors: ['#A8D5E2', trendlineColor],
-                fill: {
-                    opacity: [1, 1]
-                },
-                markers: {
-                    size: [0, 0],
-                    strokeWidth: 0
-                },
-                xaxis: {
-                    type: 'numeric',
-                    min: 0.5,
-                    max: 4.5,
-                    tickAmount: 4,
-                    labels: {
-                        style: { fontSize: '11px' },
-                        formatter: function(val) {
-                            const yearMap = { 1: years[0], 2: years[1], 3: years[2], 4: years[3] };
-                            return yearMap[Math.round(val)] || '';
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
-                            if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
-                            return val.toFixed(0);
-                        },
-                        style: { fontSize: '10px' }
-                    }
-                },
-                grid: {
-                    padding: { left: 10, right: 10, top: 0, bottom: 0 }
-                },
-                tooltip: {
-                    shared: false,
-                    intersect: true,
-                    x: {
-                        formatter: function(val) {
-                            const yearMap = { 1: years[0], 2: years[1], 3: years[2], 4: years[3] };
-                            return yearMap[Math.round(val)] || val.toFixed(2);
-                        }
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return formatNumber(val) + ' EGP';
-                        }
-                    }
-                },
-                legend: {
-                    show: true,
-                    position: 'top',
-                    fontSize: '10px',
-                    markers: { width: 8, height: 8 }
-                },
-                annotations: {
-                    points: [{
-                        x: 4,
-                        y: projection,
-                        marker: {
-                            size: 6,
-                            fillColor: '#27AE60',
-                            strokeColor: '#fff',
-                            strokeWidth: 2
-                        },
-                        label: {
-                            text: formatNumber(projection),
-                            style: {
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                color: '#fff',
-                                background: '#27AE60'
-                            },
-                            offsetY: -10
+                        regressionTrendline: {
+                            showLine: true
                         }
                     }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { size: 10 },
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return formatNumber(context.raw) + ' EGP';
+                                }
+                            }
+                        },
+                        regressionTrendline: {
+                            enabled: true,
+                            type: getPluginType(type),
+                            degree: 2, // For polynomial
+                            steps: 100,
+                            color: trendlineColor,
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 11 }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { size: 10 },
+                                callback: function(val) {
+                                    if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                    if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
+                                    return val;
+                                }
+                            }
+                        }
+                    }
                 }
-            };
+            });
 
-            trendlineCharts[product.id] = new ApexCharts(chartEl, options);
-            trendlineCharts[product.id].render();
+            trendlineCharts[product.id] = chart;
         });
     }
 
@@ -663,62 +595,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const y1 = parseFloat(row.querySelector('.year-minus-1').value) || 0;
             const type = row.querySelector('.trendline-type').value;
             const projection = projectedValues[product.id] || 0;
+            const trendlineColor = getTrendlineColor(type);
 
-            const data = [y3, y2, y1];
-            const regression = getRegression(data, type);
+            // Update chart data
+            chart.data.datasets[0].data = [y3, y2, y1, projection];
 
-            // Generate trendline data - many points for curves to show true mathematical shape
-            const trendlineData = generateTrendlineData(regression, type);
+            // Update trendline options
+            chart.options.plugins.regressionTrendline.type = getPluginType(type);
+            chart.options.plugins.regressionTrendline.color = trendlineColor;
 
-            const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
-
-            chart.updateOptions({
-                colors: ['#A8D5E2', trendlineColor],
-                stroke: {
-                    width: [0, 3],
-                    curve: 'straight' // Always straight - curves are made by many points
-                },
-                annotations: {
-                    points: [{
-                        x: 4,
-                        y: projection,
-                        marker: {
-                            size: 6,
-                            fillColor: '#27AE60',
-                            strokeColor: '#fff',
-                            strokeWidth: 2
-                        },
-                        label: {
-                            text: formatNumber(projection),
-                            style: {
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                color: '#fff',
-                                background: '#27AE60'
-                            },
-                            offsetY: -10
-                        }
-                    }]
-                }
-            });
-
-            chart.updateSeries([
-                {
-                    name: 'Revenue',
-                    type: 'bar',
-                    data: [
-                        { x: 1, y: y3 },
-                        { x: 2, y: y2 },
-                        { x: 3, y: y1 },
-                        { x: 4, y: projection }
-                    ]
-                },
-                {
-                    name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
-                    type: 'line',
-                    data: trendlineData
-                }
-            ]);
+            chart.update();
         });
     }
 
@@ -767,7 +653,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const displayEl = document.querySelector('.projected-display-' + entryId);
                 if (displayEl) displayEl.textContent = formatNumber(data.projection);
 
-                updateBarChart();
                 updateTrendlineCharts();
                 updateTotals();
             })
