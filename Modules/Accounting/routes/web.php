@@ -253,6 +253,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{budget}/expenses/initialize', [BudgetController::class, 'initializeExpenses'])->name('expenses.initialize');
             Route::post('/{budget}/expenses/apply-global', [BudgetController::class, 'applyGlobalIncrease'])->name('expenses.apply-global');
             Route::post('/{budget}/expenses/populate', [BudgetController::class, 'populateExpenseData'])->name('expenses.populate');
+
+            // Summary Tab (P&L)
+            Route::get('/{budget}/summary', [BudgetController::class, 'summary'])->name('summary');
+
+            // Finalization
+            Route::get('/{budget}/finalization', [BudgetController::class, 'finalization'])->name('finalization');
+            Route::post('/{budget}/finalize', [BudgetController::class, 'finalize'])->name('finalize');
+            Route::post('/{budget}/revert', [BudgetController::class, 'revertToDraft'])->name('revert');
         });
     });
 });

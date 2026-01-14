@@ -14,6 +14,7 @@ use Modules\Accounting\Services\Budget\CollectionService;
 use Modules\Accounting\Services\Budget\ResultService;
 use Modules\Accounting\Services\Budget\PersonnelService;
 use Modules\Accounting\Services\Budget\ExpenseService;
+use Modules\Accounting\Services\Budget\FinalizationService;
 use Modules\HR\Models\Employee;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class BudgetController extends Controller
         private ResultService $resultService,
         private PersonnelService $personnelService,
         private ExpenseService $expenseService,
+        private FinalizationService $finalizationService,
     ) {}
 
     /**
@@ -1272,6 +1274,154 @@ class BudgetController extends Controller
         }
 
         return $results;
+    }
+
+    // ==========================================
+    // Summary Tab Methods
+    // ==========================================
+
+    /**
+     * Show the Summary/P&L tab (read-only)
+     */
+    public function summary(Budget $budget)
+    {
+        // Get checklist data which has comprehensive summary
+        $checklist = $this->finalizationService->getFinalizationChecklist($budget);
+
+        // Get additional data for charts
+        $resultEntries = $budget->resultEntries()
+            ->with('product')
+            ->get();
+
+        $personnelEntries = $budget->personnelEntries()
+            ->with(['employee', 'allocations', 'allocations.product'])
+            ->get();
+
+        // Revenue by product for chart
+        $revenueByProduct = $resultEntries->mapWithKeys(function ($entry) {
+            return [$entry->product->name => $entry->final_value ?? 0];
+        })->toArray();
+
+        // Personnel cost by product allocation
+        $personnelByProduct = [];
+        foreach ($personnelEntries as $entry) {
+            $effectiveSalary = $entry->getEffectiveSalary();
+            foreach ($entry->allocations as $allocation) {
+                $productName = $allocation->product?->name ?? 'G&A';
+                $allocatedAmount = $effectiveSalary * ($allocation->allocation_percentage / 100);
+                $personnelByProduct[$productName] = ($personnelByProduct[$productName] ?? 0) + $allocatedAmount;
+            }
+        }
+
+        // Calculate P&L
+        $totalRevenue = $checklist['budget_summary']['total_final_budget'];
+        $personnelCost = $checklist['personnel']['total_proposed_salaries'];
+        $opexCost = $checklist['expenses']['opex'];
+        $taxCost = $checklist['expenses']['taxes'];
+        $capexCost = $checklist['expenses']['capex'];
+        $totalExpenses = $personnelCost + $opexCost + $taxCost;
+        $grossProfit = $totalRevenue - $personnelCost;
+        $operatingProfit = $grossProfit - $opexCost;
+        $netProfit = $operatingProfit - $taxCost;
+
+        $pnl = [
+            'revenue' => $totalRevenue,
+            'personnel_cost' => $personnelCost,
+            'gross_profit' => $grossProfit,
+            'gross_margin' => $totalRevenue > 0 ? ($grossProfit / $totalRevenue) * 100 : 0,
+            'opex' => $opexCost,
+            'operating_profit' => $operatingProfit,
+            'operating_margin' => $totalRevenue > 0 ? ($operatingProfit / $totalRevenue) * 100 : 0,
+            'taxes' => $taxCost,
+            'net_profit' => $netProfit,
+            'net_margin' => $totalRevenue > 0 ? ($netProfit / $totalRevenue) * 100 : 0,
+            'capex' => $capexCost,
+        ];
+
+        // Chart data
+        $chartData = [
+            'revenueByProduct' => $revenueByProduct,
+            'personnelByProduct' => $personnelByProduct,
+            'expenseBreakdown' => [
+                'Personnel' => $personnelCost,
+                'OpEx' => $opexCost,
+                'Taxes' => $taxCost,
+                'CapEx' => $capexCost,
+            ],
+            'pnlWaterfall' => [
+                'Revenue' => $totalRevenue,
+                'Personnel' => -$personnelCost,
+                'OpEx' => -$opexCost,
+                'Taxes' => -$taxCost,
+                'Net Profit' => $netProfit,
+            ],
+        ];
+
+        // Get readiness status
+        $readiness = $this->finalizationService->checkReadyForFinalization($budget);
+
+        return view('accounting::budget.tabs.summary', [
+            'budget' => $budget,
+            'checklist' => $checklist,
+            'pnl' => $pnl,
+            'chartData' => $chartData,
+            'readiness' => $readiness,
+        ]);
+    }
+
+    // ==========================================
+    // Finalization Methods
+    // ==========================================
+
+    /**
+     * Show finalization page with checklist
+     */
+    public function finalization(Budget $budget)
+    {
+        $readinessStatus = $this->finalizationService->getReadinessStatus($budget);
+        $comparison = $this->finalizationService->compareWithPreviousYear($budget);
+        $history = $this->finalizationService->getFinalizationHistory($budget);
+
+        return view('accounting::budget.finalization', [
+            'budget' => $budget,
+            'readiness' => $readinessStatus,
+            'comparison' => $comparison,
+            'history' => $history,
+        ]);
+    }
+
+    /**
+     * Finalize the budget
+     */
+    public function finalize(Budget $budget, Request $request)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            $this->finalizationService->finalizeBudget($budget, auth()->id());
+
+            return redirect()
+                ->route('accounting.budgets.summary', $budget->id)
+                ->with('success', 'Budget has been finalized successfully.');
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Revert a finalized budget to draft
+     */
+    public function revertToDraft(Budget $budget)
+    {
+        try {
+            $this->finalizationService->revertToDraft($budget);
+
+            return redirect()
+                ->route('accounting.budgets.summary', $budget->id)
+                ->with('success', 'Budget has been reverted to draft.');
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**

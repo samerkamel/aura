@@ -56,7 +56,7 @@
                     <a class="nav-link" href="{{ route('accounting.budgets.expenses', $budget->id) }}">Expenses</a>
                 </li>
                 <li class="nav-item ms-auto">
-                    <span class="nav-link disabled text-muted">Summary</span>
+                    <a class="nav-link" href="{{ route('accounting.budgets.summary', $budget->id) }}">Summary</a>
                 </li>
             </ul>
         </div>

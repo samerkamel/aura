@@ -44,7 +44,7 @@
             <a class="nav-link active" href="{{ route('accounting.budgets.expenses', $budget->id) }}">Expenses</a>
         </li>
         <li class="nav-item">
-            <span class="nav-link disabled">Summary</span>
+            <a class="nav-link" href="{{ route('accounting.budgets.summary', $budget->id) }}">Summary</a>
         </li>
     </ul>
 
@@ -401,9 +401,9 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="ti ti-device-floppy me-1"></i> Save Expenses Budget
                     </button>
-                    <button type="button" class="btn btn-success" disabled>
+                    <a href="{{ route('accounting.budgets.summary', $budget->id) }}" class="btn btn-success">
                         Next: Summary <i class="ti ti-arrow-right ms-1"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
         </form>
