@@ -31,7 +31,9 @@
       "mcp__playwright__browser_evaluate",
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_take_screenshot",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "mcp__playwright__browser_select_option",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

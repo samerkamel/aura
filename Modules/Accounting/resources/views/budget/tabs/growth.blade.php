@@ -487,6 +487,25 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTrendlineCharts();
     }
 
+    // Generate trendline data points - many points for curves, few for linear
+    function generateTrendlineData(regression, type, numPoints = 50) {
+        if (type === 'linear') {
+            // For linear, just 2 points (start and end) connected with straight line
+            return [
+                { x: 1, y: regression.predict(1) },
+                { x: 4, y: regression.predict(4) }
+            ];
+        } else {
+            // For logarithmic/polynomial, generate many points to show true curve shape
+            const points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const x = 1 + (i / (numPoints - 1)) * 3; // From x=1 to x=4
+                points.push({ x: x, y: regression.predict(x) });
+            }
+            return points;
+        }
+    }
+
     // Initialize trendline charts with bars and regression line
     function initTrendlineCharts() {
         productData.forEach(product => {
@@ -498,20 +517,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const regData = regressionCoeffs[product.id];
             const regression = regData ? regData.regression : linearRegression(data);
 
-            // Generate trendline points at exact year positions only (x=1, 2, 3, 4)
-            // This ensures the trendline aligns with the bar chart categories
-            const trendlineValues = [
-                regression.predict(1),
-                regression.predict(2),
-                regression.predict(3),
-                regression.predict(4)
-            ];
-
-            // Determine trendline color and curve style based on type
+            // Determine trendline type and color
             const type = regData ? regData.type : 'linear';
             const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
-            // Linear should be straight line, others should be smooth curves
-            const curveStyle = type === 'linear' ? 'straight' : 'smooth';
+
+            // Generate trendline data - many points for curves to show true mathematical shape
+            const trendlineData = generateTrendlineData(regression, type);
 
             const options = {
                 series: [
@@ -519,21 +530,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         name: 'Revenue',
                         type: 'bar',
                         data: [
-                            { x: years[0].toString(), y: data[0] || 0 },
-                            { x: years[1].toString(), y: data[1] || 0 },
-                            { x: years[2].toString(), y: data[2] || 0 },
-                            { x: years[3].toString(), y: projection }
+                            { x: 1, y: data[0] || 0 },
+                            { x: 2, y: data[1] || 0 },
+                            { x: 3, y: data[2] || 0 },
+                            { x: 4, y: projection }
                         ]
                     },
                     {
                         name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
                         type: 'line',
-                        data: [
-                            { x: years[0].toString(), y: trendlineValues[0] },
-                            { x: years[1].toString(), y: trendlineValues[1] },
-                            { x: years[2].toString(), y: trendlineValues[2] },
-                            { x: years[3].toString(), y: trendlineValues[3] }
-                        ]
+                        data: trendlineData
                     }
                 ],
                 chart: {
@@ -544,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 stroke: {
                     width: [0, 3],
-                    curve: curveStyle
+                    curve: 'straight' // Always straight - curves are made by many points
                 },
                 plotOptions: {
                     bar: {
@@ -568,9 +574,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     strokeWidth: 0
                 },
                 xaxis: {
-                    type: 'category',
-                    categories: years.map(String),
-                    labels: { style: { fontSize: '11px' } }
+                    type: 'numeric',
+                    min: 0.5,
+                    max: 4.5,
+                    tickAmount: 4,
+                    labels: {
+                        style: { fontSize: '11px' },
+                        formatter: function(val) {
+                            const yearMap = { 1: years[0], 2: years[1], 3: years[2], 4: years[3] };
+                            return yearMap[Math.round(val)] || '';
+                        }
+                    }
                 },
                 yaxis: {
                     labels: {
@@ -586,8 +600,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     padding: { left: 10, right: 10, top: 0, bottom: 0 }
                 },
                 tooltip: {
-                    shared: true,
-                    intersect: false,
+                    shared: false,
+                    intersect: true,
+                    x: {
+                        formatter: function(val) {
+                            const yearMap = { 1: years[0], 2: years[1], 3: years[2], 4: years[3] };
+                            return yearMap[Math.round(val)] || val.toFixed(2);
+                        }
+                    },
                     y: {
                         formatter: function(val) {
                             return formatNumber(val) + ' EGP';
@@ -602,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 annotations: {
                     points: [{
-                        x: years[3].toString(),
+                        x: 4,
                         y: projection,
                         marker: {
                             size: 6,
@@ -647,27 +667,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = [y3, y2, y1];
             const regression = getRegression(data, type);
 
-            // Generate trendline values at exact year positions only
-            const trendlineValues = [
-                regression.predict(1),
-                regression.predict(2),
-                regression.predict(3),
-                regression.predict(4)
-            ];
+            // Generate trendline data - many points for curves to show true mathematical shape
+            const trendlineData = generateTrendlineData(regression, type);
 
             const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
-            // Linear should be straight line, others should be smooth curves
-            const curveStyle = type === 'linear' ? 'straight' : 'smooth';
 
             chart.updateOptions({
                 colors: ['#A8D5E2', trendlineColor],
                 stroke: {
                     width: [0, 3],
-                    curve: curveStyle
+                    curve: 'straight' // Always straight - curves are made by many points
                 },
                 annotations: {
                     points: [{
-                        x: years[3].toString(),
+                        x: 4,
                         y: projection,
                         marker: {
                             size: 6,
@@ -694,21 +707,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     name: 'Revenue',
                     type: 'bar',
                     data: [
-                        { x: years[0].toString(), y: y3 },
-                        { x: years[1].toString(), y: y2 },
-                        { x: years[2].toString(), y: y1 },
-                        { x: years[3].toString(), y: projection }
+                        { x: 1, y: y3 },
+                        { x: 2, y: y2 },
+                        { x: 3, y: y1 },
+                        { x: 4, y: projection }
                     ]
                 },
                 {
                     name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
                     type: 'line',
-                    data: [
-                        { x: years[0].toString(), y: trendlineValues[0] },
-                        { x: years[1].toString(), y: trendlineValues[1] },
-                        { x: years[2].toString(), y: trendlineValues[2] },
-                        { x: years[3].toString(), y: trendlineValues[3] }
-                    ]
+                    data: trendlineData
                 }
             ]);
         });
