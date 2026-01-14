@@ -2366,8 +2366,3011 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ---
 
-*This document continues in Part 2 with Phases 4-11...*
+## Phase 4: Capacity Tab
 
-Due to length constraints, I've provided the most critical and complex phases. The remaining phases (Capacity, Collection, Result, Personnel, OpEx/Taxes/CapEx, P&L, Finalization, Testing) follow similar patterns.
+The Capacity tab calculates budgeted income based on developer headcount, available hours, hourly rates, and billable percentages.
 
-Would you like me to continue with specific phases, or would you like me to create separate detailed documents for each remaining phase?
+### 4.1 Capacity Calculation Service
+
+**File:** `Modules/Accounting/app/Services/Budget/CapacityCalculationService.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Services\Budget;
+
+use Modules\Accounting\Models\Budget\BudgetCapacityEntry;
+use Modules\Accounting\Models\Budget\BudgetCapacityHire;
+
+class CapacityCalculationService
+{
+    public function __construct(
+        protected EmployeeDataService $employeeService,
+        protected HistoricalIncomeService $incomeService
+    ) {}
+
+    /**
+     * Calculate all last year values for a capacity entry.
+     *
+     * This populates the read-only "Last Year" section of the Capacity tab.
+     */
+    public function calculateLastYearData(int $productId, int $year, float $elapsedMonths = 12): array
+    {
+        // 1. Get headcount (developers assigned to this product)
+        $headcount = $this->employeeService->getHeadcountByProduct($productId, $year);
+
+        // 2. Get available hours per month
+        // Formula: (5 billable hours/day × working days in year) / 12
+        $availableHoursMonthly = $this->employeeService->getAvailableHoursPerMonth($year);
+
+        // 3. Get average hourly rate for developers in this product
+        $avgHourlyRate = $this->employeeService->getAverageHourlyRate($productId);
+
+        // 4. Get actual income for this product last year
+        $income = $this->incomeService->getIncomeByProductAndYear($productId, $year, $elapsedMonths);
+
+        // 5. Calculate billable hours per employee per month
+        // Formula: Income / (Headcount × Avg Hourly Rate × 12 months)
+        $billableHoursMonthly = 0;
+        if ($headcount > 0 && $avgHourlyRate > 0) {
+            $totalBillableHours = $income / $avgHourlyRate;
+            $billableHoursMonthly = $totalBillableHours / ($headcount * 12);
+        }
+
+        // 6. Calculate billable percentage
+        // Formula: (Billable Hours / Available Hours) × 100
+        $billablePct = 0;
+        if ($availableHoursMonthly > 0) {
+            $billablePct = ($billableHoursMonthly / $availableHoursMonthly) * 100;
+        }
+
+        return [
+            'headcount' => $headcount,
+            'available_hours_monthly' => round($availableHoursMonthly, 2),
+            'avg_hourly_rate' => round($avgHourlyRate, 2),
+            'income' => round($income, 2),
+            'billable_hours_monthly' => round($billableHoursMonthly, 2),
+            'billable_pct' => round($billablePct, 2),
+        ];
+    }
+
+    /**
+     * Calculate weighted headcount based on base + planned hires.
+     *
+     * New hires are weighted by how many months they'll be active in the year.
+     *
+     * Example:
+     * - Base headcount: 5 (active full year = 5.0)
+     * - Hire 2 people in March (month 3): Active for 10 months = 2 × (10/12) = 1.67
+     * - Hire 1 person in October (month 10): Active for 3 months = 1 × (3/12) = 0.25
+     * - Weighted total: 5.0 + 1.67 + 0.25 = 6.92
+     */
+    public function calculateWeightedHeadcount(int $baseHeadcount, array $hires): float
+    {
+        $weighted = (float) $baseHeadcount;
+
+        foreach ($hires as $hire) {
+            // Months remaining after hire (including the hire month)
+            // If hired in January (month 1), active for 12 months
+            // If hired in December (month 12), active for 1 month
+            $monthsActive = 13 - $hire['month'];
+            $contribution = $hire['count'] * ($monthsActive / 12);
+            $weighted += $contribution;
+        }
+
+        return round($weighted, 2);
+    }
+
+    /**
+     * Calculate budgeted income from capacity inputs.
+     *
+     * Formula:
+     * Budgeted Income = Weighted Headcount × Available Hours/Month × Hourly Rate × Billable% × 12
+     */
+    public function calculateBudgetedIncome(
+        float $weightedHeadcount,
+        float $availableHoursMonthly,
+        float $hourlyRate,
+        float $billablePct
+    ): float {
+        if ($weightedHeadcount <= 0 || $hourlyRate <= 0 || $billablePct <= 0) {
+            return 0;
+        }
+
+        // Convert percentage to decimal
+        $billableDecimal = $billablePct / 100;
+
+        // Monthly income × 12 months
+        $monthlyIncome = $weightedHeadcount * $availableHoursMonthly * $hourlyRate * $billableDecimal;
+
+        return round($monthlyIncome * 12, 2);
+    }
+}
+```
+
+### 4.2 Capacity Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetCapacityController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Budget\BudgetCapacityEntry;
+use Modules\Accounting\Models\Budget\BudgetCapacityHire;
+use Modules\Accounting\Services\Budget\CapacityCalculationService;
+use Modules\Accounting\Services\Budget\EmployeeDataService;
+
+class BudgetCapacityController extends Controller
+{
+    public function __construct(
+        protected CapacityCalculationService $capacityService,
+        protected EmployeeDataService $employeeService
+    ) {}
+
+    /**
+     * Get capacity tab data.
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Load existing entries or initialize from employee data
+        $entries = $budget->capacityEntries()
+            ->with(['product', 'plannedHires'])
+            ->get();
+
+        if ($entries->isEmpty()) {
+            $entries = $this->initializeCapacityEntries($budget);
+        }
+
+        // Format for frontend
+        $data = $entries->map(function ($entry) {
+            return [
+                'id' => $entry->id,
+                'product_id' => $entry->product_id,
+                'product_name' => $entry->product->name,
+                // Last year data (read-only)
+                'last_year' => [
+                    'headcount' => $entry->last_year_headcount,
+                    'available_hours' => $entry->last_year_available_hours_monthly,
+                    'avg_hourly_rate' => $entry->last_year_avg_hourly_rate,
+                    'income' => $entry->last_year_income,
+                    'billable_hours' => $entry->last_year_billable_hours_monthly,
+                    'billable_pct' => $entry->last_year_billable_pct,
+                ],
+                // Next year budget (editable)
+                'next_year' => [
+                    'base_headcount' => $entry->next_year_base_headcount,
+                    'avg_hourly_rate' => $entry->next_year_avg_hourly_rate,
+                    'billable_pct' => $entry->next_year_billable_pct,
+                    'weighted_headcount' => $entry->next_year_weighted_headcount,
+                    'budgeted_income' => $entry->budgeted_income,
+                ],
+                // Planned hires
+                'hires' => $entry->plannedHires->map(fn($h) => [
+                    'id' => $h->id,
+                    'month' => $h->hire_month,
+                    'month_name' => $h->month_name,
+                    'count' => $h->hire_count,
+                    'hourly_rate' => $h->expected_hourly_rate,
+                ])->toArray(),
+                'total_hires' => $entry->plannedHires->sum('hire_count'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'can_edit' => $budget->canEdit() && auth()->user()->hasRole('super-admin'),
+            'entries' => $data,
+        ]);
+    }
+
+    /**
+     * Initialize capacity entries from employee/product data.
+     */
+    protected function initializeCapacityEntries(Budget $budget): \Illuminate\Support\Collection
+    {
+        $lastYear = $budget->getLastYear();
+        $elapsedMonths = $budget->getElapsedMonths();
+
+        // Get all products with developers
+        $products = \Modules\Accounting\Models\Product::where('status', 'active')
+            ->whereHas('employees', function ($q) {
+                $q->where('is_billable', true);
+            })
+            ->get();
+
+        $entries = collect();
+
+        foreach ($products as $product) {
+            // Calculate last year metrics
+            $lastYearData = $this->capacityService->calculateLastYearData(
+                $product->id,
+                $lastYear,
+                $elapsedMonths
+            );
+
+            $entry = BudgetCapacityEntry::create([
+                'budget_id' => $budget->id,
+                'product_id' => $product->id,
+                // Last year (calculated)
+                'last_year_headcount' => $lastYearData['headcount'],
+                'last_year_available_hours_monthly' => $lastYearData['available_hours_monthly'],
+                'last_year_avg_hourly_rate' => $lastYearData['avg_hourly_rate'],
+                'last_year_income' => $lastYearData['income'],
+                'last_year_billable_hours_monthly' => $lastYearData['billable_hours_monthly'],
+                'last_year_billable_pct' => $lastYearData['billable_pct'],
+                // Next year defaults (user will edit)
+                'next_year_base_headcount' => $lastYearData['headcount'],
+                'next_year_avg_hourly_rate' => $lastYearData['avg_hourly_rate'],
+                'next_year_billable_pct' => $lastYearData['billable_pct'],
+                'next_year_weighted_headcount' => $lastYearData['headcount'],
+            ]);
+
+            $entry->load(['product', 'plannedHires']);
+            $entries->push($entry);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Save capacity entries.
+     */
+    public function save(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if (!$budget->canEdit()) {
+            return response()->json(['error' => 'Budget is locked'], 403);
+        }
+
+        $validated = $request->validate([
+            'entries' => 'required|array',
+            'entries.*.id' => 'required|exists:budget_capacity_entries,id',
+            'entries.*.base_headcount' => 'required|integer|min:0',
+            'entries.*.avg_hourly_rate' => 'nullable|numeric|min:0',
+            'entries.*.billable_pct' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        DB::transaction(function () use ($validated, $budget) {
+            foreach ($validated['entries'] as $entryData) {
+                $entry = BudgetCapacityEntry::find($entryData['id']);
+
+                if ($entry->budget_id !== $budget->id) {
+                    continue;
+                }
+
+                // Get current hires for weighted calculation
+                $hires = $entry->plannedHires->map(fn($h) => [
+                    'month' => $h->hire_month,
+                    'count' => $h->hire_count,
+                ])->toArray();
+
+                // Calculate weighted headcount
+                $weightedHeadcount = $this->capacityService->calculateWeightedHeadcount(
+                    $entryData['base_headcount'],
+                    $hires
+                );
+
+                // Calculate budgeted income
+                $budgetedIncome = $this->capacityService->calculateBudgetedIncome(
+                    $weightedHeadcount,
+                    $entry->last_year_available_hours_monthly,
+                    $entryData['avg_hourly_rate'] ?? 0,
+                    $entryData['billable_pct'] ?? 0
+                );
+
+                $entry->update([
+                    'next_year_base_headcount' => $entryData['base_headcount'],
+                    'next_year_avg_hourly_rate' => $entryData['avg_hourly_rate'],
+                    'next_year_billable_pct' => $entryData['billable_pct'],
+                    'next_year_weighted_headcount' => $weightedHeadcount,
+                    'budgeted_income' => $budgetedIncome,
+                ]);
+            }
+        });
+
+        // Update Result tab with new Capacity values
+        $this->updateResultEntries($budget);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Save hiring plan for a capacity entry.
+     */
+    public function saveHires(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'entry_id' => 'required|exists:budget_capacity_entries,id',
+            'hires' => 'required|array',
+            'hires.*.month' => 'required|integer|min:1|max:12',
+            'hires.*.count' => 'required|integer|min:1',
+            'hires.*.hourly_rate' => 'nullable|numeric|min:0',
+        ]);
+
+        $entry = BudgetCapacityEntry::find($validated['entry_id']);
+
+        if ($entry->budget_id !== $budget->id) {
+            return response()->json(['error' => 'Invalid entry'], 400);
+        }
+
+        DB::transaction(function () use ($entry, $validated) {
+            // Delete existing hires
+            $entry->plannedHires()->delete();
+
+            // Create new hires
+            foreach ($validated['hires'] as $hireData) {
+                BudgetCapacityHire::create([
+                    'budget_capacity_entry_id' => $entry->id,
+                    'hire_month' => $hireData['month'],
+                    'hire_count' => $hireData['count'],
+                    'expected_hourly_rate' => $hireData['hourly_rate'] ?? null,
+                ]);
+            }
+
+            // Recalculate weighted headcount
+            $hires = collect($validated['hires'])->map(fn($h) => [
+                'month' => $h['month'],
+                'count' => $h['count'],
+            ])->toArray();
+
+            $weighted = app(CapacityCalculationService::class)->calculateWeightedHeadcount(
+                $entry->next_year_base_headcount,
+                $hires
+            );
+
+            // Recalculate budgeted income
+            $budgetedIncome = app(CapacityCalculationService::class)->calculateBudgetedIncome(
+                $weighted,
+                $entry->last_year_available_hours_monthly,
+                $entry->next_year_avg_hourly_rate ?? 0,
+                $entry->next_year_billable_pct ?? 0
+            );
+
+            $entry->update([
+                'next_year_weighted_headcount' => $weighted,
+                'budgeted_income' => $budgetedIncome,
+            ]);
+        });
+
+        // Sync new hires to Personnel tab
+        $this->syncHiresToPersonnel($budget, $entry);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Sync capacity hires to personnel entries.
+     *
+     * When hires are added in Capacity, they should appear in Personnel tab.
+     */
+    protected function syncHiresToPersonnel(Budget $budget, BudgetCapacityEntry $capacityEntry): void
+    {
+        // Remove existing personnel entries linked to this capacity entry's hires
+        $budget->personnelEntries()
+            ->whereNotNull('budget_capacity_hire_id')
+            ->whereHas('capacityHire', fn($q) => $q->where('budget_capacity_entry_id', $capacityEntry->id))
+            ->delete();
+
+        // Create personnel entries for each hire
+        foreach ($capacityEntry->plannedHires as $hire) {
+            \Modules\Accounting\Models\Budget\BudgetPersonnelEntry::create([
+                'budget_id' => $budget->id,
+                'employee_id' => null, // New hire, no employee yet
+                'employee_name' => "New Hire ({$capacityEntry->product->name})",
+                'current_salary' => 0,
+                'proposed_salary' => $hire->expected_hourly_rate
+                    ? $hire->expected_hourly_rate * 110 // Convert hourly to monthly (rough estimate)
+                    : null,
+                'is_new_hire' => true,
+                'hire_month' => $hire->hire_month,
+                'budget_capacity_hire_id' => $hire->id,
+            ]);
+        }
+    }
+
+    /**
+     * Update Result entries with Capacity values.
+     */
+    protected function updateResultEntries(Budget $budget): void
+    {
+        foreach ($budget->capacityEntries as $capacityEntry) {
+            $budget->resultEntries()->updateOrCreate(
+                ['product_id' => $capacityEntry->product_id],
+                ['capacity_value' => $capacityEntry->budgeted_income]
+            );
+        }
+    }
+}
+```
+
+### 4.3 Capacity Tab View
+
+**File:** `Modules/Accounting/resources/views/budget/partials/tabs/capacity.blade.php`
+
+```html
+<div class="tab-pane fade" id="capacity-tab" role="tabpanel">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Capacity Planning</h5>
+            <small class="text-muted">Budget based on developer capacity and billable hours</small>
+        </div>
+        <div class="card-body">
+            <!-- Info Alert -->
+            <div class="alert alert-info mb-4">
+                <i class="ti ti-info-circle me-2"></i>
+                <strong>How it works:</strong> Last year data is calculated from actual employee headcount and income.
+                Adjust next year values to project budgeted income based on capacity.
+            </div>
+
+            <!-- Capacity Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm" id="capacityTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="align-middle">Product</th>
+                            <th colspan="6" class="text-center bg-light">Last Year (Calculated)</th>
+                            <th colspan="5" class="text-center bg-success-subtle">Next Year (Budget)</th>
+                        </tr>
+                        <tr>
+                            <!-- Last Year -->
+                            <th class="text-end bg-light">Headcount</th>
+                            <th class="text-end bg-light">Avail Hrs/Mo</th>
+                            <th class="text-end bg-light">Avg Rate</th>
+                            <th class="text-end bg-light">Income</th>
+                            <th class="text-end bg-light">Bill Hrs/Mo</th>
+                            <th class="text-end bg-light">Bill %</th>
+                            <!-- Next Year -->
+                            <th class="text-center bg-success-subtle" style="width: 120px;">Headcount</th>
+                            <th class="text-end bg-success-subtle" style="width: 100px;">Avg Rate</th>
+                            <th class="text-end bg-success-subtle" style="width: 100px;">Bill %</th>
+                            <th class="text-end bg-success-subtle">Weighted HC</th>
+                            <th class="text-end bg-success-subtle">Budgeted Income</th>
+                        </tr>
+                    </thead>
+                    <tbody id="capacityTableBody">
+                        <!-- Populated via JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-secondary">
+                            <th>Total</th>
+                            <th class="text-end" id="totalLastHeadcount">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end" id="totalLastIncome">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end" id="totalNextHeadcount">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end">-</th>
+                            <th class="text-end" id="totalWeightedHC">-</th>
+                            <th class="text-end" id="totalBudgetedIncome">-</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Hiring Plan Modal -->
+            <div class="modal fade" id="hiringPlanModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Hiring Plan - <span id="hiringProductName"></span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-muted mb-3">
+                                Plan new hires for this product. Each hire is weighted by months active in the year.
+                            </p>
+                            <div id="hiresContainer">
+                                <!-- Hire rows added here -->
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addHireRow">
+                                <i class="ti ti-plus me-1"></i>Add Hire
+                            </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveHiringPlan">Save Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let capacityData = [];
+    let currentEntryId = null;
+    const budgetId = {{ $budget->id }};
+    const canEdit = {{ $budget->canEdit() && auth()->user()->hasRole('super-admin') ? 'true' : 'false' }};
+
+    // Load data when tab is shown
+    document.querySelector('a[href="#capacity-tab"]')?.addEventListener('shown.bs.tab', loadCapacityData);
+
+    async function loadCapacityData() {
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/capacity`);
+            const data = await response.json();
+
+            if (data.success) {
+                capacityData = data.entries;
+                renderCapacityTable();
+            }
+        } catch (error) {
+            console.error('Error loading capacity data:', error);
+        }
+    }
+
+    function renderCapacityTable() {
+        const tbody = document.getElementById('capacityTableBody');
+        tbody.innerHTML = '';
+
+        let totals = {
+            lastHeadcount: 0, lastIncome: 0,
+            nextHeadcount: 0, weightedHC: 0, budgetedIncome: 0
+        };
+
+        capacityData.forEach(entry => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${entry.product_name}</td>
+                <!-- Last Year (read-only) -->
+                <td class="text-end bg-light">${entry.last_year.headcount}</td>
+                <td class="text-end bg-light">${entry.last_year.available_hours.toFixed(1)}</td>
+                <td class="text-end bg-light">${formatCurrency(entry.last_year.avg_hourly_rate)}</td>
+                <td class="text-end bg-light">${formatCurrency(entry.last_year.income)}</td>
+                <td class="text-end bg-light">${entry.last_year.billable_hours.toFixed(1)}</td>
+                <td class="text-end bg-light">${entry.last_year.billable_pct.toFixed(1)}%</td>
+                <!-- Next Year (editable) -->
+                <td class="text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1">
+                        <input type="number" class="form-control form-control-sm text-center base-headcount"
+                               data-entry-id="${entry.id}" value="${entry.next_year.base_headcount}"
+                               style="width: 60px;" ${!canEdit ? 'disabled' : ''}>
+                        <button type="button" class="btn btn-sm btn-icon btn-outline-primary open-hiring"
+                                data-entry-id="${entry.id}" data-product-name="${entry.product_name}"
+                                title="Hiring Plan (${entry.total_hires} planned)">
+                            <i class="ti ti-user-plus"></i>
+                            ${entry.total_hires > 0 ? `<span class="badge bg-success position-absolute" style="top:-5px;right:-5px;font-size:10px">${entry.total_hires}</span>` : ''}
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-end avg-rate"
+                           data-entry-id="${entry.id}" value="${entry.next_year.avg_hourly_rate || ''}"
+                           step="0.01" ${!canEdit ? 'disabled' : ''}>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <input type="number" class="form-control text-end billable-pct"
+                               data-entry-id="${entry.id}" value="${entry.next_year.billable_pct || ''}"
+                               step="0.1" min="0" max="100" ${!canEdit ? 'disabled' : ''}>
+                        <span class="input-group-text">%</span>
+                    </div>
+                </td>
+                <td class="text-end weighted-hc">${entry.next_year.weighted_headcount?.toFixed(2) || '-'}</td>
+                <td class="text-end fw-bold budgeted-income">${formatCurrency(entry.next_year.budgeted_income)}</td>
+            `;
+            tbody.appendChild(row);
+
+            // Accumulate totals
+            totals.lastHeadcount += entry.last_year.headcount || 0;
+            totals.lastIncome += entry.last_year.income || 0;
+            totals.nextHeadcount += entry.next_year.base_headcount || 0;
+            totals.weightedHC += entry.next_year.weighted_headcount || 0;
+            totals.budgetedIncome += entry.next_year.budgeted_income || 0;
+        });
+
+        // Update totals
+        document.getElementById('totalLastHeadcount').textContent = totals.lastHeadcount;
+        document.getElementById('totalLastIncome').textContent = formatCurrency(totals.lastIncome);
+        document.getElementById('totalNextHeadcount').textContent = totals.nextHeadcount;
+        document.getElementById('totalWeightedHC').textContent = totals.weightedHC.toFixed(2);
+        document.getElementById('totalBudgetedIncome').textContent = formatCurrency(totals.budgetedIncome);
+
+        attachEventListeners();
+    }
+
+    function attachEventListeners() {
+        // Input changes
+        document.querySelectorAll('.base-headcount, .avg-rate, .billable-pct').forEach(input => {
+            input.addEventListener('change', function() {
+                const entryId = this.dataset.entryId;
+                const entry = capacityData.find(e => e.id == entryId);
+                if (entry) {
+                    if (this.classList.contains('base-headcount')) {
+                        entry.next_year.base_headcount = parseInt(this.value) || 0;
+                    } else if (this.classList.contains('avg-rate')) {
+                        entry.next_year.avg_hourly_rate = parseFloat(this.value) || 0;
+                    } else if (this.classList.contains('billable-pct')) {
+                        entry.next_year.billable_pct = parseFloat(this.value) || 0;
+                    }
+                    markUnsaved();
+                }
+            });
+        });
+
+        // Open hiring modal
+        document.querySelectorAll('.open-hiring').forEach(btn => {
+            btn.addEventListener('click', function() {
+                openHiringModal(this.dataset.entryId, this.dataset.productName);
+            });
+        });
+    }
+
+    function openHiringModal(entryId, productName) {
+        currentEntryId = entryId;
+        document.getElementById('hiringProductName').textContent = productName;
+
+        const entry = capacityData.find(e => e.id == entryId);
+        const container = document.getElementById('hiresContainer');
+        container.innerHTML = '';
+
+        // Add existing hires
+        if (entry.hires && entry.hires.length > 0) {
+            entry.hires.forEach(hire => addHireRow(hire));
+        } else {
+            addHireRow(); // Add empty row
+        }
+
+        new bootstrap.Modal(document.getElementById('hiringPlanModal')).show();
+    }
+
+    function addHireRow(hire = null) {
+        const container = document.getElementById('hiresContainer');
+        const row = document.createElement('div');
+        row.className = 'row mb-2 hire-row';
+        row.innerHTML = `
+            <div class="col-4">
+                <select class="form-select form-select-sm hire-month">
+                    ${[...Array(12)].map((_, i) => `
+                        <option value="${i + 1}" ${hire?.month === i + 1 ? 'selected' : ''}>
+                            ${new Date(2000, i, 1).toLocaleString('default', { month: 'long' })}
+                        </option>
+                    `).join('')}
+                </select>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm hire-count"
+                       placeholder="Count" value="${hire?.count || 1}" min="1">
+            </div>
+            <div class="col-4">
+                <input type="number" class="form-control form-control-sm hire-rate"
+                       placeholder="Hourly rate" value="${hire?.hourly_rate || ''}" step="0.01">
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-sm btn-icon btn-outline-danger remove-hire">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(row);
+
+        row.querySelector('.remove-hire').addEventListener('click', () => row.remove());
+    }
+
+    document.getElementById('addHireRow').addEventListener('click', () => addHireRow());
+
+    document.getElementById('saveHiringPlan').addEventListener('click', async function() {
+        const hires = [];
+        document.querySelectorAll('.hire-row').forEach(row => {
+            const month = parseInt(row.querySelector('.hire-month').value);
+            const count = parseInt(row.querySelector('.hire-count').value) || 1;
+            const rate = parseFloat(row.querySelector('.hire-rate').value) || null;
+
+            if (month && count) {
+                hires.push({ month, count, hourly_rate: rate });
+            }
+        });
+
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/capacity/hires`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    entry_id: currentEntryId,
+                    hires: hires
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('hiringPlanModal')).hide();
+                loadCapacityData(); // Refresh to get updated calculations
+            }
+        } catch (error) {
+            console.error('Error saving hiring plan:', error);
+        }
+    });
+
+    function formatCurrency(value) {
+        if (value === null || value === undefined) return '-';
+        return new Intl.NumberFormat('en-EG', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(value) + ' EGP';
+    }
+
+    function markUnsaved() {
+        window.budgetHasUnsavedChanges = true;
+    }
+
+    // Expose save function
+    window.saveCapacityTab = async function() {
+        const entries = capacityData.map(entry => ({
+            id: entry.id,
+            base_headcount: entry.next_year.base_headcount,
+            avg_hourly_rate: entry.next_year.avg_hourly_rate,
+            billable_pct: entry.next_year.billable_pct
+        }));
+
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/capacity`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ entries })
+            });
+
+            return (await response.json()).success;
+        } catch (error) {
+            console.error('Error saving capacity data:', error);
+            return false;
+        }
+    };
+});
+</script>
+```
+
+---
+
+## Phase 5: Collection Tab
+
+The Collection tab calculates budgeted income based on payment collection patterns and outstanding balances.
+
+### 5.1 Collection Calculation Service
+
+**File:** `Modules/Accounting/app/Services/Budget/CollectionCalculationService.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Services\Budget;
+
+class CollectionCalculationService
+{
+    /**
+     * Calculate collection months from average balance and average payment.
+     *
+     * Collection Months = Average Outstanding Balance / Average Payment Per Month
+     *
+     * This tells us how many months of payments are "in the pipeline".
+     * Lower is better (faster collection).
+     *
+     * Example:
+     * - Average balance: $500,000
+     * - Average payment/month: $250,000
+     * - Collection months: 2.0 (takes 2 months to collect on average)
+     */
+    public function calculateCollectionMonths(float $avgBalance, float $avgPaymentMonthly): float
+    {
+        if ($avgPaymentMonthly <= 0) {
+            return 0;
+        }
+
+        return round($avgBalance / $avgPaymentMonthly, 2);
+    }
+
+    /**
+     * Calculate collection months from payment schedule patterns.
+     *
+     * This uses the budgeted payment patterns to project collection months.
+     *
+     * For each pattern:
+     * 1. Calculate weighted average payment month
+     * 2. Weight by percentage of contracts using that pattern
+     *
+     * Example:
+     * Pattern A (20% of contracts): 60% in M1, 40% in M2 = 1.4 avg months
+     * Pattern B (50% of contracts): 100% in M1 = 1.0 avg months
+     * Pattern C (30% of contracts): 33% each M1,M2,M3 = 2.0 avg months
+     *
+     * Weighted: (0.20 × 1.4) + (0.50 × 1.0) + (0.30 × 2.0) = 1.38 months
+     */
+    public function calculatePatternCollectionMonths(array $patterns): float
+    {
+        if (empty($patterns)) {
+            return 0;
+        }
+
+        $totalWeightedMonths = 0;
+        $totalContractPct = 0;
+
+        foreach ($patterns as $pattern) {
+            $contractPct = $pattern['contract_percentage'] / 100;
+            if ($contractPct <= 0) continue;
+
+            // Calculate weighted average month for this pattern
+            $weightedMonth = 0;
+            for ($month = 1; $month <= 12; $month++) {
+                $monthPct = ($pattern["month_{$month}_pct"] ?? 0) / 100;
+                $weightedMonth += $month * $monthPct;
+            }
+
+            $totalWeightedMonths += $weightedMonth * $contractPct;
+            $totalContractPct += $contractPct;
+        }
+
+        if ($totalContractPct <= 0) {
+            return 0;
+        }
+
+        return round($totalWeightedMonths / $totalContractPct, 2);
+    }
+
+    /**
+     * Calculate projected collection months (average of last year and pattern-based).
+     */
+    public function calculateProjectedCollectionMonths(float $lastYearMonths, float $patternMonths): float
+    {
+        if ($lastYearMonths <= 0 && $patternMonths <= 0) {
+            return 0;
+        }
+
+        if ($lastYearMonths <= 0) {
+            return $patternMonths;
+        }
+
+        if ($patternMonths <= 0) {
+            return $lastYearMonths;
+        }
+
+        return round(($lastYearMonths + $patternMonths) / 2, 2);
+    }
+
+    /**
+     * Calculate budgeted income from collection method.
+     *
+     * Formula:
+     * 1. Average Collection/Month = End Balance / Projected Collection Months
+     * 2. Target Income = Average Collection/Month × 12
+     *
+     * Example:
+     * - End Balance: 853,405
+     * - Collection Months: 2.02
+     * - Avg Collection: 853,405 / 2.02 = 422,855
+     * - Target Income: 422,855 × 12 = 5,074,263
+     */
+    public function calculateBudgetedIncome(float $endBalance, float $projectedCollectionMonths): float
+    {
+        if ($projectedCollectionMonths <= 0) {
+            return 0;
+        }
+
+        $avgCollectionMonthly = $endBalance / $projectedCollectionMonths;
+        return round($avgCollectionMonthly * 12, 2);
+    }
+}
+```
+
+### 5.2 Collection Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetCollectionController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Budget\BudgetCollectionEntry;
+use Modules\Accounting\Models\Budget\BudgetCollectionPattern;
+use Modules\Accounting\Services\Budget\BalanceService;
+use Modules\Accounting\Services\Budget\CollectionCalculationService;
+
+class BudgetCollectionController extends Controller
+{
+    public function __construct(
+        protected BalanceService $balanceService,
+        protected CollectionCalculationService $collectionService
+    ) {}
+
+    /**
+     * Get collection tab data.
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $entries = $budget->collectionEntries()
+            ->with(['product', 'patterns'])
+            ->get();
+
+        if ($entries->isEmpty()) {
+            $entries = $this->initializeCollectionEntries($budget);
+        }
+
+        $data = $entries->map(function ($entry) {
+            return [
+                'id' => $entry->id,
+                'product_id' => $entry->product_id,
+                'product_name' => $entry->product->name,
+                'last_year' => [
+                    'beginning_balance' => $entry->beginning_balance,
+                    'end_balance' => $entry->end_balance,
+                    'avg_balance' => $entry->avg_balance,
+                    'avg_contract_monthly' => $entry->avg_contract_monthly,
+                    'avg_payment_monthly' => $entry->avg_payment_monthly,
+                    'collection_months' => $entry->last_year_collection_months,
+                ],
+                'budgeted' => [
+                    'pattern_collection_months' => $entry->pattern_collection_months,
+                    'projected_collection_months' => $entry->projected_collection_months,
+                    'budgeted_income' => $entry->budgeted_income,
+                ],
+                'patterns' => $entry->patterns->map(fn($p) => [
+                    'id' => $p->id,
+                    'name' => $p->pattern_name,
+                    'contract_pct' => $p->contract_percentage,
+                    'months' => collect(range(1, 12))->mapWithKeys(fn($m) => [
+                        $m => $p->{"month_{$m}_pct"}
+                    ])->toArray(),
+                ])->toArray(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'can_edit' => $budget->canEdit() && auth()->user()->hasRole('super-admin'),
+            'entries' => $data,
+        ]);
+    }
+
+    /**
+     * Initialize collection entries from balance data.
+     */
+    protected function initializeCollectionEntries(Budget $budget): \Illuminate\Support\Collection
+    {
+        $lastYear = $budget->getLastYear();
+        $elapsedMonths = $budget->getElapsedMonths();
+
+        $products = \Modules\Accounting\Models\Product::where('status', 'active')->get();
+        $entries = collect();
+
+        foreach ($products as $product) {
+            // Calculate last year balances
+            $beginningBalance = $this->balanceService->getBeginningBalance($product->id, $lastYear);
+            $endBalance = $this->balanceService->getEndBalance($product->id, $lastYear);
+            $avgBalance = ($beginningBalance + $endBalance) / 2;
+
+            // Calculate averages
+            $avgContractMonthly = $this->balanceService->getAverageContractPerMonth($product->id, $lastYear, $elapsedMonths);
+            $avgPaymentMonthly = $this->balanceService->getAveragePaymentPerMonth($product->id, $lastYear, $elapsedMonths);
+
+            // Calculate collection months
+            $collectionMonths = $this->collectionService->calculateCollectionMonths($avgBalance, $avgPaymentMonthly);
+
+            $entry = BudgetCollectionEntry::create([
+                'budget_id' => $budget->id,
+                'product_id' => $product->id,
+                'beginning_balance' => $beginningBalance,
+                'end_balance' => $endBalance,
+                'avg_balance' => $avgBalance,
+                'avg_contract_monthly' => $avgContractMonthly,
+                'avg_payment_monthly' => $avgPaymentMonthly,
+                'last_year_collection_months' => $collectionMonths,
+            ]);
+
+            // Create default pattern (100% paid in month 1)
+            BudgetCollectionPattern::create([
+                'budget_collection_entry_id' => $entry->id,
+                'pattern_name' => 'Standard',
+                'contract_percentage' => 100,
+                'month_1_pct' => 100,
+            ]);
+
+            $entry->load(['product', 'patterns']);
+            $entries->push($entry);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Save payment patterns for a collection entry.
+     */
+    public function savePatterns(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'entry_id' => 'required|exists:budget_collection_entries,id',
+            'patterns' => 'required|array|min:1',
+            'patterns.*.name' => 'required|string|max:100',
+            'patterns.*.contract_pct' => 'required|numeric|min:0|max:100',
+            'patterns.*.months' => 'required|array',
+            'patterns.*.months.*' => 'numeric|min:0|max:100',
+        ]);
+
+        $entry = BudgetCollectionEntry::find($validated['entry_id']);
+
+        if ($entry->budget_id !== $budget->id) {
+            return response()->json(['error' => 'Invalid entry'], 400);
+        }
+
+        // Validate total contract percentage equals 100
+        $totalPct = collect($validated['patterns'])->sum('contract_pct');
+        if (abs($totalPct - 100) > 0.01) {
+            return response()->json([
+                'error' => 'Contract percentages must total 100%',
+                'total' => $totalPct
+            ], 422);
+        }
+
+        DB::transaction(function () use ($entry, $validated) {
+            // Delete existing patterns
+            $entry->patterns()->delete();
+
+            // Create new patterns
+            foreach ($validated['patterns'] as $patternData) {
+                $pattern = new BudgetCollectionPattern([
+                    'budget_collection_entry_id' => $entry->id,
+                    'pattern_name' => $patternData['name'],
+                    'contract_percentage' => $patternData['contract_pct'],
+                ]);
+
+                // Set month percentages
+                foreach ($patternData['months'] as $month => $pct) {
+                    $pattern->{"month_{$month}_pct"} = $pct;
+                }
+
+                $pattern->save();
+            }
+
+            // Recalculate collection months from patterns
+            $patterns = $entry->fresh()->patterns->map(fn($p) => [
+                'contract_percentage' => $p->contract_percentage,
+                ...collect(range(1, 12))->mapWithKeys(fn($m) => ["month_{$m}_pct" => $p->{"month_{$m}_pct"}])->toArray()
+            ])->toArray();
+
+            $patternMonths = app(CollectionCalculationService::class)
+                ->calculatePatternCollectionMonths($patterns);
+
+            $projectedMonths = app(CollectionCalculationService::class)
+                ->calculateProjectedCollectionMonths($entry->last_year_collection_months, $patternMonths);
+
+            $budgetedIncome = app(CollectionCalculationService::class)
+                ->calculateBudgetedIncome($entry->end_balance, $projectedMonths);
+
+            $entry->update([
+                'pattern_collection_months' => $patternMonths,
+                'projected_collection_months' => $projectedMonths,
+                'budgeted_income' => $budgetedIncome,
+            ]);
+        });
+
+        // Update Result tab
+        $this->updateResultEntries($budget);
+
+        return response()->json(['success' => true]);
+    }
+
+    protected function updateResultEntries(Budget $budget): void
+    {
+        foreach ($budget->collectionEntries as $entry) {
+            $budget->resultEntries()->updateOrCreate(
+                ['product_id' => $entry->product_id],
+                ['collection_value' => $entry->budgeted_income]
+            );
+        }
+    }
+}
+```
+
+---
+
+## Phase 6: Result Tab
+
+The Result tab consolidates values from Growth, Capacity, and Collection methods, calculates an average, and allows the user to select a final budget value.
+
+### 6.1 Result Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetResultController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Budget\BudgetResultEntry;
+
+class BudgetResultController extends Controller
+{
+    /**
+     * Get result tab data.
+     *
+     * This aggregates data from Growth, Capacity, and Collection tabs.
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Get or create result entries
+        $entries = $budget->resultEntries()->with('product')->get();
+
+        if ($entries->isEmpty()) {
+            $entries = $this->initializeResultEntries($budget);
+        } else {
+            // Refresh values from other tabs
+            $this->refreshResultEntries($budget);
+            $entries = $budget->resultEntries()->with('product')->get();
+        }
+
+        $data = $entries->map(function ($entry) {
+            // Calculate average of non-null values
+            $values = array_filter([
+                $entry->growth_value,
+                $entry->capacity_value,
+                $entry->collection_value
+            ], fn($v) => $v !== null);
+
+            $average = count($values) > 0 ? array_sum($values) / count($values) : null;
+
+            return [
+                'id' => $entry->id,
+                'product_id' => $entry->product_id,
+                'product_name' => $entry->product->name,
+                'growth_value' => $entry->growth_value,
+                'capacity_value' => $entry->capacity_value,
+                'collection_value' => $entry->collection_value,
+                'average_value' => $average ? round($average, 2) : null,
+                'final_value' => $entry->final_value,
+            ];
+        });
+
+        // Calculate totals
+        $totals = [
+            'growth' => $data->sum('growth_value'),
+            'capacity' => $data->sum('capacity_value'),
+            'collection' => $data->sum('collection_value'),
+            'average' => $data->sum('average_value'),
+            'final' => $data->sum('final_value'),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'can_edit' => $budget->canEdit() && auth()->user()->hasRole('super-admin'),
+            'entries' => $data,
+            'totals' => $totals,
+        ]);
+    }
+
+    /**
+     * Initialize result entries from other tabs.
+     */
+    protected function initializeResultEntries(Budget $budget): \Illuminate\Support\Collection
+    {
+        // Get all products from Growth tab (most comprehensive list)
+        $productIds = $budget->growthEntries()->pluck('product_id')
+            ->merge($budget->capacityEntries()->pluck('product_id'))
+            ->merge($budget->collectionEntries()->pluck('product_id'))
+            ->unique();
+
+        foreach ($productIds as $productId) {
+            $growthEntry = $budget->growthEntries()->where('product_id', $productId)->first();
+            $capacityEntry = $budget->capacityEntries()->where('product_id', $productId)->first();
+            $collectionEntry = $budget->collectionEntries()->where('product_id', $productId)->first();
+
+            BudgetResultEntry::create([
+                'budget_id' => $budget->id,
+                'product_id' => $productId,
+                'growth_value' => $growthEntry?->budgeted_value,
+                'capacity_value' => $capacityEntry?->budgeted_income,
+                'collection_value' => $collectionEntry?->budgeted_income,
+            ]);
+        }
+
+        return $budget->resultEntries()->with('product')->get();
+    }
+
+    /**
+     * Refresh result entries with latest values from other tabs.
+     */
+    protected function refreshResultEntries(Budget $budget): void
+    {
+        foreach ($budget->resultEntries as $entry) {
+            $growthEntry = $budget->growthEntries()->where('product_id', $entry->product_id)->first();
+            $capacityEntry = $budget->capacityEntries()->where('product_id', $entry->product_id)->first();
+            $collectionEntry = $budget->collectionEntries()->where('product_id', $entry->product_id)->first();
+
+            $entry->update([
+                'growth_value' => $growthEntry?->budgeted_value,
+                'capacity_value' => $capacityEntry?->budgeted_income,
+                'collection_value' => $collectionEntry?->budgeted_income,
+            ]);
+        }
+    }
+
+    /**
+     * Save final values.
+     */
+    public function save(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if (!$budget->canEdit()) {
+            return response()->json(['error' => 'Budget is locked'], 403);
+        }
+
+        $validated = $request->validate([
+            'entries' => 'required|array',
+            'entries.*.id' => 'required|exists:budget_result_entries,id',
+            'entries.*.final_value' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['entries'] as $entryData) {
+            $entry = BudgetResultEntry::find($entryData['id']);
+
+            if ($entry->budget_id !== $budget->id) {
+                continue;
+            }
+
+            $entry->update([
+                'final_value' => $entryData['final_value'],
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Quick fill: Set final value to a specific method for all products.
+     */
+    public function quickFill(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'method' => 'required|in:growth,capacity,collection,average',
+        ]);
+
+        foreach ($budget->resultEntries as $entry) {
+            $value = match($validated['method']) {
+                'growth' => $entry->growth_value,
+                'capacity' => $entry->capacity_value,
+                'collection' => $entry->collection_value,
+                'average' => $this->calculateAverage($entry),
+            };
+
+            $entry->update(['final_value' => $value]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    protected function calculateAverage(BudgetResultEntry $entry): ?float
+    {
+        $values = array_filter([
+            $entry->growth_value,
+            $entry->capacity_value,
+            $entry->collection_value
+        ], fn($v) => $v !== null);
+
+        return count($values) > 0 ? round(array_sum($values) / count($values), 2) : null;
+    }
+}
+```
+
+### 6.2 Result Tab View
+
+**File:** `Modules/Accounting/resources/views/budget/partials/tabs/result.blade.php`
+
+```html
+<div class="tab-pane fade" id="result-tab" role="tabpanel">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">Budget Results</h5>
+                <small class="text-muted">Compare methods and select final budget per product</small>
+            </div>
+            <div class="dropdown" id="quickFillDropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="ti ti-copy me-1"></i>Quick Fill Final Values
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item quick-fill" data-method="growth">Use Growth Values</a></li>
+                    <li><a class="dropdown-item quick-fill" data-method="capacity">Use Capacity Values</a></li>
+                    <li><a class="dropdown-item quick-fill" data-method="collection">Use Collection Values</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item quick-fill" data-method="average">Use Average Values</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-end">Growth Method</th>
+                            <th class="text-end">Capacity Method</th>
+                            <th class="text-end">Collection Method</th>
+                            <th class="text-end">Average</th>
+                            <th class="text-end bg-primary-subtle" style="width: 180px;">Final Budget</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody">
+                        <!-- Populated via JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-secondary fw-bold">
+                            <th>Total</th>
+                            <th class="text-end" id="totalGrowth">-</th>
+                            <th class="text-end" id="totalCapacity">-</th>
+                            <th class="text-end" id="totalCollection">-</th>
+                            <th class="text-end" id="totalAverage">-</th>
+                            <th class="text-end bg-primary-subtle" id="totalFinal">-</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Visual Comparison -->
+            <div class="mt-4">
+                <h6>Method Comparison</h6>
+                <canvas id="resultComparisonChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let resultData = [];
+    let resultTotals = {};
+    const budgetId = {{ $budget->id }};
+    const canEdit = {{ $budget->canEdit() && auth()->user()->hasRole('super-admin') ? 'true' : 'false' }};
+    let comparisonChart = null;
+
+    document.querySelector('a[href="#result-tab"]')?.addEventListener('shown.bs.tab', loadResultData);
+
+    async function loadResultData() {
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/result`);
+            const data = await response.json();
+
+            if (data.success) {
+                resultData = data.entries;
+                resultTotals = data.totals;
+                renderResultTable();
+                renderComparisonChart();
+            }
+        } catch (error) {
+            console.error('Error loading result data:', error);
+        }
+    }
+
+    function renderResultTable() {
+        const tbody = document.getElementById('resultTableBody');
+        tbody.innerHTML = '';
+
+        resultData.forEach(entry => {
+            const row = document.createElement('tr');
+
+            // Determine which method is highest (for highlighting)
+            const methods = [
+                { name: 'growth', value: entry.growth_value },
+                { name: 'capacity', value: entry.capacity_value },
+                { name: 'collection', value: entry.collection_value }
+            ].filter(m => m.value !== null);
+
+            const maxMethod = methods.reduce((max, m) => m.value > (max?.value || 0) ? m : max, null);
+
+            row.innerHTML = `
+                <td>${entry.product_name}</td>
+                <td class="text-end ${maxMethod?.name === 'growth' ? 'text-success fw-bold' : ''}">
+                    ${formatCurrency(entry.growth_value)}
+                    <button class="btn btn-sm btn-icon btn-text-primary copy-value ms-1"
+                            data-entry-id="${entry.id}" data-value="${entry.growth_value}"
+                            title="Copy to Final" ${!canEdit || !entry.growth_value ? 'disabled' : ''}>
+                        <i class="ti ti-arrow-right"></i>
+                    </button>
+                </td>
+                <td class="text-end ${maxMethod?.name === 'capacity' ? 'text-success fw-bold' : ''}">
+                    ${formatCurrency(entry.capacity_value)}
+                    <button class="btn btn-sm btn-icon btn-text-primary copy-value ms-1"
+                            data-entry-id="${entry.id}" data-value="${entry.capacity_value}"
+                            title="Copy to Final" ${!canEdit || !entry.capacity_value ? 'disabled' : ''}>
+                        <i class="ti ti-arrow-right"></i>
+                    </button>
+                </td>
+                <td class="text-end ${maxMethod?.name === 'collection' ? 'text-success fw-bold' : ''}">
+                    ${formatCurrency(entry.collection_value)}
+                    <button class="btn btn-sm btn-icon btn-text-primary copy-value ms-1"
+                            data-entry-id="${entry.id}" data-value="${entry.collection_value}"
+                            title="Copy to Final" ${!canEdit || !entry.collection_value ? 'disabled' : ''}>
+                        <i class="ti ti-arrow-right"></i>
+                    </button>
+                </td>
+                <td class="text-end">
+                    ${formatCurrency(entry.average_value)}
+                    <button class="btn btn-sm btn-icon btn-text-primary copy-value ms-1"
+                            data-entry-id="${entry.id}" data-value="${entry.average_value}"
+                            title="Copy to Final" ${!canEdit || !entry.average_value ? 'disabled' : ''}>
+                        <i class="ti ti-arrow-right"></i>
+                    </button>
+                </td>
+                <td class="bg-primary-subtle">
+                    <input type="number" class="form-control form-control-sm text-end fw-bold final-value"
+                           data-entry-id="${entry.id}" value="${entry.final_value || ''}"
+                           ${!canEdit ? 'disabled' : ''}>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Update totals
+        document.getElementById('totalGrowth').textContent = formatCurrency(resultTotals.growth);
+        document.getElementById('totalCapacity').textContent = formatCurrency(resultTotals.capacity);
+        document.getElementById('totalCollection').textContent = formatCurrency(resultTotals.collection);
+        document.getElementById('totalAverage').textContent = formatCurrency(resultTotals.average);
+        document.getElementById('totalFinal').textContent = formatCurrency(resultTotals.final);
+
+        attachEventListeners();
+    }
+
+    function attachEventListeners() {
+        // Copy value buttons
+        document.querySelectorAll('.copy-value').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const entryId = this.dataset.entryId;
+                const value = this.dataset.value;
+                const input = document.querySelector(`.final-value[data-entry-id="${entryId}"]`);
+                if (input) {
+                    input.value = value;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Final value changes
+        document.querySelectorAll('.final-value').forEach(input => {
+            input.addEventListener('change', function() {
+                const entryId = this.dataset.entryId;
+                const entry = resultData.find(e => e.id == entryId);
+                if (entry) {
+                    entry.final_value = parseFloat(this.value) || null;
+                    updateTotalFinal();
+                    markUnsaved();
+                }
+            });
+        });
+
+        // Quick fill
+        document.querySelectorAll('.quick-fill').forEach(link => {
+            link.addEventListener('click', async function(e) {
+                e.preventDefault();
+                await quickFill(this.dataset.method);
+            });
+        });
+    }
+
+    async function quickFill(method) {
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/result/quick-fill`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ method })
+            });
+
+            if ((await response.json()).success) {
+                loadResultData();
+            }
+        } catch (error) {
+            console.error('Error quick filling:', error);
+        }
+    }
+
+    function updateTotalFinal() {
+        const total = resultData.reduce((sum, e) => sum + (parseFloat(e.final_value) || 0), 0);
+        document.getElementById('totalFinal').textContent = formatCurrency(total);
+    }
+
+    function renderComparisonChart() {
+        const ctx = document.getElementById('resultComparisonChart').getContext('2d');
+
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+
+        comparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Growth', 'Capacity', 'Collection', 'Average', 'Final'],
+                datasets: [{
+                    label: 'Total Budget',
+                    data: [
+                        resultTotals.growth,
+                        resultTotals.capacity,
+                        resultTotals.collection,
+                        resultTotals.average,
+                        resultTotals.final
+                    ],
+                    backgroundColor: [
+                        'rgba(105, 108, 255, 0.8)',
+                        'rgba(40, 199, 111, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 99, 132, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => formatCurrency(v) }
+                    }
+                }
+            }
+        });
+    }
+
+    function formatCurrency(value) {
+        if (value === null || value === undefined) return '-';
+        return new Intl.NumberFormat('en-EG', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(value) + ' EGP';
+    }
+
+    function markUnsaved() {
+        window.budgetHasUnsavedChanges = true;
+    }
+
+    window.saveResultTab = async function() {
+        const entries = resultData.map(e => ({
+            id: e.id,
+            final_value: e.final_value
+        }));
+
+        try {
+            const response = await fetch(`/accounting/budget/${budgetId}/result`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ entries })
+            });
+
+            return (await response.json()).success;
+        } catch (error) {
+            console.error('Error saving result data:', error);
+            return false;
+        }
+    };
+});
+</script>
+```
+
+---
+
+## Phase 7: Personnel Tab
+
+The Personnel tab manages salary planning for all employees, with allocations to products and G&A.
+
+### 7.1 Personnel Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetPersonnelController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Budget\BudgetPersonnelEntry;
+use Modules\Accounting\Models\Budget\BudgetPersonnelAllocation;
+use Modules\Accounting\Services\Budget\EmployeeDataService;
+use Modules\HR\Models\Employee;
+
+class BudgetPersonnelController extends Controller
+{
+    public function __construct(
+        protected EmployeeDataService $employeeService
+    ) {}
+
+    /**
+     * Get personnel tab data.
+     *
+     * Organizes employees by product allocation (can appear in multiple products).
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $entries = $budget->personnelEntries()
+            ->with(['employee', 'allocations.product'])
+            ->get();
+
+        if ($entries->isEmpty()) {
+            $entries = $this->initializePersonnelEntries($budget);
+        }
+
+        // Group by product for display
+        $products = \Modules\Accounting\Models\Product::where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        $groupedData = [];
+
+        // Product sections
+        foreach ($products as $product) {
+            $productEntries = $entries->filter(function ($entry) use ($product) {
+                return $entry->allocations->contains('product_id', $product->id);
+            });
+
+            if ($productEntries->isNotEmpty()) {
+                $groupedData[] = [
+                    'section' => 'product',
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'entries' => $this->formatEntries($productEntries, $product->id),
+                    'totals' => $this->calculateSectionTotals($productEntries, $product->id),
+                ];
+            }
+        }
+
+        // G&A section (employees with no product allocation or allocation to null product)
+        $gaEntries = $entries->filter(function ($entry) {
+            return $entry->allocations->isEmpty() ||
+                   $entry->allocations->contains('product_id', null);
+        });
+
+        if ($gaEntries->isNotEmpty()) {
+            $groupedData[] = [
+                'section' => 'ga',
+                'product_id' => null,
+                'product_name' => 'General & Administrative (G&A)',
+                'entries' => $this->formatEntries($gaEntries, null),
+                'totals' => $this->calculateSectionTotals($gaEntries, null),
+            ];
+        }
+
+        // Grand totals
+        $grandTotals = [
+            'current_salary' => $entries->sum('current_salary'),
+            'proposed_salary' => $entries->sum('proposed_salary'),
+            'increase_amount' => $entries->sum(fn($e) => ($e->proposed_salary ?? 0) - $e->current_salary),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'can_edit' => $budget->canEdit() && auth()->user()->hasRole('super-admin'),
+            'sections' => $groupedData,
+            'grand_totals' => $grandTotals,
+        ]);
+    }
+
+    protected function formatEntries($entries, $productId): array
+    {
+        return $entries->map(function ($entry) use ($productId) {
+            $allocation = $productId !== null
+                ? $entry->allocations->firstWhere('product_id', $productId)
+                : $entry->allocations->firstWhere('product_id', null);
+
+            $allocationPct = $allocation?->allocation_percentage ?? 100;
+            $effectiveCost = ($entry->proposed_salary ?? 0) * ($allocationPct / 100);
+
+            return [
+                'id' => $entry->id,
+                'employee_id' => $entry->employee_id,
+                'employee_name' => $entry->employee_id
+                    ? $entry->employee->full_name
+                    : $entry->employee_name,
+                'is_new_hire' => $entry->is_new_hire,
+                'hire_month' => $entry->hire_month,
+                'current_salary' => $entry->current_salary,
+                'proposed_salary' => $entry->proposed_salary,
+                'increase_pct' => $entry->current_salary > 0
+                    ? round((($entry->proposed_salary ?? 0) - $entry->current_salary) / $entry->current_salary * 100, 1)
+                    : null,
+                'allocation_pct' => $allocationPct,
+                'effective_cost' => round($effectiveCost, 2),
+            ];
+        })->values()->toArray();
+    }
+
+    protected function calculateSectionTotals($entries, $productId): array
+    {
+        $currentTotal = 0;
+        $proposedTotal = 0;
+
+        foreach ($entries as $entry) {
+            $allocation = $productId !== null
+                ? $entry->allocations->firstWhere('product_id', $productId)
+                : $entry->allocations->firstWhere('product_id', null);
+
+            $allocationPct = ($allocation?->allocation_percentage ?? 100) / 100;
+
+            $currentTotal += $entry->current_salary * $allocationPct;
+            $proposedTotal += ($entry->proposed_salary ?? 0) * $allocationPct;
+        }
+
+        return [
+            'current_salary' => round($currentTotal, 2),
+            'proposed_salary' => round($proposedTotal, 2),
+            'increase_amount' => round($proposedTotal - $currentTotal, 2),
+        ];
+    }
+
+    protected function initializePersonnelEntries(Budget $budget): \Illuminate\Support\Collection
+    {
+        // Get all active employees
+        $employees = Employee::where('status', 'active')
+            ->with('products')
+            ->get();
+
+        foreach ($employees as $employee) {
+            $entry = BudgetPersonnelEntry::create([
+                'budget_id' => $budget->id,
+                'employee_id' => $employee->id,
+                'current_salary' => $employee->monthly_salary ?? 0,
+                'proposed_salary' => $employee->monthly_salary ?? 0,
+            ]);
+
+            // Create allocations based on employee's product assignments
+            if ($employee->products->isNotEmpty()) {
+                $pctPerProduct = 100 / $employee->products->count();
+                foreach ($employee->products as $product) {
+                    BudgetPersonnelAllocation::create([
+                        'budget_personnel_entry_id' => $entry->id,
+                        'product_id' => $product->id,
+                        'allocation_percentage' => $pctPerProduct,
+                    ]);
+                }
+            } else {
+                // G&A employee
+                BudgetPersonnelAllocation::create([
+                    'budget_personnel_entry_id' => $entry->id,
+                    'product_id' => null,
+                    'allocation_percentage' => 100,
+                ]);
+            }
+        }
+
+        return $budget->personnelEntries()
+            ->with(['employee', 'allocations.product'])
+            ->get();
+    }
+
+    /**
+     * Save personnel entries.
+     */
+    public function save(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'entries' => 'required|array',
+            'entries.*.id' => 'required|exists:budget_personnel_entries,id',
+            'entries.*.proposed_salary' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['entries'] as $entryData) {
+            $entry = BudgetPersonnelEntry::find($entryData['id']);
+
+            if ($entry->budget_id !== $budget->id) {
+                continue;
+            }
+
+            $proposedSalary = $entryData['proposed_salary'];
+            $currentSalary = $entry->current_salary;
+
+            // Calculate increase percentage
+            $increasePct = $currentSalary > 0
+                ? (($proposedSalary - $currentSalary) / $currentSalary) * 100
+                : null;
+
+            $entry->update([
+                'proposed_salary' => $proposedSalary,
+                'increase_percentage' => $increasePct ? round($increasePct, 2) : null,
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Add a new hire entry (independent of Capacity tab).
+     */
+    public function addNewHire(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'employee_name' => 'required|string|max:255',
+            'proposed_salary' => 'required|numeric|min:0',
+            'hire_month' => 'required|integer|min:1|max:12',
+            'product_id' => 'nullable|exists:products,id',
+        ]);
+
+        $entry = BudgetPersonnelEntry::create([
+            'budget_id' => $budget->id,
+            'employee_id' => null,
+            'employee_name' => $validated['employee_name'],
+            'current_salary' => 0,
+            'proposed_salary' => $validated['proposed_salary'],
+            'is_new_hire' => true,
+            'hire_month' => $validated['hire_month'],
+        ]);
+
+        BudgetPersonnelAllocation::create([
+            'budget_personnel_entry_id' => $entry->id,
+            'product_id' => $validated['product_id'], // null = G&A
+            'allocation_percentage' => 100,
+        ]);
+
+        // Sync to Capacity tab if product assigned
+        if ($validated['product_id']) {
+            $this->syncToCapacity($budget, $entry, $validated['product_id']);
+        }
+
+        return response()->json(['success' => true, 'entry_id' => $entry->id]);
+    }
+
+    protected function syncToCapacity(Budget $budget, BudgetPersonnelEntry $personnelEntry, int $productId): void
+    {
+        $capacityEntry = $budget->capacityEntries()
+            ->where('product_id', $productId)
+            ->first();
+
+        if (!$capacityEntry) {
+            return;
+        }
+
+        // Add a hire to capacity
+        \Modules\Accounting\Models\Budget\BudgetCapacityHire::create([
+            'budget_capacity_entry_id' => $capacityEntry->id,
+            'hire_month' => $personnelEntry->hire_month,
+            'hire_count' => 1,
+            'expected_hourly_rate' => $personnelEntry->proposed_salary / 110, // Rough conversion
+        ]);
+    }
+}
+```
+
+---
+
+## Phase 8: OpEx/Taxes/CapEx Tabs
+
+These three tabs share similar structure. The main difference is the expense category type filter.
+
+### 8.1 Base Expense Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetExpenseController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Budget\BudgetExpenseEntry;
+use Modules\Accounting\Services\Budget\ExpenseDataService;
+use App\Models\ExpenseCategory;
+
+class BudgetExpenseController extends Controller
+{
+    protected string $expenseType; // 'opex', 'tax', or 'capex'
+    protected string $globalIncreasePctField; // 'opex_global_increase_pct' or 'tax_global_increase_pct'
+
+    public function __construct(
+        protected ExpenseDataService $expenseService
+    ) {
+        // Will be set by child controllers
+    }
+
+    /**
+     * Get expense tab data.
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $entries = $budget->expenseEntries()
+            ->with('expenseCategory')
+            ->where('expense_type', $this->expenseType)
+            ->get();
+
+        if ($entries->isEmpty()) {
+            $entries = $this->initializeExpenseEntries($budget);
+        }
+
+        // Get global increase percentage
+        $globalIncreasePct = $budget->{$this->globalIncreasePctField} ?? 10;
+
+        $data = $entries->map(function ($entry) use ($globalIncreasePct) {
+            // Calculate proposed values
+            $effectiveIncreasePct = $entry->custom_increase_pct ?? $globalIncreasePct;
+
+            $proposedAvgMonthly = $entry->override_amount
+                ?? ($entry->last_year_avg_monthly * (1 + $effectiveIncreasePct / 100));
+
+            $proposedTotal = $proposedAvgMonthly * 12;
+
+            return [
+                'id' => $entry->id,
+                'category_id' => $entry->expense_category_id,
+                'category_name' => $entry->expenseCategory->name,
+                'last_year' => [
+                    'total' => $entry->last_year_total,
+                    'avg_monthly' => $entry->last_year_avg_monthly,
+                ],
+                'budget' => [
+                    'uses_global' => $entry->custom_increase_pct === null && $entry->override_amount === null,
+                    'increase_pct' => $entry->custom_increase_pct ?? $globalIncreasePct,
+                    'override_amount' => $entry->override_amount,
+                    'proposed_avg_monthly' => round($proposedAvgMonthly, 2),
+                    'proposed_total' => round($proposedTotal, 2),
+                ],
+            ];
+        });
+
+        $totals = [
+            'last_year_total' => $data->sum('last_year.total'),
+            'proposed_total' => $data->sum('budget.proposed_total'),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'can_edit' => $budget->canEdit() && auth()->user()->hasRole('super-admin'),
+            'global_increase_pct' => $globalIncreasePct,
+            'entries' => $data,
+            'totals' => $totals,
+        ]);
+    }
+
+    protected function initializeExpenseEntries(Budget $budget): \Illuminate\Support\Collection
+    {
+        $lastYear = $budget->getLastYear();
+        $elapsedMonths = $budget->getElapsedMonths();
+
+        $categories = $this->expenseService->getCategoriesByType($this->expenseType);
+
+        foreach ($categories as $category) {
+            $total = $this->expenseService->getExpensesByCategory($category->id, $lastYear, $elapsedMonths);
+            $avgMonthly = $total / 12;
+
+            BudgetExpenseEntry::create([
+                'budget_id' => $budget->id,
+                'expense_category_id' => $category->id,
+                'expense_type' => $this->expenseType,
+                'last_year_total' => $total,
+                'last_year_avg_monthly' => round($avgMonthly, 2),
+            ]);
+        }
+
+        return $budget->expenseEntries()
+            ->with('expenseCategory')
+            ->where('expense_type', $this->expenseType)
+            ->get();
+    }
+
+    /**
+     * Save expense entries.
+     */
+    public function save(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'entries' => 'required|array',
+            'entries.*.id' => 'required|exists:budget_expense_entries,id',
+            'entries.*.custom_increase_pct' => 'nullable|numeric|min:-100|max:1000',
+            'entries.*.override_amount' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['entries'] as $entryData) {
+            $entry = BudgetExpenseEntry::find($entryData['id']);
+
+            if ($entry->budget_id !== $budget->id) {
+                continue;
+            }
+
+            $entry->update([
+                'custom_increase_pct' => $entryData['custom_increase_pct'],
+                'override_amount' => $entryData['override_amount'],
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Set global increase percentage.
+     */
+    public function setGlobalIncrease(Request $request, Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'increase_pct' => 'required|numeric|min:-100|max:1000',
+        ]);
+
+        $budget->update([
+            $this->globalIncreasePctField => $validated['increase_pct'],
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+}
+```
+
+### 8.2 OpEx, Taxes, and CapEx Controllers
+
+```php
+// Modules/Accounting/app/Http/Controllers/Budget/BudgetOpExController.php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+class BudgetOpExController extends BudgetExpenseController
+{
+    protected string $expenseType = 'opex';
+    protected string $globalIncreasePctField = 'opex_global_increase_pct';
+}
+
+// Modules/Accounting/app/Http/Controllers/Budget/BudgetTaxesController.php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+class BudgetTaxesController extends BudgetExpenseController
+{
+    protected string $expenseType = 'tax';
+    protected string $globalIncreasePctField = 'tax_global_increase_pct';
+}
+
+// Modules/Accounting/app/Http/Controllers/Budget/BudgetCapExController.php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+class BudgetCapExController extends BudgetExpenseController
+{
+    protected string $expenseType = 'capex';
+    protected string $globalIncreasePctField = 'opex_global_increase_pct'; // CapEx uses same or no global
+}
+```
+
+---
+
+## Phase 9: P&L Tab
+
+The P&L (Profit & Loss) tab is a read-only summary view that consolidates data from all other tabs.
+
+### 9.1 P&L Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetPnLController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Services\Budget\ExpenseDataService;
+
+class BudgetPnLController extends Controller
+{
+    public function __construct(
+        protected ExpenseDataService $expenseService
+    ) {}
+
+    /**
+     * Get P&L summary data.
+     *
+     * This consolidates all budget data into P&L format:
+     * - Revenue: From Result tab (final values)
+     * - Cost of Sales: From OpEx (specific category)
+     * - VAT: From Taxes (specific category)
+     * - Salaries: From Personnel tab (product allocations + G&A)
+     * - Sales Commissions: From OpEx (specific category)
+     * - OpEx: From OpEx tab (excluding Cost of Sales, Commissions)
+     * - Taxes: From Taxes tab (excluding VAT)
+     * - CapEx: From CapEx tab
+     */
+    public function index(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Get special category IDs
+        $costOfSalesCategoryId = $this->expenseService->getCostOfSalesCategoryId();
+        $vatCategoryId = $this->expenseService->getVatCategoryId();
+        $commissionsCategoryId = $this->expenseService->getSalesCommissionsCategoryId();
+
+        // ===== REVENUE =====
+        $revenue = [];
+        foreach ($budget->resultEntries()->with('product')->get() as $entry) {
+            $revenue[] = [
+                'name' => $entry->product->name,
+                'budgeted' => $entry->final_value ?? 0,
+                'last_year' => $entry->growth_value ?? 0, // Using growth (historical) as proxy
+            ];
+        }
+        $totalRevenue = collect($revenue)->sum('budgeted');
+
+        // ===== COST OF SALES =====
+        $costOfSales = 0;
+        $costOfSalesLastYear = 0;
+        if ($costOfSalesCategoryId) {
+            $entry = $budget->expenseEntries()
+                ->where('expense_category_id', $costOfSalesCategoryId)
+                ->first();
+            if ($entry) {
+                $costOfSales = $this->calculateProposedTotal($entry, $budget);
+                $costOfSalesLastYear = $entry->last_year_total ?? 0;
+            }
+        }
+
+        // ===== VAT =====
+        $vat = 0;
+        $vatLastYear = 0;
+        if ($vatCategoryId) {
+            $entry = $budget->expenseEntries()
+                ->where('expense_category_id', $vatCategoryId)
+                ->first();
+            if ($entry) {
+                $vat = $this->calculateProposedTotal($entry, $budget);
+                $vatLastYear = $entry->last_year_total ?? 0;
+            }
+        }
+
+        // GROSS PROFIT = Revenue - Cost of Sales - VAT
+        $grossProfit = $totalRevenue - $costOfSales - $vat;
+
+        // ===== SALARIES (Product + G&A) =====
+        $productSalaries = 0;
+        $gaSalaries = 0;
+
+        foreach ($budget->personnelEntries()->with('allocations')->get() as $entry) {
+            $proposedSalary = $entry->proposed_salary ?? 0;
+
+            foreach ($entry->allocations as $allocation) {
+                $amount = $proposedSalary * ($allocation->allocation_percentage / 100) * 12; // Annual
+
+                if ($allocation->product_id) {
+                    $productSalaries += $amount;
+                } else {
+                    $gaSalaries += $amount;
+                }
+            }
+        }
+
+        // ===== SALES COMMISSIONS =====
+        $commissions = 0;
+        if ($commissionsCategoryId) {
+            $entry = $budget->expenseEntries()
+                ->where('expense_category_id', $commissionsCategoryId)
+                ->first();
+            if ($entry) {
+                $commissions = $this->calculateProposedTotal($entry, $budget);
+            }
+        }
+
+        // EARNINGS = Gross Profit - Product Salaries - Commissions
+        $earnings = $grossProfit - $productSalaries - $commissions;
+
+        // ===== OTHER OPEX (excluding special categories) =====
+        $otherOpEx = 0;
+        $excludedOpExIds = array_filter([$costOfSalesCategoryId, $commissionsCategoryId]);
+
+        foreach ($budget->expenseEntries()->where('expense_type', 'opex')->get() as $entry) {
+            if (!in_array($entry->expense_category_id, $excludedOpExIds)) {
+                $otherOpEx += $this->calculateProposedTotal($entry, $budget);
+            }
+        }
+
+        // ===== OTHER TAXES (excluding VAT) =====
+        $otherTaxes = 0;
+        foreach ($budget->expenseEntries()->where('expense_type', 'tax')->get() as $entry) {
+            if ($entry->expense_category_id !== $vatCategoryId) {
+                $otherTaxes += $this->calculateProposedTotal($entry, $budget);
+            }
+        }
+
+        // PROFIT = Earnings - G&A Salaries - Other OpEx - Other Taxes
+        $profit = $earnings - $gaSalaries - $otherOpEx - $otherTaxes;
+
+        // ===== CAPEX =====
+        $capex = 0;
+        foreach ($budget->expenseEntries()->where('expense_type', 'capex')->get() as $entry) {
+            $capex += $this->calculateProposedTotal($entry, $budget);
+        }
+
+        // Build P&L structure
+        $pnl = [
+            'revenue' => [
+                'items' => $revenue,
+                'total' => $totalRevenue,
+            ],
+            'cost_of_sales' => $costOfSales,
+            'vat' => $vat,
+            'gross_profit' => $grossProfit,
+            'direct_expenses' => [
+                'product_salaries' => $productSalaries,
+                'commissions' => $commissions,
+            ],
+            'earnings' => $earnings,
+            'contribution' => [
+                'ga_salaries' => $gaSalaries,
+                'opex' => $otherOpEx,
+                'taxes' => $otherTaxes,
+            ],
+            'profit' => $profit,
+            'capex' => $capex,
+            'net_cash_flow' => $profit - $capex,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'budget_year' => $budget->budget_year,
+            'pnl' => $pnl,
+        ]);
+    }
+
+    protected function calculateProposedTotal($entry, Budget $budget): float
+    {
+        if ($entry->override_amount) {
+            return $entry->override_amount * 12;
+        }
+
+        $globalIncreasePct = $entry->expense_type === 'tax'
+            ? $budget->tax_global_increase_pct
+            : $budget->opex_global_increase_pct;
+
+        $effectiveIncreasePct = $entry->custom_increase_pct ?? $globalIncreasePct ?? 10;
+        $proposedAvgMonthly = $entry->last_year_avg_monthly * (1 + $effectiveIncreasePct / 100);
+
+        return round($proposedAvgMonthly * 12, 2);
+    }
+}
+```
+
+---
+
+## Phase 10: Finalization
+
+The finalization process applies budget data to the main system.
+
+### 10.1 Finalization Service
+
+**File:** `Modules/Accounting/app/Services/Budget/BudgetFinalizationService.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Services\Budget;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Models\Product;
+use Modules\HR\Models\Employee;
+use App\Models\ExpenseCategory;
+
+class BudgetFinalizationService
+{
+    /**
+     * Validate budget before finalization.
+     *
+     * @return array ['valid' => bool, 'errors' => []]
+     */
+    public function validate(Budget $budget): array
+    {
+        $errors = [];
+
+        // Check all products have final values
+        $missingFinal = $budget->resultEntries()
+            ->whereNull('final_value')
+            ->with('product')
+            ->get();
+
+        if ($missingFinal->isNotEmpty()) {
+            $errors[] = 'Missing final budget values for: ' .
+                $missingFinal->pluck('product.name')->join(', ');
+        }
+
+        // Check all personnel have proposed salaries
+        $missingSalaries = $budget->personnelEntries()
+            ->whereNull('proposed_salary')
+            ->get();
+
+        if ($missingSalaries->isNotEmpty()) {
+            $errors[] = "Missing proposed salaries for {$missingSalaries->count()} employees";
+        }
+
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Preview what will be updated when finalized.
+     */
+    public function previewChanges(Budget $budget): array
+    {
+        $changes = [
+            'products' => [],
+            'employees' => [],
+            'expense_categories' => [],
+        ];
+
+        // Product targets
+        foreach ($budget->resultEntries()->with('product')->get() as $entry) {
+            $product = $entry->product;
+            $changes['products'][] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'current_target' => $product->yearly_budget ?? 0,
+                'new_target' => $entry->final_value ?? 0,
+            ];
+        }
+
+        // Employee salaries
+        foreach ($budget->personnelEntries()->with('employee')->get() as $entry) {
+            if ($entry->employee_id) {
+                $employee = $entry->employee;
+                $changes['employees'][] = [
+                    'id' => $employee->id,
+                    'name' => $employee->full_name,
+                    'current_salary' => $entry->current_salary,
+                    'new_salary' => $entry->proposed_salary,
+                    'change' => ($entry->proposed_salary ?? 0) - $entry->current_salary,
+                ];
+            }
+        }
+
+        // Expense category budgets
+        foreach ($budget->expenseEntries()->with('expenseCategory')->get() as $entry) {
+            $proposedTotal = $this->calculateProposedTotal($entry, $budget);
+            $changes['expense_categories'][] = [
+                'id' => $entry->expense_category_id,
+                'name' => $entry->expenseCategory->name,
+                'type' => $entry->expense_type,
+                'new_budget' => $proposedTotal,
+            ];
+        }
+
+        return $changes;
+    }
+
+    /**
+     * Finalize budget and apply to system.
+     */
+    public function finalize(Budget $budget): bool
+    {
+        // Validate first
+        $validation = $this->validate($budget);
+        if (!$validation['valid']) {
+            throw new \Exception('Budget validation failed: ' . implode('; ', $validation['errors']));
+        }
+
+        try {
+            DB::transaction(function () use ($budget) {
+                // 1. Update product yearly targets
+                $this->updateProductTargets($budget);
+
+                // 2. Update employee salaries (for next FY)
+                $this->updateEmployeeSalaries($budget);
+
+                // 3. Update expense category budgets
+                $this->updateExpenseCategoryBudgets($budget);
+
+                // 4. Mark budget as finalized
+                $budget->update([
+                    'status' => 'finalized',
+                    'finalized_at' => now(),
+                    'finalized_by' => auth()->id(),
+                ]);
+
+                // 5. Create audit log
+                $this->createAuditLog($budget);
+            });
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Budget finalization failed', [
+                'budget_id' => $budget->id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    protected function updateProductTargets(Budget $budget): void
+    {
+        foreach ($budget->resultEntries as $entry) {
+            Product::where('id', $entry->product_id)->update([
+                'yearly_budget' => $entry->final_value,
+                'budget_year' => $budget->budget_year,
+            ]);
+        }
+    }
+
+    protected function updateEmployeeSalaries(Budget $budget): void
+    {
+        foreach ($budget->personnelEntries as $entry) {
+            if ($entry->employee_id && $entry->proposed_salary) {
+                Employee::where('id', $entry->employee_id)->update([
+                    'next_year_salary' => $entry->proposed_salary,
+                    'salary_effective_date' => "{$budget->budget_year}-01-01",
+                ]);
+            }
+        }
+    }
+
+    protected function updateExpenseCategoryBudgets(Budget $budget): void
+    {
+        foreach ($budget->expenseEntries as $entry) {
+            $proposedTotal = $this->calculateProposedTotal($entry, $budget);
+
+            ExpenseCategory::where('id', $entry->expense_category_id)->update([
+                'yearly_budget' => $proposedTotal,
+                'budget_year' => $budget->budget_year,
+            ]);
+        }
+    }
+
+    protected function calculateProposedTotal($entry, Budget $budget): float
+    {
+        if ($entry->override_amount) {
+            return $entry->override_amount * 12;
+        }
+
+        $globalIncreasePct = $entry->expense_type === 'tax'
+            ? $budget->tax_global_increase_pct
+            : $budget->opex_global_increase_pct;
+
+        $effectiveIncreasePct = $entry->custom_increase_pct ?? $globalIncreasePct ?? 10;
+        return round($entry->last_year_avg_monthly * (1 + $effectiveIncreasePct / 100) * 12, 2);
+    }
+
+    protected function createAuditLog(Budget $budget): void
+    {
+        // Create audit log entry
+        DB::table('audit_logs')->insert([
+            'user_id' => auth()->id(),
+            'action' => 'budget_finalized',
+            'model_type' => Budget::class,
+            'model_id' => $budget->id,
+            'changes' => json_encode([
+                'budget_year' => $budget->budget_year,
+                'total_revenue' => $budget->resultEntries()->sum('final_value'),
+                'employee_count' => $budget->personnelEntries()->count(),
+            ]),
+            'created_at' => now(),
+        ]);
+    }
+}
+```
+
+### 10.2 Finalization Controller
+
+**File:** `Modules/Accounting/app/Http/Controllers/Budget/BudgetFinalizationController.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Http\Controllers\Budget;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Modules\Accounting\Models\Budget\Budget;
+use Modules\Accounting\Services\Budget\BudgetFinalizationService;
+
+class BudgetFinalizationController extends Controller
+{
+    public function __construct(
+        protected BudgetFinalizationService $finalizationService
+    ) {}
+
+    /**
+     * Preview finalization changes.
+     */
+    public function preview(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validation = $this->finalizationService->validate($budget);
+        $changes = $this->finalizationService->previewChanges($budget);
+
+        return response()->json([
+            'success' => true,
+            'validation' => $validation,
+            'changes' => $changes,
+        ]);
+    }
+
+    /**
+     * Finalize budget.
+     */
+    public function finalize(Budget $budget): JsonResponse
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($budget->status === 'finalized') {
+            return response()->json([
+                'error' => 'Budget is already finalized'
+            ], 400);
+        }
+
+        try {
+            $this->finalizationService->finalize($budget);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Budget finalized successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Finalization failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+}
+```
+
+---
+
+## Phase 11: Testing
+
+### 11.1 Unit Tests for Calculation Services
+
+**File:** `Modules/Accounting/tests/Unit/Services/GrowthCalculationServiceTest.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Tests\Unit\Services;
+
+use Tests\TestCase;
+use Modules\Accounting\Services\Budget\GrowthCalculationService;
+
+class GrowthCalculationServiceTest extends TestCase
+{
+    protected GrowthCalculationService $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->service = new GrowthCalculationService();
+    }
+
+    public function test_linear_projection_with_increasing_trend(): void
+    {
+        $dataPoints = [
+            2021 => 100000,
+            2022 => 120000,
+            2023 => 140000,
+        ];
+
+        $projected = $this->service->projectValue($dataPoints, 'linear', 2024);
+
+        // Should project approximately 160000
+        $this->assertGreaterThan(155000, $projected);
+        $this->assertLessThan(165000, $projected);
+    }
+
+    public function test_linear_projection_with_decreasing_trend(): void
+    {
+        $dataPoints = [
+            2021 => 100000,
+            2022 => 80000,
+            2023 => 60000,
+        ];
+
+        $projected = $this->service->projectValue($dataPoints, 'linear', 2024);
+
+        // Should project approximately 40000
+        $this->assertGreaterThan(35000, $projected);
+        $this->assertLessThan(45000, $projected);
+    }
+
+    public function test_projection_never_returns_negative(): void
+    {
+        $dataPoints = [
+            2021 => 30000,
+            2022 => 20000,
+            2023 => 10000,
+        ];
+
+        $projected = $this->service->projectValue($dataPoints, 'linear', 2025);
+
+        // Even with extreme downward trend, should not go negative
+        $this->assertGreaterThanOrEqual(0, $projected);
+    }
+
+    public function test_polynomial_projection(): void
+    {
+        $dataPoints = [
+            2021 => 100000,
+            2022 => 150000,
+            2023 => 220000,
+        ];
+
+        $projected = $this->service->projectValue($dataPoints, 'polynomial', 2024, 2);
+
+        // Should show accelerating growth
+        $this->assertGreaterThan(280000, $projected);
+    }
+}
+```
+
+### 11.2 Feature Tests for Controllers
+
+**File:** `Modules/Accounting/tests/Feature/BudgetControllerTest.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Accounting\Models\Budget\Budget;
+use App\Models\User;
+
+class BudgetControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $superAdmin;
+    protected User $financeUser;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create users with roles
+        $this->superAdmin = User::factory()->create();
+        $this->superAdmin->assignRole('super-admin');
+
+        $this->financeUser = User::factory()->create();
+        $this->financeUser->assignRole('finance');
+    }
+
+    public function test_super_admin_can_create_budget(): void
+    {
+        $response = $this->actingAs($this->superAdmin)
+            ->post(route('accounting.budget.store'), [
+                'budget_year' => 2027,
+            ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('budgets', ['budget_year' => 2027]);
+    }
+
+    public function test_finance_user_cannot_create_budget(): void
+    {
+        $response = $this->actingAs($this->financeUser)
+            ->post(route('accounting.budget.store'), [
+                'budget_year' => 2027,
+            ]);
+
+        $response->assertForbidden();
+    }
+
+    public function test_finance_user_can_view_budget(): void
+    {
+        $budget = Budget::factory()->create(['budget_year' => 2027]);
+
+        $response = $this->actingAs($this->financeUser)
+            ->get(route('accounting.budget.show', $budget));
+
+        $response->assertOk();
+    }
+
+    public function test_cannot_edit_finalized_past_year_budget(): void
+    {
+        $budget = Budget::factory()->create([
+            'budget_year' => 2020, // Past year
+            'status' => 'finalized',
+        ]);
+
+        $response = $this->actingAs($this->superAdmin)
+            ->postJson("/accounting/budget/{$budget->id}/growth", [
+                'entries' => [],
+            ]);
+
+        $response->assertForbidden();
+    }
+}
+```
+
+### 11.3 Browser Tests with Playwright
+
+**File:** `Modules/Accounting/tests/Browser/BudgetGrowthTabTest.php`
+
+```php
+<?php
+
+namespace Modules\Accounting\Tests\Browser;
+
+use Tests\DuskTestCase;
+use Laravel\Dusk\Browser;
+use App\Models\User;
+use Modules\Accounting\Models\Budget\Budget;
+
+class BudgetGrowthTabTest extends DuskTestCase
+{
+    public function test_growth_tab_displays_historical_data(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('super-admin');
+
+        $budget = Budget::factory()->create(['budget_year' => 2027]);
+
+        $this->browse(function (Browser $browser) use ($user, $budget) {
+            $browser->loginAs($user)
+                ->visit("/accounting/budget/{$budget->id}")
+                ->waitFor('#growth-tab')
+                ->click('a[href="#growth-tab"]')
+                ->waitFor('#growthTableBody')
+                ->assertSee('Growth Analysis')
+                ->assertVisible('#growthTable');
+        });
+    }
+
+    public function test_can_change_trendline_type(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('super-admin');
+
+        $budget = Budget::factory()
+            ->hasGrowthEntries(1)
+            ->create(['budget_year' => 2027]);
+
+        $this->browse(function (Browser $browser) use ($user, $budget) {
+            $browser->loginAs($user)
+                ->visit("/accounting/budget/{$budget->id}")
+                ->click('a[href="#growth-tab"]')
+                ->waitFor('.trendline-select')
+                ->select('.trendline-select', 'polynomial')
+                ->assertSelected('.trendline-select', 'polynomial');
+        });
+    }
+
+    public function test_chart_modal_opens(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('super-admin');
+
+        $budget = Budget::factory()
+            ->hasGrowthEntries(1)
+            ->create(['budget_year' => 2027]);
+
+        $this->browse(function (Browser $browser) use ($user, $budget) {
+            $browser->loginAs($user)
+                ->visit("/accounting/budget/{$budget->id}")
+                ->click('a[href="#growth-tab"]')
+                ->waitFor('.show-chart')
+                ->click('.show-chart')
+                ->waitFor('#growthChartModal.show')
+                ->assertVisible('#growthChart');
+        });
+    }
+}
+```
+
+---
+
+## Routes Summary
+
+**File:** `Modules/Accounting/routes/web.php` (add to existing routes)
+
+```php
+// Budget Routes
+Route::prefix('budget')->name('budget.')->middleware(['auth'])->group(function () {
+    // Main budget management
+    Route::get('/', [BudgetController::class, 'index'])->name('index');
+    Route::get('/create', [BudgetController::class, 'create'])->name('create');
+    Route::post('/', [BudgetController::class, 'store'])->name('store');
+    Route::get('/{budget}', [BudgetController::class, 'show'])->name('show');
+
+    // Tab-specific routes
+    Route::prefix('/{budget}')->group(function () {
+        // Growth
+        Route::get('/growth', [BudgetGrowthController::class, 'index']);
+        Route::post('/growth', [BudgetGrowthController::class, 'save']);
+        Route::get('/growth/chart/{product}', [BudgetGrowthController::class, 'chartData']);
+
+        // Capacity
+        Route::get('/capacity', [BudgetCapacityController::class, 'index']);
+        Route::post('/capacity', [BudgetCapacityController::class, 'save']);
+        Route::post('/capacity/hires', [BudgetCapacityController::class, 'saveHires']);
+
+        // Collection
+        Route::get('/collection', [BudgetCollectionController::class, 'index']);
+        Route::post('/collection/patterns', [BudgetCollectionController::class, 'savePatterns']);
+
+        // Result
+        Route::get('/result', [BudgetResultController::class, 'index']);
+        Route::post('/result', [BudgetResultController::class, 'save']);
+        Route::post('/result/quick-fill', [BudgetResultController::class, 'quickFill']);
+
+        // Personnel
+        Route::get('/personnel', [BudgetPersonnelController::class, 'index']);
+        Route::post('/personnel', [BudgetPersonnelController::class, 'save']);
+        Route::post('/personnel/new-hire', [BudgetPersonnelController::class, 'addNewHire']);
+
+        // OpEx/Taxes/CapEx
+        Route::get('/opex', [BudgetOpExController::class, 'index']);
+        Route::post('/opex', [BudgetOpExController::class, 'save']);
+        Route::post('/opex/global', [BudgetOpExController::class, 'setGlobalIncrease']);
+
+        Route::get('/taxes', [BudgetTaxesController::class, 'index']);
+        Route::post('/taxes', [BudgetTaxesController::class, 'save']);
+        Route::post('/taxes/global', [BudgetTaxesController::class, 'setGlobalIncrease']);
+
+        Route::get('/capex', [BudgetCapExController::class, 'index']);
+        Route::post('/capex', [BudgetCapExController::class, 'save']);
+
+        // P&L
+        Route::get('/pnl', [BudgetPnLController::class, 'index']);
+
+        // Finalization
+        Route::get('/finalize/preview', [BudgetFinalizationController::class, 'preview']);
+        Route::post('/finalize', [BudgetFinalizationController::class, 'finalize']);
+    });
+});
+```
+
+---
+
+## Implementation Checklist
+
+Use this checklist to track progress:
+
+### Phase 1: Database & Models
+- [ ] Create all migrations
+- [ ] Run migrations
+- [ ] Create all Eloquent models
+- [ ] Test relationships in tinker
+
+### Phase 2: Services
+- [ ] HistoricalIncomeService
+- [ ] BalanceService
+- [ ] EmployeeDataService
+- [ ] ExpenseDataService
+- [ ] GrowthCalculationService
+- [ ] CapacityCalculationService
+- [ ] CollectionCalculationService
+- [ ] BudgetFinalizationService
+
+### Phase 3: Controllers & Routes
+- [ ] BudgetController (main CRUD)
+- [ ] BudgetGrowthController
+- [ ] BudgetCapacityController
+- [ ] BudgetCollectionController
+- [ ] BudgetResultController
+- [ ] BudgetPersonnelController
+- [ ] BudgetOpExController
+- [ ] BudgetTaxesController
+- [ ] BudgetCapExController
+- [ ] BudgetPnLController
+- [ ] BudgetFinalizationController
+- [ ] Add all routes
+
+### Phase 4: Views
+- [ ] Main tabbed layout
+- [ ] Growth tab with chart
+- [ ] Capacity tab with hiring modal
+- [ ] Collection tab with patterns
+- [ ] Result tab with comparison
+- [ ] Personnel tab with sections
+- [ ] OpEx/Taxes/CapEx tabs
+- [ ] P&L summary view
+- [ ] Finalization modal
+
+### Phase 5: Testing
+- [ ] Unit tests for calculation services
+- [ ] Feature tests for controllers
+- [ ] Browser tests for UI interactions
+
+### Phase 6: Polish
+- [ ] Add menu item
+- [ ] Implement permissions
+- [ ] Add unsaved changes warning
+- [ ] Auto-save functionality
+- [ ] Cross-tab update notifications
+
+---
+
+*Document completed: January 2025*
+*Status: Ready for Implementation*
