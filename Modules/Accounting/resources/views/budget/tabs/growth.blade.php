@@ -507,9 +507,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 regression.predict(4)
             ];
 
-            // Determine trendline color based on type
+            // Determine trendline color and curve style based on type
             const type = regData ? regData.type : 'linear';
             const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
+            // Linear should be straight line, others should be smooth curves
+            const curveStyle = type === 'linear' ? 'straight' : 'smooth';
 
             const options = {
                 series: [
@@ -542,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 stroke: {
                     width: [0, 3],
-                    curve: 'smooth'
+                    curve: curveStyle
                 },
                 plotOptions: {
                     bar: {
@@ -654,9 +656,15 @@ document.addEventListener('DOMContentLoaded', function() {
             ];
 
             const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
+            // Linear should be straight line, others should be smooth curves
+            const curveStyle = type === 'linear' ? 'straight' : 'smooth';
 
             chart.updateOptions({
                 colors: ['#A8D5E2', trendlineColor],
+                stroke: {
+                    width: [0, 3],
+                    curve: curveStyle
+                },
                 annotations: {
                     points: [{
                         x: years[3].toString(),
