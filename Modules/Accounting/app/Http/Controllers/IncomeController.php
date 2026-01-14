@@ -142,9 +142,10 @@ class IncomeController extends Controller
         }
 
         // Outstanding balance = total_amount - paid for ALL active contracts (no year filter)
+        // Includes negative balances (overpaid contracts) to reduce total
         $allActiveContracts = Contract::active()->with('payments')->get();
         $totalOutstanding = $allActiveContracts->sum(function ($contract) {
-            return max(0, $contract->total_amount - $contract->paid_amount);
+            return $contract->total_amount - $contract->paid_amount;
         });
 
         $statistics = [
