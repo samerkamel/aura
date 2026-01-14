@@ -166,13 +166,18 @@
                         </div>
 
                         <!-- Form Actions -->
-                        <div class="d-flex gap-2 mt-4">
+                        <div class="d-flex flex-wrap gap-2 mt-4">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Capacity Budget
                             </button>
                             <button type="button" class="btn btn-info" id="populateFromEmployeesBtn"
                                     data-route="{{ route('accounting.budgets.capacity.populate-from-employees', $budget->id) }}">
                                 <i class="fas fa-users"></i> Populate from Employees
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="calculateAvailableHoursBtn"
+                                    data-route="{{ route('accounting.budgets.capacity.calculate-available-hours', $budget->id) }}"
+                                    data-year="{{ $budget->year }}">
+                                <i class="fas fa-calculator"></i> Calculate Available Hours
                             </button>
                             <a href="{{ route('accounting.budgets.growth', $budget->id) }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to Growth
@@ -528,6 +533,74 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 alert('Failed to populate from employees');
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+        });
+    }
+
+    // Calculate Available Hours button handler
+    const calcHoursBtn = document.getElementById('calculateAvailableHoursBtn');
+    if (calcHoursBtn) {
+        calcHoursBtn.addEventListener('click', function() {
+            const year = this.dataset.year;
+            const hoursPerDay = prompt(
+                `Calculate available hours for ${year}.\n\n` +
+                `This will compute working days (excluding weekends & public holidays) × hours per day.\n\n` +
+                `Enter hours per day:`,
+                '5'
+            );
+
+            if (hoursPerDay === null) return; // User cancelled
+
+            const hours = parseFloat(hoursPerDay);
+            if (isNaN(hours) || hours < 1 || hours > 24) {
+                alert('Please enter a valid number between 1 and 24');
+                return;
+            }
+
+            const route = this.dataset.route;
+            const btn = this;
+
+            // Disable button and show loading state
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+
+            fetch(route, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ hours_per_day: hours })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const calc = data.results.calculation;
+                    alert(
+                        `Available Hours Calculated Successfully!\n\n` +
+                        `Year: ${calc.year}\n` +
+                        `Total Days: ${calc.total_days}\n` +
+                        `Weekend Days: ${calc.weekend_days}\n` +
+                        `Public Holidays (weekdays): ${calc.holidays_on_weekdays}\n` +
+                        `Working Days: ${calc.working_days}\n` +
+                        `Hours per Day: ${calc.hours_per_day}\n\n` +
+                        `Available Hours per Employee: ${calc.available_hours.toLocaleString()}\n\n` +
+                        `The page will reload to show the updated values.`
+                    );
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to calculate available hours');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to calculate available hours');
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
             });

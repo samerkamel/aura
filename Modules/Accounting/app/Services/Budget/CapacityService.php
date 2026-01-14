@@ -5,9 +5,12 @@ namespace Modules\Accounting\Services\Budget;
 use Modules\Accounting\Models\Budget;
 use Modules\Accounting\Models\BudgetCapacityEntry;
 use Modules\Accounting\Models\BudgetCapacityHire;
+use Modules\Attendance\Models\PublicHoliday;
 use App\Models\Product;
 use Modules\HR\Models\Employee;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 /**
  * CapacityService
@@ -252,5 +255,98 @@ class CapacityService
             ->selectRaw('MAX(hourly_rate) as max_hourly_rate')
             ->groupBy('team')
             ->get();
+    }
+
+    /**
+     * Calculate available hours for a budget year.
+     * Formula: Working Days × Hours Per Day
+     * Working Days = Total Days - Weekends - Public Holidays (on weekdays)
+     *
+     * @param int $year The budget year
+     * @param float $hoursPerDay Hours per working day (default 5)
+     * @return array{working_days: int, total_days: int, weekend_days: int, holidays: int, available_hours: float}
+     */
+    public function calculateAvailableHoursForYear(int $year, float $hoursPerDay = 5.0): array
+    {
+        $startOfYear = Carbon::create($year, 1, 1);
+        $endOfYear = Carbon::create($year, 12, 31);
+
+        // Get all public holidays for the year
+        $publicHolidays = PublicHoliday::forYear($year)->pluck('date')->toArray();
+
+        // Count working days (excluding weekends and public holidays)
+        $totalDays = 0;
+        $weekendDays = 0;
+        $holidaysOnWeekdays = 0;
+        $workingDays = 0;
+
+        $period = CarbonPeriod::create($startOfYear, $endOfYear);
+
+        foreach ($period as $date) {
+            $totalDays++;
+
+            // Check if weekend (Friday and Saturday for Egypt, or Saturday and Sunday)
+            // Using Saturday and Sunday as standard weekends
+            if ($date->isWeekend()) {
+                $weekendDays++;
+                continue;
+            }
+
+            // Check if it's a public holiday
+            $isHoliday = false;
+            foreach ($publicHolidays as $holiday) {
+                if ($date->isSameDay(Carbon::parse($holiday))) {
+                    $isHoliday = true;
+                    $holidaysOnWeekdays++;
+                    break;
+                }
+            }
+
+            if (!$isHoliday) {
+                $workingDays++;
+            }
+        }
+
+        $availableHours = $workingDays * $hoursPerDay;
+
+        return [
+            'year' => $year,
+            'total_days' => $totalDays,
+            'weekend_days' => $weekendDays,
+            'holidays_on_weekdays' => $holidaysOnWeekdays,
+            'working_days' => $workingDays,
+            'hours_per_day' => $hoursPerDay,
+            'available_hours' => $availableHours,
+        ];
+    }
+
+    /**
+     * Populate available hours for all capacity entries in a budget.
+     *
+     * @param Budget $budget
+     * @param float $hoursPerDay Hours per working day (default 5)
+     * @return array Summary of calculation and updates
+     */
+    public function populateAvailableHours(Budget $budget, float $hoursPerDay = 5.0): array
+    {
+        $calculation = $this->calculateAvailableHoursForYear($budget->year, $hoursPerDay);
+        $availableHours = $calculation['available_hours'];
+
+        // Update all capacity entries with the calculated available hours
+        $updated = $budget->capacityEntries()->update([
+            'last_year_available_hours' => $availableHours,
+        ]);
+
+        // Recalculate budgeted income for all entries
+        $capacityEntries = $budget->capacityEntries()->with('hires')->get();
+        foreach ($capacityEntries as $entry) {
+            $this->calculateAndSaveBudgetedIncome($entry);
+        }
+
+        return [
+            'calculation' => $calculation,
+            'entries_updated' => $updated,
+            'available_hours_per_employee' => $availableHours,
+        ];
     }
 }

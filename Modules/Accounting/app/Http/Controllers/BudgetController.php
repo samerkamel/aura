@@ -384,6 +384,47 @@ class BudgetController extends Controller
     }
 
     /**
+     * Calculate and populate available hours for all capacity entries.
+     * Based on working days (excluding weekends and public holidays) × hours per day.
+     */
+    public function calculateAvailableHours(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'hours_per_day' => 'nullable|numeric|min:1|max:24',
+        ]);
+
+        $hoursPerDay = $validated['hours_per_day'] ?? 5.0;
+
+        try {
+            $results = $this->capacityService->populateAvailableHours($budget, $hoursPerDay);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Calculated {$results['calculation']['available_hours']} available hours per employee for {$budget->year}",
+                    'results' => $results,
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', "Calculated {$results['calculation']['available_hours']} available hours ({$results['calculation']['working_days']} working days × {$hoursPerDay} hrs/day) for all entries");
+
+        } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to calculate available hours: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to calculate available hours: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Delete a budget
      */
     public function destroy(Budget $budget)

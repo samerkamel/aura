@@ -226,6 +226,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{budget}/capacity/hires/{hire}', [BudgetController::class, 'deleteHire'])->name('capacity.hires.delete');
             Route::post('/{budget}/capacity/calculate', [BudgetController::class, 'calculateCapacityIncome'])->name('capacity.calculate');
             Route::post('/{budget}/capacity/populate-from-employees', [BudgetController::class, 'populateCapacityFromEmployees'])->name('capacity.populate-from-employees');
+            Route::post('/{budget}/capacity/calculate-available-hours', [BudgetController::class, 'calculateAvailableHours'])->name('capacity.calculate-available-hours');
 
             // Collection Tab
             Route::get('/{budget}/collection', [BudgetController::class, 'collection'])->name('collection');
