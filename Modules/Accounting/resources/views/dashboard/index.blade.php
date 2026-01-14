@@ -436,7 +436,7 @@
                     @foreach($recentContracts->take(3) as $contract)
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <span class="small">{{ \Illuminate\Support\Str::limit($contract->client_name, 20) }}</span>
+                                <span class="small">{{ \Illuminate\Support\Str::limit($contract->customer?->display_name ?? $contract->client_name, 20) }}</span>
                             </div>
                             <div class="text-end">
                                 <span class="badge bg-{{ $contract->status === 'active' ? 'success' : 'warning' }}">

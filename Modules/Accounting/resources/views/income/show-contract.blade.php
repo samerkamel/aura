@@ -9,7 +9,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">{{ $contract->client_name }}</h4>
+                    <h4 class="mb-1">{{ $contract->customer?->display_name ?? $contract->client_name }}</h4>
                     <span class="text-muted">Contract {{ $contract->contract_number }}</span>
                 </div>
                 <div class="d-flex gap-2">

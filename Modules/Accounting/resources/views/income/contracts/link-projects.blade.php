@@ -151,7 +151,7 @@
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div>
-                                                        <span class="fw-medium">{{ $contract->client_name }}</span>
+                                                        <span class="fw-medium">{{ $contract->customer?->display_name ?? $contract->client_name }}</span>
                                                         @if($hasAutoSuggestion && !$isLinked)
                                                             <br><small class="text-success"><i class="ti ti-wand me-1"></i>Auto-select available</small>
                                                         @endif

@@ -119,7 +119,7 @@
                                     <div>
                                         @if($contract->customer)
                                             <a href="{{ route('administration.customers.show', $contract->customer) }}" class="fw-semibold">
-                                                {{ $contract->client_name }}
+                                                {{ $contract->customer->display_name }}
                                             </a>
                                         @else
                                             <span class="fw-semibold">{{ $contract->client_name }}</span>
