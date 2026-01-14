@@ -48,26 +48,48 @@ class IncomeController extends Controller
             abort(403, 'Unauthorized to view contracts.');
         }
 
-        // Year filter - default to current year
-        $selectedYear = $request->get('year', date('Y'));
-        $availableYears = Contract::selectRaw('YEAR(start_date) as year')
+        // Year filter - default to all years
+        $selectedYear = $request->get('year', 'all');
+
+        // Get available years from both start and end dates
+        $startYears = Contract::selectRaw('YEAR(start_date) as year')
             ->whereNotNull('start_date')
             ->distinct()
-            ->orderBy('year', 'desc')
             ->pluck('year')
             ->toArray();
+        $endYears = Contract::selectRaw('YEAR(end_date) as year')
+            ->whereNotNull('end_date')
+            ->distinct()
+            ->pluck('year')
+            ->toArray();
+        $availableYears = array_unique(array_merge($startYears, $endYears));
+        rsort($availableYears);
 
         // Ensure current year is in the list
-        if (!in_array(date('Y'), $availableYears)) {
+        if (!in_array((int)date('Y'), $availableYears)) {
             array_unshift($availableYears, (int)date('Y'));
+            rsort($availableYears);
         }
 
         // Get contracts with their payments, customer and projects
         $query = Contract::with(['payments', 'customer', 'projects']);
 
-        // Filter by year
+        // Filter by year - show contracts that are valid during that year
+        // (start_date <= end of year AND (end_date >= start of year OR end_date is null))
         if ($selectedYear && $selectedYear !== 'all') {
-            $query->whereYear('start_date', $selectedYear);
+            $yearStart = $selectedYear . '-01-01';
+            $yearEnd = $selectedYear . '-12-31';
+            $query->where(function ($q) use ($yearStart, $yearEnd) {
+                $q->where(function ($q2) use ($yearStart, $yearEnd) {
+                    // Contract started before or during the year
+                    $q2->where('start_date', '<=', $yearEnd)
+                       // AND contract ends during or after the year, or has no end date
+                       ->where(function ($q3) use ($yearStart) {
+                           $q3->where('end_date', '>=', $yearStart)
+                              ->orWhereNull('end_date');
+                       });
+                });
+            });
         }
 
         // Filter by status
@@ -98,10 +120,16 @@ class IncomeController extends Controller
 
         $contracts = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
 
-        // Statistics - filtered by year for contract metrics
+        // Statistics - filtered by year for contract metrics (same logic as table)
         $yearContractsQuery = Contract::query();
         if ($selectedYear && $selectedYear !== 'all') {
-            $yearContractsQuery->whereYear('start_date', $selectedYear);
+            $yearStart = $selectedYear . '-01-01';
+            $yearEnd = $selectedYear . '-12-31';
+            $yearContractsQuery->where('start_date', '<=', $yearEnd)
+                ->where(function ($q) use ($yearStart) {
+                    $q->where('end_date', '>=', $yearStart)
+                      ->orWhereNull('end_date');
+                });
         }
 
         // Outstanding balance = total_amount - paid for ALL active contracts (no year filter)
