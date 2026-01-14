@@ -147,15 +147,20 @@
                                                    placeholder="0.00">
                                         </td>
                                         <td>
-                                            <select name="growth_entries[{{ $loop->index }}][trendline_type]"
-                                                    class="form-control form-control-sm trendline-type"
-                                                    data-entry-id="{{ $entry->id }}">
-                                                <option value="linear" {{ $entry->trendline_type === 'linear' ? 'selected' : '' }}>Linear</option>
-                                                <option value="logarithmic" {{ $entry->trendline_type === 'logarithmic' ? 'selected' : '' }}>Logarithmic</option>
-                                                <option value="polynomial" {{ $entry->trendline_type === 'polynomial' ? 'selected' : '' }}>Polynomial</option>
-                                            </select>
-                                            <input type="hidden" name="growth_entries[{{ $loop->index }}][polynomial_order]"
-                                                   class="polynomial-order" value="{{ $entry->polynomial_order ?? 2 }}">
+                                            <div class="d-flex gap-1 align-items-center">
+                                                <select name="growth_entries[{{ $loop->index }}][trendline_type]"
+                                                        class="form-control form-control-sm trendline-type"
+                                                        data-entry-id="{{ $entry->id }}" style="width: auto;">
+                                                    <option value="linear" {{ $entry->trendline_type === 'linear' ? 'selected' : '' }}>Linear</option>
+                                                    <option value="logarithmic" {{ $entry->trendline_type === 'logarithmic' ? 'selected' : '' }}>Logarithmic</option>
+                                                    <option value="polynomial" {{ $entry->trendline_type === 'polynomial' ? 'selected' : '' }}>Polynomial</option>
+                                                </select>
+                                                <input type="number" name="growth_entries[{{ $loop->index }}][polynomial_order]"
+                                                       class="form-control form-control-sm polynomial-order text-center"
+                                                       value="{{ $entry->polynomial_order ?? 2 }}"
+                                                       min="2" max="5" style="width: 50px; {{ $entry->trendline_type !== 'polynomial' ? 'display: none;' : '' }}"
+                                                       title="Polynomial order (2=quadratic, 3=cubic)">
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="input-group input-group-sm">
@@ -359,10 +364,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return { a, b, predict: (x) => Math.max(0, a * Math.log(x) + b) };
     }
 
-    // Polynomial regression (quadratic): y = ax² + bx + c
-    function polynomialRegression(data) {
+    // General polynomial regression with configurable order
+    // Uses least squares fitting: y = a_n*x^n + a_(n-1)*x^(n-1) + ... + a_1*x + a_0
+    function polynomialRegression(data, order = 2) {
         const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
-        if (validData.length < 3) {
+
+        // Need at least order+1 points for polynomial of given order
+        if (validData.length < order + 1) {
+            if (order > 1 && validData.length >= 2) {
+                return polynomialRegression(data, order - 1); // Try lower order
+            }
             return linearRegression(data);
         }
 
@@ -370,52 +381,100 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = validData.map(d => d.x);
         const y = validData.map(d => d.y);
 
-        let sumX = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0;
-        let sumY = 0, sumXY = 0, sumX2Y = 0;
+        // Build the Vandermonde matrix and solve using normal equations
+        // For order 2: [1, x, x²], for order 3: [1, x, x², x³], etc.
 
-        for (let i = 0; i < n; i++) {
-            const xi = x[i], yi = y[i];
-            sumX += xi;
-            sumX2 += xi * xi;
-            sumX3 += xi * xi * xi;
-            sumX4 += xi * xi * xi * xi;
-            sumY += yi;
-            sumXY += xi * yi;
-            sumX2Y += xi * xi * yi;
+        // Calculate sums of powers of x
+        const sumPows = [];
+        for (let p = 0; p <= 2 * order; p++) {
+            sumPows[p] = x.reduce((acc, xi) => acc + Math.pow(xi, p), 0);
         }
 
-        const D = n * (sumX2 * sumX4 - sumX3 * sumX3) -
-                  sumX * (sumX * sumX4 - sumX2 * sumX3) +
-                  sumX2 * (sumX * sumX3 - sumX2 * sumX2);
+        // Calculate sums of y * x^p
+        const sumYPows = [];
+        for (let p = 0; p <= order; p++) {
+            sumYPows[p] = x.reduce((acc, xi, i) => acc + y[i] * Math.pow(xi, p), 0);
+        }
 
-        if (Math.abs(D) < 1e-10) {
+        // Build the normal equations matrix (order+1 x order+1)
+        const matrix = [];
+        for (let i = 0; i <= order; i++) {
+            matrix[i] = [];
+            for (let j = 0; j <= order; j++) {
+                matrix[i][j] = sumPows[i + j];
+            }
+        }
+
+        // Solve using Gaussian elimination with partial pivoting
+        const coeffs = solveLinearSystem(matrix, sumYPows);
+
+        if (!coeffs) {
             return linearRegression(data);
         }
 
-        const Da = sumY * (sumX2 * sumX4 - sumX3 * sumX3) -
-                   sumX * (sumXY * sumX4 - sumX2Y * sumX3) +
-                   sumX2 * (sumXY * sumX3 - sumX2Y * sumX2);
-
-        const Db = n * (sumXY * sumX4 - sumX2Y * sumX3) -
-                   sumY * (sumX * sumX4 - sumX2 * sumX3) +
-                   sumX2 * (sumX * sumX2Y - sumX2 * sumXY);
-
-        const Dc = n * (sumX2 * sumX2Y - sumX3 * sumXY) -
-                   sumX * (sumX * sumX2Y - sumX2 * sumXY) +
-                   sumY * (sumX * sumX3 - sumX2 * sumX2);
-
-        const c = Da / D;
-        const b = Db / D;
-        const a = Dc / D;
-
-        return { a, b, c, predict: (xVal) => Math.max(0, a * xVal * xVal + b * xVal + c) };
+        return {
+            coefficients: coeffs,
+            order: order,
+            predict: (xVal) => {
+                let result = 0;
+                for (let p = 0; p <= order; p++) {
+                    result += coeffs[p] * Math.pow(xVal, p);
+                }
+                return Math.max(0, result);
+            }
+        };
     }
 
-    // Get regression based on type
-    function getRegression(data, type) {
+    // Gaussian elimination with partial pivoting
+    function solveLinearSystem(A, b) {
+        const n = b.length;
+        const augmented = A.map((row, i) => [...row, b[i]]);
+
+        // Forward elimination with partial pivoting
+        for (let col = 0; col < n; col++) {
+            // Find pivot
+            let maxRow = col;
+            for (let row = col + 1; row < n; row++) {
+                if (Math.abs(augmented[row][col]) > Math.abs(augmented[maxRow][col])) {
+                    maxRow = row;
+                }
+            }
+
+            // Swap rows
+            [augmented[col], augmented[maxRow]] = [augmented[maxRow], augmented[col]];
+
+            // Check for singular matrix
+            if (Math.abs(augmented[col][col]) < 1e-10) {
+                return null;
+            }
+
+            // Eliminate column
+            for (let row = col + 1; row < n; row++) {
+                const factor = augmented[row][col] / augmented[col][col];
+                for (let j = col; j <= n; j++) {
+                    augmented[row][j] -= factor * augmented[col][j];
+                }
+            }
+        }
+
+        // Back substitution
+        const x = new Array(n);
+        for (let i = n - 1; i >= 0; i--) {
+            x[i] = augmented[i][n];
+            for (let j = i + 1; j < n; j++) {
+                x[i] -= augmented[i][j] * x[j];
+            }
+            x[i] /= augmented[i][i];
+        }
+
+        return x;
+    }
+
+    // Get regression based on type and order
+    function getRegression(data, type, order = 2) {
         switch (type) {
             case 'logarithmic': return logarithmicRegression(data);
-            case 'polynomial': return polynomialRegression(data);
+            case 'polynomial': return polynomialRegression(data, order);
             default: return linearRegression(data);
         }
     }
@@ -437,10 +496,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const y2 = parseFloat(row.querySelector('.year-minus-2').value) || 0;
             const y1 = parseFloat(row.querySelector('.year-minus-1').value) || 0;
             const type = row.querySelector('.trendline-type').value;
+            const order = parseInt(row.querySelector('.polynomial-order').value) || 2;
 
             const data = [y3, y2, y1];
-            const regression = getRegression(data, type);
-            regressionCoeffs[entryId] = { regression, type };
+            const regression = getRegression(data, type, order);
+            regressionCoeffs[entryId] = { regression, type, order };
 
             // Project to year 4 (next year)
             const projection = regression.predict(4);
@@ -457,7 +517,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update trendline badge
             const badgeEl = document.querySelector('.trendline-badge-' + entryId);
             if (badgeEl) {
-                badgeEl.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                const badgeText = type === 'polynomial'
+                    ? `Poly (${order})`
+                    : type.charAt(0).toUpperCase() + type.slice(1);
+                badgeEl.textContent = badgeText;
                 badgeEl.className = 'badge bg-label-' + (type === 'linear' ? 'primary' : (type === 'logarithmic' ? 'warning' : 'success')) + ' trendline-badge-' + entryId;
             }
 
@@ -514,8 +577,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const projection = projectedValues[product.id] || 0;
             const regData = regressionCoeffs[product.id];
             const type = regData ? regData.type : 'linear';
+            const order = regData ? regData.order : 2;
             const regression = regData ? regData.regression : linearRegression(data);
             const trendlineColor = getTrendlineColor(type);
+
+            // Generate trendline label with order for polynomial
+            const trendlineLabel = type === 'polynomial'
+                ? `Polynomial (order ${order})`
+                : type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline';
 
             // Generate trendline curve points (x=1 to x=4, with many intermediate points)
             const trendlinePoints = generateTrendlinePoints(regression, type, 1, 4, 50);
@@ -549,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Line dataset for trendline curve
                         {
                             type: 'line',
-                            label: type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline',
+                            label: trendlineLabel,
                             data: trendlinePoints,
                             borderColor: trendlineColor,
                             backgroundColor: 'transparent',
@@ -631,12 +700,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const y2 = parseFloat(row.querySelector('.year-minus-2').value) || 0;
             const y1 = parseFloat(row.querySelector('.year-minus-1').value) || 0;
             const type = row.querySelector('.trendline-type').value;
+            const order = parseInt(row.querySelector('.polynomial-order').value) || 2;
             const projection = projectedValues[product.id] || 0;
             const trendlineColor = getTrendlineColor(type);
 
+            // Generate trendline label with order for polynomial
+            const trendlineLabel = type === 'polynomial'
+                ? `Polynomial (order ${order})`
+                : type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline';
+
             // Recalculate regression and trendline points
             const data = [y3, y2, y1];
-            const regression = getRegression(data, type);
+            const regression = getRegression(data, type, order);
             const trendlinePoints = generateTrendlinePoints(regression, type, 1, 4, 50);
 
             // Update bar data
@@ -645,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update trendline data
             chart.data.datasets[1].data = trendlinePoints;
             chart.data.datasets[1].borderColor = trendlineColor;
-            chart.data.datasets[1].label = type.charAt(0).toUpperCase() + type.slice(1) + ' Trendline';
+            chart.data.datasets[1].label = trendlineLabel;
 
             chart.update();
         });
@@ -654,6 +729,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Trendline type change handler
     document.querySelectorAll('.trendline-type').forEach(select => {
         select.addEventListener('change', function() {
+            // Show/hide polynomial order input
+            const row = this.closest('tr');
+            const orderInput = row.querySelector('.polynomial-order');
+            if (this.value === 'polynomial') {
+                orderInput.style.display = 'block';
+            } else {
+                orderInput.style.display = 'none';
+            }
+            calculateAllProjections();
+        });
+    });
+
+    // Polynomial order change handler
+    document.querySelectorAll('.polynomial-order').forEach(input => {
+        input.addEventListener('change', function() {
             calculateAllProjections();
         });
     });
