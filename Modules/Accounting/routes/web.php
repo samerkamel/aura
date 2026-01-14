@@ -122,6 +122,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::post('/import/preview', [IncomeController::class, 'importPreview'])->name('import.preview');
                 Route::post('/import/process', [IncomeController::class, 'importProcess'])->name('import.process');
 
+                // Link to Projects routes
+                Route::get('/link-projects', [IncomeController::class, 'linkProjects'])->name('link-projects');
+                Route::post('/link-projects', [IncomeController::class, 'updateProjectLinks'])->name('update-project-links');
+
                 Route::get('/{contract}', [IncomeController::class, 'showContract'])->name('show');
                 Route::get('/{contract}/edit', [IncomeController::class, 'editContract'])->name('edit');
                 Route::put('/{contract}', [IncomeController::class, 'updateContract'])->name('update');

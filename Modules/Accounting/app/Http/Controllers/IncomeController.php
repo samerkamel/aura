@@ -88,15 +88,11 @@ class IncomeController extends Controller
             'total_paid_amount' => Contract::active()->get()->sum('paid_amount'),
         ];
 
-        // Get projects for bulk assignment
-        $projects = \Modules\Project\Models\Project::orderBy('name')->get(['id', 'name', 'code']);
-
         return view('accounting::income.index', compact(
             'contracts',
             'statistics',
             'sortField',
-            'sortDirection',
-            'projects'
+            'sortDirection'
         ));
     }
 
@@ -581,30 +577,6 @@ class IncomeController extends Controller
             case 'delete':
                 Contract::whereIn('id', $contractIds)->delete();
                 $message = 'Contracts deleted successfully.';
-                break;
-
-            case 'assign_project':
-                $projectId = $request->input('project_id');
-                if (!$projectId) {
-                    return redirect()->back()->with('error', 'No project selected.');
-                }
-
-                $contracts = Contract::whereIn('id', $contractIds)->get();
-                $assigned = 0;
-
-                foreach ($contracts as $contract) {
-                    // Check if not already linked
-                    if (!$contract->projects()->where('project_id', $projectId)->exists()) {
-                        $contract->projects()->attach($projectId, [
-                            'allocation_type' => 'percentage',
-                            'allocation_percentage' => 100,
-                            'is_primary' => $contract->projects()->count() === 0,
-                        ]);
-                        $assigned++;
-                    }
-                }
-
-                $message = "{$assigned} contracts linked to project successfully.";
                 break;
 
             default:
@@ -1705,5 +1677,118 @@ class IncomeController extends Controller
         }
 
         return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Display the link contracts to projects page.
+     */
+    public function linkProjects(Request $request): View
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            abort(403, 'Unauthorized to link contracts to projects.');
+        }
+
+        $query = Contract::with(['customer', 'projects', 'products']);
+
+        // Filter by customer
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        // Filter by year
+        if ($request->filled('year')) {
+            $query->whereYear('start_date', $request->year);
+        }
+
+        // Filter to show only unlinked contracts
+        if ($request->get('unlinked_only', '1') === '1') {
+            $query->whereDoesntHave('projects');
+        }
+
+        $contracts = $query->orderBy('contract_number', 'desc')->paginate(50);
+
+        // Get all customers with their projects count
+        $customers = \App\Models\Customer::withCount('projects')->orderBy('name')->get();
+
+        // Get ALL projects grouped by customer
+        $projects = \Modules\Project\Models\Project::orderBy('customer_id')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('customer_id');
+
+        // Build customer project suggestions (for auto-select)
+        $customerProjectSuggestions = [];
+        foreach ($customers as $customer) {
+            $customerProjects = $projects->get($customer->id, collect());
+            if ($customerProjects->count() === 1) {
+                // Single project - auto-suggest
+                $customerProjectSuggestions[$customer->id] = [
+                    'project_id' => $customerProjects->first()->id,
+                    'project_code' => $customerProjects->first()->code,
+                    'project_name' => $customerProjects->first()->name,
+                    'auto_select' => true,
+                ];
+            } elseif ($customerProjects->count() > 1) {
+                $customerProjectSuggestions[$customer->id] = [
+                    'projects' => $customerProjects,
+                    'auto_select' => false,
+                ];
+            }
+        }
+
+        // Get available years
+        $years = Contract::selectRaw('YEAR(start_date) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
+        return view('accounting::income.contracts.link-projects', compact(
+            'contracts',
+            'customers',
+            'projects',
+            'customerProjectSuggestions',
+            'years'
+        ));
+    }
+
+    /**
+     * Mass update contract project links.
+     */
+    public function updateProjectLinks(Request $request): RedirectResponse
+    {
+        if (!auth()->user()->can('view-accounting-readonly')) {
+            abort(403, 'Unauthorized to link contracts to projects.');
+        }
+
+        $request->validate([
+            'links' => 'required|array',
+            'links.*.contract_id' => 'required|exists:contracts,id',
+            'links.*.project_id' => 'nullable|exists:projects,id',
+        ]);
+
+        $updatedCount = 0;
+
+        foreach ($request->links as $link) {
+            if (empty($link['project_id'])) {
+                continue;
+            }
+
+            $contract = Contract::find($link['contract_id']);
+            if ($contract) {
+                // Check if not already linked to this project
+                if (!$contract->projects()->where('project_id', $link['project_id'])->exists()) {
+                    $contract->projects()->attach($link['project_id'], [
+                        'allocation_type' => 'percentage',
+                        'allocation_percentage' => 100,
+                        'is_primary' => $contract->projects()->count() === 0,
+                    ]);
+                    $updatedCount++;
+                }
+            }
+        }
+
+        return redirect()
+            ->route('accounting.income.contracts.link-projects')
+            ->with('success', "Successfully linked {$updatedCount} contract(s) to projects.");
     }
 }
