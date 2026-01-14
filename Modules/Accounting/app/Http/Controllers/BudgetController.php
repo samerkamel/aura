@@ -157,20 +157,34 @@ class BudgetController extends Controller
     {
         $this->authorizeEdit($budget);
 
-        // Populate historical data from contracts/payments
-        $results = $this->growthService->populateHistoricalData($budget);
+        try {
+            // Populate historical data from contracts/payments
+            $results = $this->growthService->populateHistoricalData($budget);
 
-        // Return JSON for AJAX request, redirect for regular request
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Historical data populated from contracts',
-                'data' => $results,
-            ]);
+            // Return JSON for AJAX request, redirect for regular request
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Historical data populated from contracts',
+                    'data' => $results,
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Historical data populated from contracts');
+        } catch (\Exception $e) {
+            \Log::error('Failed to populate historical data: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to populate historical data: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to populate historical data: ' . $e->getMessage());
         }
-
-        return redirect()->back()
-            ->with('success', 'Historical data populated from contracts');
     }
 
     /**

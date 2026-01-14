@@ -216,28 +216,44 @@ class GrowthService
         $budgetYear = $budget->year;
         $results = [];
 
-        foreach ($budget->growthEntries as $entry) {
+        // Eager load growth entries with product relationship
+        $entries = $budget->growthEntries()->with('product')->get();
+
+        foreach ($entries as $entry) {
             $productId = $entry->product_id;
 
-            // Get income for each historical year
-            $yearMinus3 = $this->getProductIncomeForYear($productId, $budgetYear - 3);
-            $yearMinus2 = $this->getProductIncomeForYear($productId, $budgetYear - 2);
-            $yearMinus1 = $this->getProductIncomeForYear($productId, $budgetYear - 1);
+            if (!$productId) {
+                continue;
+            }
 
-            // Update the entry
-            $entry->update([
-                'year_minus_3' => $yearMinus3,
-                'year_minus_2' => $yearMinus2,
-                'year_minus_1' => $yearMinus1,
-            ]);
+            try {
+                // Get income for each historical year
+                $yearMinus3 = $this->getProductIncomeForYear($productId, $budgetYear - 3);
+                $yearMinus2 = $this->getProductIncomeForYear($productId, $budgetYear - 2);
+                $yearMinus1 = $this->getProductIncomeForYear($productId, $budgetYear - 1);
 
-            $results[$entry->id] = [
-                'product_id' => $productId,
-                'product_name' => $entry->product->name ?? 'Unknown',
-                'year_minus_3' => $yearMinus3,
-                'year_minus_2' => $yearMinus2,
-                'year_minus_1' => $yearMinus1,
-            ];
+                // Update the entry
+                $entry->update([
+                    'year_minus_3' => $yearMinus3,
+                    'year_minus_2' => $yearMinus2,
+                    'year_minus_1' => $yearMinus1,
+                ]);
+
+                $results[$entry->id] = [
+                    'product_id' => $productId,
+                    'product_name' => $entry->product->name ?? 'Unknown',
+                    'year_minus_3' => $yearMinus3,
+                    'year_minus_2' => $yearMinus2,
+                    'year_minus_1' => $yearMinus1,
+                ];
+            } catch (\Exception $e) {
+                \Log::error("Error populating historical data for product {$productId}: " . $e->getMessage());
+                $results[$entry->id] = [
+                    'product_id' => $productId,
+                    'product_name' => $entry->product->name ?? 'Unknown',
+                    'error' => $e->getMessage(),
+                ];
+            }
         }
 
         return $results;
