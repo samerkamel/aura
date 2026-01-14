@@ -211,10 +211,16 @@ class CapacityService
                     'next_year_avg_hourly_price' => $stats->avg_hourly_rate ?? 0,
                 ]);
 
+                // Recalculate and save budgeted income
+                $entry->refresh();
+                $entry->load('hires');
+                $this->calculateAndSaveBudgetedIncome($entry);
+
                 $results[$productName] = [
                     'updated' => true,
                     'headcount' => $stats->headcount,
                     'avg_hourly_rate' => $stats->avg_hourly_rate,
+                    'budgeted_income' => $entry->budgeted_income,
                 ];
             } else {
                 $results[$productName] = [

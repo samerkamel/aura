@@ -247,7 +247,7 @@ class BudgetController extends Controller
         ]);
 
         foreach ($validated['capacity_entries'] as $entryData) {
-            $entry = $budget->capacityEntries()->findOrFail($entryData['id']);
+            $entry = $budget->capacityEntries()->with('hires')->findOrFail($entryData['id']);
 
             $entry->update([
                 'last_year_available_hours' => $entryData['last_year_available_hours'],
@@ -255,6 +255,11 @@ class BudgetController extends Controller
                 'next_year_avg_hourly_price' => $entryData['next_year_avg_hourly_price'],
                 'next_year_billable_pct' => $entryData['next_year_billable_pct'],
             ]);
+
+            // Calculate and save budgeted income (reload to get fresh data)
+            $entry->refresh();
+            $entry->load('hires');
+            $this->capacityService->calculateAndSaveBudgetedIncome($entry);
         }
 
         return redirect()->back()

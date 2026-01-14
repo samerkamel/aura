@@ -39,7 +39,8 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm uninstall:*)",
       "Bash(php:*)",
-      "Bash(php /Users/SamerKamel/Root/aura/artisan view:clear:*)"
+      "Bash(php /Users/SamerKamel/Root/aura/artisan view:clear:*)",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []
