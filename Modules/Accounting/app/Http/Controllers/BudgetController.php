@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use Modules\Accounting\Models\Budget;
 use Modules\Accounting\Models\BudgetCapacityHire;
 use Modules\Accounting\Models\BudgetCollectionPattern;
+use Modules\Accounting\Models\BudgetPersonnelEntry;
 use Modules\Accounting\Services\Budget\BudgetService;
 use Modules\Accounting\Services\Budget\GrowthService;
 use Modules\Accounting\Services\Budget\CapacityService;
 use Modules\Accounting\Services\Budget\CollectionService;
 use Modules\Accounting\Services\Budget\ResultService;
+use Modules\Accounting\Services\Budget\PersonnelService;
+use Modules\HR\Models\Employee;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 /**
@@ -26,6 +30,7 @@ class BudgetController extends Controller
         private CapacityService $capacityService,
         private CollectionService $collectionService,
         private ResultService $resultService,
+        private PersonnelService $personnelService,
     ) {}
 
     /**
@@ -744,6 +749,294 @@ class BudgetController extends Controller
 
         return redirect()->back()
             ->with('success', 'Result budget entries updated successfully');
+    }
+
+    // ==================== Personnel Tab Methods ====================
+
+    /**
+     * Show Personnel Tab
+     */
+    public function personnel(Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $personnelEntries = $this->personnelService->getBudgetPersonnelEntries($budget);
+        $products = Product::where('is_active', true)->orderBy('name')->get();
+        $summary = $this->personnelService->getSalaryChangesSummary($budget);
+
+        // Prepare chart data for JavaScript
+        $chartData = [
+            'byDepartment' => $this->getPersonnelByDepartment($personnelEntries),
+            'allocations' => $this->getAllocationsSummary($personnelEntries, $products),
+        ];
+
+        return view('accounting::budget.tabs.personnel', [
+            'budget' => $budget,
+            'personnelEntries' => $personnelEntries,
+            'products' => $products,
+            'summary' => $summary,
+            'chartData' => $chartData,
+        ]);
+    }
+
+    /**
+     * Initialize personnel entries from active employees
+     */
+    public function initializePersonnel(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            // Check if already initialized
+            if ($budget->personnelEntries()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Personnel entries already initialized. Clear existing entries first.',
+                ], 400);
+            }
+
+            $this->personnelService->initializePersonnelEntries($budget);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Personnel entries initialized from active employees',
+                    'count' => $budget->personnelEntries()->count(),
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Personnel entries initialized from active employees');
+        } catch (\Exception $e) {
+            \Log::error('Failed to initialize personnel entries: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to initialize personnel entries: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to initialize personnel entries: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update personnel entries (salaries)
+     */
+    public function updatePersonnel(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'personnel_entries' => 'required|array',
+            'personnel_entries.*.id' => 'required|exists:budget_personnel_entries,id',
+            'personnel_entries.*.proposed_salary' => 'nullable|numeric|min:0',
+            'personnel_entries.*.is_new_hire' => 'nullable|boolean',
+            'personnel_entries.*.hire_month' => 'nullable|integer|min:1|max:12',
+        ]);
+
+        foreach ($validated['personnel_entries'] as $entryData) {
+            $entry = $budget->personnelEntries()->findOrFail($entryData['id']);
+
+            $entry->update([
+                'proposed_salary' => $entryData['proposed_salary'] ?? $entry->current_salary,
+                'increase_percentage' => $entry->calculateIncreasePercentage(),
+                'is_new_hire' => $entryData['is_new_hire'] ?? false,
+                'hire_month' => $entryData['hire_month'] ?? null,
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Personnel budget entries updated successfully');
+    }
+
+    /**
+     * Update allocations for a personnel entry
+     */
+    public function updateAllocations(Request $request, Budget $budget, BudgetPersonnelEntry $entry)
+    {
+        $this->authorizeEdit($budget);
+
+        // Verify entry belongs to this budget
+        if ($entry->budget_id !== $budget->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'allocations' => 'required|array',
+            'allocations.*.product_id' => 'nullable|exists:products,id',
+            'allocations.*.is_ga' => 'nullable|boolean',
+            'allocations.*.percentage' => 'required|numeric|min:0|max:100',
+        ]);
+
+        // Build allocations array for service
+        $allocations = [];
+        foreach ($validated['allocations'] as $alloc) {
+            if (($alloc['is_ga'] ?? false) === true) {
+                $allocations['ga'] = (float) $alloc['percentage'];
+            } elseif (!empty($alloc['product_id'])) {
+                $allocations[(int) $alloc['product_id']] = (float) $alloc['percentage'];
+            }
+        }
+
+        try {
+            $this->personnelService->setAllocations($entry, $allocations);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Allocations updated successfully',
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Allocations updated successfully');
+        } catch (\InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 400);
+            }
+
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Add a new hire entry
+     */
+    public function addNewHire(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'position_name' => 'required|string|max:255',
+            'proposed_salary' => 'required|numeric|min:0',
+            'hire_month' => 'required|integer|min:1|max:12',
+            'team' => 'nullable|string|max:100',
+        ]);
+
+        // Create a placeholder employee-less entry for new hires
+        $entry = BudgetPersonnelEntry::create([
+            'budget_id' => $budget->id,
+            'employee_id' => null, // New hire without employee record
+            'current_salary' => 0,
+            'proposed_salary' => $validated['proposed_salary'],
+            'increase_percentage' => 0,
+            'is_new_hire' => true,
+            'hire_month' => $validated['hire_month'],
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'entry' => $entry,
+                'message' => 'New hire entry added successfully',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'New hire entry added successfully');
+    }
+
+    /**
+     * Delete a personnel entry
+     */
+    public function deletePersonnelEntry(Request $request, Budget $budget, BudgetPersonnelEntry $entry)
+    {
+        $this->authorizeEdit($budget);
+
+        // Verify entry belongs to this budget
+        if ($entry->budget_id !== $budget->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Only allow deleting new hire entries (without employee_id)
+        if ($entry->employee_id !== null) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete existing employee entries',
+                ], 400);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Cannot delete existing employee entries');
+        }
+
+        $entry->allocations()->delete();
+        $entry->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Personnel entry deleted successfully',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Personnel entry deleted successfully');
+    }
+
+    /**
+     * Helper to get personnel grouped by department/team
+     */
+    private function getPersonnelByDepartment($entries): array
+    {
+        $byDept = [];
+        foreach ($entries as $entry) {
+            $team = $entry->employee?->team ?? 'New Hires';
+            if (!isset($byDept[$team])) {
+                $byDept[$team] = [
+                    'count' => 0,
+                    'current_total' => 0,
+                    'proposed_total' => 0,
+                ];
+            }
+            $byDept[$team]['count']++;
+            $byDept[$team]['current_total'] += (float) $entry->current_salary;
+            $byDept[$team]['proposed_total'] += (float) $entry->getEffectiveSalary();
+        }
+        return $byDept;
+    }
+
+    /**
+     * Helper to get allocations summary by product
+     */
+    private function getAllocationsSummary($entries, $products): array
+    {
+        $allocations = [];
+
+        // Initialize with all products
+        foreach ($products as $product) {
+            $allocations[$product->id] = [
+                'name' => $product->name,
+                'total' => 0,
+            ];
+        }
+        $allocations['ga'] = [
+            'name' => 'G&A',
+            'total' => 0,
+        ];
+
+        // Sum allocations
+        foreach ($entries as $entry) {
+            $salary = $entry->getEffectiveSalary();
+            foreach ($entry->allocations as $alloc) {
+                $cost = $salary * ($alloc->allocation_percentage / 100);
+                if ($alloc->product_id === null) {
+                    $allocations['ga']['total'] += $cost;
+                } elseif (isset($allocations[$alloc->product_id])) {
+                    $allocations[$alloc->product_id]['total'] += $cost;
+                }
+            }
+        }
+
+        return $allocations;
     }
 
     /**

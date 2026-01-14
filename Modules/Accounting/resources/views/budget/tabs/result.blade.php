@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <span class="nav-link disabled text-muted">Personnel</span>
+                    <a class="nav-link" href="{{ route('accounting.budgets.personnel', $budget->id) }}">Personnel</a>
                 </li>
                 <li class="nav-item">
                     <span class="nav-link disabled text-muted">Expenses</span>
@@ -244,10 +244,9 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="ti ti-device-floppy"></i> Save Final Budget
                         </button>
-                        {{-- Next tab would be Personnel --}}
-                        <button type="button" class="btn btn-success" disabled>
+                        <a href="{{ route('accounting.budgets.personnel', $budget->id) }}" class="btn btn-success">
                             Next: Personnel <i class="ti ti-arrow-right"></i>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </form>

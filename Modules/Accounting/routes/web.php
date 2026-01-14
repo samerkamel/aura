@@ -238,6 +238,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Result Tab
             Route::get('/{budget}/result', [BudgetController::class, 'result'])->name('result');
             Route::post('/{budget}/result', [BudgetController::class, 'updateResult'])->name('result.update');
+
+            // Personnel Tab
+            Route::get('/{budget}/personnel', [BudgetController::class, 'personnel'])->name('personnel');
+            Route::post('/{budget}/personnel', [BudgetController::class, 'updatePersonnel'])->name('personnel.update');
+            Route::post('/{budget}/personnel/initialize', [BudgetController::class, 'initializePersonnel'])->name('personnel.initialize');
+            Route::post('/{budget}/personnel/{entry}/allocations', [BudgetController::class, 'updateAllocations'])->name('personnel.allocations.update');
+            Route::post('/{budget}/personnel/new-hire', [BudgetController::class, 'addNewHire'])->name('personnel.new-hire.add');
+            Route::delete('/{budget}/personnel/{entry}', [BudgetController::class, 'deletePersonnelEntry'])->name('personnel.delete');
         });
     });
 });
