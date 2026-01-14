@@ -2,7 +2,32 @@
   "permissions": {
     "allow": [
       "Bash(sshpass:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(xargs grep:*)",
+      "Bash(php /Users/SamerKamel/Root/aura/artisan migrate:status:*)",
+      "Bash(php artisan migrate:*)",
+      "Bash(mysql:*)",
+      "Bash(php artisan migrate:status:*)",
+      "Bash(php artisan migrate:rollback:*)",
+      "Bash(php artisan migrate:refresh:*)",
+      "Bash(php artisan cache:clear:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(Modules/Accounting/app/Models/Budget*.php)",
+      "Bash(Modules/Accounting/app/Services/Budget/ )",
+      "Bash(Modules/Accounting/resources/views/budget/ )",
+      "Bash(Modules/Accounting/app/Providers/AccountingServiceProvider.php )",
+      "Bash(Modules/Accounting/routes/web.php )",
+      "Bash(database/migrations/2026_01_14_*.php)",
+      "Bash(php artisan:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_handle_dialog"
     ],
     "deny": [],
     "ask": []

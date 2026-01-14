@@ -236,7 +236,7 @@
 
 @endsection
 
-@section('scripts')
+@section('page-script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Trendline type change handler
