@@ -74,21 +74,30 @@ class IncomeController extends Controller
         // Get contracts with their payments, customer and projects
         $query = Contract::with(['payments', 'customer', 'projects']);
 
-        // Filter by year - show contracts that are valid during that year
-        // (start_date <= end of year AND (end_date >= start of year OR end_date is null))
+        // Filter by year - show contracts that are valid during that year OR have remaining balance
+        // Valid = (start_date <= end of year AND (end_date >= start of year OR end_date is null))
+        // OR has outstanding balance
         if ($selectedYear && $selectedYear !== 'all') {
             $yearStart = $selectedYear . '-01-01';
             $yearEnd = $selectedYear . '-12-31';
-            $query->where(function ($q) use ($yearStart, $yearEnd) {
+
+            // Get contract IDs with outstanding balance
+            $contractsWithBalance = Contract::with('payments')->get()
+                ->filter(fn($c) => ($c->total_amount - $c->paid_amount) > 0)
+                ->pluck('id')
+                ->toArray();
+
+            $query->where(function ($q) use ($yearStart, $yearEnd, $contractsWithBalance) {
+                // Contracts valid during the year
                 $q->where(function ($q2) use ($yearStart, $yearEnd) {
-                    // Contract started before or during the year
                     $q2->where('start_date', '<=', $yearEnd)
-                       // AND contract ends during or after the year, or has no end date
                        ->where(function ($q3) use ($yearStart) {
                            $q3->where('end_date', '>=', $yearStart)
                               ->orWhereNull('end_date');
                        });
-                });
+                })
+                // OR contracts with outstanding balance
+                ->orWhereIn('id', $contractsWithBalance);
             });
         }
 
