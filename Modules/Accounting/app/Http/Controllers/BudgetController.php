@@ -5,9 +5,12 @@ namespace Modules\Accounting\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Modules\Accounting\Models\Budget;
 use Modules\Accounting\Models\BudgetCapacityHire;
+use Modules\Accounting\Models\BudgetCollectionPattern;
 use Modules\Accounting\Services\Budget\BudgetService;
 use Modules\Accounting\Services\Budget\GrowthService;
 use Modules\Accounting\Services\Budget\CapacityService;
+use Modules\Accounting\Services\Budget\CollectionService;
+use Modules\Accounting\Services\Budget\ResultService;
 use Illuminate\Http\Request;
 
 /**
@@ -21,6 +24,8 @@ class BudgetController extends Controller
         private BudgetService $budgetService,
         private GrowthService $growthService,
         private CapacityService $capacityService,
+        private CollectionService $collectionService,
+        private ResultService $resultService,
     ) {}
 
     /**
@@ -339,6 +344,406 @@ class BudgetController extends Controller
 
         return redirect()->route('accounting.budgets.index')
             ->with('success', "Budget for {$year} has been deleted successfully");
+    }
+
+    // ==================== Collection Tab Methods ====================
+
+    /**
+     * Show Collection Tab
+     */
+    public function collection(Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $collectionEntries = $this->collectionService->getBudgetCollectionEntries($budget);
+
+        // Prepare chart data for JavaScript
+        $chartData = $collectionEntries->map(function ($entry) {
+            return [
+                'id' => $entry->id,
+                'name' => $entry->product->name ?? 'Unknown',
+                'beginning_balance' => (float) ($entry->beginning_balance ?? 0),
+                'end_balance' => (float) ($entry->end_balance ?? 0),
+                'avg_balance' => (float) ($entry->avg_balance ?? 0),
+                'last_year_collection_months' => (float) ($entry->last_year_collection_months ?? 0),
+                'budgeted_collection_months' => (float) ($entry->budgeted_collection_months ?? 0),
+                'projected_collection_months' => (float) ($entry->projected_collection_months ?? 0),
+                'budgeted_income' => (float) ($entry->budgeted_income ?? 0),
+                'patterns' => $entry->patterns->map(fn($p) => [
+                    'id' => $p->id,
+                    'name' => $p->pattern_name,
+                    'contract_percentage' => (float) $p->contract_percentage,
+                    'collection_months' => $p->calculateCollectionMonths(),
+                ]),
+            ];
+        })->values();
+
+        return view('accounting::budget.tabs.collection', [
+            'budget' => $budget,
+            'collectionEntries' => $collectionEntries,
+            'chartData' => $chartData,
+        ]);
+    }
+
+    /**
+     * Update collection entries
+     */
+    public function updateCollection(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'collection_entries' => 'required|array',
+            'collection_entries.*.id' => 'required|exists:budget_collection_entries,id',
+            'collection_entries.*.beginning_balance' => 'nullable|numeric|min:0',
+            'collection_entries.*.end_balance' => 'nullable|numeric|min:0',
+            'collection_entries.*.avg_balance' => 'nullable|numeric|min:0',
+            'collection_entries.*.avg_contract_per_month' => 'nullable|numeric|min:0',
+            'collection_entries.*.avg_payment_per_month' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['collection_entries'] as $entryData) {
+            $entry = $budget->collectionEntries()->findOrFail($entryData['id']);
+
+            // Update balance data
+            $this->collectionService->updateLastYearBalanceData(
+                $entry,
+                $entryData['beginning_balance'] ?? 0,
+                $entryData['end_balance'] ?? 0,
+                $entryData['avg_balance'] ?? 0,
+                $entryData['avg_contract_per_month'] ?? 0,
+                $entryData['avg_payment_per_month'] ?? 0
+            );
+        }
+
+        return redirect()->back()
+            ->with('success', 'Collection budget entries updated successfully');
+    }
+
+    /**
+     * Populate collection data from actual balances
+     */
+    public function populateCollectionData(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            // Get payment balances from contract payments
+            $results = $this->populateCollectionFromPayments($budget);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Collection data populated from payment history',
+                    'data' => $results,
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Collection data populated from payment history');
+        } catch (\Exception $e) {
+            \Log::error('Failed to populate collection data: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to populate collection data: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to populate collection data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Helper to populate collection data from payment history
+     */
+    private function populateCollectionFromPayments(Budget $budget): array
+    {
+        $results = [];
+        $budgetYear = $budget->year;
+        $lastYear = $budgetYear - 1;
+
+        $entries = $budget->collectionEntries()->with('product')->get();
+
+        foreach ($entries as $entry) {
+            $productId = $entry->product_id;
+
+            if (!$productId) {
+                continue;
+            }
+
+            // Get contracts with this product allocated
+            $contracts = \Modules\Accounting\Models\Contract::whereHas('products', function ($query) use ($productId) {
+                $query->where('product_id', $productId);
+            })->get();
+
+            $beginningBalance = 0;
+            $endBalance = 0;
+            $totalContracts = 0;
+            $totalPayments = 0;
+
+            foreach ($contracts as $contract) {
+                // Get contract allocation for this product
+                $allocation = $contract->products()->where('product_id', $productId)->first();
+                if (!$allocation) continue;
+
+                $allocPct = ($allocation->pivot->allocation_percentage ?? 100) / 100;
+
+                // Calculate balances for last year (prorated by product allocation)
+                $contractTotal = $contract->total_amount * $allocPct;
+
+                // Beginning balance = unpaid at start of last year
+                $paidBeforeYear = $contract->payments()
+                    ->where('status', 'paid')
+                    ->whereDate('paid_date', '<', "{$lastYear}-01-01")
+                    ->sum('amount');
+                $beginningBalance += max(0, $contractTotal - ($paidBeforeYear * $allocPct));
+
+                // End balance = unpaid at end of last year
+                $paidByEndOfYear = $contract->payments()
+                    ->where('status', 'paid')
+                    ->whereDate('paid_date', '<=', "{$lastYear}-12-31")
+                    ->sum('amount');
+                $endBalance += max(0, $contractTotal - ($paidByEndOfYear * $allocPct));
+
+                // Contracts and payments during last year
+                if ($contract->created_at && $contract->created_at->year == $lastYear) {
+                    $totalContracts += $contractTotal;
+                }
+
+                $totalPayments += $contract->payments()
+                    ->where('status', 'paid')
+                    ->whereYear('paid_date', $lastYear)
+                    ->sum('amount') * $allocPct;
+            }
+
+            // Calculate averages
+            $avgBalance = ($beginningBalance + $endBalance) / 2;
+            $avgContractPerMonth = $totalContracts / 12;
+            $avgPaymentPerMonth = $totalPayments / 12;
+
+            // Update entry
+            $this->collectionService->updateLastYearBalanceData(
+                $entry,
+                $beginningBalance,
+                $endBalance,
+                $avgBalance,
+                $avgContractPerMonth,
+                $avgPaymentPerMonth
+            );
+
+            $results[$entry->id] = [
+                'product_id' => $productId,
+                'product_name' => $entry->product->name ?? 'Unknown',
+                'beginning_balance' => $beginningBalance,
+                'end_balance' => $endBalance,
+                'avg_balance' => $avgBalance,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Add a payment pattern
+     */
+    public function addPattern(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'collection_entry_id' => 'required|exists:budget_collection_entries,id',
+            'pattern_name' => 'required|string|max:100',
+            'contract_percentage' => 'required|numeric|min:0|max:100',
+            'monthly_percentages' => 'required|array|size:12',
+            'monthly_percentages.*' => 'numeric|min:0|max:100',
+        ]);
+
+        $entry = $budget->collectionEntries()->findOrFail($validated['collection_entry_id']);
+
+        // Convert monthly percentages array to keyed array
+        $monthlyPcts = [];
+        foreach ($validated['monthly_percentages'] as $index => $pct) {
+            $monthlyPcts[$index + 1] = (float) $pct;
+        }
+
+        $pattern = $this->collectionService->addPattern(
+            $entry,
+            $validated['pattern_name'],
+            $validated['contract_percentage'],
+            $monthlyPcts
+        );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'pattern' => $pattern,
+                'message' => 'Payment pattern added successfully',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Payment pattern added successfully');
+    }
+
+    /**
+     * Update a payment pattern
+     */
+    public function updatePattern(Request $request, Budget $budget, BudgetCollectionPattern $pattern)
+    {
+        $this->authorizeEdit($budget);
+
+        // Verify pattern belongs to this budget
+        $entry = $pattern->collectionEntry;
+        if ($entry->budget_id !== $budget->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'pattern_name' => 'required|string|max:100',
+            'contract_percentage' => 'required|numeric|min:0|max:100',
+            'monthly_percentages' => 'required|array|size:12',
+            'monthly_percentages.*' => 'numeric|min:0|max:100',
+        ]);
+
+        // Convert monthly percentages array to keyed array
+        $monthlyPcts = [];
+        foreach ($validated['monthly_percentages'] as $index => $pct) {
+            $monthlyPcts[$index + 1] = (float) $pct;
+        }
+
+        $this->collectionService->updatePattern(
+            $pattern,
+            $validated['pattern_name'],
+            $validated['contract_percentage'],
+            $monthlyPcts
+        );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment pattern updated successfully',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Payment pattern updated successfully');
+    }
+
+    /**
+     * Delete a payment pattern
+     */
+    public function deletePattern(Request $request, Budget $budget, BudgetCollectionPattern $pattern)
+    {
+        $this->authorizeEdit($budget);
+
+        // Verify pattern belongs to this budget
+        $entry = $pattern->collectionEntry;
+        if ($entry->budget_id !== $budget->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $this->collectionService->deletePattern($pattern);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment pattern deleted successfully',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Payment pattern deleted successfully');
+    }
+
+    /**
+     * Calculate collection income for an entry
+     */
+    public function calculateCollectionIncome(Request $request, Budget $budget)
+    {
+        $validated = $request->validate([
+            'collection_entry_id' => 'required|exists:budget_collection_entries,id',
+        ]);
+
+        $entry = $budget->collectionEntries()->findOrFail($validated['collection_entry_id']);
+
+        $budgetedIncome = $this->collectionService->calculateBudgetedIncome($entry);
+        $this->collectionService->calculateAndSaveBudgetedIncome($entry);
+
+        return response()->json([
+            'budgeted_income' => round($budgetedIncome, 2),
+            'projected_collection_months' => round($entry->projected_collection_months, 2),
+            'message' => 'Collection income calculated',
+        ]);
+    }
+
+    // ==================== Result Tab Methods ====================
+
+    /**
+     * Show Result Tab
+     */
+    public function result(Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $resultEntries = $this->resultService->getBudgetResultEntries($budget);
+
+        // Also get growth and collection data for comparison
+        $growthEntries = $this->growthService->getBudgetGrowthEntries($budget);
+        $collectionEntries = $this->collectionService->getBudgetCollectionEntries($budget);
+
+        // Prepare comparison data for JavaScript
+        $comparisonData = $resultEntries->map(function ($entry) use ($growthEntries, $collectionEntries) {
+            $growth = $growthEntries->firstWhere('product_id', $entry->product_id);
+            $collection = $collectionEntries->firstWhere('product_id', $entry->product_id);
+
+            return [
+                'id' => $entry->id,
+                'name' => $entry->product->name ?? 'Unknown',
+                'growth_value' => (float) ($growth->budgeted_value ?? 0),
+                'collection_value' => (float) ($collection->budgeted_income ?? 0),
+                'selected_method' => $entry->selected_method ?? 'growth',
+                'final_budgeted_income' => (float) ($entry->final_budgeted_income ?? 0),
+            ];
+        })->values();
+
+        return view('accounting::budget.tabs.result', [
+            'budget' => $budget,
+            'resultEntries' => $resultEntries,
+            'growthEntries' => $growthEntries,
+            'collectionEntries' => $collectionEntries,
+            'comparisonData' => $comparisonData,
+        ]);
+    }
+
+    /**
+     * Update result entries (select method for each product)
+     */
+    public function updateResult(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        $validated = $request->validate([
+            'result_entries' => 'required|array',
+            'result_entries.*.id' => 'required|exists:budget_result_entries,id',
+            'result_entries.*.selected_method' => 'required|in:growth,collection,manual',
+            'result_entries.*.manual_override' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['result_entries'] as $entryData) {
+            $entry = $budget->resultEntries()->findOrFail($entryData['id']);
+
+            $this->resultService->selectMethod(
+                $entry,
+                $entryData['selected_method'],
+                $entryData['manual_override'] ?? null
+            );
+        }
+
+        return redirect()->back()
+            ->with('success', 'Result budget entries updated successfully');
     }
 
     /**

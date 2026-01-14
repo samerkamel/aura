@@ -225,6 +225,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{budget}/capacity/hires', [BudgetController::class, 'addHire'])->name('capacity.hires.add');
             Route::delete('/{budget}/capacity/hires/{hire}', [BudgetController::class, 'deleteHire'])->name('capacity.hires.delete');
             Route::post('/{budget}/capacity/calculate', [BudgetController::class, 'calculateCapacityIncome'])->name('capacity.calculate');
+
+            // Collection Tab
+            Route::get('/{budget}/collection', [BudgetController::class, 'collection'])->name('collection');
+            Route::post('/{budget}/collection', [BudgetController::class, 'updateCollection'])->name('collection.update');
+            Route::post('/{budget}/collection/populate', [BudgetController::class, 'populateCollectionData'])->name('collection.populate');
+            Route::post('/{budget}/collection/patterns', [BudgetController::class, 'addPattern'])->name('collection.patterns.add');
+            Route::put('/{budget}/collection/patterns/{pattern}', [BudgetController::class, 'updatePattern'])->name('collection.patterns.update');
+            Route::delete('/{budget}/collection/patterns/{pattern}', [BudgetController::class, 'deletePattern'])->name('collection.patterns.delete');
+            Route::post('/{budget}/collection/calculate', [BudgetController::class, 'calculateCollectionIncome'])->name('collection.calculate');
+
+            // Result Tab
+            Route::get('/{budget}/result', [BudgetController::class, 'result'])->name('result');
+            Route::post('/{budget}/result', [BudgetController::class, 'updateResult'])->name('result.update');
         });
     });
 });

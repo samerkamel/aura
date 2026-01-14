@@ -208,4 +208,45 @@ class ResultService
             'completion_percentage' => $totalCount > 0 ? ($completedCount / $totalCount) * 100 : 0,
         ];
     }
+
+    /**
+     * Select a method for a result entry and calculate final income
+     *
+     * @param BudgetResultEntry $entry
+     * @param string $method 'growth', 'collection', or 'manual'
+     * @param float|null $manualOverride Manual override value when method is 'manual'
+     */
+    public function selectMethod(BudgetResultEntry $entry, string $method, ?float $manualOverride = null): void
+    {
+        $finalValue = match($method) {
+            'growth' => $entry->growth_value,
+            'collection' => $entry->collection_value,
+            'capacity' => $entry->capacity_value,
+            'average' => $entry->average_value,
+            'manual' => $manualOverride,
+            default => null,
+        };
+
+        $entry->update([
+            'final_value' => $finalValue,
+        ]);
+    }
+
+    /**
+     * Auto-select method based on business rules
+     * Default: Use average if variance is low, otherwise use collection method
+     */
+    public function autoSelectMethod(BudgetResultEntry $entry): void
+    {
+        // Calculate variance between growth and collection
+        $variance = $this->getVarianceAnalysis($entry);
+
+        if (empty($variance) || ($variance['variance_pct'] ?? 100) < 10) {
+            // Low variance - use average
+            $this->setFinalFromMethod($entry, 'average');
+        } else {
+            // High variance - use growth as it's more conservative
+            $this->setFinalFromMethod($entry, 'growth');
+        }
+    }
 }

@@ -30,10 +30,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <span class="nav-link disabled text-muted">Collection</span>
+                    <a class="nav-link" href="{{ route('accounting.budgets.collection', $budget->id) }}">
+                        Collection
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <span class="nav-link disabled text-muted">Result</span>
+                    <a class="nav-link" href="{{ route('accounting.budgets.result', $budget->id) }}">
+                        Result
+                    </a>
                 </li>
                 <li class="nav-item">
                     <span class="nav-link disabled text-muted">Personnel</span>
