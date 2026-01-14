@@ -734,24 +734,26 @@ class BudgetController extends Controller
     {
         $this->authorizeEdit($budget);
 
+        // Sync result entries from source tabs (growth, capacity, collection)
+        $this->resultService->syncFromSourceTabs($budget);
+
         $resultEntries = $this->resultService->getBudgetResultEntries($budget);
 
-        // Also get growth and collection data for comparison
+        // Also get source data for display
         $growthEntries = $this->growthService->getBudgetGrowthEntries($budget);
+        $capacityEntries = $this->capacityService->getBudgetCapacityEntries($budget);
         $collectionEntries = $this->collectionService->getBudgetCollectionEntries($budget);
 
-        // Prepare comparison data for JavaScript
-        $comparisonData = $resultEntries->map(function ($entry) use ($growthEntries, $collectionEntries) {
-            $growth = $growthEntries->firstWhere('product_id', $entry->product_id);
-            $collection = $collectionEntries->firstWhere('product_id', $entry->product_id);
-
+        // Prepare comparison data for JavaScript (includes all 4 methods)
+        $comparisonData = $resultEntries->map(function ($entry) {
             return [
                 'id' => $entry->id,
                 'name' => $entry->product->name ?? 'Unknown',
-                'growth_value' => (float) ($growth->budgeted_value ?? 0),
-                'collection_value' => (float) ($collection->budgeted_income ?? 0),
-                'selected_method' => $entry->selected_method ?? 'growth',
-                'final_budgeted_income' => (float) ($entry->final_budgeted_income ?? 0),
+                'growth_value' => (float) ($entry->growth_value ?? 0),
+                'capacity_value' => (float) ($entry->capacity_value ?? 0),
+                'collection_value' => (float) ($entry->collection_value ?? 0),
+                'average_value' => (float) ($entry->average_value ?? 0),
+                'final_value' => (float) ($entry->final_value ?? 0),
             ];
         })->values();
 
@@ -759,6 +761,7 @@ class BudgetController extends Controller
             'budget' => $budget,
             'resultEntries' => $resultEntries,
             'growthEntries' => $growthEntries,
+            'capacityEntries' => $capacityEntries,
             'collectionEntries' => $collectionEntries,
             'comparisonData' => $comparisonData,
         ]);
@@ -774,7 +777,7 @@ class BudgetController extends Controller
         $validated = $request->validate([
             'result_entries' => 'required|array',
             'result_entries.*.id' => 'required|exists:budget_result_entries,id',
-            'result_entries.*.selected_method' => 'required|in:growth,collection,manual',
+            'result_entries.*.selected_method' => 'required|in:growth,capacity,collection,average,manual',
             'result_entries.*.manual_override' => 'nullable|numeric|min:0',
         ]);
 

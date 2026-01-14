@@ -16,7 +16,7 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <h1 class="h3">Budget {{ $budget->year }} - Result Tab</h1>
-            <p class="text-muted">Compare Growth vs Collection methods and select final budget values</p>
+            <p class="text-muted">Compare Growth, Capacity & Collection methods and select final budget values</p>
         </div>
         <div class="col-md-4 text-end">
             <span class="badge bg-{{ $budget->status === 'finalized' ? 'success' : 'warning' }}">
@@ -68,8 +68,8 @@
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="mb-0">Growth vs Collection Comparison</h5>
-                        <small class="text-muted">Select the best method for each product</small>
+                        <h5 class="mb-0">Budget Method Comparison</h5>
+                        <small class="text-muted">Compare Growth, Capacity, Collection & Average methods</small>
                     </div>
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-sm btn-outline-primary active" id="chart-grouped">Grouped</button>
@@ -84,32 +84,31 @@
         <div class="col-12 col-lg-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0">Method Distribution</h5>
+                    <h5 class="mb-0">Method Totals</h5>
                 </div>
                 <div class="card-body">
-                    <div id="methodPieChart" style="min-height: 300px;"></div>
+                    <div id="methodPieChart" style="min-height: 250px;"></div>
                     <div class="mt-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span><span class="badge bg-primary me-2">Growth</span> Total:</span>
-                            <strong id="growth-total">{{ number_format($growthEntries->sum('budgeted_value'), 0) }}</strong>
+                            <strong id="growth-total">{{ number_format($resultEntries->sum('growth_value'), 0) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="badge bg-info me-2">Capacity</span> Total:</span>
+                            <strong id="capacity-total">{{ number_format($resultEntries->sum('capacity_value'), 0) }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span><span class="badge bg-success me-2">Collection</span> Total:</span>
-                            <strong id="collection-total">{{ number_format($collectionEntries->sum('budgeted_income'), 0) }}</strong>
+                            <strong id="collection-total">{{ number_format($resultEntries->sum('collection_value'), 0) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="badge bg-warning me-2">Average</span> Total:</span>
+                            <strong id="average-total">{{ number_format($resultEntries->sum('average_value'), 0) }}</strong>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between">
-                            <span><strong>Difference:</strong></span>
-                            @php
-                                $diff = $growthEntries->sum('budgeted_value') - $collectionEntries->sum('budgeted_income');
-                                $diffPct = $collectionEntries->sum('budgeted_income') > 0
-                                    ? ($diff / $collectionEntries->sum('budgeted_income')) * 100
-                                    : 0;
-                            @endphp
-                            <strong class="{{ $diff >= 0 ? 'text-success' : 'text-danger' }}">
-                                {{ $diff >= 0 ? '+' : '' }}{{ number_format($diff, 0) }}
-                                ({{ number_format($diffPct, 1) }}%)
-                            </strong>
+                            <span><strong>Final Budget:</strong></span>
+                            <strong class="text-dark" id="final-budget-total">{{ number_format($resultEntries->sum('final_value'), 0) }}</strong>
                         </div>
                     </div>
                 </div>
@@ -121,12 +120,18 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Final Budget Selection</h5>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-sm btn-outline-primary" id="select-all-growth-btn">
-                    <i class="ti ti-trending-up"></i> Select All Growth
+                    <i class="ti ti-trending-up"></i> All Growth
+                </button>
+                <button class="btn btn-sm btn-outline-info" id="select-all-capacity-btn">
+                    <i class="ti ti-users"></i> All Capacity
                 </button>
                 <button class="btn btn-sm btn-outline-success" id="select-all-collection-btn">
-                    <i class="ti ti-coins"></i> Select All Collection
+                    <i class="ti ti-coins"></i> All Collection
+                </button>
+                <button class="btn btn-sm btn-outline-warning" id="select-all-average-btn">
+                    <i class="ti ti-calculator"></i> All Average
                 </button>
             </div>
         </div>
@@ -139,9 +144,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Product</th>
-                                <th class="text-end">Growth Value</th>
-                                <th class="text-end">Collection Value</th>
-                                <th class="text-end">Variance</th>
+                                <th class="text-end">Growth</th>
+                                <th class="text-end">Capacity</th>
+                                <th class="text-end">Collection</th>
+                                <th class="text-end">Average</th>
                                 <th class="text-center">Selected Method</th>
                                 <th class="text-end">Final Budget</th>
                             </tr>
@@ -149,48 +155,41 @@
                         <tbody>
                             @foreach($resultEntries as $entry)
                             @php
-                                $growthEntry = $growthEntries->firstWhere('product_id', $entry->product_id);
-                                $collectionEntry = $collectionEntries->firstWhere('product_id', $entry->product_id);
-
-                                $growthVal = $growthEntry->budgeted_value ?? 0;
-                                $collectionVal = $collectionEntry->budgeted_income ?? 0;
-
-                                $variance = $growthVal - $collectionVal;
-                                $variancePct = $collectionVal > 0 ? ($variance / $collectionVal) * 100 : 0;
+                                $growthVal = $entry->growth_value ?? 0;
+                                $capacityVal = $entry->capacity_value ?? 0;
+                                $collectionVal = $entry->collection_value ?? 0;
+                                $averageVal = $entry->average_value ?? 0;
 
                                 // Determine currently selected method
-                                $currentMethod = 'growth';
-                                if ($entry->final_value !== null) {
-                                    if (abs($entry->final_value - $collectionVal) < 0.01) {
-                                        $currentMethod = 'collection';
-                                    } elseif (abs($entry->final_value - $growthVal) < 0.01) {
-                                        $currentMethod = 'growth';
-                                    } else {
-                                        $currentMethod = 'manual';
-                                    }
-                                }
+                                $currentMethod = $entry->isFinalFromMethod() ?? 'growth';
                             @endphp
                             <tr class="result-entry-row" data-entry-id="{{ $entry->id }}"
                                 data-growth-value="{{ $growthVal }}"
-                                data-collection-value="{{ $collectionVal }}">
+                                data-capacity-value="{{ $capacityVal }}"
+                                data-collection-value="{{ $collectionVal }}"
+                                data-average-value="{{ $averageVal }}">
                                 <td>
                                     <input type="hidden" name="result_entries[{{ $loop->index }}][id]" value="{{ $entry->id }}">
                                     <strong>{{ $entry->product->name }}</strong>
                                 </td>
                                 <td class="text-end">
-                                    <span class="growth-value {{ $currentMethod === 'growth' ? 'fw-bold text-primary' : '' }}">
+                                    <span class="method-value growth-value {{ $currentMethod === 'growth' ? 'fw-bold text-primary' : '' }}">
                                         {{ number_format($growthVal, 2) }}
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <span class="collection-value {{ $currentMethod === 'collection' ? 'fw-bold text-success' : '' }}">
+                                    <span class="method-value capacity-value {{ $currentMethod === 'capacity' ? 'fw-bold text-info' : '' }}">
+                                        {{ number_format($capacityVal, 2) }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="method-value collection-value {{ $currentMethod === 'collection' ? 'fw-bold text-success' : '' }}">
                                         {{ number_format($collectionVal, 2) }}
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <span class="{{ $variance >= 0 ? 'text-success' : 'text-danger' }}">
-                                        {{ $variance >= 0 ? '+' : '' }}{{ number_format($variance, 0) }}
-                                        <small>({{ number_format($variancePct, 1) }}%)</small>
+                                    <span class="method-value average-value {{ $currentMethod === 'average' ? 'fw-bold text-warning' : '' }}">
+                                        {{ number_format($averageVal, 2) }}
                                     </span>
                                 </td>
                                 <td class="text-center">
@@ -198,13 +197,19 @@
                                             class="form-control form-control-sm method-select"
                                             data-entry-id="{{ $entry->id }}">
                                         <option value="growth" {{ $currentMethod === 'growth' ? 'selected' : '' }}>
-                                            Growth ({{ number_format($growthVal, 0) }})
+                                            Growth
+                                        </option>
+                                        <option value="capacity" {{ $currentMethod === 'capacity' ? 'selected' : '' }}>
+                                            Capacity
                                         </option>
                                         <option value="collection" {{ $currentMethod === 'collection' ? 'selected' : '' }}>
-                                            Collection ({{ number_format($collectionVal, 0) }})
+                                            Collection
                                         </option>
-                                        <option value="manual" {{ $currentMethod === 'manual' ? 'selected' : '' }}>
-                                            Manual Override
+                                        <option value="average" {{ $currentMethod === 'average' ? 'selected' : '' }}>
+                                            Average
+                                        </option>
+                                        <option value="manual" {{ $currentMethod === 'custom' || $currentMethod === 'manual' ? 'selected' : '' }}>
+                                            Manual
                                         </option>
                                     </select>
                                 </td>
@@ -214,7 +219,7 @@
                                         <input type="number" name="result_entries[{{ $loop->index }}][manual_override]"
                                                class="form-control text-end final-value fw-bold"
                                                value="{{ $entry->final_value ?? $growthVal }}"
-                                               step="0.01" {{ $currentMethod !== 'manual' ? 'readonly' : '' }}>
+                                               step="0.01" {{ $currentMethod !== 'custom' && $currentMethod !== 'manual' ? 'readonly' : '' }}>
                                     </div>
                                 </td>
                             </tr>
@@ -223,11 +228,12 @@
                         <tfoot class="table-light">
                             <tr class="fw-bold">
                                 <td>Total</td>
-                                <td class="text-end text-primary" id="total-growth">{{ number_format($growthEntries->sum('budgeted_value'), 2) }}</td>
-                                <td class="text-end text-success" id="total-collection">{{ number_format($collectionEntries->sum('budgeted_income'), 2) }}</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end text-primary" id="total-growth">{{ number_format($resultEntries->sum('growth_value'), 2) }}</td>
+                                <td class="text-end text-info" id="total-capacity">{{ number_format($resultEntries->sum('capacity_value'), 2) }}</td>
+                                <td class="text-end text-success" id="total-collection">{{ number_format($resultEntries->sum('collection_value'), 2) }}</td>
+                                <td class="text-end text-warning" id="total-average">{{ number_format($resultEntries->sum('average_value'), 2) }}</td>
                                 <td></td>
-                                <td class="text-end text-dark" id="total-final">{{ number_format($resultEntries->sum('final_value') ?? $growthEntries->sum('budgeted_value'), 2) }}</td>
+                                <td class="text-end text-dark" id="total-final">{{ number_format($resultEntries->sum('final_value') ?? 0, 2) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -260,27 +266,39 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="stat-card stat-primary">
-                        <h6 class="text-muted">Total Products</h6>
+                        <h6 class="text-muted">Products</h6>
                         <h3>{{ $resultEntries->count() }}</h3>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="stat-card stat-info">
                         <h6 class="text-muted">Using Growth</h6>
                         <h3 id="summary-growth-count">0</h3>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <div class="stat-card stat-cyan">
+                        <h6 class="text-muted">Using Capacity</h6>
+                        <h3 id="summary-capacity-count">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="stat-card stat-success">
                         <h6 class="text-muted">Using Collection</h6>
                         <h3 id="summary-collection-count">0</h3>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <div class="stat-card stat-warning">
+                        <h6 class="text-muted">Using Average</h6>
+                        <h3 id="summary-average-count">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="stat-card stat-dark">
-                        <h6 class="text-muted">Total Final Budget</h6>
+                        <h6 class="text-muted">Final Budget</h6>
                         <h3 id="summary-final">0</h3>
                     </div>
                 </div>
@@ -291,14 +309,16 @@
     <!-- Recommendation Card -->
     <div class="card mt-4">
         <div class="card-header">
-            <h5 class="mb-0"><i class="ti ti-bulb"></i> Recommendation</h5>
+            <h5 class="mb-0"><i class="ti ti-bulb"></i> Budget Method Guide</h5>
         </div>
         <div class="card-body">
             <div class="alert alert-info mb-0">
                 <h6><i class="ti ti-info-circle"></i> How to Choose</h6>
                 <ul class="mb-0">
-                    <li><strong>Growth Method:</strong> Best when you have consistent historical data and expect similar growth patterns.</li>
-                    <li><strong>Collection Method:</strong> Best when your payment collection cycle is predictable and you want to budget based on cash flow.</li>
+                    <li><strong>Growth Method:</strong> Based on historical revenue patterns and growth trends. Best when you have consistent historical data.</li>
+                    <li><strong>Capacity Method:</strong> Based on employee headcount, hourly rates, and billable percentages. Best for service-based businesses.</li>
+                    <li><strong>Collection Method:</strong> Based on payment collection patterns and cash flow. Best when cash flow timing is critical.</li>
+                    <li><strong>Average:</strong> The average of the three methods. Good for balanced estimates when methods differ significantly.</li>
                     <li><strong>Manual Override:</strong> Use when you have specific knowledge about expected changes (new contracts, market shifts, etc.).</li>
                 </ul>
             </div>
@@ -316,16 +336,19 @@
 .stat-card.stat-primary { border-left: 4px solid #007bff; }
 .stat-card.stat-success { border-left: 4px solid #28a745; }
 .stat-card.stat-info { border-left: 4px solid #17a2b8; }
+.stat-card.stat-cyan { border-left: 4px solid #0dcaf0; }
+.stat-card.stat-warning { border-left: 4px solid #ffc107; }
 .stat-card.stat-dark { border-left: 4px solid #343a40; }
 
 .stat-card h6 {
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
 }
 
 .stat-card h3 {
     margin: 0.5rem 0 0 0;
     font-weight: 700;
+    font-size: 1.25rem;
 }
 
 .result-entry-row:hover {
@@ -333,7 +356,11 @@
 }
 
 .method-select {
-    min-width: 160px;
+    min-width: 120px;
+}
+
+.method-value {
+    transition: all 0.2s ease;
 }
 </style>
 
@@ -362,8 +389,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const options = {
             series: [
-                { name: 'Growth Value', data: comparisonData.map(p => p.growth_value) },
-                { name: 'Collection Value', data: comparisonData.map(p => p.collection_value) }
+                { name: 'Growth', data: comparisonData.map(p => p.growth_value) },
+                { name: 'Capacity', data: comparisonData.map(p => p.capacity_value) },
+                { name: 'Collection', data: comparisonData.map(p => p.collection_value) },
+                { name: 'Average', data: comparisonData.map(p => p.average_value) }
             ],
             chart: {
                 type: 'bar',
@@ -373,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '55%',
+                    columnWidth: '70%',
                     borderRadius: 4
                 }
             },
@@ -392,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             fill: { opacity: 1 },
-            colors: ['#3498DB', '#27AE60'],
+            colors: ['#3498DB', '#0dcaf0', '#27AE60', '#f39c12'],
             tooltip: {
                 y: {
                     formatter: function(val) {
@@ -415,23 +444,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updatePieChart() {
-        let growthCount = 0, collectionCount = 0, manualCount = 0;
+        let growthCount = 0, capacityCount = 0, collectionCount = 0, averageCount = 0, manualCount = 0;
 
         document.querySelectorAll('.method-select').forEach(select => {
             switch(select.value) {
                 case 'growth': growthCount++; break;
+                case 'capacity': capacityCount++; break;
                 case 'collection': collectionCount++; break;
+                case 'average': averageCount++; break;
                 case 'manual': manualCount++; break;
             }
         });
 
-        const data = [growthCount, collectionCount, manualCount].filter(v => v > 0);
+        const data = [];
         const labels = [];
         const colors = [];
 
-        if (growthCount > 0) { labels.push('Growth'); colors.push('#3498DB'); }
-        if (collectionCount > 0) { labels.push('Collection'); colors.push('#27AE60'); }
-        if (manualCount > 0) { labels.push('Manual'); colors.push('#F39C12'); }
+        if (growthCount > 0) { data.push(growthCount); labels.push('Growth'); colors.push('#3498DB'); }
+        if (capacityCount > 0) { data.push(capacityCount); labels.push('Capacity'); colors.push('#0dcaf0'); }
+        if (collectionCount > 0) { data.push(collectionCount); labels.push('Collection'); colors.push('#27AE60'); }
+        if (averageCount > 0) { data.push(averageCount); labels.push('Average'); colors.push('#f39c12'); }
+        if (manualCount > 0) { data.push(manualCount); labels.push('Manual'); colors.push('#6c757d'); }
 
         if (pieChart) {
             pieChart.updateOptions({
@@ -441,13 +474,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         } else {
             const options = {
-                series: data,
+                series: data.length > 0 ? data : [1],
                 chart: {
                     type: 'pie',
-                    height: 300
+                    height: 250
                 },
-                labels: labels,
-                colors: colors,
+                labels: labels.length > 0 ? labels : ['No Selection'],
+                colors: colors.length > 0 ? colors : ['#e9ecef'],
                 legend: {
                     position: 'bottom'
                 },
@@ -464,7 +497,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update summary counts
         document.getElementById('summary-growth-count').textContent = growthCount;
+        document.getElementById('summary-capacity-count').textContent = capacityCount;
         document.getElementById('summary-collection-count').textContent = collectionCount;
+        document.getElementById('summary-average-count').textContent = averageCount;
     }
 
     // Chart type toggle
@@ -487,24 +522,42 @@ document.addEventListener('DOMContentLoaded', function() {
             const method = this.value;
             const finalInput = row.querySelector('.final-value');
             const growthVal = parseFloat(row.dataset.growthValue) || 0;
+            const capacityVal = parseFloat(row.dataset.capacityValue) || 0;
             const collectionVal = parseFloat(row.dataset.collectionValue) || 0;
+            const averageVal = parseFloat(row.dataset.averageValue) || 0;
 
-            if (method === 'growth') {
-                finalInput.value = growthVal.toFixed(2);
-                finalInput.readOnly = true;
-            } else if (method === 'collection') {
-                finalInput.value = collectionVal.toFixed(2);
-                finalInput.readOnly = true;
-            } else {
-                finalInput.readOnly = false;
-                finalInput.focus();
+            // Update final value based on method
+            switch(method) {
+                case 'growth':
+                    finalInput.value = growthVal.toFixed(2);
+                    finalInput.readOnly = true;
+                    break;
+                case 'capacity':
+                    finalInput.value = capacityVal.toFixed(2);
+                    finalInput.readOnly = true;
+                    break;
+                case 'collection':
+                    finalInput.value = collectionVal.toFixed(2);
+                    finalInput.readOnly = true;
+                    break;
+                case 'average':
+                    finalInput.value = averageVal.toFixed(2);
+                    finalInput.readOnly = true;
+                    break;
+                default: // manual
+                    finalInput.readOnly = false;
+                    finalInput.focus();
             }
 
-            // Update styling
+            // Update styling for all method values
             row.querySelector('.growth-value').classList.toggle('fw-bold', method === 'growth');
             row.querySelector('.growth-value').classList.toggle('text-primary', method === 'growth');
+            row.querySelector('.capacity-value').classList.toggle('fw-bold', method === 'capacity');
+            row.querySelector('.capacity-value').classList.toggle('text-info', method === 'capacity');
             row.querySelector('.collection-value').classList.toggle('fw-bold', method === 'collection');
             row.querySelector('.collection-value').classList.toggle('text-success', method === 'collection');
+            row.querySelector('.average-value').classList.toggle('fw-bold', method === 'average');
+            row.querySelector('.average-value').classList.toggle('text-warning', method === 'average');
 
             updateTotals();
             updatePieChart();
@@ -516,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', updateTotals);
     });
 
-    // Select all growth button
+    // Select all buttons
     document.getElementById('select-all-growth-btn')?.addEventListener('click', function() {
         document.querySelectorAll('.method-select').forEach(select => {
             select.value = 'growth';
@@ -524,10 +577,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Select all collection button
+    document.getElementById('select-all-capacity-btn')?.addEventListener('click', function() {
+        document.querySelectorAll('.method-select').forEach(select => {
+            select.value = 'capacity';
+            select.dispatchEvent(new Event('change'));
+        });
+    });
+
     document.getElementById('select-all-collection-btn')?.addEventListener('click', function() {
         document.querySelectorAll('.method-select').forEach(select => {
             select.value = 'collection';
+            select.dispatchEvent(new Event('change'));
+        });
+    });
+
+    document.getElementById('select-all-average-btn')?.addEventListener('click', function() {
+        document.querySelectorAll('.method-select').forEach(select => {
+            select.value = 'average';
             select.dispatchEvent(new Event('change'));
         });
     });
@@ -542,6 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('total-final').textContent = formatNumber(total);
         document.getElementById('summary-final').textContent = new Intl.NumberFormat('en-US').format(Math.round(total));
+        document.getElementById('final-budget-total').textContent = new Intl.NumberFormat('en-US').format(Math.round(total));
     }
 
     // Initialize
