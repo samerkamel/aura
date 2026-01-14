@@ -5,6 +5,30 @@
 @section('content')
 <div class="row">
     <div class="col-12">
+        <!-- Year Filter -->
+        <div class="card mb-4">
+            <div class="card-body py-3">
+                <form method="GET" class="d-flex align-items-center gap-3">
+                    <label class="form-label mb-0 fw-semibold">Year:</label>
+                    <select name="year" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <option value="all" {{ $selectedYear == 'all' ? 'selected' : '' }}>All Years</option>
+                        @foreach($availableYears as $year)
+                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                    @if(request('status'))
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    <span class="text-muted small">
+                        <i class="ti ti-info-circle me-1"></i>Statistics and contracts are filtered by year
+                    </span>
+                </form>
+            </div>
+        </div>
+
         <!-- Statistics Cards -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
@@ -12,7 +36,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title mb-1">Total Contracts</h6>
+                                <h6 class="card-title mb-1">{{ $selectedYear == 'all' ? 'Total' : $selectedYear }} Contracts</h6>
                                 <h4 class="mb-0">{{ $statistics['total_contracts'] }}</h4>
                             </div>
                             <div class="avatar">
@@ -46,7 +70,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title mb-1">Total Contract Value</h6>
+                                <h6 class="card-title mb-1">{{ $selectedYear == 'all' ? 'Total' : $selectedYear }} Contract Value</h6>
                                 <h4 class="mb-0">EGP {{ number_format($statistics['total_contract_value'], 0) }}</h4>
                             </div>
                             <div class="avatar">
@@ -63,12 +87,13 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="card-title mb-1">Payments Scheduled</h6>
-                                <h4 class="mb-0">EGP {{ number_format($statistics['total_payments_scheduled'], 0) }}</h4>
+                                <h6 class="card-title mb-1">Outstanding Balance</h6>
+                                <h4 class="mb-0 {{ $statistics['total_outstanding'] > 0 ? 'text-warning' : '' }}">EGP {{ number_format($statistics['total_outstanding'], 0) }}</h4>
+                                <small class="text-muted">All active contracts</small>
                             </div>
                             <div class="avatar">
                                 <div class="avatar-initial rounded bg-label-warning">
-                                    <i class="ti ti-calendar-dollar ti-md"></i>
+                                    <i class="ti ti-clock-dollar ti-md"></i>
                                 </div>
                             </div>
                         </div>

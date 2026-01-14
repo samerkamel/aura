@@ -48,8 +48,27 @@ class IncomeController extends Controller
             abort(403, 'Unauthorized to view contracts.');
         }
 
+        // Year filter - default to current year
+        $selectedYear = $request->get('year', date('Y'));
+        $availableYears = Contract::selectRaw('YEAR(start_date) as year')
+            ->whereNotNull('start_date')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Ensure current year is in the list
+        if (!in_array(date('Y'), $availableYears)) {
+            array_unshift($availableYears, (int)date('Y'));
+        }
+
         // Get contracts with their payments, customer and projects
         $query = Contract::with(['payments', 'customer', 'projects']);
+
+        // Filter by year
+        if ($selectedYear && $selectedYear !== 'all') {
+            $query->whereYear('start_date', $selectedYear);
+        }
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -79,20 +98,32 @@ class IncomeController extends Controller
 
         $contracts = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
 
-        // Statistics
+        // Statistics - filtered by year for contract metrics
+        $yearContractsQuery = Contract::query();
+        if ($selectedYear && $selectedYear !== 'all') {
+            $yearContractsQuery->whereYear('start_date', $selectedYear);
+        }
+
+        // Outstanding balance = total_amount - paid for ALL active contracts (no year filter)
+        $allActiveContracts = Contract::active()->with('payments')->get();
+        $totalOutstanding = $allActiveContracts->sum(function ($contract) {
+            return max(0, $contract->total_amount - $contract->paid_amount);
+        });
+
         $statistics = [
-            'total_contracts' => Contract::count(),
-            'active_contracts' => Contract::active()->count(),
-            'total_contract_value' => Contract::active()->sum('total_amount'),
-            'total_payments_scheduled' => Contract::active()->get()->sum('total_payment_amount'),
-            'total_paid_amount' => Contract::active()->get()->sum('paid_amount'),
+            'total_contracts' => (clone $yearContractsQuery)->count(),
+            'active_contracts' => (clone $yearContractsQuery)->active()->count(),
+            'total_contract_value' => (clone $yearContractsQuery)->sum('total_amount'),
+            'total_outstanding' => $totalOutstanding,
         ];
 
         return view('accounting::income.index', compact(
             'contracts',
             'statistics',
             'sortField',
-            'sortDirection'
+            'sortDirection',
+            'selectedYear',
+            'availableYears'
         ));
     }
 
