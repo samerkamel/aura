@@ -770,14 +770,27 @@ class CustomerController extends Controller
                 }
             }
 
-            // 3. Merge contact_persons (combine arrays, remove duplicates)
+            // 3. Merge contact_persons (combine arrays, remove duplicates by serialization)
             $allContacts = $primary->contact_persons ?? [];
+            if (!is_array($allContacts)) {
+                $allContacts = [];
+            }
             foreach ($duplicates as $dup) {
                 if (!empty($dup->contact_persons) && is_array($dup->contact_persons)) {
                     $allContacts = array_merge($allContacts, $dup->contact_persons);
                 }
             }
-            $primary->contact_persons = array_values(array_unique($allContacts));
+            // Remove duplicates by comparing serialized values
+            $uniqueContacts = [];
+            $seen = [];
+            foreach ($allContacts as $contact) {
+                $key = is_array($contact) ? json_encode($contact) : (string)$contact;
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $uniqueContacts[] = $contact;
+                }
+            }
+            $primary->contact_persons = $uniqueContacts;
 
             // 4. Concatenate notes
             $allNotes = [$primary->notes];
