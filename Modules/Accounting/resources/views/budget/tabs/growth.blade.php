@@ -62,41 +62,22 @@
         </div>
     </div>
 
-    <!-- Chart Section -->
-    <div class="row mb-4">
-        <!-- Bar Chart - Historical + Projected by Product -->
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-0">Revenue by Product - Historical & Projected</h5>
-                        <small class="text-muted">Comparing {{ $budget->year - 3 }}, {{ $budget->year - 2 }}, {{ $budget->year - 1 }} with projected {{ $budget->year }}</small>
-                    </div>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-outline-primary active" id="chart-grouped">Grouped</button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" id="chart-stacked">Stacked</button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="revenueBarChart" style="min-height: 400px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Trendline Charts Row -->
+    <!-- Per-Product Charts with Bars and Trendlines -->
     <div class="row mb-4" id="trendline-charts-row">
         @foreach($growthEntries as $entry)
-        <div class="col-md-4 col-lg-3 mb-4">
+        <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
-                <div class="card-header py-2">
+                <div class="card-header py-2 d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">{{ $entry->product->name }}</h6>
+                    <span class="badge bg-label-{{ $entry->trendline_type === 'linear' ? 'primary' : ($entry->trendline_type === 'logarithmic' ? 'warning' : 'success') }} trendline-badge-{{ $entry->id }}">
+                        {{ ucfirst($entry->trendline_type ?? 'linear') }}
+                    </span>
                 </div>
                 <div class="card-body p-2">
-                    <div id="trendline-chart-{{ $entry->id }}" style="height: 180px;"></div>
+                    <div id="trendline-chart-{{ $entry->id }}" style="height: 280px;"></div>
                     <div class="text-center mt-2">
-                        <span class="badge bg-label-primary">
-                            Projected: <span class="projected-display-{{ $entry->id }}">Calculating...</span>
+                        <span class="badge bg-success fs-6">
+                            {{ $budget->year }} Projected: <span class="projected-display-{{ $entry->id }}">Calculating...</span>
                         </span>
                     </div>
                 </div>
@@ -326,84 +307,136 @@ document.addEventListener('DOMContentLoaded', function() {
     const productData = @json($chartData);
 
     let projectedValues = {};
-    let barChart = null;
     let trendlineCharts = {};
+    let regressionCoeffs = {}; // Store regression coefficients per product
 
-    // Trendline calculation functions
-    function calculateLinear(data) {
-        const validData = data.filter(v => v !== null && v !== undefined && v > 0);
-        if (validData.length < 2) return validData[validData.length - 1] || 0;
+    // Linear regression: y = mx + b
+    // Returns { m, b } coefficients
+    function linearRegression(data) {
+        const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
+        if (validData.length < 2) {
+            const lastValid = data.filter(v => v > 0).pop() || 0;
+            return { m: 0, b: lastValid, predict: (x) => lastValid };
+        }
 
         const n = validData.length;
-        const x = validData.map((_, i) => i + 1);
-        const y = validData;
+        const sumX = validData.reduce((acc, d) => acc + d.x, 0);
+        const sumY = validData.reduce((acc, d) => acc + d.y, 0);
+        const sumXY = validData.reduce((acc, d) => acc + d.x * d.y, 0);
+        const sumX2 = validData.reduce((acc, d) => acc + d.x * d.x, 0);
 
-        const sumX = x.reduce((a, b) => a + b, 0);
-        const sumY = y.reduce((a, b) => a + b, 0);
-        const sumXY = x.reduce((acc, xi, i) => acc + xi * y[i], 0);
-        const sumX2 = x.reduce((acc, xi) => acc + xi * xi, 0);
+        const denom = n * sumX2 - sumX * sumX;
+        if (Math.abs(denom) < 1e-10) {
+            return { m: 0, b: sumY / n, predict: (x) => sumY / n };
+        }
 
-        const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const m = (n * sumXY - sumX * sumY) / denom;
         const b = (sumY - m * sumX) / n;
 
-        return Math.max(0, m * (n + 1) + b);
+        return { m, b, predict: (x) => Math.max(0, m * x + b) };
     }
 
-    function calculateLogarithmic(data) {
-        const validData = data.filter(v => v !== null && v !== undefined && v > 0);
-        if (validData.length < 2) return validData[validData.length - 1] || 0;
+    // Logarithmic regression: y = a * ln(x) + b
+    // Returns { a, b } coefficients
+    function logarithmicRegression(data) {
+        const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
+        if (validData.length < 2) {
+            const lastValid = data.filter(v => v > 0).pop() || 0;
+            return { a: 0, b: lastValid, predict: (x) => lastValid };
+        }
 
         const n = validData.length;
-        const x = validData.map((_, i) => i + 1);
-        const y = validData;
-        const lnX = x.map(xi => Math.log(xi));
-
-        const sumLnX = lnX.reduce((a, b) => a + b, 0);
-        const sumY = y.reduce((a, b) => a + b, 0);
-        const sumLnX2 = lnX.reduce((acc, ln) => acc + ln * ln, 0);
-        const sumYLnX = lnX.reduce((acc, ln, i) => acc + y[i] * ln, 0);
+        const lnX = validData.map(d => Math.log(d.x));
+        const sumLnX = lnX.reduce((acc, v) => acc + v, 0);
+        const sumY = validData.reduce((acc, d) => acc + d.y, 0);
+        const sumLnX2 = lnX.reduce((acc, v) => acc + v * v, 0);
+        const sumYLnX = lnX.reduce((acc, v, i) => acc + validData[i].y * v, 0);
 
         const denom = n * sumLnX2 - sumLnX * sumLnX;
-        if (Math.abs(denom) < 1e-10) return validData[validData.length - 1] || 0;
+        if (Math.abs(denom) < 1e-10) {
+            return { a: 0, b: sumY / n, predict: (x) => sumY / n };
+        }
 
         const a = (n * sumYLnX - sumLnX * sumY) / denom;
         const b = (sumY - a * sumLnX) / n;
 
-        return Math.max(0, a * Math.log(n + 1) + b);
+        return { a, b, predict: (x) => Math.max(0, a * Math.log(x) + b) };
     }
 
-    function calculatePolynomial(data) {
-        // Simplified quadratic fit
-        const validData = data.filter(v => v !== null && v !== undefined && v > 0);
-        if (validData.length < 2) return validData[validData.length - 1] || 0;
-        if (validData.length === 2) return calculateLinear(data);
+    // Polynomial regression (quadratic): y = ax² + bx + c
+    // Returns { a, b, c } coefficients
+    function polynomialRegression(data) {
+        const validData = data.map((v, i) => ({ x: i + 1, y: v || 0 })).filter(d => d.y > 0);
+        if (validData.length < 3) {
+            // Fall back to linear if not enough points
+            return linearRegression(data);
+        }
 
         const n = validData.length;
-        const x = validData.map((_, i) => i + 1);
-        const y = validData;
+        const x = validData.map(d => d.x);
+        const y = validData.map(d => d.y);
 
-        // For simplicity, use linear for now if not enough points
-        if (n < 3) return calculateLinear(data);
+        // Using least squares for quadratic fit
+        let sumX = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0;
+        let sumY = 0, sumXY = 0, sumX2Y = 0;
 
-        // Simple quadratic using last 3 points
-        const x1 = 1, x2 = 2, x3 = 3;
-        const y1 = validData[0], y2 = validData[1], y3 = validData[2];
+        for (let i = 0; i < n; i++) {
+            const xi = x[i], yi = y[i];
+            sumX += xi;
+            sumX2 += xi * xi;
+            sumX3 += xi * xi * xi;
+            sumX4 += xi * xi * xi * xi;
+            sumY += yi;
+            sumXY += xi * yi;
+            sumX2Y += xi * xi * yi;
+        }
 
-        const a = ((y3 - y1) - (x3 - x1) * (y2 - y1) / (x2 - x1)) /
-                  ((x3 * x3 - x1 * x1) - (x3 - x1) * (x2 * x2 - x1 * x1) / (x2 - x1));
-        const b = (y2 - y1 - a * (x2 * x2 - x1 * x1)) / (x2 - x1);
-        const c = y1 - a * x1 * x1 - b * x1;
+        // Solve system of equations using Cramer's rule
+        const D = n * (sumX2 * sumX4 - sumX3 * sumX3) -
+                  sumX * (sumX * sumX4 - sumX2 * sumX3) +
+                  sumX2 * (sumX * sumX3 - sumX2 * sumX2);
 
-        const nextX = n + 1;
-        return Math.max(0, a * nextX * nextX + b * nextX + c);
+        if (Math.abs(D) < 1e-10) {
+            return linearRegression(data);
+        }
+
+        const Da = sumY * (sumX2 * sumX4 - sumX3 * sumX3) -
+                   sumX * (sumXY * sumX4 - sumX2Y * sumX3) +
+                   sumX2 * (sumXY * sumX3 - sumX2Y * sumX2);
+
+        const Db = n * (sumXY * sumX4 - sumX2Y * sumX3) -
+                   sumY * (sumX * sumX4 - sumX2 * sumX3) +
+                   sumX2 * (sumX * sumX2Y - sumX2 * sumXY);
+
+        const Dc = n * (sumX2 * sumX2Y - sumX3 * sumXY) -
+                   sumX * (sumX * sumX2Y - sumX2 * sumXY) +
+                   sumY * (sumX * sumX3 - sumX2 * sumX2);
+
+        const c = Da / D;
+        const b = Db / D;
+        const a = Dc / D;
+
+        return { a, b, c, predict: (xVal) => Math.max(0, a * xVal * xVal + b * xVal + c) };
     }
 
-    function calculateProjection(data, type) {
+    // Get regression based on type
+    function getRegression(data, type) {
         switch (type) {
-            case 'logarithmic': return calculateLogarithmic(data);
-            case 'polynomial': return calculatePolynomial(data);
-            default: return calculateLinear(data);
+            case 'logarithmic': return logarithmicRegression(data);
+            case 'polynomial': return polynomialRegression(data);
+            default: return linearRegression(data);
         }
+    }
+
+    // Generate trendline points for smooth curve
+    function generateTrendlinePoints(regression, startX, endX, numPoints = 50) {
+        const points = [];
+        const step = (endX - startX) / (numPoints - 1);
+        for (let i = 0; i < numPoints; i++) {
+            const x = startX + i * step;
+            points.push({ x: x, y: regression.predict(x) });
+        }
+        return points;
     }
 
     function formatNumber(num) {
@@ -425,7 +458,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = row.querySelector('.trendline-type').value;
 
             const data = [y3, y2, y1];
-            const projection = calculateProjection(data, type);
+            const regression = getRegression(data, type);
+            regressionCoeffs[entryId] = { regression, type };
+
+            // Project to year 4 (next year)
+            const projection = regression.predict(4);
 
             projectedValues[entryId] = projection;
             row.querySelector('.projected-value').value = formatNumber(projection);
@@ -436,87 +473,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayEl.textContent = formatNumber(projection);
             }
 
+            // Update trendline badge
+            const badgeEl = document.querySelector('.trendline-badge-' + entryId);
+            if (badgeEl) {
+                badgeEl.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                badgeEl.className = 'badge bg-label-' + (type === 'linear' ? 'primary' : (type === 'logarithmic' ? 'warning' : 'success')) + ' trendline-badge-' + entryId;
+            }
+
             totalProjected += projection;
         });
 
         document.getElementById('total-projected').textContent = formatNumber(totalProjected);
-        updateBarChart();
         updateTrendlineCharts();
     }
 
-    // Initialize bar chart
-    function initBarChart() {
-        const categories = productData.map(p => p.name);
-        const series = [
-            { name: years[0].toString(), data: productData.map(p => p.year_minus_3) },
-            { name: years[1].toString(), data: productData.map(p => p.year_minus_2) },
-            { name: years[2].toString(), data: productData.map(p => p.year_minus_1) },
-            { name: years[3].toString() + ' (Projected)', data: productData.map(p => projectedValues[p.id] || 0) }
-        ];
-
-        const options = {
-            series: series,
-            chart: {
-                type: 'bar',
-                height: 400,
-                toolbar: { show: true },
-                animations: { enabled: true }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    borderRadius: 4,
-                    dataLabels: { position: 'top' }
-                }
-            },
-            dataLabels: { enabled: false },
-            stroke: { show: true, width: 2, colors: ['transparent'] },
-            xaxis: {
-                categories: categories,
-                labels: { rotate: -45, style: { fontSize: '12px' } }
-            },
-            yaxis: {
-                title: { text: 'Revenue (EGP)' },
-                labels: {
-                    formatter: function(val) {
-                        return new Intl.NumberFormat('en-US', { notation: 'compact' }).format(val);
-                    }
-                }
-            },
-            fill: { opacity: 1 },
-            colors: ['#A8D5E2', '#6BB3D9', '#3498DB', '#27AE60'],
-            tooltip: {
-                y: {
-                    formatter: function(val) {
-                        return formatNumber(val) + ' EGP';
-                    }
-                }
-            },
-            legend: {
-                position: 'top',
-                horizontalAlign: 'left'
-            }
-        };
-
-        barChart = new ApexCharts(document.querySelector('#revenueBarChart'), options);
-        barChart.render();
-    }
-
-    // Update bar chart with new projections
-    function updateBarChart() {
-        if (!barChart) return;
-
-        const projectedData = productData.map(p => projectedValues[p.id] || 0);
-        barChart.updateSeries([
-            { name: years[0].toString(), data: productData.map(p => p.year_minus_3) },
-            { name: years[1].toString(), data: productData.map(p => p.year_minus_2) },
-            { name: years[2].toString(), data: productData.map(p => p.year_minus_1) },
-            { name: years[3].toString() + ' (Projected)', data: projectedData }
-        ]);
-    }
-
-    // Initialize mini trendline charts
+    // Initialize trendline charts with bars and regression line
     function initTrendlineCharts() {
         productData.forEach(product => {
             const chartEl = document.querySelector('#trendline-chart-' + product.id);
@@ -524,47 +495,100 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = [product.year_minus_3, product.year_minus_2, product.year_minus_1];
             const projection = projectedValues[product.id] || 0;
+            const regData = regressionCoeffs[product.id];
+            const regression = regData ? regData.regression : linearRegression(data);
+
+            // Generate smooth trendline points (from x=1 to x=4)
+            const trendlinePoints = generateTrendlinePoints(regression, 1, 4, 20);
+
+            // Determine trendline color based on type
+            const type = regData ? regData.type : 'linear';
+            const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
 
             const options = {
-                series: [{
-                    name: 'Revenue',
-                    data: [...data, projection]
-                }],
+                series: [
+                    {
+                        name: 'Revenue',
+                        type: 'bar',
+                        data: [
+                            { x: years[0].toString(), y: data[0] || 0 },
+                            { x: years[1].toString(), y: data[1] || 0 },
+                            { x: years[2].toString(), y: data[2] || 0 },
+                            { x: years[3].toString(), y: projection }
+                        ]
+                    },
+                    {
+                        name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
+                        type: 'line',
+                        data: trendlinePoints.map(p => ({
+                            x: (budgetYear - 4 + p.x).toString(),
+                            y: p.y
+                        }))
+                    }
+                ],
                 chart: {
                     type: 'line',
-                    height: 180,
-                    sparkline: { enabled: false },
+                    height: 280,
                     toolbar: { show: false },
                     animations: { enabled: true }
                 },
                 stroke: {
-                    curve: 'smooth',
-                    width: 3
+                    width: [0, 3],
+                    curve: 'smooth'
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '50%',
+                        borderRadius: 4,
+                        colors: {
+                            ranges: [{
+                                from: 0,
+                                to: Infinity,
+                                color: '#A8D5E2'
+                            }]
+                        }
+                    }
+                },
+                colors: ['#A8D5E2', trendlineColor],
+                fill: {
+                    opacity: [1, 1]
                 },
                 markers: {
-                    size: 5,
-                    colors: ['#3498DB'],
+                    size: [0, 0],
                     strokeWidth: 0
                 },
-                colors: ['#3498DB'],
                 xaxis: {
+                    type: 'category',
                     categories: years.map(String),
-                    labels: { style: { fontSize: '10px' } }
+                    labels: { style: { fontSize: '11px' } }
                 },
                 yaxis: {
                     labels: {
-                        show: false
+                        formatter: function(val) {
+                            if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                            if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
+                            return val.toFixed(0);
+                        },
+                        style: { fontSize: '10px' }
                     }
                 },
                 grid: {
-                    padding: { left: 10, right: 10 }
+                    padding: { left: 10, right: 10, top: 0, bottom: 0 }
                 },
                 tooltip: {
+                    shared: true,
+                    intersect: false,
                     y: {
                         formatter: function(val) {
-                            return formatNumber(val);
+                            return formatNumber(val) + ' EGP';
                         }
                     }
+                },
+                legend: {
+                    show: true,
+                    position: 'top',
+                    fontSize: '10px',
+                    markers: { width: 8, height: 8 }
                 },
                 annotations: {
                     points: [{
@@ -577,8 +601,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             strokeWidth: 2
                         },
                         label: {
-                            text: 'Projected',
-                            style: { fontSize: '10px' }
+                            text: formatNumber(projection),
+                            style: {
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                color: '#fff',
+                                background: '#27AE60'
+                            },
+                            offsetY: -10
                         }
                     }]
                 }
@@ -601,27 +631,63 @@ document.addEventListener('DOMContentLoaded', function() {
             const y3 = parseFloat(row.querySelector('.year-minus-3').value) || 0;
             const y2 = parseFloat(row.querySelector('.year-minus-2').value) || 0;
             const y1 = parseFloat(row.querySelector('.year-minus-1').value) || 0;
+            const type = row.querySelector('.trendline-type').value;
             const projection = projectedValues[product.id] || 0;
 
-            chart.updateSeries([{
-                name: 'Revenue',
-                data: [y3, y2, y1, projection]
-            }]);
+            const data = [y3, y2, y1];
+            const regression = getRegression(data, type);
+            const trendlinePoints = generateTrendlinePoints(regression, 1, 4, 20);
+
+            const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
+
+            chart.updateOptions({
+                colors: ['#A8D5E2', trendlineColor],
+                annotations: {
+                    points: [{
+                        x: years[3].toString(),
+                        y: projection,
+                        marker: {
+                            size: 6,
+                            fillColor: '#27AE60',
+                            strokeColor: '#fff',
+                            strokeWidth: 2
+                        },
+                        label: {
+                            text: formatNumber(projection),
+                            style: {
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                color: '#fff',
+                                background: '#27AE60'
+                            },
+                            offsetY: -10
+                        }
+                    }]
+                }
+            });
+
+            chart.updateSeries([
+                {
+                    name: 'Revenue',
+                    type: 'bar',
+                    data: [
+                        { x: years[0].toString(), y: y3 },
+                        { x: years[1].toString(), y: y2 },
+                        { x: years[2].toString(), y: y1 },
+                        { x: years[3].toString(), y: projection }
+                    ]
+                },
+                {
+                    name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
+                    type: 'line',
+                    data: trendlinePoints.map(p => ({
+                        x: (budgetYear - 4 + p.x).toString(),
+                        y: p.y
+                    }))
+                }
+            ]);
         });
     }
-
-    // Chart type toggle
-    document.getElementById('chart-grouped')?.addEventListener('click', function() {
-        this.classList.add('active');
-        document.getElementById('chart-stacked').classList.remove('active');
-        barChart.updateOptions({ chart: { stacked: false } });
-    });
-
-    document.getElementById('chart-stacked')?.addEventListener('click', function() {
-        this.classList.add('active');
-        document.getElementById('chart-grouped').classList.remove('active');
-        barChart.updateOptions({ chart: { stacked: true } });
-    });
 
     // Trendline type change handler
     document.querySelectorAll('.trendline-type').forEach(select => {
@@ -760,9 +826,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize
-    initBarChart();
     calculateAllProjections();
-    setTimeout(initTrendlineCharts, 100); // Small delay to ensure bar chart is ready
+    setTimeout(initTrendlineCharts, 100); // Small delay to ensure projections are calculated
 });
 </script>
 @endsection
