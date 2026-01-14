@@ -1,20 +1,18 @@
-@extends('layouts.app')
+@extends('layouts/layoutMaster')
 
-@section('title', "Budget {$budget->year} - Personnel")
+@section('title', 'Budget ' . $budget->year . ' - Personnel')
 
 @section('vendor-style')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
+@vite(['resources/assets/vendor/libs/apex-charts/apex-charts.scss'])
 @endsection
 
 @section('vendor-script')
-    <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+@vite(['resources/assets/vendor/libs/apex-charts/apexcharts.js'])
 @endsection
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
-        {{-- Page Header --}}
+<div class="container-fluid">
+    <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="mb-1">Budget {{ $budget->year }} - Personnel Tab</h1>
