@@ -550,12 +550,20 @@ class BudgetController extends Controller
 
     /**
      * Helper to populate collection data from payment history
+     *
+     * Note: Beginning balance and end balance only include contracts that existed
+     * at those respective dates. Contracts created during or after the budget year
+     * are excluded to ensure accurate historical analysis.
      */
     private function populateCollectionFromPayments(Budget $budget): array
     {
         $results = [];
         $budgetYear = $budget->year;
         $lastYear = $budgetYear - 1;
+
+        // Define reference dates
+        $startOfLastYear = "{$lastYear}-01-01";
+        $endOfLastYear = "{$lastYear}-12-31";
 
         $entries = $budget->collectionEntries()->with('product')->get();
 
@@ -566,10 +574,21 @@ class BudgetController extends Controller
                 continue;
             }
 
-            // Get contracts with this product allocated
+            // Get contracts with this product allocated that existed by the end of last year
+            // This excludes contracts created during the budget year
             $contracts = \Modules\Accounting\Models\Contract::whereHas('products', function ($query) use ($productId) {
                 $query->where('product_id', $productId);
-            })->get();
+            })
+            ->where(function ($query) use ($endOfLastYear) {
+                // Include contracts created on or before end of last year
+                // Use start_date if available, otherwise fall back to created_at
+                $query->whereDate('start_date', '<=', $endOfLastYear)
+                      ->orWhere(function ($q) use ($endOfLastYear) {
+                          $q->whereNull('start_date')
+                            ->whereDate('created_at', '<=', $endOfLastYear);
+                      });
+            })
+            ->get();
 
             $beginningBalance = 0;
             $endBalance = 0;
@@ -586,22 +605,31 @@ class BudgetController extends Controller
                 // Calculate balances for last year (prorated by product allocation)
                 $contractTotal = $contract->total_amount * $allocPct;
 
+                // Determine contract start date for existence checks
+                $contractStartDate = $contract->start_date ?? $contract->created_at;
+
                 // Beginning balance = unpaid at start of last year
-                $paidBeforeYear = $contract->payments()
-                    ->where('status', 'paid')
-                    ->whereDate('paid_date', '<', "{$lastYear}-01-01")
-                    ->sum('amount');
-                $beginningBalance += max(0, $contractTotal - ($paidBeforeYear * $allocPct));
+                // Only include contracts that existed BEFORE the start of last year
+                if ($contractStartDate && $contractStartDate < $startOfLastYear) {
+                    $paidBeforeYear = $contract->payments()
+                        ->where('status', 'paid')
+                        ->whereDate('paid_date', '<', $startOfLastYear)
+                        ->sum('amount');
+                    $beginningBalance += max(0, $contractTotal - ($paidBeforeYear * $allocPct));
+                }
 
                 // End balance = unpaid at end of last year
+                // Include all contracts that existed by end of last year (already filtered in query)
                 $paidByEndOfYear = $contract->payments()
                     ->where('status', 'paid')
-                    ->whereDate('paid_date', '<=', "{$lastYear}-12-31")
+                    ->whereDate('paid_date', '<=', $endOfLastYear)
                     ->sum('amount');
                 $endBalance += max(0, $contractTotal - ($paidByEndOfYear * $allocPct));
 
-                // Contracts and payments during last year
-                if ($contract->created_at && $contract->created_at->year == $lastYear) {
+                // Contracts created during last year (for average calculation)
+                if ($contractStartDate &&
+                    $contractStartDate >= $startOfLastYear &&
+                    $contractStartDate <= $endOfLastYear) {
                     $totalContracts += $contractTotal;
                 }
 
