@@ -498,8 +498,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const regData = regressionCoeffs[product.id];
             const regression = regData ? regData.regression : linearRegression(data);
 
-            // Generate smooth trendline points (from x=1 to x=4)
-            const trendlinePoints = generateTrendlinePoints(regression, 1, 4, 20);
+            // Generate trendline points at exact year positions only (x=1, 2, 3, 4)
+            // This ensures the trendline aligns with the bar chart categories
+            const trendlineValues = [
+                regression.predict(1),
+                regression.predict(2),
+                regression.predict(3),
+                regression.predict(4)
+            ];
 
             // Determine trendline color based on type
             const type = regData ? regData.type : 'linear';
@@ -520,10 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
                         type: 'line',
-                        data: trendlinePoints.map(p => ({
-                            x: (budgetYear - 4 + p.x).toString(),
-                            y: p.y
-                        }))
+                        data: [
+                            { x: years[0].toString(), y: trendlineValues[0] },
+                            { x: years[1].toString(), y: trendlineValues[1] },
+                            { x: years[2].toString(), y: trendlineValues[2] },
+                            { x: years[3].toString(), y: trendlineValues[3] }
+                        ]
                     }
                 ],
                 chart: {
@@ -636,7 +644,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = [y3, y2, y1];
             const regression = getRegression(data, type);
-            const trendlinePoints = generateTrendlinePoints(regression, 1, 4, 20);
+
+            // Generate trendline values at exact year positions only
+            const trendlineValues = [
+                regression.predict(1),
+                regression.predict(2),
+                regression.predict(3),
+                regression.predict(4)
+            ];
 
             const trendlineColor = type === 'linear' ? '#3498DB' : (type === 'logarithmic' ? '#F39C12' : '#27AE60');
 
@@ -680,10 +695,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     name: 'Trendline (' + type.charAt(0).toUpperCase() + type.slice(1) + ')',
                     type: 'line',
-                    data: trendlinePoints.map(p => ({
-                        x: (budgetYear - 4 + p.x).toString(),
-                        y: p.y
-                    }))
+                    data: [
+                        { x: years[0].toString(), y: trendlineValues[0] },
+                        { x: years[1].toString(), y: trendlineValues[1] },
+                        { x: years[2].toString(), y: trendlineValues[2] },
+                        { x: years[3].toString(), y: trendlineValues[3] }
+                    ]
                 }
             ]);
         });
