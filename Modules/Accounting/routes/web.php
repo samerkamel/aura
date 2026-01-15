@@ -255,6 +255,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/{budget}/expenses/initialize', [BudgetController::class, 'initializeExpenses'])->name('expenses.initialize');
             Route::post('/{budget}/expenses/apply-global', [BudgetController::class, 'applyGlobalIncrease'])->name('expenses.apply-global');
             Route::post('/{budget}/expenses/populate', [BudgetController::class, 'populateExpenseData'])->name('expenses.populate');
+            Route::post('/{budget}/expenses/sync-types', [BudgetController::class, 'syncExpenseTypes'])->name('expenses.sync-types');
 
             // Summary Tab (P&L)
             Route::get('/{budget}/summary', [BudgetController::class, 'summary'])->name('summary');

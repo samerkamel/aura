@@ -18,13 +18,11 @@ class ExpenseService
      */
     public function initializeExpenseEntries(Budget $budget): void
     {
-        $categories = ExpenseCategory::active()->get();
+        $categories = ExpenseCategory::active()->with('expenseType', 'parent')->get();
 
         foreach ($categories as $category) {
-            // Map expense type code to budget type
-            // Existing codes: 'CapEx', 'OpEx', 'CoS', 'Admin'
-            // Budget types: 'opex', 'tax', 'capex'
-            $type = $this->mapExpenseTypeTobudgetType($category->expenseType?->code);
+            // Determine the correct budget type based on expense type and name
+            $type = $this->determineBudgetType($category);
 
             $this->createExpenseEntry($budget, $category, $type);
         }
@@ -35,17 +33,77 @@ class ExpenseService
      *
      * Mapping:
      * - 'CapEx' -> 'capex'
+     * - 'Tax' -> 'tax'
      * - 'OpEx', 'CoS', 'Admin' -> 'opex'
-     * - Tax categories need to be manually categorized
      */
     private function mapExpenseTypeTobudgetType(?string $expenseTypeCode): string
     {
         return match(strtolower($expenseTypeCode ?? '')) {
             'capex' => 'capex',
-            'opex', 'cos', 'admin', '' => 'opex',
             'tax' => 'tax',
+            'opex', 'cos', 'admin', '' => 'opex',
             default => 'opex',
         };
+    }
+
+    /**
+     * Determine budget type for a category based on expense type and name
+     *
+     * Uses expense type code first, then falls back to name-based detection
+     * for tax-related categories that might not have a Tax expense type assigned.
+     */
+    public function determineBudgetType(ExpenseCategory $category): string
+    {
+        // First check the expense type code
+        $expenseTypeCode = $category->expenseType?->code;
+
+        if ($expenseTypeCode) {
+            $type = $this->mapExpenseTypeTobudgetType($expenseTypeCode);
+            if ($type !== 'opex') {
+                return $type;
+            }
+        }
+
+        // Check category name for tax-related keywords
+        $categoryName = strtolower($category->name);
+        $parentName = strtolower($category->parent?->name ?? '');
+
+        $taxKeywords = ['vat', 'tax', 'income tax', 'sales tax', 'withholding'];
+        foreach ($taxKeywords as $keyword) {
+            if (str_contains($categoryName, $keyword) || str_contains($parentName, $keyword)) {
+                return 'tax';
+            }
+        }
+
+        return $this->mapExpenseTypeTobudgetType($expenseTypeCode);
+    }
+
+    /**
+     * Sync budget entry types based on their category's expense type
+     *
+     * Updates existing budget entries to use the correct type (opex, tax, capex)
+     * based on the category's expense type and name detection.
+     */
+    public function syncEntryTypes(Budget $budget): array
+    {
+        $updated = ['opex' => 0, 'tax' => 0, 'capex' => 0];
+
+        $entries = $budget->expenseEntries()
+            ->with('category', 'category.expenseType', 'category.parent')
+            ->get();
+
+        foreach ($entries as $entry) {
+            if (!$entry->category) continue;
+
+            $correctType = $this->determineBudgetType($entry->category);
+
+            if ($entry->type !== $correctType) {
+                $entry->update(['type' => $correctType]);
+                $updated[$correctType]++;
+            }
+        }
+
+        return $updated;
     }
 
     /**

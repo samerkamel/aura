@@ -127,6 +127,18 @@
                         </div>
                     </div>
                 </div>
+                <hr class="my-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Sync Category Types</label>
+                        <div>
+                            <button type="button" class="btn btn-outline-info" id="syncTypesBtn">
+                                <i class="ti ti-category me-1"></i> Move to Tax/CapEx Sections
+                            </button>
+                            <small class="text-muted d-block mt-1">Auto-detect and move categories to correct sections based on expense type</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         @endif
     </div>
@@ -743,6 +755,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Error:', error);
                     alert('An error occurred');
+                });
+            }
+        });
+    }
+
+    // Sync Types Button
+    const syncTypesBtn = document.getElementById('syncTypesBtn');
+    if (syncTypesBtn) {
+        syncTypesBtn.addEventListener('click', function() {
+            if (confirm('This will move Tax and CapEx categories to their correct sections based on expense type. Continue?')) {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Syncing...';
+
+                fetch('{{ route('accounting.budgets.expenses.sync-types', $budget->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Failed to sync types');
+                        this.disabled = false;
+                        this.innerHTML = '<i class="ti ti-category me-1"></i> Move to Tax/CapEx Sections';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred');
+                    this.disabled = false;
+                    this.innerHTML = '<i class="ti ti-category me-1"></i> Move to Tax/CapEx Sections';
                 });
             }
         });

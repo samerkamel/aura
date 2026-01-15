@@ -1360,6 +1360,49 @@ class BudgetController extends Controller
     }
 
     /**
+     * Sync expense entry types based on category expense types
+     *
+     * Updates the type (opex, tax, capex) of each budget expense entry
+     * based on the category's expense type and name detection.
+     */
+    public function syncExpenseTypes(Request $request, Budget $budget)
+    {
+        $this->authorizeEdit($budget);
+
+        try {
+            $results = $this->expenseService->syncEntryTypes($budget);
+
+            $message = sprintf(
+                'Expense types synced: %d tax, %d capex entries updated',
+                $results['tax'],
+                $results['capex']
+            );
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'data' => $results,
+                ]);
+            }
+
+            return redirect()->back()->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error('Failed to sync expense types: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to sync expense types: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Failed to sync expense types: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Helper to populate expense data from actual expenses
      */
     private function populateExpensesFromActuals(Budget $budget): array
