@@ -336,6 +336,11 @@
           "slug": "accounting-reports-income-expenses"
         },
         {
+          "url": "accounting/budgets",
+          "name": "Budget Planning",
+          "slug": "accounting-budgets-index"
+        },
+        {
           "url": "accounting/reports",
           "name": "All Reports",
           "slug": "accounting-reports-index"
