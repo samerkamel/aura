@@ -193,13 +193,19 @@ class PersonnelService
 
     /**
      * Get salary changes summary
+     * Note: Returns annual totals (monthly × 12) for budget purposes
      */
     public function getSalaryChangesSummary(Budget $budget): array
     {
         $entries = $budget->personnelEntries()->get();
 
-        $totalCurrentSalaries = $entries->sum('current_salary');
-        $totalProposedSalaries = $entries->sum(fn($e) => $e->getEffectiveSalary());
+        // Monthly totals
+        $monthlyCurrentSalaries = $entries->sum('current_salary');
+        $monthlyProposedSalaries = $entries->sum(fn($e) => $e->getEffectiveSalary());
+
+        // Annual totals (multiply by 12 for budget year)
+        $totalCurrentSalaries = $monthlyCurrentSalaries * 12;
+        $totalProposedSalaries = $monthlyProposedSalaries * 12;
         $totalIncrease = $totalProposedSalaries - $totalCurrentSalaries;
         $increasePercentage = $totalCurrentSalaries > 0 ? ($totalIncrease / $totalCurrentSalaries) * 100 : 0;
 
@@ -210,6 +216,9 @@ class PersonnelService
             'total_increase_percentage' => $increasePercentage,
             'employee_count' => $entries->count(),
             'new_hires_count' => $entries->filter(fn($e) => $e->is_new_hire)->count(),
+            // Also include monthly values for reference
+            'monthly_current_salaries' => $monthlyCurrentSalaries,
+            'monthly_proposed_salaries' => $monthlyProposedSalaries,
         ];
     }
 

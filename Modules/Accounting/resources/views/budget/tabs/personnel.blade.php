@@ -267,19 +267,19 @@
                     </div>
                     <div class="col-md-2 col-sm-4">
                         <div class="text-center">
-                            <h6 class="text-muted mb-1">Current Total</h6>
+                            <h6 class="text-muted mb-1">Current Total <small>(Annual)</small></h6>
                             <h3 class="mb-0">{{ number_format($summary['total_current_salaries'], 0) }}</h3>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-4">
                         <div class="text-center">
-                            <h6 class="text-muted mb-1">Proposed Total</h6>
+                            <h6 class="text-muted mb-1">Proposed Total <small>(Annual)</small></h6>
                             <h3 class="mb-0">{{ number_format($summary['total_proposed_salaries'], 0) }}</h3>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-4">
                         <div class="text-center">
-                            <h6 class="text-muted mb-1">Increase Amount</h6>
+                            <h6 class="text-muted mb-1">Increase Amount <small>(Annual)</small></h6>
                             <h3 class="mb-0 {{ $summary['total_increase_amount'] >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ $summary['total_increase_amount'] >= 0 ? '+' : '' }}{{ number_format($summary['total_increase_amount'], 0) }}
                             </h3>
