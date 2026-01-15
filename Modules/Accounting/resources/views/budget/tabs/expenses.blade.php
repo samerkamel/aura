@@ -168,9 +168,9 @@
                             @foreach($opexHierarchy as $groupIndex => $group)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                        <button class="accordion-button" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#opexGroup{{ $groupIndex }}"
-                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                                aria-expanded="true">
                                             <div class="d-flex justify-content-between align-items-center w-100 me-3">
                                                 <span>
                                                     <i class="ti ti-folder me-2"></i>
@@ -185,8 +185,7 @@
                                             </div>
                                         </button>
                                     </h2>
-                                    <div id="opexGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
-                                         data-bs-parent="#opexAccordion">
+                                    <div id="opexGroup{{ $groupIndex }}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
                                             <div class="table-responsive">
                                                 <table class="table table-hover mb-0">
@@ -283,9 +282,9 @@
                             @foreach($taxHierarchy as $groupIndex => $group)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                        <button class="accordion-button" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#taxGroup{{ $groupIndex }}"
-                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                                aria-expanded="true">
                                             <div class="d-flex justify-content-between align-items-center w-100 me-3">
                                                 <span>
                                                     <i class="ti ti-folder me-2"></i>
@@ -300,8 +299,7 @@
                                             </div>
                                         </button>
                                     </h2>
-                                    <div id="taxGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
-                                         data-bs-parent="#taxAccordion">
+                                    <div id="taxGroup{{ $groupIndex }}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
                                             <div class="table-responsive">
                                                 <table class="table table-hover mb-0">
@@ -398,9 +396,9 @@
                             @foreach($capexHierarchy as $groupIndex => $group)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                        <button class="accordion-button" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#capexGroup{{ $groupIndex }}"
-                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                                aria-expanded="true">
                                             <div class="d-flex justify-content-between align-items-center w-100 me-3">
                                                 <span>
                                                     <i class="ti ti-folder me-2"></i>
@@ -415,8 +413,7 @@
                                             </div>
                                         </button>
                                     </h2>
-                                    <div id="capexGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
-                                         data-bs-parent="#capexAccordion">
+                                    <div id="capexGroup{{ $groupIndex }}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
                                             <div class="table-responsive">
                                                 <table class="table table-hover mb-0">
