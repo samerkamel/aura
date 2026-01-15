@@ -1370,10 +1370,11 @@ class BudgetController extends Controller
             }
 
             // Get actual expenses from last year for this category
+            // Note: expense_schedules table uses 'category_id' and 'payment_status' columns
             $lastYearTotal = \Modules\Accounting\Models\ExpenseSchedule::query()
-                ->where('expense_category_id', $categoryId)
+                ->where('category_id', $categoryId)
                 ->whereYear('expense_date', $lastYear)
-                ->where('status', 'paid')
+                ->where('payment_status', 'paid')
                 ->sum('amount');
 
             $entry->update([
