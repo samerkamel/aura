@@ -117,8 +117,83 @@ class ExpenseService
     public function getBudgetExpenseEntries(Budget $budget)
     {
         return $budget->expenseEntries()
-            ->with('category', 'category.expenseType')
+            ->with('category', 'category.expenseType', 'category.parent')
             ->get();
+    }
+
+    /**
+     * Get expense entries organized hierarchically by parent category
+     *
+     * Returns entries grouped by parent category, with orphan categories (no parent)
+     * as their own group. Each group has 'parent' and 'entries' keys.
+     *
+     * @param \Illuminate\Support\Collection $entries Collection of expense entries
+     * @return \Illuminate\Support\Collection Collection of hierarchical groups
+     */
+    public function organizeEntriesHierarchically($entries)
+    {
+        $hierarchy = collect();
+        $processed = collect();
+
+        // First pass: Find all unique parent categories
+        $parentCategories = $entries->map(function ($entry) {
+            return $entry->category?->parent ?? $entry->category;
+        })->unique('id')->sortBy('sort_order');
+
+        // Build hierarchy: group entries under their parent category
+        foreach ($parentCategories as $parentCat) {
+            if (!$parentCat) continue;
+
+            // Get all entries that belong to this parent (either directly or as subcategories)
+            $groupEntries = $entries->filter(function ($entry) use ($parentCat) {
+                if (!$entry->category) return false;
+
+                // Entry is directly under this parent
+                if ($entry->category->parent_id === $parentCat->id) {
+                    return true;
+                }
+
+                // Entry's category IS the parent (no subcategory level)
+                if ($entry->category->id === $parentCat->id && is_null($entry->category->parent_id)) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            if ($groupEntries->isNotEmpty()) {
+                // Sort entries by category sort_order
+                $sortedEntries = $groupEntries->sortBy(function ($entry) {
+                    return $entry->category?->sort_order ?? 999;
+                });
+
+                $hierarchy->push([
+                    'parent' => $parentCat,
+                    'is_parent_only' => $groupEntries->count() === 1 && $groupEntries->first()->category->id === $parentCat->id,
+                    'entries' => $sortedEntries->values(),
+                    'subtotal' => $sortedEntries->sum(fn($e) => $e->proposed_total ?? $e->last_year_total),
+                ]);
+
+                $processed = $processed->merge($groupEntries->pluck('id'));
+            }
+        }
+
+        // Handle any orphan entries not yet processed
+        $orphans = $entries->whereNotIn('id', $processed->toArray());
+        if ($orphans->isNotEmpty()) {
+            foreach ($orphans as $orphan) {
+                $hierarchy->push([
+                    'parent' => $orphan->category,
+                    'is_parent_only' => true,
+                    'entries' => collect([$orphan]),
+                    'subtotal' => $orphan->proposed_total ?? $orphan->last_year_total,
+                ]);
+            }
+        }
+
+        return $hierarchy->sortBy(function ($group) {
+            return $group['parent']?->sort_order ?? 999;
+        })->values();
     }
 
     /**

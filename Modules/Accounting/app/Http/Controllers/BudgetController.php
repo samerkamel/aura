@@ -1175,6 +1175,11 @@ class BudgetController extends Controller
         $taxEntries = $expenseEntries->where('type', 'tax');
         $capexEntries = $expenseEntries->where('type', 'capex');
 
+        // Organize entries hierarchically by parent category
+        $opexHierarchy = $this->expenseService->organizeEntriesHierarchically($opexEntries);
+        $taxHierarchy = $this->expenseService->organizeEntriesHierarchically($taxEntries);
+        $capexHierarchy = $this->expenseService->organizeEntriesHierarchically($capexEntries);
+
         // Prepare chart data
         $chartData = [
             'byType' => [
@@ -1194,6 +1199,9 @@ class BudgetController extends Controller
             'opexEntries' => $opexEntries,
             'taxEntries' => $taxEntries,
             'capexEntries' => $capexEntries,
+            'opexHierarchy' => $opexHierarchy,
+            'taxHierarchy' => $taxHierarchy,
+            'capexHierarchy' => $capexHierarchy,
             'summary' => $summary,
             'chartData' => $chartData,
         ]);

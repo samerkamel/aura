@@ -145,81 +145,112 @@
 
             {{-- OpEx Section --}}
             <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="ti ti-building-store me-2"></i>Operating Expenses (OpEx)</h5>
+                    <span class="badge bg-light text-primary">{{ $opexEntries->count() }} categories</span>
                 </div>
                 <div class="card-body">
-                    @if($opexEntries->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th class="text-end">Last Year Total</th>
-                                        <th class="text-end">Last Year Avg/Month</th>
-                                        <th style="width: 120px;">Increase %</th>
-                                        <th style="width: 150px;">Override Amount</th>
-                                        <th class="text-end">Proposed Total</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($opexEntries as $index => $entry)
-                                        <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
-                                            <td>
-                                                <input type="hidden" name="expenses[opex][{{ $index }}][id]" value="{{ $entry->id }}">
-                                                <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
-                                                @if($entry->category?->parent)
-                                                    <br><small class="text-muted">{{ $entry->category->parent->name }}</small>
-                                                @endif
-                                            </td>
-                                            <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
-                                            <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number"
-                                                           class="form-control increase-pct"
-                                                           name="expenses[opex][{{ $index }}][increase_percentage]"
-                                                           value="{{ $entry->increase_percentage ?? 0 }}"
-                                                           step="0.1"
-                                                           {{ $entry->is_override ? 'disabled' : '' }}
-                                                           data-last-year="{{ $entry->last_year_total }}">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text">EGP</span>
-                                                    <input type="number"
-                                                           class="form-control override-amount"
-                                                           name="expenses[opex][{{ $index }}][override_amount]"
-                                                           value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
-                                                           step="0.01"
-                                                           min="0"
-                                                           placeholder="Override">
-                                                </div>
-                                            </td>
-                                            <td class="text-end proposed-total">
-                                                <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
-                                            </td>
-                                            <td>
-                                                @if($entry->is_override)
-                                                    <span class="badge bg-warning">Override</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Calculated</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    <tr class="table-light">
-                                        <td colspan="5"><strong>OpEx Total</strong></td>
-                                        <td class="text-end"><strong>{{ number_format($summary['opex_total'], 2) }}</strong></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    @if($opexHierarchy->count() > 0)
+                        <div class="accordion" id="opexAccordion">
+                            @php $opexIndex = 0; @endphp
+                            @foreach($opexHierarchy as $groupIndex => $group)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#opexGroup{{ $groupIndex }}"
+                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                                <span>
+                                                    <i class="ti ti-folder me-2"></i>
+                                                    <strong>{{ $group['parent']?->name ?? 'Uncategorized' }}</strong>
+                                                    @if(!$group['is_parent_only'])
+                                                        <span class="badge bg-secondary ms-2">{{ $group['entries']->count() }} items</span>
+                                                    @endif
+                                                </span>
+                                                <span class="text-primary fw-bold">
+                                                    EGP {{ number_format($group['subtotal'], 2) }}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="opexGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
+                                         data-bs-parent="#opexAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover mb-0">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Category</th>
+                                                            <th class="text-end">Last Year Total</th>
+                                                            <th class="text-end">Last Year Avg/Month</th>
+                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 150px;">Override Amount</th>
+                                                            <th class="text-end">Proposed Total</th>
+                                                            <th>Type</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($group['entries'] as $entry)
+                                                            <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
+                                                                <td>
+                                                                    <input type="hidden" name="expenses[opex][{{ $opexIndex }}][id]" value="{{ $entry->id }}">
+                                                                    @if($entry->category?->parent_id)
+                                                                        <span class="text-muted me-2">└─</span>
+                                                                    @endif
+                                                                    <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
+                                                                </td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input type="number"
+                                                                               class="form-control increase-pct"
+                                                                               name="expenses[opex][{{ $opexIndex }}][increase_percentage]"
+                                                                               value="{{ $entry->increase_percentage ?? 0 }}"
+                                                                               step="0.1"
+                                                                               {{ $entry->is_override ? 'disabled' : '' }}
+                                                                               data-last-year="{{ $entry->last_year_total }}">
+                                                                        <span class="input-group-text">%</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <span class="input-group-text">EGP</span>
+                                                                        <input type="number"
+                                                                               class="form-control override-amount"
+                                                                               name="expenses[opex][{{ $opexIndex }}][override_amount]"
+                                                                               value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
+                                                                               step="0.01"
+                                                                               min="0"
+                                                                               placeholder="Override">
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end proposed-total">
+                                                                    <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
+                                                                </td>
+                                                                <td>
+                                                                    @if($entry->is_override)
+                                                                        <span class="badge bg-warning">Override</span>
+                                                                    @else
+                                                                        <span class="badge bg-secondary">Calculated</span>
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                            @php $opexIndex++; @endphp
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="card-footer bg-light mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>OpEx Total</strong>
+                                <strong class="text-primary fs-5">EGP {{ number_format($summary['opex_total'], 2) }}</strong>
+                            </div>
                         </div>
                     @else
                         <p class="text-muted mb-0">No OpEx entries found.</p>
@@ -229,78 +260,112 @@
 
             {{-- Tax Section --}}
             <div class="card mb-4">
-                <div class="card-header bg-danger text-white">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="ti ti-receipt-tax me-2"></i>Taxes</h5>
+                    <span class="badge bg-light text-danger">{{ $taxEntries->count() }} categories</span>
                 </div>
                 <div class="card-body">
-                    @if($taxEntries->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th class="text-end">Last Year Total</th>
-                                        <th class="text-end">Last Year Avg/Month</th>
-                                        <th style="width: 120px;">Increase %</th>
-                                        <th style="width: 150px;">Override Amount</th>
-                                        <th class="text-end">Proposed Total</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($taxEntries as $index => $entry)
-                                        <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
-                                            <td>
-                                                <input type="hidden" name="expenses[tax][{{ $index }}][id]" value="{{ $entry->id }}">
-                                                <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
-                                            </td>
-                                            <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
-                                            <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number"
-                                                           class="form-control increase-pct"
-                                                           name="expenses[tax][{{ $index }}][increase_percentage]"
-                                                           value="{{ $entry->increase_percentage ?? 0 }}"
-                                                           step="0.1"
-                                                           {{ $entry->is_override ? 'disabled' : '' }}
-                                                           data-last-year="{{ $entry->last_year_total }}">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text">EGP</span>
-                                                    <input type="number"
-                                                           class="form-control override-amount"
-                                                           name="expenses[tax][{{ $index }}][override_amount]"
-                                                           value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
-                                                           step="0.01"
-                                                           min="0"
-                                                           placeholder="Override">
-                                                </div>
-                                            </td>
-                                            <td class="text-end proposed-total">
-                                                <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
-                                            </td>
-                                            <td>
-                                                @if($entry->is_override)
-                                                    <span class="badge bg-warning">Override</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Calculated</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    <tr class="table-light">
-                                        <td colspan="5"><strong>Tax Total</strong></td>
-                                        <td class="text-end"><strong>{{ number_format($summary['tax_total'], 2) }}</strong></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    @if($taxHierarchy->count() > 0)
+                        <div class="accordion" id="taxAccordion">
+                            @php $taxIndex = 0; @endphp
+                            @foreach($taxHierarchy as $groupIndex => $group)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#taxGroup{{ $groupIndex }}"
+                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                                <span>
+                                                    <i class="ti ti-folder me-2"></i>
+                                                    <strong>{{ $group['parent']?->name ?? 'Uncategorized' }}</strong>
+                                                    @if(!$group['is_parent_only'])
+                                                        <span class="badge bg-secondary ms-2">{{ $group['entries']->count() }} items</span>
+                                                    @endif
+                                                </span>
+                                                <span class="text-danger fw-bold">
+                                                    EGP {{ number_format($group['subtotal'], 2) }}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="taxGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
+                                         data-bs-parent="#taxAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover mb-0">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Category</th>
+                                                            <th class="text-end">Last Year Total</th>
+                                                            <th class="text-end">Last Year Avg/Month</th>
+                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 150px;">Override Amount</th>
+                                                            <th class="text-end">Proposed Total</th>
+                                                            <th>Type</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($group['entries'] as $entry)
+                                                            <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
+                                                                <td>
+                                                                    <input type="hidden" name="expenses[tax][{{ $taxIndex }}][id]" value="{{ $entry->id }}">
+                                                                    @if($entry->category?->parent_id)
+                                                                        <span class="text-muted me-2">└─</span>
+                                                                    @endif
+                                                                    <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
+                                                                </td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input type="number"
+                                                                               class="form-control increase-pct"
+                                                                               name="expenses[tax][{{ $taxIndex }}][increase_percentage]"
+                                                                               value="{{ $entry->increase_percentage ?? 0 }}"
+                                                                               step="0.1"
+                                                                               {{ $entry->is_override ? 'disabled' : '' }}
+                                                                               data-last-year="{{ $entry->last_year_total }}">
+                                                                        <span class="input-group-text">%</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <span class="input-group-text">EGP</span>
+                                                                        <input type="number"
+                                                                               class="form-control override-amount"
+                                                                               name="expenses[tax][{{ $taxIndex }}][override_amount]"
+                                                                               value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
+                                                                               step="0.01"
+                                                                               min="0"
+                                                                               placeholder="Override">
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end proposed-total">
+                                                                    <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
+                                                                </td>
+                                                                <td>
+                                                                    @if($entry->is_override)
+                                                                        <span class="badge bg-warning">Override</span>
+                                                                    @else
+                                                                        <span class="badge bg-secondary">Calculated</span>
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                            @php $taxIndex++; @endphp
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="card-footer bg-light mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>Tax Total</strong>
+                                <strong class="text-danger fs-5">EGP {{ number_format($summary['tax_total'], 2) }}</strong>
+                            </div>
                         </div>
                     @else
                         <p class="text-muted mb-0">No Tax entries found.</p>
@@ -310,81 +375,112 @@
 
             {{-- CapEx Section --}}
             <div class="card mb-4">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="ti ti-building me-2"></i>Capital Expenditure (CapEx)</h5>
+                    <span class="badge bg-light text-success">{{ $capexEntries->count() }} categories</span>
                 </div>
                 <div class="card-body">
-                    @if($capexEntries->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th class="text-end">Last Year Total</th>
-                                        <th class="text-end">Last Year Avg/Month</th>
-                                        <th style="width: 120px;">Increase %</th>
-                                        <th style="width: 150px;">Override Amount</th>
-                                        <th class="text-end">Proposed Total</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($capexEntries as $index => $entry)
-                                        <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
-                                            <td>
-                                                <input type="hidden" name="expenses[capex][{{ $index }}][id]" value="{{ $entry->id }}">
-                                                <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
-                                                @if($entry->category?->parent)
-                                                    <br><small class="text-muted">{{ $entry->category->parent->name }}</small>
-                                                @endif
-                                            </td>
-                                            <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
-                                            <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number"
-                                                           class="form-control increase-pct"
-                                                           name="expenses[capex][{{ $index }}][increase_percentage]"
-                                                           value="{{ $entry->increase_percentage ?? 0 }}"
-                                                           step="0.1"
-                                                           {{ $entry->is_override ? 'disabled' : '' }}
-                                                           data-last-year="{{ $entry->last_year_total }}">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group input-group-sm">
-                                                    <span class="input-group-text">EGP</span>
-                                                    <input type="number"
-                                                           class="form-control override-amount"
-                                                           name="expenses[capex][{{ $index }}][override_amount]"
-                                                           value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
-                                                           step="0.01"
-                                                           min="0"
-                                                           placeholder="Override">
-                                                </div>
-                                            </td>
-                                            <td class="text-end proposed-total">
-                                                <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
-                                            </td>
-                                            <td>
-                                                @if($entry->is_override)
-                                                    <span class="badge bg-warning">Override</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Calculated</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    <tr class="table-light">
-                                        <td colspan="5"><strong>CapEx Total</strong></td>
-                                        <td class="text-end"><strong>{{ number_format($summary['capex_total'], 2) }}</strong></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    @if($capexHierarchy->count() > 0)
+                        <div class="accordion" id="capexAccordion">
+                            @php $capexIndex = 0; @endphp
+                            @foreach($capexHierarchy as $groupIndex => $group)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {{ $groupIndex > 0 ? 'collapsed' : '' }}" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#capexGroup{{ $groupIndex }}"
+                                                aria-expanded="{{ $groupIndex === 0 ? 'true' : 'false' }}">
+                                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                                <span>
+                                                    <i class="ti ti-folder me-2"></i>
+                                                    <strong>{{ $group['parent']?->name ?? 'Uncategorized' }}</strong>
+                                                    @if(!$group['is_parent_only'])
+                                                        <span class="badge bg-secondary ms-2">{{ $group['entries']->count() }} items</span>
+                                                    @endif
+                                                </span>
+                                                <span class="text-success fw-bold">
+                                                    EGP {{ number_format($group['subtotal'], 2) }}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="capexGroup{{ $groupIndex }}" class="accordion-collapse collapse {{ $groupIndex === 0 ? 'show' : '' }}"
+                                         data-bs-parent="#capexAccordion">
+                                        <div class="accordion-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover mb-0">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Category</th>
+                                                            <th class="text-end">Last Year Total</th>
+                                                            <th class="text-end">Last Year Avg/Month</th>
+                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 150px;">Override Amount</th>
+                                                            <th class="text-end">Proposed Total</th>
+                                                            <th>Type</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($group['entries'] as $entry)
+                                                            <tr class="{{ $entry->is_override ? 'table-warning' : '' }}">
+                                                                <td>
+                                                                    <input type="hidden" name="expenses[capex][{{ $capexIndex }}][id]" value="{{ $entry->id }}">
+                                                                    @if($entry->category?->parent_id)
+                                                                        <span class="text-muted me-2">└─</span>
+                                                                    @endif
+                                                                    <strong>{{ $entry->category?->name ?? 'Unknown' }}</strong>
+                                                                </td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_total, 2) }}</td>
+                                                                <td class="text-end">{{ number_format($entry->last_year_avg_monthly, 2) }}</td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input type="number"
+                                                                               class="form-control increase-pct"
+                                                                               name="expenses[capex][{{ $capexIndex }}][increase_percentage]"
+                                                                               value="{{ $entry->increase_percentage ?? 0 }}"
+                                                                               step="0.1"
+                                                                               {{ $entry->is_override ? 'disabled' : '' }}
+                                                                               data-last-year="{{ $entry->last_year_total }}">
+                                                                        <span class="input-group-text">%</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="input-group input-group-sm">
+                                                                        <span class="input-group-text">EGP</span>
+                                                                        <input type="number"
+                                                                               class="form-control override-amount"
+                                                                               name="expenses[capex][{{ $capexIndex }}][override_amount]"
+                                                                               value="{{ $entry->is_override ? $entry->proposed_amount : '' }}"
+                                                                               step="0.01"
+                                                                               min="0"
+                                                                               placeholder="Override">
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end proposed-total">
+                                                                    <strong>{{ number_format($entry->proposed_total ?? $entry->last_year_total, 2) }}</strong>
+                                                                </td>
+                                                                <td>
+                                                                    @if($entry->is_override)
+                                                                        <span class="badge bg-warning">Override</span>
+                                                                    @else
+                                                                        <span class="badge bg-secondary">Calculated</span>
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                            @php $capexIndex++; @endphp
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="card-footer bg-light mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>CapEx Total</strong>
+                                <strong class="text-success fs-5">EGP {{ number_format($summary['capex_total'], 2) }}</strong>
+                            </div>
                         </div>
                     @else
                         <p class="text-muted mb-0">No CapEx entries found.</p>
