@@ -46,11 +46,13 @@ class Project extends Model
         'last_followup_date',
         'next_followup_date',
         'followup_status',
+        'followups_disabled',
     ];
 
     protected $casts = [
         'needs_monthly_report' => 'boolean',
         'is_active' => 'boolean',
+        'followups_disabled' => 'boolean',
         'last_followup_date' => 'date',
         'next_followup_date' => 'date',
         'planned_start_date' => 'date',

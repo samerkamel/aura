@@ -367,9 +367,11 @@ class ProjectController extends Controller
             'phase' => 'nullable|in:' . implode(',', array_keys(Project::PHASES)),
             'health_status' => 'nullable|in:' . implode(',', array_keys(Project::HEALTH_STATUSES)),
             'needs_monthly_report' => 'boolean',
+            'followups_disabled' => 'boolean',
         ]);
 
         $validated['needs_monthly_report'] = $request->has('needs_monthly_report');
+        $validated['followups_disabled'] = $request->has('followups_disabled');
 
         $project->update($validated);
 

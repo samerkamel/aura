@@ -46,6 +46,7 @@ class ProjectFollowupService
     public function getProjectsNeedingFollowup(int $activityDays = self::DEFAULT_ACTIVITY_DAYS, bool $showAllActive = false): Collection
     {
         $query = Project::where('is_active', true)
+            ->where('followups_disabled', false)
             ->with(['customer', 'latestFollowup']);
 
         if (!$showAllActive) {
@@ -190,6 +191,7 @@ class ProjectFollowupService
     {
         $updated = 0;
         $projects = Project::where('is_active', true)
+            ->where('followups_disabled', false)
             ->whereNotNull('last_followup_date')
             ->get();
 

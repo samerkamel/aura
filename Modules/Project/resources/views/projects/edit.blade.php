@@ -193,6 +193,17 @@
                 </div>
                 <div class="form-text">Enable this if the project requires monthly billing reports</div>
               </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="followups_disabled"
+                         name="followups_disabled" value="1"
+                         {{ old('followups_disabled', $project->followups_disabled) ? 'checked' : '' }}>
+                  <label class="form-check-label" for="followups_disabled">
+                    Disable Follow-ups
+                  </label>
+                </div>
+                <div class="form-text">Exclude this project from the follow-ups tracking page</div>
+              </div>
             </div>
 
             <hr class="my-4">
