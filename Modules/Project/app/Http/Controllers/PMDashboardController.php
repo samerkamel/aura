@@ -29,22 +29,25 @@ class PMDashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Today's Follow-ups
+        // Today's Follow-ups (exclude projects with followups disabled)
         $todayFollowups = ProjectFollowup::with(['project', 'user'])
+            ->whereHas('project', fn($q) => $q->where('followups_disabled', false))
             ->whereNotNull('next_followup_date')
             ->whereDate('next_followup_date', today())
             ->orderBy('next_followup_date')
             ->get();
 
-        // Overdue Follow-ups
+        // Overdue Follow-ups (exclude projects with followups disabled)
         $overdueFollowups = ProjectFollowup::with(['project', 'user'])
+            ->whereHas('project', fn($q) => $q->where('followups_disabled', false))
             ->whereNotNull('next_followup_date')
             ->where('next_followup_date', '<', today())
             ->orderBy('next_followup_date')
             ->get();
 
-        // Upcoming Follow-ups (next 7 days)
+        // Upcoming Follow-ups (next 7 days, exclude projects with followups disabled)
         $upcomingFollowups = ProjectFollowup::with(['project', 'user'])
+            ->whereHas('project', fn($q) => $q->where('followups_disabled', false))
             ->whereNotNull('next_followup_date')
             ->whereBetween('next_followup_date', [today()->addDay(), today()->addDays(7)])
             ->orderBy('next_followup_date')
@@ -264,8 +267,9 @@ class PMDashboardController extends Controller
 
         $events = collect();
 
-        // Follow-ups
+        // Follow-ups (exclude projects with followups disabled)
         $followups = ProjectFollowup::with('project')
+            ->whereHas('project', fn($q) => $q->where('followups_disabled', false))
             ->whereNotNull('next_followup_date')
             ->whereBetween('next_followup_date', [$start, $end])
             ->get();
@@ -332,8 +336,9 @@ class PMDashboardController extends Controller
     {
         $activities = collect();
 
-        // Recent follow-ups
+        // Recent follow-ups (exclude projects with followups disabled)
         $followups = ProjectFollowup::with(['project', 'user'])
+            ->whereHas('project', fn($q) => $q->where('followups_disabled', false))
             ->orderByDesc('created_at')
             ->limit($limit)
             ->get()
@@ -506,10 +511,12 @@ class PMDashboardController extends Controller
         $user = auth()->user();
 
         $data = [
-            'overdue_followups_count' => ProjectFollowup::whereNotNull('next_followup_date')
+            'overdue_followups_count' => ProjectFollowup::whereHas('project', fn($q) => $q->where('followups_disabled', false))
+                ->whereNotNull('next_followup_date')
                 ->where('next_followup_date', '<', today())
                 ->count(),
-            'today_followups_count' => ProjectFollowup::whereNotNull('next_followup_date')
+            'today_followups_count' => ProjectFollowup::whereHas('project', fn($q) => $q->where('followups_disabled', false))
+                ->whereNotNull('next_followup_date')
                 ->whereDate('next_followup_date', today())
                 ->count(),
             'overdue_milestones_count' => ProjectMilestone::where('status', '!=', 'completed')
