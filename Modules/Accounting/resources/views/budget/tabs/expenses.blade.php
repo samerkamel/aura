@@ -194,7 +194,7 @@
                                                             <th>Category</th>
                                                             <th class="text-end">Last Year Total</th>
                                                             <th class="text-end">Last Year Avg/Month</th>
-                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 160px;">Increase %</th>
                                                             <th style="width: 150px;">Override Amount</th>
                                                             <th class="text-end">Proposed Total</th>
                                                             <th>Type</th>
@@ -308,7 +308,7 @@
                                                             <th>Category</th>
                                                             <th class="text-end">Last Year Total</th>
                                                             <th class="text-end">Last Year Avg/Month</th>
-                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 160px;">Increase %</th>
                                                             <th style="width: 150px;">Override Amount</th>
                                                             <th class="text-end">Proposed Total</th>
                                                             <th>Type</th>
@@ -422,7 +422,7 @@
                                                             <th>Category</th>
                                                             <th class="text-end">Last Year Total</th>
                                                             <th class="text-end">Last Year Avg/Month</th>
-                                                            <th style="width: 120px;">Increase %</th>
+                                                            <th style="width: 160px;">Increase %</th>
                                                             <th style="width: 150px;">Override Amount</th>
                                                             <th class="text-end">Proposed Total</th>
                                                             <th>Type</th>
