@@ -18,6 +18,7 @@ use Modules\Accounting\Services\Budget\FinalizationService;
 use Modules\HR\Models\Employee;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * BudgetController
@@ -201,7 +202,7 @@ class BudgetController extends Controller
             return redirect()->back()
                 ->with('success', 'Historical data populated from contracts');
         } catch (\Exception $e) {
-            \Log::error('Failed to populate historical data: ' . $e->getMessage());
+            Log::error('Failed to populate historical data: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -534,7 +535,7 @@ class BudgetController extends Controller
             return redirect()->back()
                 ->with('success', 'Collection data populated from payment history');
         } catch (\Exception $e) {
-            \Log::error('Failed to populate collection data: ' . $e->getMessage());
+            Log::error('Failed to populate collection data: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -926,7 +927,7 @@ class BudgetController extends Controller
             return redirect()->back()
                 ->with('success', 'Personnel entries initialized from active employees');
         } catch (\Exception $e) {
-            \Log::error('Failed to initialize personnel entries: ' . $e->getMessage());
+            Log::error('Failed to initialize personnel entries: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -1226,7 +1227,7 @@ class BudgetController extends Controller
             return redirect()->back()
                 ->with('success', 'Expense entries initialized from categories');
         } catch (\Exception $e) {
-            \Log::error('Failed to initialize expense entries: ' . $e->getMessage());
+            Log::error('Failed to initialize expense entries: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -1336,7 +1337,7 @@ class BudgetController extends Controller
             return redirect()->back()
                 ->with('success', 'Expense data populated from last year actuals');
         } catch (\Exception $e) {
-            \Log::error('Failed to populate expense data: ' . $e->getMessage());
+            Log::error('Failed to populate expense data: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
