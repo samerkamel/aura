@@ -138,7 +138,9 @@ class ProjectController extends Controller
         // Get portfolio stats using optimized aggregation with financial year filter
         $portfolioStats = $dashboardService->getPortfolioStatsOptimized($phaseFilter, auth()->user(), $financialYear);
 
-        $customers = Customer::active()->orderBy('name')->get(['id', 'name', 'company_name']);
+        $customers = Customer::active()
+            ->orderByRaw('COALESCE(NULLIF(company_name, \'\'), name)')
+            ->get(['id', 'name', 'company_name']);
 
         return view('project::projects.index', [
             'projects' => $projects,

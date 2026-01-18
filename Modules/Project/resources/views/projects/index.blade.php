@@ -3,6 +3,7 @@
 @section('title', 'Projects')
 
 @section('vendor-style')
+@vite(['resources/assets/vendor/libs/select2/select2.scss'])
 <style>
   .stat-card {
     transition: transform 0.2s ease-in-out;
@@ -49,6 +50,10 @@
     display: inline-block;
   }
 </style>
+@endsection
+
+@section('vendor-script')
+@vite(['resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 @section('content')
@@ -239,9 +244,9 @@
           <label class="form-label">Search</label>
           <input type="text" class="form-control form-control-sm" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Name or code...">
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <label class="form-label">Customer</label>
-          <select class="form-select form-select-sm" name="customer_id">
+          <select class="form-select form-select-sm select2-customer" name="customer_id" id="customerFilter">
             <option value="">All Customers</option>
             @foreach($customers as $customer)
               <option value="{{ $customer->id }}" {{ ($filters['customer_id'] ?? '') == $customer->id ? 'selected' : '' }}>
@@ -548,8 +553,40 @@
   @keyframes progress {
     0% { stroke-dasharray: 0 100; }
   }
+  /* Select2 small size styling */
+  .select2-container--default .select2-selection--single {
+    min-height: 31px;
+    padding: 2px 6px;
+    font-size: 0.8125rem;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 25px;
+    padding-left: 0;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 29px;
+  }
 </style>
 <script>
+// Initialize Select2 for customer dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    function initCustomerSelect2() {
+        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            setTimeout(initCustomerSelect2, 50);
+            return;
+        }
+
+        $('.select2-customer').select2({
+            placeholder: 'All Customers',
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: false
+        });
+    }
+
+    initCustomerSelect2();
+});
+
 function applyFYFilter(year) {
     const url = new URL(window.location.href);
     if (year === 'all') {
